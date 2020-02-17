@@ -1,0 +1,15 @@
+projects:
+  database:
+    schemaPath: ./database/src/schema/schema.graphql
+    includes: ["./database/src/**/*.graphql"]
+    extensions:
+      prisma: ./database/prisma.yml
+      endpoints:
+        default: ${PRISMA_ENDPOINT}
+
+  graphqlserver:
+    schemaPath: ./graphqlserver/src/schema/schema.graphql
+    includes: ["./graphqlserver/src/**/*.graphql"]
+    extensions:
+      endpoints:
+        default: ${GRAPHQL_ENDPOINT}

@@ -1,0 +1,27 @@
+{
+  "name": "@ibexcm/mercado",
+  "private": true,
+  "version": "1.0.0",
+  "description": "IBEX Crypto Mercado",
+  "scripts": {
+    "clean": "lerna clean -y",
+    "bootstrap": "lerna bootstrap --ci",
+    "build": "lerna run build && npm run bootstrap",
+    "api:schema:generate": "lerna run api:schema:generate && lerna run api:schema:compile && npm run bootstrap"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "lerna": "^3.13.0",
+    "prettier": "^1.16.4",
+    "ts-node": "^8.1.0",
+    "rimraf": "^2.6.3",
+    "typescript": "^3.7.5",
+    "convict": "^5.1.0"
+  },
+  "prettier": {
+    "trailingComma": "all",
+    "printWidth": 92
+  }
+}

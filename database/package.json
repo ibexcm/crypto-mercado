@@ -1,0 +1,25 @@
+{
+  "name": "@ibexcm/database",
+  "version": "1.0.0",
+  "private": true,
+  "description": "IBEXCM Database",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "author": "netpoe",
+  "license": "MIT",
+  "scripts": {
+    "build": "npm run deploy && npm run generate && npm run compile",
+    "compile": "npm run clean && tsc",
+    "clean": "rimraf lib",
+    "reset": "prisma reset && npm run seed",
+    "deploy": "prisma deploy",
+    "deploy:force": "prisma deploy -f",
+    "generate": "prisma generate",
+    "seed": "ts-node ./datamodel/seed.ts",
+    "api:schema:generate": "npm run generate",
+    "api:schema:compile": "npm run compile"
+  },
+  "dependencies": {
+    "prisma-client-lib": "^1.30.4"
+  }
+}

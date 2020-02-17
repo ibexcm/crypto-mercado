@@ -1,0 +1,126 @@
+type User {
+  id: ID! @id
+  role: UserRole! @relation(link: INLINE, onDelete: CASCADE)
+  account: Account!
+  contact: Contact!
+  profile: Profile
+  bankAccount: [BankAccount]
+  cryptoAccount: [CryptoAccount]
+}
+
+type UserRole {
+  id: ID! @id
+  type: String! @unique # admin | user
+}
+
+type BankAccount {
+  id: ID! @id
+  fullName: String!
+  accountNumber: String! @unique
+  bankAccountType: BankAccountType!
+  isCurrent: Boolean @default(value: false)
+  account: Account!
+  verifiedAt: DateTime
+  createdAt: DateTime! @createdAt
+}
+
+type BankAccountType {
+  id: ID! @id
+  type: String! # monetaria | ahorro
+  currency: Currency!
+}
+
+type Bank { # predefined in seed
+  id: ID! @id
+  name: String! @unique
+  logoURL: String! @unique
+}
+
+type Account {
+  id: ID! @id
+  password: String!
+  clientID: String! @unique
+  user: User!
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
+type CryptoAccount {
+  id: ID! @id
+  address: String! @unique
+  account: Account!
+  currency: Currency!
+  createdAt: DateTime! @createdAt
+}
+
+type Profile {
+  id: ID! @id
+  governmentID: [GovernmentID]
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
+type GovernmentID { # DPI
+  id: ID! @id
+  hash: String!
+  firstName: String
+  lastName: String
+  CUI: String
+  dateOfBirth: Date
+  genre: Genre
+  expiresAt: Date
+  isCurrent: Boolean @default(value: false)
+  verifiedAt: DateTime
+  createdAt: DateTime! @createdAt
+}
+
+enum Genre {
+  MALE
+  FEMALE
+}
+
+type Contact {
+  id: ID! @id
+  email: [Email]
+  phoneNumber: [PhoneNumber]
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
+type Email {
+  id: ID! @id
+  address: String!
+  isCurrent: Boolean @default(value: false)
+  verifiedAt: DateTime
+  createdAt: DateTime! @createdAt
+}
+
+type PhoneNumber {
+  id: ID! @id
+  number: String!
+  isCurrent: Boolean @default(value: false)
+  verifiedAt: DateTime
+  createdAt: DateTime! @createdAt
+}
+
+type TransactionFee {
+  id: ID! @id
+  fee: String! # decimal / percentage
+}
+
+type Transaction {
+  id: ID! @id
+  amount: String! @default(value: "0.00")
+  user: User!
+  toCurrency: Currency!
+  fromCurrency: Currency!
+  cryptoAccount: CryptoAccount
+  transactionFee: TransactionFee!
+  paidAt: DateTime # only by admin!
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
+# ADMIN Management
+extends type BankAccount {
+}

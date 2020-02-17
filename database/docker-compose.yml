@@ -1,0 +1,33 @@
+version: "3"
+services:
+  prisma:
+    container_name: ${PRISMA_CONTAINER_NAME}
+    image: prismagraphql/prisma:1.34
+    restart: always
+    ports:
+      - "${PRISMA_PORT}:${PRISMA_PORT}"
+    environment:
+      PRISMA_CONFIG: |
+        managementApiSecret: ${PRISMA_MANAGEMENT_API_SECRET}
+        port: ${PRISMA_PORT}
+        databases:
+          default:
+            connector: ${DB_CONNECTOR}
+            host: ${DB_HOST}
+            user: ${DB_USER}
+            password: ${DB_PASSWORD}
+            rawAccess: ${DB_RAWACCESS}
+            port: ${DB_PORT}
+            migrations: ${DB_MIGRATIONS}
+            database: ${DB_DATABASE}
+  postgres:
+    container_name: ${DATABASE_CONTAINER_NAME}
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - postgres:/var/lib/postgresql/data
+volumes:
+  postgres: ~
