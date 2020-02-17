@@ -1,11 +1,12 @@
 type User {
   id: ID! @id
-  role: UserRole! @relation(link: INLINE, onDelete: CASCADE)
-  account: Account!
-  contact: Contact!
-  profile: Profile
-  bankAccount: [BankAccount]
-  cryptoAccount: [CryptoAccount]
+  role: UserRole! @relation(link: INLINE)
+  account: Account! @relation(link: INLINE, onDelete: CASCADE)
+  contact: Contact! @relation(link: INLINE, onDelete: CASCADE)
+  profile: Profile @relation(link: INLINE, onDelete: CASCADE)
+  bankAccount: [BankAccount] @relation(onDelete: CASCADE)
+  cryptoAccount: [CryptoAccount] @relation(onDelete: CASCADE)
+  transactions: [Transaction] @relation(onDelete: CASCADE)
 }
 
 type UserRole {
@@ -18,22 +19,23 @@ type BankAccount {
   fullName: String!
   accountNumber: String! @unique
   bankAccountType: BankAccountType!
+  bank: Bank!
   isCurrent: Boolean @default(value: false)
-  account: Account!
+  user: User!
   verifiedAt: DateTime
   createdAt: DateTime! @createdAt
+}
+
+type Bank { # from seed
+  id: ID! @id
+  name: String! @unique
+  imgHash: String
 }
 
 type BankAccountType {
   id: ID! @id
   type: String! # monetaria | ahorro
   currency: Currency!
-}
-
-type Bank { # predefined in seed
-  id: ID! @id
-  name: String! @unique
-  logoURL: String! @unique
 }
 
 type Account {
@@ -48,7 +50,7 @@ type Account {
 type CryptoAccount {
   id: ID! @id
   address: String! @unique
-  account: Account!
+  user: User!
   currency: Currency!
   createdAt: DateTime! @createdAt
 }
@@ -56,20 +58,28 @@ type CryptoAccount {
 type Profile {
   id: ID! @id
   governmentID: [GovernmentID]
+  user: User!
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }
 
-type GovernmentID { # DPI
+type GovernmentID { # Support for multiple types of IDs
   id: ID! @id
-  hash: String!
+  dpi: DPI @relation(name: "GovernmentIDToDPI", link: INLINE, onDelete: CASCADE)
+  profile: Profile!
+}
+
+type DPI {
+  id: ID! @id
+  imgHash: String!
   firstName: String
   lastName: String
   CUI: String
-  dateOfBirth: Date
+  dateOfBirth: DateTime
   genre: Genre
-  expiresAt: Date
+  expiresAt: DateTime
   isCurrent: Boolean @default(value: false)
+  governmentID: GovernmentID! @relation(name: "GovernmentIDToDPI")
   verifiedAt: DateTime
   createdAt: DateTime! @createdAt
 }
@@ -83,6 +93,7 @@ type Contact {
   id: ID! @id
   email: [Email]
   phoneNumber: [PhoneNumber]
+  user: User!
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }
@@ -91,6 +102,7 @@ type Email {
   id: ID! @id
   address: String!
   isCurrent: Boolean @default(value: false)
+  contact: Contact!
   verifiedAt: DateTime
   createdAt: DateTime! @createdAt
 }
@@ -99,6 +111,7 @@ type PhoneNumber {
   id: ID! @id
   number: String!
   isCurrent: Boolean @default(value: false)
+  contact: Contact!
   verifiedAt: DateTime
   createdAt: DateTime! @createdAt
 }
@@ -112,15 +125,30 @@ type Transaction {
   id: ID! @id
   amount: String! @default(value: "0.00")
   user: User!
-  toCurrency: Currency!
-  fromCurrency: Currency!
+  toCurrency: Currency! @relation(name: "TransactionToCurrency")
+  fromCurrency: Currency! @relation(name: "TransactionFromCurrency")
+  bankAccount: BankAccount
   cryptoAccount: CryptoAccount
+  adminBankAccount: AdminBankAccount
   transactionFee: TransactionFee!
   paidAt: DateTime # only by admin!
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }
 
+type Currency {
+  id: ID! @id
+  name: String! @unique
+  symbol: String! @unique
+  createdAt: DateTime! @createdAt
+}
+
 # ADMIN Management
-extends type BankAccount {
+type AdminBankAccount {
+  id: ID! @id
+  fullName: String!
+  accountNumber: String! @unique
+  bankAccountType: BankAccountType!
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
 }
