@@ -10,23 +10,6 @@ const configuration = convict({
     env: "NODE_ENV",
   },
 
-  dapi: {
-    apiBaseURL: {
-      doc: "Dapi API base URL",
-      format: "url",
-      default: "https://api.dapi.co/v1",
-      env: "DAPI_API_BASE_URL",
-      arg: "dapi-api-base-url",
-    },
-    appSecret: {
-      doc: "App Secret from the dashboard.",
-      format: "String",
-      default: null,
-      env: "DAPI_APP_SECRET",
-      arg: "dapi-app-secret",
-    },
-  },
-
   flags: {
     verifiedPhoneNumbers: {
       doc: "Phone numbers that will authenticate without verification.",

@@ -1,4 +1,4 @@
-import { InjectionKey, InjectionKeyScope } from "@ziina/libraries/di";
+import { InjectionKey, InjectionKeyScope } from "@ibexcm/libraries/di";
 import { ISMSVerificationRepository } from "./interfaces/ISMSVerificationRepository";
 import { SMSVerificationRepository } from "./repository/SMSVerificationRepository";
 

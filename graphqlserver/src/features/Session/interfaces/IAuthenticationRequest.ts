@@ -1,4 +1,4 @@
-import { Account, User } from "@ziina/database";
+import { Account, User } from "@ibexcm/database";
 
 export interface IAuthenticationRequest {
   user: User;

@@ -1,4 +1,4 @@
-import { InjectionKey, InjectionKeyScope } from "@ziina/libraries/di";
+import { InjectionKey, InjectionKeyScope } from "@ibexcm/libraries/di";
 import { IFileManagementRepository } from "./interfaces/IFileManagementRepository";
 import { FileManagementRepository } from "./repositories/FileManagementRepository";
 

@@ -1,8 +1,5 @@
-import { prisma as db } from "@ziina/database";
-import { MutationVerifyPhoneNumberArgs } from "@ziina/libraries/api";
-import { VerifyPhoneNumberMutation } from "@ziina/libraries/api/user";
-import { TestDependencies } from "@ziina/libraries/di";
-import { ApolloError } from "apollo-server-errors";
+import { prisma as db } from "@ibexcm/database";
+import { TestDependencies } from "@ibexcm/libraries/di";
 import { smsVerificationRepositoryInjectionKey } from "../../../../features/SMSVerification";
 import { UserErrorCode } from "../../../../features/User/errors/UserError";
 import { dbInjectionKey } from "../../../../InjectionKeys";
@@ -13,7 +10,7 @@ import {
 import GraphQLClient from "../../../../__test-utils__/mocks/GraphQLClient";
 
 describe("verifyPhoneNumber", () => {
-  const number = "+971559691287";
+  const number = "+50200000000";
   const code = "123456";
   const client = new GraphQLClient();
   const dependencies = new TestDependencies();
@@ -28,28 +25,27 @@ describe("verifyPhoneNumber", () => {
 
   beforeAll(async () => {
     await server.start();
-    await db.deleteManyAccounts();
-    await db.deleteManyContacts();
+    await db.deleteManyUsers();
   });
 
   afterAll(() => {
     server.stop();
   });
 
-  test("creates contact with phone & returns SignupSession", async () => {
+  test("creates user with phone & returns Session", async () => {
     const {
       data: {
         data: { verifyPhoneNumber },
       },
-    } = await client.verifyPhoneNumber({ number, code });
+    } = await client.verifyPhoneNumber({ args: { number, code } });
 
     const contact = await db.phoneNumber({ number }).contact();
-    const account = await db.contact({ id: contact.id }).account();
+    const user = await db.contact({ id: contact.id }).user();
     const phoneNumber = await db.phoneNumber({ number });
 
     expect(verifyPhoneNumber.token).toBeDefined();
     expect(contact.id).toBeDefined();
-    expect(account.id).toBeDefined();
+    expect(user.id).toBeDefined();
     expect(phoneNumber.number).toEqual(number);
     expect(phoneNumber.verifiedAt).toBeDefined();
   });
@@ -57,7 +53,7 @@ describe("verifyPhoneNumber", () => {
   test("phone number taken", async () => {
     const {
       data: { errors },
-    } = await client.verifyPhoneNumber({ number, code });
+    } = await client.verifyPhoneNumber({ args: { number, code } });
 
     expect(errors[0].extensions.code).toEqual(UserErrorCode.phoneNumberExists);
   });
@@ -68,10 +64,7 @@ describe("verifyPhoneNumber", () => {
     const newNumber = "+0000000000";
     const {
       data: { errors },
-    } = await client.query<MutationVerifyPhoneNumberArgs, { errors?: ApolloError[] }>(
-      VerifyPhoneNumberMutation,
-      { number: newNumber, code },
-    );
+    } = await client.verifyPhoneNumber({ args: { number: newNumber, code } });
 
     expect(errors[0].extensions.code).toEqual(UserErrorCode.verificationCode);
 

@@ -13,13 +13,9 @@ export type Scalars = {
 export type Account = {
    __typename?: 'Account',
   id: Scalars['ID'],
-  username: Scalars['String'],
   password: Scalars['String'],
-  fullName?: Maybe<Scalars['String']>,
-  profilePicture?: Maybe<ProfilePicture>,
-  bankAccountProvider?: Maybe<BankAccountProvider>,
-  user?: Maybe<User>,
-  signupCompletedAt?: Maybe<Scalars['DateTime']>,
+  clientID: Scalars['String'],
+  user: User,
   createdAt: Scalars['DateTime'],
   updatedAt: Scalars['DateTime'],
 };
@@ -39,20 +35,6 @@ export type AccountWhereInput = {
   id_not_starts_with?: Maybe<Scalars['ID']>,
   id_ends_with?: Maybe<Scalars['ID']>,
   id_not_ends_with?: Maybe<Scalars['ID']>,
-  username?: Maybe<Scalars['String']>,
-  username_not?: Maybe<Scalars['String']>,
-  username_in?: Maybe<Array<Scalars['String']>>,
-  username_not_in?: Maybe<Array<Scalars['String']>>,
-  username_lt?: Maybe<Scalars['String']>,
-  username_lte?: Maybe<Scalars['String']>,
-  username_gt?: Maybe<Scalars['String']>,
-  username_gte?: Maybe<Scalars['String']>,
-  username_contains?: Maybe<Scalars['String']>,
-  username_not_contains?: Maybe<Scalars['String']>,
-  username_starts_with?: Maybe<Scalars['String']>,
-  username_not_starts_with?: Maybe<Scalars['String']>,
-  username_ends_with?: Maybe<Scalars['String']>,
-  username_not_ends_with?: Maybe<Scalars['String']>,
   password?: Maybe<Scalars['String']>,
   password_not?: Maybe<Scalars['String']>,
   password_in?: Maybe<Array<Scalars['String']>>,
@@ -67,31 +49,21 @@ export type AccountWhereInput = {
   password_not_starts_with?: Maybe<Scalars['String']>,
   password_ends_with?: Maybe<Scalars['String']>,
   password_not_ends_with?: Maybe<Scalars['String']>,
-  fullName?: Maybe<Scalars['String']>,
-  fullName_not?: Maybe<Scalars['String']>,
-  fullName_in?: Maybe<Array<Scalars['String']>>,
-  fullName_not_in?: Maybe<Array<Scalars['String']>>,
-  fullName_lt?: Maybe<Scalars['String']>,
-  fullName_lte?: Maybe<Scalars['String']>,
-  fullName_gt?: Maybe<Scalars['String']>,
-  fullName_gte?: Maybe<Scalars['String']>,
-  fullName_contains?: Maybe<Scalars['String']>,
-  fullName_not_contains?: Maybe<Scalars['String']>,
-  fullName_starts_with?: Maybe<Scalars['String']>,
-  fullName_not_starts_with?: Maybe<Scalars['String']>,
-  fullName_ends_with?: Maybe<Scalars['String']>,
-  fullName_not_ends_with?: Maybe<Scalars['String']>,
-  profilePicture?: Maybe<ProfilePictureWhereInput>,
-  bankAccountProvider?: Maybe<BankAccountProviderWhereInput>,
+  clientID?: Maybe<Scalars['String']>,
+  clientID_not?: Maybe<Scalars['String']>,
+  clientID_in?: Maybe<Array<Scalars['String']>>,
+  clientID_not_in?: Maybe<Array<Scalars['String']>>,
+  clientID_lt?: Maybe<Scalars['String']>,
+  clientID_lte?: Maybe<Scalars['String']>,
+  clientID_gt?: Maybe<Scalars['String']>,
+  clientID_gte?: Maybe<Scalars['String']>,
+  clientID_contains?: Maybe<Scalars['String']>,
+  clientID_not_contains?: Maybe<Scalars['String']>,
+  clientID_starts_with?: Maybe<Scalars['String']>,
+  clientID_not_starts_with?: Maybe<Scalars['String']>,
+  clientID_ends_with?: Maybe<Scalars['String']>,
+  clientID_not_ends_with?: Maybe<Scalars['String']>,
   user?: Maybe<UserWhereInput>,
-  signupCompletedAt?: Maybe<Scalars['DateTime']>,
-  signupCompletedAt_not?: Maybe<Scalars['DateTime']>,
-  signupCompletedAt_in?: Maybe<Array<Scalars['DateTime']>>,
-  signupCompletedAt_not_in?: Maybe<Array<Scalars['DateTime']>>,
-  signupCompletedAt_lt?: Maybe<Scalars['DateTime']>,
-  signupCompletedAt_lte?: Maybe<Scalars['DateTime']>,
-  signupCompletedAt_gt?: Maybe<Scalars['DateTime']>,
-  signupCompletedAt_gte?: Maybe<Scalars['DateTime']>,
   createdAt?: Maybe<Scalars['DateTime']>,
   createdAt_not?: Maybe<Scalars['DateTime']>,
   createdAt_in?: Maybe<Array<Scalars['DateTime']>>,
@@ -113,57 +85,18 @@ export type AccountWhereInput = {
   NOT?: Maybe<Array<AccountWhereInput>>,
 };
 
-export type BankAccountProvider = {
-   __typename?: 'BankAccountProvider',
+export type AdminBankAccount = {
+   __typename?: 'AdminBankAccount',
   id: Scalars['ID'],
-  dapiConnect?: Maybe<DapiConnect>,
-  account: Account,
-};
-
-export type BankAccountProviderWhereInput = {
-  id?: Maybe<Scalars['ID']>,
-  id_not?: Maybe<Scalars['ID']>,
-  id_in?: Maybe<Array<Scalars['ID']>>,
-  id_not_in?: Maybe<Array<Scalars['ID']>>,
-  id_lt?: Maybe<Scalars['ID']>,
-  id_lte?: Maybe<Scalars['ID']>,
-  id_gt?: Maybe<Scalars['ID']>,
-  id_gte?: Maybe<Scalars['ID']>,
-  id_contains?: Maybe<Scalars['ID']>,
-  id_not_contains?: Maybe<Scalars['ID']>,
-  id_starts_with?: Maybe<Scalars['ID']>,
-  id_not_starts_with?: Maybe<Scalars['ID']>,
-  id_ends_with?: Maybe<Scalars['ID']>,
-  id_not_ends_with?: Maybe<Scalars['ID']>,
-  dapiConnect?: Maybe<DapiConnectWhereInput>,
-  account?: Maybe<AccountWhereInput>,
-  AND?: Maybe<Array<BankAccountProviderWhereInput>>,
-  OR?: Maybe<Array<BankAccountProviderWhereInput>>,
-  NOT?: Maybe<Array<BankAccountProviderWhereInput>>,
-};
-
-export type BeneficiaryRequest = {
-   __typename?: 'BeneficiaryRequest',
-  id: Scalars['ID'],
-  sender: User,
-  recipient: User,
-  status: BeneficiaryStatus,
+  fullName: Scalars['String'],
+  accountNumber: Scalars['String'],
+  bankAccountType: BankAccountType,
+  bank: Bank,
   createdAt: Scalars['DateTime'],
   updatedAt: Scalars['DateTime'],
 };
 
-export enum BeneficiaryRequestOrderByInput {
-  IdAsc = 'id_ASC',
-  IdDesc = 'id_DESC',
-  StatusAsc = 'status_ASC',
-  StatusDesc = 'status_DESC',
-  CreatedAtAsc = 'createdAt_ASC',
-  CreatedAtDesc = 'createdAt_DESC',
-  UpdatedAtAsc = 'updatedAt_ASC',
-  UpdatedAtDesc = 'updatedAt_DESC'
-}
-
-export type BeneficiaryRequestWhereInput = {
+export type AdminBankAccountWhereInput = {
   id?: Maybe<Scalars['ID']>,
   id_not?: Maybe<Scalars['ID']>,
   id_in?: Maybe<Array<Scalars['ID']>>,
@@ -178,12 +111,36 @@ export type BeneficiaryRequestWhereInput = {
   id_not_starts_with?: Maybe<Scalars['ID']>,
   id_ends_with?: Maybe<Scalars['ID']>,
   id_not_ends_with?: Maybe<Scalars['ID']>,
-  sender?: Maybe<UserWhereInput>,
-  recipient?: Maybe<UserWhereInput>,
-  status?: Maybe<BeneficiaryStatus>,
-  status_not?: Maybe<BeneficiaryStatus>,
-  status_in?: Maybe<Array<BeneficiaryStatus>>,
-  status_not_in?: Maybe<Array<BeneficiaryStatus>>,
+  fullName?: Maybe<Scalars['String']>,
+  fullName_not?: Maybe<Scalars['String']>,
+  fullName_in?: Maybe<Array<Scalars['String']>>,
+  fullName_not_in?: Maybe<Array<Scalars['String']>>,
+  fullName_lt?: Maybe<Scalars['String']>,
+  fullName_lte?: Maybe<Scalars['String']>,
+  fullName_gt?: Maybe<Scalars['String']>,
+  fullName_gte?: Maybe<Scalars['String']>,
+  fullName_contains?: Maybe<Scalars['String']>,
+  fullName_not_contains?: Maybe<Scalars['String']>,
+  fullName_starts_with?: Maybe<Scalars['String']>,
+  fullName_not_starts_with?: Maybe<Scalars['String']>,
+  fullName_ends_with?: Maybe<Scalars['String']>,
+  fullName_not_ends_with?: Maybe<Scalars['String']>,
+  accountNumber?: Maybe<Scalars['String']>,
+  accountNumber_not?: Maybe<Scalars['String']>,
+  accountNumber_in?: Maybe<Array<Scalars['String']>>,
+  accountNumber_not_in?: Maybe<Array<Scalars['String']>>,
+  accountNumber_lt?: Maybe<Scalars['String']>,
+  accountNumber_lte?: Maybe<Scalars['String']>,
+  accountNumber_gt?: Maybe<Scalars['String']>,
+  accountNumber_gte?: Maybe<Scalars['String']>,
+  accountNumber_contains?: Maybe<Scalars['String']>,
+  accountNumber_not_contains?: Maybe<Scalars['String']>,
+  accountNumber_starts_with?: Maybe<Scalars['String']>,
+  accountNumber_not_starts_with?: Maybe<Scalars['String']>,
+  accountNumber_ends_with?: Maybe<Scalars['String']>,
+  accountNumber_not_ends_with?: Maybe<Scalars['String']>,
+  bankAccountType?: Maybe<BankAccountTypeWhereInput>,
+  bank?: Maybe<BankWhereInput>,
   createdAt?: Maybe<Scalars['DateTime']>,
   createdAt_not?: Maybe<Scalars['DateTime']>,
   createdAt_in?: Maybe<Array<Scalars['DateTime']>>,
@@ -200,36 +157,240 @@ export type BeneficiaryRequestWhereInput = {
   updatedAt_lte?: Maybe<Scalars['DateTime']>,
   updatedAt_gt?: Maybe<Scalars['DateTime']>,
   updatedAt_gte?: Maybe<Scalars['DateTime']>,
-  AND?: Maybe<Array<BeneficiaryRequestWhereInput>>,
-  OR?: Maybe<Array<BeneficiaryRequestWhereInput>>,
-  NOT?: Maybe<Array<BeneficiaryRequestWhereInput>>,
+  AND?: Maybe<Array<AdminBankAccountWhereInput>>,
+  OR?: Maybe<Array<AdminBankAccountWhereInput>>,
+  NOT?: Maybe<Array<AdminBankAccountWhereInput>>,
 };
 
-export enum BeneficiaryStatus {
-  Initiated = 'INITIATED',
-  Completed = 'COMPLETED',
-  Rejected = 'REJECTED'
+export type AuthenticateInput = {
+  email: Scalars['String'],
+  password: Scalars['String'],
+};
+
+export type Bank = {
+   __typename?: 'Bank',
+  id: Scalars['ID'],
+  name: Scalars['String'],
+  imgHash?: Maybe<Scalars['String']>,
+};
+
+export type BankAccount = {
+   __typename?: 'BankAccount',
+  id: Scalars['ID'],
+  fullName: Scalars['String'],
+  accountNumber: Scalars['String'],
+  bankAccountType: BankAccountType,
+  bank: Bank,
+  isCurrent?: Maybe<Scalars['Boolean']>,
+  user: User,
+  verifiedAt?: Maybe<Scalars['DateTime']>,
+  createdAt: Scalars['DateTime'],
+};
+
+export enum BankAccountOrderByInput {
+  IdAsc = 'id_ASC',
+  IdDesc = 'id_DESC',
+  FullNameAsc = 'fullName_ASC',
+  FullNameDesc = 'fullName_DESC',
+  AccountNumberAsc = 'accountNumber_ASC',
+  AccountNumberDesc = 'accountNumber_DESC',
+  IsCurrentAsc = 'isCurrent_ASC',
+  IsCurrentDesc = 'isCurrent_DESC',
+  VerifiedAtAsc = 'verifiedAt_ASC',
+  VerifiedAtDesc = 'verifiedAt_DESC',
+  CreatedAtAsc = 'createdAt_ASC',
+  CreatedAtDesc = 'createdAt_DESC'
 }
 
-export type ConnectDapiAccountParams = {
-  accessCode: Scalars['String'],
-  connectionID: Scalars['String'],
-  swiftCode: Scalars['String'],
-  userSecret: Scalars['String'],
+export type BankAccountType = {
+   __typename?: 'BankAccountType',
+  id: Scalars['ID'],
+  type: Scalars['String'],
+  currency: Currency,
 };
 
-export type ConnectDapiAccountResponse = {
-   __typename?: 'ConnectDapiAccountResponse',
-  accessToken?: Maybe<Scalars['String']>,
+export type BankAccountTypeWhereInput = {
+  id?: Maybe<Scalars['ID']>,
+  id_not?: Maybe<Scalars['ID']>,
+  id_in?: Maybe<Array<Scalars['ID']>>,
+  id_not_in?: Maybe<Array<Scalars['ID']>>,
+  id_lt?: Maybe<Scalars['ID']>,
+  id_lte?: Maybe<Scalars['ID']>,
+  id_gt?: Maybe<Scalars['ID']>,
+  id_gte?: Maybe<Scalars['ID']>,
+  id_contains?: Maybe<Scalars['ID']>,
+  id_not_contains?: Maybe<Scalars['ID']>,
+  id_starts_with?: Maybe<Scalars['ID']>,
+  id_not_starts_with?: Maybe<Scalars['ID']>,
+  id_ends_with?: Maybe<Scalars['ID']>,
+  id_not_ends_with?: Maybe<Scalars['ID']>,
+  type?: Maybe<Scalars['String']>,
+  type_not?: Maybe<Scalars['String']>,
+  type_in?: Maybe<Array<Scalars['String']>>,
+  type_not_in?: Maybe<Array<Scalars['String']>>,
+  type_lt?: Maybe<Scalars['String']>,
+  type_lte?: Maybe<Scalars['String']>,
+  type_gt?: Maybe<Scalars['String']>,
+  type_gte?: Maybe<Scalars['String']>,
+  type_contains?: Maybe<Scalars['String']>,
+  type_not_contains?: Maybe<Scalars['String']>,
+  type_starts_with?: Maybe<Scalars['String']>,
+  type_not_starts_with?: Maybe<Scalars['String']>,
+  type_ends_with?: Maybe<Scalars['String']>,
+  type_not_ends_with?: Maybe<Scalars['String']>,
+  currency?: Maybe<CurrencyWhereInput>,
+  AND?: Maybe<Array<BankAccountTypeWhereInput>>,
+  OR?: Maybe<Array<BankAccountTypeWhereInput>>,
+  NOT?: Maybe<Array<BankAccountTypeWhereInput>>,
+};
+
+export type BankAccountWhereInput = {
+  id?: Maybe<Scalars['ID']>,
+  id_not?: Maybe<Scalars['ID']>,
+  id_in?: Maybe<Array<Scalars['ID']>>,
+  id_not_in?: Maybe<Array<Scalars['ID']>>,
+  id_lt?: Maybe<Scalars['ID']>,
+  id_lte?: Maybe<Scalars['ID']>,
+  id_gt?: Maybe<Scalars['ID']>,
+  id_gte?: Maybe<Scalars['ID']>,
+  id_contains?: Maybe<Scalars['ID']>,
+  id_not_contains?: Maybe<Scalars['ID']>,
+  id_starts_with?: Maybe<Scalars['ID']>,
+  id_not_starts_with?: Maybe<Scalars['ID']>,
+  id_ends_with?: Maybe<Scalars['ID']>,
+  id_not_ends_with?: Maybe<Scalars['ID']>,
+  fullName?: Maybe<Scalars['String']>,
+  fullName_not?: Maybe<Scalars['String']>,
+  fullName_in?: Maybe<Array<Scalars['String']>>,
+  fullName_not_in?: Maybe<Array<Scalars['String']>>,
+  fullName_lt?: Maybe<Scalars['String']>,
+  fullName_lte?: Maybe<Scalars['String']>,
+  fullName_gt?: Maybe<Scalars['String']>,
+  fullName_gte?: Maybe<Scalars['String']>,
+  fullName_contains?: Maybe<Scalars['String']>,
+  fullName_not_contains?: Maybe<Scalars['String']>,
+  fullName_starts_with?: Maybe<Scalars['String']>,
+  fullName_not_starts_with?: Maybe<Scalars['String']>,
+  fullName_ends_with?: Maybe<Scalars['String']>,
+  fullName_not_ends_with?: Maybe<Scalars['String']>,
+  accountNumber?: Maybe<Scalars['String']>,
+  accountNumber_not?: Maybe<Scalars['String']>,
+  accountNumber_in?: Maybe<Array<Scalars['String']>>,
+  accountNumber_not_in?: Maybe<Array<Scalars['String']>>,
+  accountNumber_lt?: Maybe<Scalars['String']>,
+  accountNumber_lte?: Maybe<Scalars['String']>,
+  accountNumber_gt?: Maybe<Scalars['String']>,
+  accountNumber_gte?: Maybe<Scalars['String']>,
+  accountNumber_contains?: Maybe<Scalars['String']>,
+  accountNumber_not_contains?: Maybe<Scalars['String']>,
+  accountNumber_starts_with?: Maybe<Scalars['String']>,
+  accountNumber_not_starts_with?: Maybe<Scalars['String']>,
+  accountNumber_ends_with?: Maybe<Scalars['String']>,
+  accountNumber_not_ends_with?: Maybe<Scalars['String']>,
+  bankAccountType?: Maybe<BankAccountTypeWhereInput>,
+  bank?: Maybe<BankWhereInput>,
+  isCurrent?: Maybe<Scalars['Boolean']>,
+  isCurrent_not?: Maybe<Scalars['Boolean']>,
+  user?: Maybe<UserWhereInput>,
+  verifiedAt?: Maybe<Scalars['DateTime']>,
+  verifiedAt_not?: Maybe<Scalars['DateTime']>,
+  verifiedAt_in?: Maybe<Array<Scalars['DateTime']>>,
+  verifiedAt_not_in?: Maybe<Array<Scalars['DateTime']>>,
+  verifiedAt_lt?: Maybe<Scalars['DateTime']>,
+  verifiedAt_lte?: Maybe<Scalars['DateTime']>,
+  verifiedAt_gt?: Maybe<Scalars['DateTime']>,
+  verifiedAt_gte?: Maybe<Scalars['DateTime']>,
+  createdAt?: Maybe<Scalars['DateTime']>,
+  createdAt_not?: Maybe<Scalars['DateTime']>,
+  createdAt_in?: Maybe<Array<Scalars['DateTime']>>,
+  createdAt_not_in?: Maybe<Array<Scalars['DateTime']>>,
+  createdAt_lt?: Maybe<Scalars['DateTime']>,
+  createdAt_lte?: Maybe<Scalars['DateTime']>,
+  createdAt_gt?: Maybe<Scalars['DateTime']>,
+  createdAt_gte?: Maybe<Scalars['DateTime']>,
+  AND?: Maybe<Array<BankAccountWhereInput>>,
+  OR?: Maybe<Array<BankAccountWhereInput>>,
+  NOT?: Maybe<Array<BankAccountWhereInput>>,
+};
+
+export type BankWhereInput = {
+  id?: Maybe<Scalars['ID']>,
+  id_not?: Maybe<Scalars['ID']>,
+  id_in?: Maybe<Array<Scalars['ID']>>,
+  id_not_in?: Maybe<Array<Scalars['ID']>>,
+  id_lt?: Maybe<Scalars['ID']>,
+  id_lte?: Maybe<Scalars['ID']>,
+  id_gt?: Maybe<Scalars['ID']>,
+  id_gte?: Maybe<Scalars['ID']>,
+  id_contains?: Maybe<Scalars['ID']>,
+  id_not_contains?: Maybe<Scalars['ID']>,
+  id_starts_with?: Maybe<Scalars['ID']>,
+  id_not_starts_with?: Maybe<Scalars['ID']>,
+  id_ends_with?: Maybe<Scalars['ID']>,
+  id_not_ends_with?: Maybe<Scalars['ID']>,
+  name?: Maybe<Scalars['String']>,
+  name_not?: Maybe<Scalars['String']>,
+  name_in?: Maybe<Array<Scalars['String']>>,
+  name_not_in?: Maybe<Array<Scalars['String']>>,
+  name_lt?: Maybe<Scalars['String']>,
+  name_lte?: Maybe<Scalars['String']>,
+  name_gt?: Maybe<Scalars['String']>,
+  name_gte?: Maybe<Scalars['String']>,
+  name_contains?: Maybe<Scalars['String']>,
+  name_not_contains?: Maybe<Scalars['String']>,
+  name_starts_with?: Maybe<Scalars['String']>,
+  name_not_starts_with?: Maybe<Scalars['String']>,
+  name_ends_with?: Maybe<Scalars['String']>,
+  name_not_ends_with?: Maybe<Scalars['String']>,
+  imgHash?: Maybe<Scalars['String']>,
+  imgHash_not?: Maybe<Scalars['String']>,
+  imgHash_in?: Maybe<Array<Scalars['String']>>,
+  imgHash_not_in?: Maybe<Array<Scalars['String']>>,
+  imgHash_lt?: Maybe<Scalars['String']>,
+  imgHash_lte?: Maybe<Scalars['String']>,
+  imgHash_gt?: Maybe<Scalars['String']>,
+  imgHash_gte?: Maybe<Scalars['String']>,
+  imgHash_contains?: Maybe<Scalars['String']>,
+  imgHash_not_contains?: Maybe<Scalars['String']>,
+  imgHash_starts_with?: Maybe<Scalars['String']>,
+  imgHash_not_starts_with?: Maybe<Scalars['String']>,
+  imgHash_ends_with?: Maybe<Scalars['String']>,
+  imgHash_not_ends_with?: Maybe<Scalars['String']>,
+  AND?: Maybe<Array<BankWhereInput>>,
+  OR?: Maybe<Array<BankWhereInput>>,
+  NOT?: Maybe<Array<BankWhereInput>>,
 };
 
 export type Contact = {
    __typename?: 'Contact',
   id: Scalars['ID'],
-  phoneNumber: PhoneNumber,
-  user?: Maybe<User>,
+  email?: Maybe<Array<Email>>,
+  phoneNumber?: Maybe<Array<PhoneNumber>>,
+  user: User,
   createdAt: Scalars['DateTime'],
   updatedAt: Scalars['DateTime'],
+};
+
+
+export type ContactEmailArgs = {
+  where?: Maybe<EmailWhereInput>,
+  orderBy?: Maybe<EmailOrderByInput>,
+  skip?: Maybe<Scalars['Int']>,
+  after?: Maybe<Scalars['String']>,
+  before?: Maybe<Scalars['String']>,
+  first?: Maybe<Scalars['Int']>,
+  last?: Maybe<Scalars['Int']>
+};
+
+
+export type ContactPhoneNumberArgs = {
+  where?: Maybe<PhoneNumberWhereInput>,
+  orderBy?: Maybe<PhoneNumberOrderByInput>,
+  skip?: Maybe<Scalars['Int']>,
+  after?: Maybe<Scalars['String']>,
+  before?: Maybe<Scalars['String']>,
+  first?: Maybe<Scalars['Int']>,
+  last?: Maybe<Scalars['Int']>
 };
 
 export type ContactWhereInput = {
@@ -247,7 +408,12 @@ export type ContactWhereInput = {
   id_not_starts_with?: Maybe<Scalars['ID']>,
   id_ends_with?: Maybe<Scalars['ID']>,
   id_not_ends_with?: Maybe<Scalars['ID']>,
-  phoneNumber?: Maybe<PhoneNumberWhereInput>,
+  email_every?: Maybe<EmailWhereInput>,
+  email_some?: Maybe<EmailWhereInput>,
+  email_none?: Maybe<EmailWhereInput>,
+  phoneNumber_every?: Maybe<PhoneNumberWhereInput>,
+  phoneNumber_some?: Maybe<PhoneNumberWhereInput>,
+  phoneNumber_none?: Maybe<PhoneNumberWhereInput>,
   user?: Maybe<UserWhereInput>,
   createdAt?: Maybe<Scalars['DateTime']>,
   createdAt_not?: Maybe<Scalars['DateTime']>,
@@ -268,6 +434,68 @@ export type ContactWhereInput = {
   AND?: Maybe<Array<ContactWhereInput>>,
   OR?: Maybe<Array<ContactWhereInput>>,
   NOT?: Maybe<Array<ContactWhereInput>>,
+};
+
+export type CryptoAccount = {
+   __typename?: 'CryptoAccount',
+  id: Scalars['ID'],
+  address: Scalars['String'],
+  user: User,
+  currency: Currency,
+  createdAt: Scalars['DateTime'],
+};
+
+export enum CryptoAccountOrderByInput {
+  IdAsc = 'id_ASC',
+  IdDesc = 'id_DESC',
+  AddressAsc = 'address_ASC',
+  AddressDesc = 'address_DESC',
+  CreatedAtAsc = 'createdAt_ASC',
+  CreatedAtDesc = 'createdAt_DESC'
+}
+
+export type CryptoAccountWhereInput = {
+  id?: Maybe<Scalars['ID']>,
+  id_not?: Maybe<Scalars['ID']>,
+  id_in?: Maybe<Array<Scalars['ID']>>,
+  id_not_in?: Maybe<Array<Scalars['ID']>>,
+  id_lt?: Maybe<Scalars['ID']>,
+  id_lte?: Maybe<Scalars['ID']>,
+  id_gt?: Maybe<Scalars['ID']>,
+  id_gte?: Maybe<Scalars['ID']>,
+  id_contains?: Maybe<Scalars['ID']>,
+  id_not_contains?: Maybe<Scalars['ID']>,
+  id_starts_with?: Maybe<Scalars['ID']>,
+  id_not_starts_with?: Maybe<Scalars['ID']>,
+  id_ends_with?: Maybe<Scalars['ID']>,
+  id_not_ends_with?: Maybe<Scalars['ID']>,
+  address?: Maybe<Scalars['String']>,
+  address_not?: Maybe<Scalars['String']>,
+  address_in?: Maybe<Array<Scalars['String']>>,
+  address_not_in?: Maybe<Array<Scalars['String']>>,
+  address_lt?: Maybe<Scalars['String']>,
+  address_lte?: Maybe<Scalars['String']>,
+  address_gt?: Maybe<Scalars['String']>,
+  address_gte?: Maybe<Scalars['String']>,
+  address_contains?: Maybe<Scalars['String']>,
+  address_not_contains?: Maybe<Scalars['String']>,
+  address_starts_with?: Maybe<Scalars['String']>,
+  address_not_starts_with?: Maybe<Scalars['String']>,
+  address_ends_with?: Maybe<Scalars['String']>,
+  address_not_ends_with?: Maybe<Scalars['String']>,
+  user?: Maybe<UserWhereInput>,
+  currency?: Maybe<CurrencyWhereInput>,
+  createdAt?: Maybe<Scalars['DateTime']>,
+  createdAt_not?: Maybe<Scalars['DateTime']>,
+  createdAt_in?: Maybe<Array<Scalars['DateTime']>>,
+  createdAt_not_in?: Maybe<Array<Scalars['DateTime']>>,
+  createdAt_lt?: Maybe<Scalars['DateTime']>,
+  createdAt_lte?: Maybe<Scalars['DateTime']>,
+  createdAt_gt?: Maybe<Scalars['DateTime']>,
+  createdAt_gte?: Maybe<Scalars['DateTime']>,
+  AND?: Maybe<Array<CryptoAccountWhereInput>>,
+  OR?: Maybe<Array<CryptoAccountWhereInput>>,
+  NOT?: Maybe<Array<CryptoAccountWhereInput>>,
 };
 
 export type Currency = {
@@ -334,39 +562,24 @@ export type CurrencyWhereInput = {
   NOT?: Maybe<Array<CurrencyWhereInput>>,
 };
 
-export type DapiAccount = {
-   __typename?: 'DapiAccount',
+
+export type Dpi = {
+   __typename?: 'DPI',
   id: Scalars['ID'],
-  accountID: Scalars['String'],
-  accountNumber: Scalars['String'],
-  accountType: Scalars['String'],
-  iban: Scalars['String'],
-  currency: Currency,
-  dapiConnect: DapiConnect,
+  imgHash: Scalars['String'],
+  firstName?: Maybe<Scalars['String']>,
+  lastName?: Maybe<Scalars['String']>,
+  CUI?: Maybe<Scalars['String']>,
+  dateOfBirth?: Maybe<Scalars['DateTime']>,
+  genre?: Maybe<Genre>,
+  expiresAt?: Maybe<Scalars['DateTime']>,
+  isCurrent?: Maybe<Scalars['Boolean']>,
+  governmentID: GovernmentId,
+  verifiedAt?: Maybe<Scalars['DateTime']>,
   createdAt: Scalars['DateTime'],
-  updatedAt: Scalars['DateTime'],
 };
 
-export type DapiAccountInput = {
-  accountNumber: Scalars['String'],
-  accountType: Scalars['String'],
-  currency: Scalars['String'],
-  iban: Scalars['String'],
-  id: Scalars['String'],
-  name: Scalars['String'],
-};
-
-export type DapiAccountResponse = {
-   __typename?: 'DapiAccountResponse',
-  accountNumber: Scalars['String'],
-  accountType: Scalars['String'],
-  currency: Scalars['String'],
-  iban: Scalars['String'],
-  id: Scalars['String'],
-  name: Scalars['String'],
-};
-
-export type DapiAccountWhereInput = {
+export type DpiWhereInput = {
   id?: Maybe<Scalars['ID']>,
   id_not?: Maybe<Scalars['ID']>,
   id_in?: Maybe<Array<Scalars['ID']>>,
@@ -381,64 +594,93 @@ export type DapiAccountWhereInput = {
   id_not_starts_with?: Maybe<Scalars['ID']>,
   id_ends_with?: Maybe<Scalars['ID']>,
   id_not_ends_with?: Maybe<Scalars['ID']>,
-  accountID?: Maybe<Scalars['String']>,
-  accountID_not?: Maybe<Scalars['String']>,
-  accountID_in?: Maybe<Array<Scalars['String']>>,
-  accountID_not_in?: Maybe<Array<Scalars['String']>>,
-  accountID_lt?: Maybe<Scalars['String']>,
-  accountID_lte?: Maybe<Scalars['String']>,
-  accountID_gt?: Maybe<Scalars['String']>,
-  accountID_gte?: Maybe<Scalars['String']>,
-  accountID_contains?: Maybe<Scalars['String']>,
-  accountID_not_contains?: Maybe<Scalars['String']>,
-  accountID_starts_with?: Maybe<Scalars['String']>,
-  accountID_not_starts_with?: Maybe<Scalars['String']>,
-  accountID_ends_with?: Maybe<Scalars['String']>,
-  accountID_not_ends_with?: Maybe<Scalars['String']>,
-  accountNumber?: Maybe<Scalars['String']>,
-  accountNumber_not?: Maybe<Scalars['String']>,
-  accountNumber_in?: Maybe<Array<Scalars['String']>>,
-  accountNumber_not_in?: Maybe<Array<Scalars['String']>>,
-  accountNumber_lt?: Maybe<Scalars['String']>,
-  accountNumber_lte?: Maybe<Scalars['String']>,
-  accountNumber_gt?: Maybe<Scalars['String']>,
-  accountNumber_gte?: Maybe<Scalars['String']>,
-  accountNumber_contains?: Maybe<Scalars['String']>,
-  accountNumber_not_contains?: Maybe<Scalars['String']>,
-  accountNumber_starts_with?: Maybe<Scalars['String']>,
-  accountNumber_not_starts_with?: Maybe<Scalars['String']>,
-  accountNumber_ends_with?: Maybe<Scalars['String']>,
-  accountNumber_not_ends_with?: Maybe<Scalars['String']>,
-  accountType?: Maybe<Scalars['String']>,
-  accountType_not?: Maybe<Scalars['String']>,
-  accountType_in?: Maybe<Array<Scalars['String']>>,
-  accountType_not_in?: Maybe<Array<Scalars['String']>>,
-  accountType_lt?: Maybe<Scalars['String']>,
-  accountType_lte?: Maybe<Scalars['String']>,
-  accountType_gt?: Maybe<Scalars['String']>,
-  accountType_gte?: Maybe<Scalars['String']>,
-  accountType_contains?: Maybe<Scalars['String']>,
-  accountType_not_contains?: Maybe<Scalars['String']>,
-  accountType_starts_with?: Maybe<Scalars['String']>,
-  accountType_not_starts_with?: Maybe<Scalars['String']>,
-  accountType_ends_with?: Maybe<Scalars['String']>,
-  accountType_not_ends_with?: Maybe<Scalars['String']>,
-  iban?: Maybe<Scalars['String']>,
-  iban_not?: Maybe<Scalars['String']>,
-  iban_in?: Maybe<Array<Scalars['String']>>,
-  iban_not_in?: Maybe<Array<Scalars['String']>>,
-  iban_lt?: Maybe<Scalars['String']>,
-  iban_lte?: Maybe<Scalars['String']>,
-  iban_gt?: Maybe<Scalars['String']>,
-  iban_gte?: Maybe<Scalars['String']>,
-  iban_contains?: Maybe<Scalars['String']>,
-  iban_not_contains?: Maybe<Scalars['String']>,
-  iban_starts_with?: Maybe<Scalars['String']>,
-  iban_not_starts_with?: Maybe<Scalars['String']>,
-  iban_ends_with?: Maybe<Scalars['String']>,
-  iban_not_ends_with?: Maybe<Scalars['String']>,
-  currency?: Maybe<CurrencyWhereInput>,
-  dapiConnect?: Maybe<DapiConnectWhereInput>,
+  imgHash?: Maybe<Scalars['String']>,
+  imgHash_not?: Maybe<Scalars['String']>,
+  imgHash_in?: Maybe<Array<Scalars['String']>>,
+  imgHash_not_in?: Maybe<Array<Scalars['String']>>,
+  imgHash_lt?: Maybe<Scalars['String']>,
+  imgHash_lte?: Maybe<Scalars['String']>,
+  imgHash_gt?: Maybe<Scalars['String']>,
+  imgHash_gte?: Maybe<Scalars['String']>,
+  imgHash_contains?: Maybe<Scalars['String']>,
+  imgHash_not_contains?: Maybe<Scalars['String']>,
+  imgHash_starts_with?: Maybe<Scalars['String']>,
+  imgHash_not_starts_with?: Maybe<Scalars['String']>,
+  imgHash_ends_with?: Maybe<Scalars['String']>,
+  imgHash_not_ends_with?: Maybe<Scalars['String']>,
+  firstName?: Maybe<Scalars['String']>,
+  firstName_not?: Maybe<Scalars['String']>,
+  firstName_in?: Maybe<Array<Scalars['String']>>,
+  firstName_not_in?: Maybe<Array<Scalars['String']>>,
+  firstName_lt?: Maybe<Scalars['String']>,
+  firstName_lte?: Maybe<Scalars['String']>,
+  firstName_gt?: Maybe<Scalars['String']>,
+  firstName_gte?: Maybe<Scalars['String']>,
+  firstName_contains?: Maybe<Scalars['String']>,
+  firstName_not_contains?: Maybe<Scalars['String']>,
+  firstName_starts_with?: Maybe<Scalars['String']>,
+  firstName_not_starts_with?: Maybe<Scalars['String']>,
+  firstName_ends_with?: Maybe<Scalars['String']>,
+  firstName_not_ends_with?: Maybe<Scalars['String']>,
+  lastName?: Maybe<Scalars['String']>,
+  lastName_not?: Maybe<Scalars['String']>,
+  lastName_in?: Maybe<Array<Scalars['String']>>,
+  lastName_not_in?: Maybe<Array<Scalars['String']>>,
+  lastName_lt?: Maybe<Scalars['String']>,
+  lastName_lte?: Maybe<Scalars['String']>,
+  lastName_gt?: Maybe<Scalars['String']>,
+  lastName_gte?: Maybe<Scalars['String']>,
+  lastName_contains?: Maybe<Scalars['String']>,
+  lastName_not_contains?: Maybe<Scalars['String']>,
+  lastName_starts_with?: Maybe<Scalars['String']>,
+  lastName_not_starts_with?: Maybe<Scalars['String']>,
+  lastName_ends_with?: Maybe<Scalars['String']>,
+  lastName_not_ends_with?: Maybe<Scalars['String']>,
+  CUI?: Maybe<Scalars['String']>,
+  CUI_not?: Maybe<Scalars['String']>,
+  CUI_in?: Maybe<Array<Scalars['String']>>,
+  CUI_not_in?: Maybe<Array<Scalars['String']>>,
+  CUI_lt?: Maybe<Scalars['String']>,
+  CUI_lte?: Maybe<Scalars['String']>,
+  CUI_gt?: Maybe<Scalars['String']>,
+  CUI_gte?: Maybe<Scalars['String']>,
+  CUI_contains?: Maybe<Scalars['String']>,
+  CUI_not_contains?: Maybe<Scalars['String']>,
+  CUI_starts_with?: Maybe<Scalars['String']>,
+  CUI_not_starts_with?: Maybe<Scalars['String']>,
+  CUI_ends_with?: Maybe<Scalars['String']>,
+  CUI_not_ends_with?: Maybe<Scalars['String']>,
+  dateOfBirth?: Maybe<Scalars['DateTime']>,
+  dateOfBirth_not?: Maybe<Scalars['DateTime']>,
+  dateOfBirth_in?: Maybe<Array<Scalars['DateTime']>>,
+  dateOfBirth_not_in?: Maybe<Array<Scalars['DateTime']>>,
+  dateOfBirth_lt?: Maybe<Scalars['DateTime']>,
+  dateOfBirth_lte?: Maybe<Scalars['DateTime']>,
+  dateOfBirth_gt?: Maybe<Scalars['DateTime']>,
+  dateOfBirth_gte?: Maybe<Scalars['DateTime']>,
+  genre?: Maybe<Genre>,
+  genre_not?: Maybe<Genre>,
+  genre_in?: Maybe<Array<Genre>>,
+  genre_not_in?: Maybe<Array<Genre>>,
+  expiresAt?: Maybe<Scalars['DateTime']>,
+  expiresAt_not?: Maybe<Scalars['DateTime']>,
+  expiresAt_in?: Maybe<Array<Scalars['DateTime']>>,
+  expiresAt_not_in?: Maybe<Array<Scalars['DateTime']>>,
+  expiresAt_lt?: Maybe<Scalars['DateTime']>,
+  expiresAt_lte?: Maybe<Scalars['DateTime']>,
+  expiresAt_gt?: Maybe<Scalars['DateTime']>,
+  expiresAt_gte?: Maybe<Scalars['DateTime']>,
+  isCurrent?: Maybe<Scalars['Boolean']>,
+  isCurrent_not?: Maybe<Scalars['Boolean']>,
+  governmentID?: Maybe<GovernmentIdWhereInput>,
+  verifiedAt?: Maybe<Scalars['DateTime']>,
+  verifiedAt_not?: Maybe<Scalars['DateTime']>,
+  verifiedAt_in?: Maybe<Array<Scalars['DateTime']>>,
+  verifiedAt_not_in?: Maybe<Array<Scalars['DateTime']>>,
+  verifiedAt_lt?: Maybe<Scalars['DateTime']>,
+  verifiedAt_lte?: Maybe<Scalars['DateTime']>,
+  verifiedAt_gt?: Maybe<Scalars['DateTime']>,
+  verifiedAt_gte?: Maybe<Scalars['DateTime']>,
   createdAt?: Maybe<Scalars['DateTime']>,
   createdAt_not?: Maybe<Scalars['DateTime']>,
   createdAt_in?: Maybe<Array<Scalars['DateTime']>>,
@@ -447,31 +689,35 @@ export type DapiAccountWhereInput = {
   createdAt_lte?: Maybe<Scalars['DateTime']>,
   createdAt_gt?: Maybe<Scalars['DateTime']>,
   createdAt_gte?: Maybe<Scalars['DateTime']>,
-  updatedAt?: Maybe<Scalars['DateTime']>,
-  updatedAt_not?: Maybe<Scalars['DateTime']>,
-  updatedAt_in?: Maybe<Array<Scalars['DateTime']>>,
-  updatedAt_not_in?: Maybe<Array<Scalars['DateTime']>>,
-  updatedAt_lt?: Maybe<Scalars['DateTime']>,
-  updatedAt_lte?: Maybe<Scalars['DateTime']>,
-  updatedAt_gt?: Maybe<Scalars['DateTime']>,
-  updatedAt_gte?: Maybe<Scalars['DateTime']>,
-  AND?: Maybe<Array<DapiAccountWhereInput>>,
-  OR?: Maybe<Array<DapiAccountWhereInput>>,
-  NOT?: Maybe<Array<DapiAccountWhereInput>>,
+  AND?: Maybe<Array<DpiWhereInput>>,
+  OR?: Maybe<Array<DpiWhereInput>>,
+  NOT?: Maybe<Array<DpiWhereInput>>,
 };
 
-export type DapiAddress = {
-   __typename?: 'DapiAddress',
+export type Email = {
+   __typename?: 'Email',
   id: Scalars['ID'],
-  line1?: Maybe<Scalars['String']>,
-  line2?: Maybe<Scalars['String']>,
-  line3?: Maybe<Scalars['String']>,
-  dapiConnect: DapiConnect,
+  address: Scalars['String'],
+  isCurrent?: Maybe<Scalars['Boolean']>,
+  contact: Contact,
+  verifiedAt?: Maybe<Scalars['DateTime']>,
   createdAt: Scalars['DateTime'],
-  updatedAt: Scalars['DateTime'],
 };
 
-export type DapiAddressWhereInput = {
+export enum EmailOrderByInput {
+  IdAsc = 'id_ASC',
+  IdDesc = 'id_DESC',
+  AddressAsc = 'address_ASC',
+  AddressDesc = 'address_DESC',
+  IsCurrentAsc = 'isCurrent_ASC',
+  IsCurrentDesc = 'isCurrent_DESC',
+  VerifiedAtAsc = 'verifiedAt_ASC',
+  VerifiedAtDesc = 'verifiedAt_DESC',
+  CreatedAtAsc = 'createdAt_ASC',
+  CreatedAtDesc = 'createdAt_DESC'
+}
+
+export type EmailWhereInput = {
   id?: Maybe<Scalars['ID']>,
   id_not?: Maybe<Scalars['ID']>,
   id_in?: Maybe<Array<Scalars['ID']>>,
@@ -486,49 +732,31 @@ export type DapiAddressWhereInput = {
   id_not_starts_with?: Maybe<Scalars['ID']>,
   id_ends_with?: Maybe<Scalars['ID']>,
   id_not_ends_with?: Maybe<Scalars['ID']>,
-  line1?: Maybe<Scalars['String']>,
-  line1_not?: Maybe<Scalars['String']>,
-  line1_in?: Maybe<Array<Scalars['String']>>,
-  line1_not_in?: Maybe<Array<Scalars['String']>>,
-  line1_lt?: Maybe<Scalars['String']>,
-  line1_lte?: Maybe<Scalars['String']>,
-  line1_gt?: Maybe<Scalars['String']>,
-  line1_gte?: Maybe<Scalars['String']>,
-  line1_contains?: Maybe<Scalars['String']>,
-  line1_not_contains?: Maybe<Scalars['String']>,
-  line1_starts_with?: Maybe<Scalars['String']>,
-  line1_not_starts_with?: Maybe<Scalars['String']>,
-  line1_ends_with?: Maybe<Scalars['String']>,
-  line1_not_ends_with?: Maybe<Scalars['String']>,
-  line2?: Maybe<Scalars['String']>,
-  line2_not?: Maybe<Scalars['String']>,
-  line2_in?: Maybe<Array<Scalars['String']>>,
-  line2_not_in?: Maybe<Array<Scalars['String']>>,
-  line2_lt?: Maybe<Scalars['String']>,
-  line2_lte?: Maybe<Scalars['String']>,
-  line2_gt?: Maybe<Scalars['String']>,
-  line2_gte?: Maybe<Scalars['String']>,
-  line2_contains?: Maybe<Scalars['String']>,
-  line2_not_contains?: Maybe<Scalars['String']>,
-  line2_starts_with?: Maybe<Scalars['String']>,
-  line2_not_starts_with?: Maybe<Scalars['String']>,
-  line2_ends_with?: Maybe<Scalars['String']>,
-  line2_not_ends_with?: Maybe<Scalars['String']>,
-  line3?: Maybe<Scalars['String']>,
-  line3_not?: Maybe<Scalars['String']>,
-  line3_in?: Maybe<Array<Scalars['String']>>,
-  line3_not_in?: Maybe<Array<Scalars['String']>>,
-  line3_lt?: Maybe<Scalars['String']>,
-  line3_lte?: Maybe<Scalars['String']>,
-  line3_gt?: Maybe<Scalars['String']>,
-  line3_gte?: Maybe<Scalars['String']>,
-  line3_contains?: Maybe<Scalars['String']>,
-  line3_not_contains?: Maybe<Scalars['String']>,
-  line3_starts_with?: Maybe<Scalars['String']>,
-  line3_not_starts_with?: Maybe<Scalars['String']>,
-  line3_ends_with?: Maybe<Scalars['String']>,
-  line3_not_ends_with?: Maybe<Scalars['String']>,
-  dapiConnect?: Maybe<DapiConnectWhereInput>,
+  address?: Maybe<Scalars['String']>,
+  address_not?: Maybe<Scalars['String']>,
+  address_in?: Maybe<Array<Scalars['String']>>,
+  address_not_in?: Maybe<Array<Scalars['String']>>,
+  address_lt?: Maybe<Scalars['String']>,
+  address_lte?: Maybe<Scalars['String']>,
+  address_gt?: Maybe<Scalars['String']>,
+  address_gte?: Maybe<Scalars['String']>,
+  address_contains?: Maybe<Scalars['String']>,
+  address_not_contains?: Maybe<Scalars['String']>,
+  address_starts_with?: Maybe<Scalars['String']>,
+  address_not_starts_with?: Maybe<Scalars['String']>,
+  address_ends_with?: Maybe<Scalars['String']>,
+  address_not_ends_with?: Maybe<Scalars['String']>,
+  isCurrent?: Maybe<Scalars['Boolean']>,
+  isCurrent_not?: Maybe<Scalars['Boolean']>,
+  contact?: Maybe<ContactWhereInput>,
+  verifiedAt?: Maybe<Scalars['DateTime']>,
+  verifiedAt_not?: Maybe<Scalars['DateTime']>,
+  verifiedAt_in?: Maybe<Array<Scalars['DateTime']>>,
+  verifiedAt_not_in?: Maybe<Array<Scalars['DateTime']>>,
+  verifiedAt_lt?: Maybe<Scalars['DateTime']>,
+  verifiedAt_lte?: Maybe<Scalars['DateTime']>,
+  verifiedAt_gt?: Maybe<Scalars['DateTime']>,
+  verifiedAt_gte?: Maybe<Scalars['DateTime']>,
   createdAt?: Maybe<Scalars['DateTime']>,
   createdAt_not?: Maybe<Scalars['DateTime']>,
   createdAt_in?: Maybe<Array<Scalars['DateTime']>>,
@@ -537,38 +765,29 @@ export type DapiAddressWhereInput = {
   createdAt_lte?: Maybe<Scalars['DateTime']>,
   createdAt_gt?: Maybe<Scalars['DateTime']>,
   createdAt_gte?: Maybe<Scalars['DateTime']>,
-  updatedAt?: Maybe<Scalars['DateTime']>,
-  updatedAt_not?: Maybe<Scalars['DateTime']>,
-  updatedAt_in?: Maybe<Array<Scalars['DateTime']>>,
-  updatedAt_not_in?: Maybe<Array<Scalars['DateTime']>>,
-  updatedAt_lt?: Maybe<Scalars['DateTime']>,
-  updatedAt_lte?: Maybe<Scalars['DateTime']>,
-  updatedAt_gt?: Maybe<Scalars['DateTime']>,
-  updatedAt_gte?: Maybe<Scalars['DateTime']>,
-  AND?: Maybe<Array<DapiAddressWhereInput>>,
-  OR?: Maybe<Array<DapiAddressWhereInput>>,
-  NOT?: Maybe<Array<DapiAddressWhereInput>>,
+  AND?: Maybe<Array<EmailWhereInput>>,
+  OR?: Maybe<Array<EmailWhereInput>>,
+  NOT?: Maybe<Array<EmailWhereInput>>,
 };
 
-export type DapiAuthRequestParams = {
-  accessToken: Scalars['String'],
-  userSecret: Scalars['String'],
-};
+export enum Genre {
+  Male = 'MALE',
+  Female = 'FEMALE'
+}
 
-export type DapiBank = {
-   __typename?: 'DapiBank',
+export type GovernmentId = {
+   __typename?: 'GovernmentID',
   id: Scalars['ID'],
-  swiftCode: Scalars['String'],
-  sortCode: Scalars['String'],
-  country: Scalars['String'],
-  bankName: Scalars['String'],
-  branchName: Scalars['String'],
-  branchAddress: Scalars['String'],
-  createdAt: Scalars['DateTime'],
-  updatedAt: Scalars['DateTime'],
+  dpi?: Maybe<Dpi>,
+  profile: Profile,
 };
 
-export type DapiBankWhereInput = {
+export enum GovernmentIdOrderByInput {
+  IdAsc = 'id_ASC',
+  IdDesc = 'id_DESC'
+}
+
+export type GovernmentIdWhereInput = {
   id?: Maybe<Scalars['ID']>,
   id_not?: Maybe<Scalars['ID']>,
   id_in?: Maybe<Array<Scalars['ID']>>,
@@ -583,283 +802,63 @@ export type DapiBankWhereInput = {
   id_not_starts_with?: Maybe<Scalars['ID']>,
   id_ends_with?: Maybe<Scalars['ID']>,
   id_not_ends_with?: Maybe<Scalars['ID']>,
-  swiftCode?: Maybe<Scalars['String']>,
-  swiftCode_not?: Maybe<Scalars['String']>,
-  swiftCode_in?: Maybe<Array<Scalars['String']>>,
-  swiftCode_not_in?: Maybe<Array<Scalars['String']>>,
-  swiftCode_lt?: Maybe<Scalars['String']>,
-  swiftCode_lte?: Maybe<Scalars['String']>,
-  swiftCode_gt?: Maybe<Scalars['String']>,
-  swiftCode_gte?: Maybe<Scalars['String']>,
-  swiftCode_contains?: Maybe<Scalars['String']>,
-  swiftCode_not_contains?: Maybe<Scalars['String']>,
-  swiftCode_starts_with?: Maybe<Scalars['String']>,
-  swiftCode_not_starts_with?: Maybe<Scalars['String']>,
-  swiftCode_ends_with?: Maybe<Scalars['String']>,
-  swiftCode_not_ends_with?: Maybe<Scalars['String']>,
-  sortCode?: Maybe<Scalars['String']>,
-  sortCode_not?: Maybe<Scalars['String']>,
-  sortCode_in?: Maybe<Array<Scalars['String']>>,
-  sortCode_not_in?: Maybe<Array<Scalars['String']>>,
-  sortCode_lt?: Maybe<Scalars['String']>,
-  sortCode_lte?: Maybe<Scalars['String']>,
-  sortCode_gt?: Maybe<Scalars['String']>,
-  sortCode_gte?: Maybe<Scalars['String']>,
-  sortCode_contains?: Maybe<Scalars['String']>,
-  sortCode_not_contains?: Maybe<Scalars['String']>,
-  sortCode_starts_with?: Maybe<Scalars['String']>,
-  sortCode_not_starts_with?: Maybe<Scalars['String']>,
-  sortCode_ends_with?: Maybe<Scalars['String']>,
-  sortCode_not_ends_with?: Maybe<Scalars['String']>,
-  country?: Maybe<Scalars['String']>,
-  country_not?: Maybe<Scalars['String']>,
-  country_in?: Maybe<Array<Scalars['String']>>,
-  country_not_in?: Maybe<Array<Scalars['String']>>,
-  country_lt?: Maybe<Scalars['String']>,
-  country_lte?: Maybe<Scalars['String']>,
-  country_gt?: Maybe<Scalars['String']>,
-  country_gte?: Maybe<Scalars['String']>,
-  country_contains?: Maybe<Scalars['String']>,
-  country_not_contains?: Maybe<Scalars['String']>,
-  country_starts_with?: Maybe<Scalars['String']>,
-  country_not_starts_with?: Maybe<Scalars['String']>,
-  country_ends_with?: Maybe<Scalars['String']>,
-  country_not_ends_with?: Maybe<Scalars['String']>,
-  bankName?: Maybe<Scalars['String']>,
-  bankName_not?: Maybe<Scalars['String']>,
-  bankName_in?: Maybe<Array<Scalars['String']>>,
-  bankName_not_in?: Maybe<Array<Scalars['String']>>,
-  bankName_lt?: Maybe<Scalars['String']>,
-  bankName_lte?: Maybe<Scalars['String']>,
-  bankName_gt?: Maybe<Scalars['String']>,
-  bankName_gte?: Maybe<Scalars['String']>,
-  bankName_contains?: Maybe<Scalars['String']>,
-  bankName_not_contains?: Maybe<Scalars['String']>,
-  bankName_starts_with?: Maybe<Scalars['String']>,
-  bankName_not_starts_with?: Maybe<Scalars['String']>,
-  bankName_ends_with?: Maybe<Scalars['String']>,
-  bankName_not_ends_with?: Maybe<Scalars['String']>,
-  branchName?: Maybe<Scalars['String']>,
-  branchName_not?: Maybe<Scalars['String']>,
-  branchName_in?: Maybe<Array<Scalars['String']>>,
-  branchName_not_in?: Maybe<Array<Scalars['String']>>,
-  branchName_lt?: Maybe<Scalars['String']>,
-  branchName_lte?: Maybe<Scalars['String']>,
-  branchName_gt?: Maybe<Scalars['String']>,
-  branchName_gte?: Maybe<Scalars['String']>,
-  branchName_contains?: Maybe<Scalars['String']>,
-  branchName_not_contains?: Maybe<Scalars['String']>,
-  branchName_starts_with?: Maybe<Scalars['String']>,
-  branchName_not_starts_with?: Maybe<Scalars['String']>,
-  branchName_ends_with?: Maybe<Scalars['String']>,
-  branchName_not_ends_with?: Maybe<Scalars['String']>,
-  branchAddress?: Maybe<Scalars['String']>,
-  branchAddress_not?: Maybe<Scalars['String']>,
-  branchAddress_in?: Maybe<Array<Scalars['String']>>,
-  branchAddress_not_in?: Maybe<Array<Scalars['String']>>,
-  branchAddress_lt?: Maybe<Scalars['String']>,
-  branchAddress_lte?: Maybe<Scalars['String']>,
-  branchAddress_gt?: Maybe<Scalars['String']>,
-  branchAddress_gte?: Maybe<Scalars['String']>,
-  branchAddress_contains?: Maybe<Scalars['String']>,
-  branchAddress_not_contains?: Maybe<Scalars['String']>,
-  branchAddress_starts_with?: Maybe<Scalars['String']>,
-  branchAddress_not_starts_with?: Maybe<Scalars['String']>,
-  branchAddress_ends_with?: Maybe<Scalars['String']>,
-  branchAddress_not_ends_with?: Maybe<Scalars['String']>,
-  createdAt?: Maybe<Scalars['DateTime']>,
-  createdAt_not?: Maybe<Scalars['DateTime']>,
-  createdAt_in?: Maybe<Array<Scalars['DateTime']>>,
-  createdAt_not_in?: Maybe<Array<Scalars['DateTime']>>,
-  createdAt_lt?: Maybe<Scalars['DateTime']>,
-  createdAt_lte?: Maybe<Scalars['DateTime']>,
-  createdAt_gt?: Maybe<Scalars['DateTime']>,
-  createdAt_gte?: Maybe<Scalars['DateTime']>,
-  updatedAt?: Maybe<Scalars['DateTime']>,
-  updatedAt_not?: Maybe<Scalars['DateTime']>,
-  updatedAt_in?: Maybe<Array<Scalars['DateTime']>>,
-  updatedAt_not_in?: Maybe<Array<Scalars['DateTime']>>,
-  updatedAt_lt?: Maybe<Scalars['DateTime']>,
-  updatedAt_lte?: Maybe<Scalars['DateTime']>,
-  updatedAt_gt?: Maybe<Scalars['DateTime']>,
-  updatedAt_gte?: Maybe<Scalars['DateTime']>,
-  AND?: Maybe<Array<DapiBankWhereInput>>,
-  OR?: Maybe<Array<DapiBankWhereInput>>,
-  NOT?: Maybe<Array<DapiBankWhereInput>>,
+  dpi?: Maybe<DpiWhereInput>,
+  profile?: Maybe<ProfileWhereInput>,
+  AND?: Maybe<Array<GovernmentIdWhereInput>>,
+  OR?: Maybe<Array<GovernmentIdWhereInput>>,
+  NOT?: Maybe<Array<GovernmentIdWhereInput>>,
 };
-
-export type DapiConnect = {
-   __typename?: 'DapiConnect',
-  id: Scalars['ID'],
-  dapiAccount?: Maybe<DapiAccount>,
-  dapiAddress?: Maybe<DapiAddress>,
-  dapiBank: DapiBank,
-  bankAccountProvider: BankAccountProvider,
-  createdAt: Scalars['DateTime'],
-  updatedAt: Scalars['DateTime'],
-};
-
-export type DapiConnectWhereInput = {
-  id?: Maybe<Scalars['ID']>,
-  id_not?: Maybe<Scalars['ID']>,
-  id_in?: Maybe<Array<Scalars['ID']>>,
-  id_not_in?: Maybe<Array<Scalars['ID']>>,
-  id_lt?: Maybe<Scalars['ID']>,
-  id_lte?: Maybe<Scalars['ID']>,
-  id_gt?: Maybe<Scalars['ID']>,
-  id_gte?: Maybe<Scalars['ID']>,
-  id_contains?: Maybe<Scalars['ID']>,
-  id_not_contains?: Maybe<Scalars['ID']>,
-  id_starts_with?: Maybe<Scalars['ID']>,
-  id_not_starts_with?: Maybe<Scalars['ID']>,
-  id_ends_with?: Maybe<Scalars['ID']>,
-  id_not_ends_with?: Maybe<Scalars['ID']>,
-  dapiAccount?: Maybe<DapiAccountWhereInput>,
-  dapiAddress?: Maybe<DapiAddressWhereInput>,
-  dapiBank?: Maybe<DapiBankWhereInput>,
-  bankAccountProvider?: Maybe<BankAccountProviderWhereInput>,
-  createdAt?: Maybe<Scalars['DateTime']>,
-  createdAt_not?: Maybe<Scalars['DateTime']>,
-  createdAt_in?: Maybe<Array<Scalars['DateTime']>>,
-  createdAt_not_in?: Maybe<Array<Scalars['DateTime']>>,
-  createdAt_lt?: Maybe<Scalars['DateTime']>,
-  createdAt_lte?: Maybe<Scalars['DateTime']>,
-  createdAt_gt?: Maybe<Scalars['DateTime']>,
-  createdAt_gte?: Maybe<Scalars['DateTime']>,
-  updatedAt?: Maybe<Scalars['DateTime']>,
-  updatedAt_not?: Maybe<Scalars['DateTime']>,
-  updatedAt_in?: Maybe<Array<Scalars['DateTime']>>,
-  updatedAt_not_in?: Maybe<Array<Scalars['DateTime']>>,
-  updatedAt_lt?: Maybe<Scalars['DateTime']>,
-  updatedAt_lte?: Maybe<Scalars['DateTime']>,
-  updatedAt_gt?: Maybe<Scalars['DateTime']>,
-  updatedAt_gte?: Maybe<Scalars['DateTime']>,
-  AND?: Maybe<Array<DapiConnectWhereInput>>,
-  OR?: Maybe<Array<DapiConnectWhereInput>>,
-  NOT?: Maybe<Array<DapiConnectWhereInput>>,
-};
-
-export type DapiGetAccountsResponse = {
-   __typename?: 'DapiGetAccountsResponse',
-  accounts: Array<Maybe<DapiAccountResponse>>,
-};
-
-export type DapiGetAccountsResponseOrUserInputRequest = DapiGetAccountsResponse | UserInputRequest;
-
-export type DapiPaymentRequestParams = {
-  amount: Scalars['Int'],
-  beneficiaryUserID: Scalars['String'],
-  currency: Scalars['String'],
-  message: Scalars['String'],
-};
-
-export type DapiResumeParams = {
-  jobID: Scalars['String'],
-  responses: Array<Maybe<UserInputResponse>>,
-};
-
 
 export type Mutation = {
    __typename?: 'Mutation',
   authenticate: Session,
-  connectDapiAccount: ConnectDapiAccountResponse,
-  createUser: Session,
-  initiatePayment: PaymentResponse,
-  resumePayment: PaymentResponse,
   sendVerificationCode: Scalars['Boolean'],
-  setAddress?: Maybe<SetAddressResponseOrUserInputRequest>,
-  setBankAccount: Scalars['Boolean'],
-  setFullName: Scalars['Boolean'],
-  setProfilePicture: Scalars['String'],
-  updatePayment: PaymentResponse,
-  verifyPhoneNumber: Scalars['String'],
+  verifyEmail: Session,
+  verifyPhoneNumber: Session,
 };
 
 
 export type MutationAuthenticateArgs = {
-  username: Scalars['String'],
-  password: Scalars['String']
-};
-
-
-export type MutationConnectDapiAccountArgs = {
-  params: ConnectDapiAccountParams
-};
-
-
-export type MutationCreateUserArgs = {
-  username: Scalars['String'],
-  password: Scalars['String'],
-  contactID: Scalars['String']
-};
-
-
-export type MutationInitiatePaymentArgs = {
-  params: DapiPaymentRequestParams,
-  authParams: DapiAuthRequestParams
-};
-
-
-export type MutationResumePaymentArgs = {
-  transactionID: Scalars['String'],
-  authParams: DapiAuthRequestParams,
-  resumeParams?: Maybe<DapiResumeParams>
+  args: AuthenticateInput
 };
 
 
 export type MutationSendVerificationCodeArgs = {
-  number: Scalars['String']
+  args: SendVerificationCodeInput
 };
 
 
-export type MutationSetAddressArgs = {
-  authParams: DapiAuthRequestParams,
-  resumeParams?: Maybe<DapiResumeParams>
-};
-
-
-export type MutationSetBankAccountArgs = {
-  account: DapiAccountInput
-};
-
-
-export type MutationSetFullNameArgs = {
-  fullName: Scalars['String']
-};
-
-
-export type MutationSetProfilePictureArgs = {
-  image: Scalars['Upload']
-};
-
-
-export type MutationUpdatePaymentArgs = {
-  transactionID: Scalars['String'],
-  authParams: DapiAuthRequestParams,
-  resumeParams?: Maybe<DapiResumeParams>
+export type MutationVerifyEmailArgs = {
+  args: VerifyEmailInput
 };
 
 
 export type MutationVerifyPhoneNumberArgs = {
-  number: Scalars['String'],
-  code: Scalars['String']
-};
-
-export type PaymentResponse = {
-   __typename?: 'PaymentResponse',
-  transaction: TransactionResponse,
-  userInputRequest?: Maybe<UserInputRequest>,
+  args: VerifyPhoneNumberInput
 };
 
 export type PhoneNumber = {
    __typename?: 'PhoneNumber',
   id: Scalars['ID'],
   number: Scalars['String'],
-  verifiedAt?: Maybe<Scalars['DateTime']>,
+  isCurrent?: Maybe<Scalars['Boolean']>,
   contact: Contact,
+  verifiedAt?: Maybe<Scalars['DateTime']>,
   createdAt: Scalars['DateTime'],
-  updatedAt: Scalars['DateTime'],
 };
+
+export enum PhoneNumberOrderByInput {
+  IdAsc = 'id_ASC',
+  IdDesc = 'id_DESC',
+  NumberAsc = 'number_ASC',
+  NumberDesc = 'number_DESC',
+  IsCurrentAsc = 'isCurrent_ASC',
+  IsCurrentDesc = 'isCurrent_DESC',
+  VerifiedAtAsc = 'verifiedAt_ASC',
+  VerifiedAtDesc = 'verifiedAt_DESC',
+  CreatedAtAsc = 'createdAt_ASC',
+  CreatedAtDesc = 'createdAt_DESC'
+}
 
 export type PhoneNumberWhereInput = {
   id?: Maybe<Scalars['ID']>,
@@ -890,6 +889,9 @@ export type PhoneNumberWhereInput = {
   number_not_starts_with?: Maybe<Scalars['String']>,
   number_ends_with?: Maybe<Scalars['String']>,
   number_not_ends_with?: Maybe<Scalars['String']>,
+  isCurrent?: Maybe<Scalars['Boolean']>,
+  isCurrent_not?: Maybe<Scalars['Boolean']>,
+  contact?: Maybe<ContactWhereInput>,
   verifiedAt?: Maybe<Scalars['DateTime']>,
   verifiedAt_not?: Maybe<Scalars['DateTime']>,
   verifiedAt_in?: Maybe<Array<Scalars['DateTime']>>,
@@ -898,7 +900,6 @@ export type PhoneNumberWhereInput = {
   verifiedAt_lte?: Maybe<Scalars['DateTime']>,
   verifiedAt_gt?: Maybe<Scalars['DateTime']>,
   verifiedAt_gte?: Maybe<Scalars['DateTime']>,
-  contact?: Maybe<ContactWhereInput>,
   createdAt?: Maybe<Scalars['DateTime']>,
   createdAt_not?: Maybe<Scalars['DateTime']>,
   createdAt_in?: Maybe<Array<Scalars['DateTime']>>,
@@ -907,30 +908,32 @@ export type PhoneNumberWhereInput = {
   createdAt_lte?: Maybe<Scalars['DateTime']>,
   createdAt_gt?: Maybe<Scalars['DateTime']>,
   createdAt_gte?: Maybe<Scalars['DateTime']>,
-  updatedAt?: Maybe<Scalars['DateTime']>,
-  updatedAt_not?: Maybe<Scalars['DateTime']>,
-  updatedAt_in?: Maybe<Array<Scalars['DateTime']>>,
-  updatedAt_not_in?: Maybe<Array<Scalars['DateTime']>>,
-  updatedAt_lt?: Maybe<Scalars['DateTime']>,
-  updatedAt_lte?: Maybe<Scalars['DateTime']>,
-  updatedAt_gt?: Maybe<Scalars['DateTime']>,
-  updatedAt_gte?: Maybe<Scalars['DateTime']>,
   AND?: Maybe<Array<PhoneNumberWhereInput>>,
   OR?: Maybe<Array<PhoneNumberWhereInput>>,
   NOT?: Maybe<Array<PhoneNumberWhereInput>>,
 };
 
-export type ProfilePicture = {
-   __typename?: 'ProfilePicture',
+export type Profile = {
+   __typename?: 'Profile',
   id: Scalars['ID'],
-  account: Account,
-  url: Scalars['String'],
-  filename: Scalars['String'],
+  governmentID?: Maybe<Array<GovernmentId>>,
+  user: User,
   createdAt: Scalars['DateTime'],
   updatedAt: Scalars['DateTime'],
 };
 
-export type ProfilePictureWhereInput = {
+
+export type ProfileGovernmentIdArgs = {
+  where?: Maybe<GovernmentIdWhereInput>,
+  orderBy?: Maybe<GovernmentIdOrderByInput>,
+  skip?: Maybe<Scalars['Int']>,
+  after?: Maybe<Scalars['String']>,
+  before?: Maybe<Scalars['String']>,
+  first?: Maybe<Scalars['Int']>,
+  last?: Maybe<Scalars['Int']>
+};
+
+export type ProfileWhereInput = {
   id?: Maybe<Scalars['ID']>,
   id_not?: Maybe<Scalars['ID']>,
   id_in?: Maybe<Array<Scalars['ID']>>,
@@ -945,35 +948,10 @@ export type ProfilePictureWhereInput = {
   id_not_starts_with?: Maybe<Scalars['ID']>,
   id_ends_with?: Maybe<Scalars['ID']>,
   id_not_ends_with?: Maybe<Scalars['ID']>,
-  account?: Maybe<AccountWhereInput>,
-  url?: Maybe<Scalars['String']>,
-  url_not?: Maybe<Scalars['String']>,
-  url_in?: Maybe<Array<Scalars['String']>>,
-  url_not_in?: Maybe<Array<Scalars['String']>>,
-  url_lt?: Maybe<Scalars['String']>,
-  url_lte?: Maybe<Scalars['String']>,
-  url_gt?: Maybe<Scalars['String']>,
-  url_gte?: Maybe<Scalars['String']>,
-  url_contains?: Maybe<Scalars['String']>,
-  url_not_contains?: Maybe<Scalars['String']>,
-  url_starts_with?: Maybe<Scalars['String']>,
-  url_not_starts_with?: Maybe<Scalars['String']>,
-  url_ends_with?: Maybe<Scalars['String']>,
-  url_not_ends_with?: Maybe<Scalars['String']>,
-  filename?: Maybe<Scalars['String']>,
-  filename_not?: Maybe<Scalars['String']>,
-  filename_in?: Maybe<Array<Scalars['String']>>,
-  filename_not_in?: Maybe<Array<Scalars['String']>>,
-  filename_lt?: Maybe<Scalars['String']>,
-  filename_lte?: Maybe<Scalars['String']>,
-  filename_gt?: Maybe<Scalars['String']>,
-  filename_gte?: Maybe<Scalars['String']>,
-  filename_contains?: Maybe<Scalars['String']>,
-  filename_not_contains?: Maybe<Scalars['String']>,
-  filename_starts_with?: Maybe<Scalars['String']>,
-  filename_not_starts_with?: Maybe<Scalars['String']>,
-  filename_ends_with?: Maybe<Scalars['String']>,
-  filename_not_ends_with?: Maybe<Scalars['String']>,
+  governmentID_every?: Maybe<GovernmentIdWhereInput>,
+  governmentID_some?: Maybe<GovernmentIdWhereInput>,
+  governmentID_none?: Maybe<GovernmentIdWhereInput>,
+  user?: Maybe<UserWhereInput>,
   createdAt?: Maybe<Scalars['DateTime']>,
   createdAt_not?: Maybe<Scalars['DateTime']>,
   createdAt_in?: Maybe<Array<Scalars['DateTime']>>,
@@ -990,21 +968,18 @@ export type ProfilePictureWhereInput = {
   updatedAt_lte?: Maybe<Scalars['DateTime']>,
   updatedAt_gt?: Maybe<Scalars['DateTime']>,
   updatedAt_gte?: Maybe<Scalars['DateTime']>,
-  AND?: Maybe<Array<ProfilePictureWhereInput>>,
-  OR?: Maybe<Array<ProfilePictureWhereInput>>,
-  NOT?: Maybe<Array<ProfilePictureWhereInput>>,
+  AND?: Maybe<Array<ProfileWhereInput>>,
+  OR?: Maybe<Array<ProfileWhereInput>>,
+  NOT?: Maybe<Array<ProfileWhereInput>>,
 };
 
 export type Query = {
    __typename?: 'Query',
-  getBankAccounts: DapiGetAccountsResponseOrUserInputRequest,
   user: User,
 };
 
-
-export type QueryGetBankAccountsArgs = {
-  authParams: DapiAuthRequestParams,
-  resumeParams?: Maybe<DapiResumeParams>
+export type SendVerificationCodeInput = {
+  number: Scalars['String'],
 };
 
 export type Session = {
@@ -1013,60 +988,73 @@ export type Session = {
   token?: Maybe<Scalars['String']>,
 };
 
-export type SetAddressResponse = {
-   __typename?: 'SetAddressResponse',
-  success: Scalars['Boolean'],
-};
-
-export type SetAddressResponseOrUserInputRequest = SetAddressResponse | UserInputRequest;
-
 export type Transaction = {
    __typename?: 'Transaction',
   id: Scalars['ID'],
-  status: TransactionStatus,
-  sender?: Maybe<User>,
-  recipient?: Maybe<User>,
-  beneficiaryID?: Maybe<Scalars['String']>,
-  amount: Scalars['Int'],
-  currency: Currency,
-  message: Scalars['String'],
-  isPrivate: Scalars['Boolean'],
+  amount: Scalars['String'],
+  user: User,
+  toCurrency: Currency,
+  fromCurrency: Currency,
+  bankAccount?: Maybe<BankAccount>,
+  cryptoAccount?: Maybe<CryptoAccount>,
+  adminBankAccount?: Maybe<AdminBankAccount>,
+  transactionFee: TransactionFee,
+  paidAt?: Maybe<Scalars['DateTime']>,
   createdAt: Scalars['DateTime'],
   updatedAt: Scalars['DateTime'],
+};
+
+export type TransactionFee = {
+   __typename?: 'TransactionFee',
+  id: Scalars['ID'],
+  fee: Scalars['String'],
+};
+
+export type TransactionFeeWhereInput = {
+  id?: Maybe<Scalars['ID']>,
+  id_not?: Maybe<Scalars['ID']>,
+  id_in?: Maybe<Array<Scalars['ID']>>,
+  id_not_in?: Maybe<Array<Scalars['ID']>>,
+  id_lt?: Maybe<Scalars['ID']>,
+  id_lte?: Maybe<Scalars['ID']>,
+  id_gt?: Maybe<Scalars['ID']>,
+  id_gte?: Maybe<Scalars['ID']>,
+  id_contains?: Maybe<Scalars['ID']>,
+  id_not_contains?: Maybe<Scalars['ID']>,
+  id_starts_with?: Maybe<Scalars['ID']>,
+  id_not_starts_with?: Maybe<Scalars['ID']>,
+  id_ends_with?: Maybe<Scalars['ID']>,
+  id_not_ends_with?: Maybe<Scalars['ID']>,
+  fee?: Maybe<Scalars['String']>,
+  fee_not?: Maybe<Scalars['String']>,
+  fee_in?: Maybe<Array<Scalars['String']>>,
+  fee_not_in?: Maybe<Array<Scalars['String']>>,
+  fee_lt?: Maybe<Scalars['String']>,
+  fee_lte?: Maybe<Scalars['String']>,
+  fee_gt?: Maybe<Scalars['String']>,
+  fee_gte?: Maybe<Scalars['String']>,
+  fee_contains?: Maybe<Scalars['String']>,
+  fee_not_contains?: Maybe<Scalars['String']>,
+  fee_starts_with?: Maybe<Scalars['String']>,
+  fee_not_starts_with?: Maybe<Scalars['String']>,
+  fee_ends_with?: Maybe<Scalars['String']>,
+  fee_not_ends_with?: Maybe<Scalars['String']>,
+  AND?: Maybe<Array<TransactionFeeWhereInput>>,
+  OR?: Maybe<Array<TransactionFeeWhereInput>>,
+  NOT?: Maybe<Array<TransactionFeeWhereInput>>,
 };
 
 export enum TransactionOrderByInput {
   IdAsc = 'id_ASC',
   IdDesc = 'id_DESC',
-  StatusAsc = 'status_ASC',
-  StatusDesc = 'status_DESC',
-  BeneficiaryIdAsc = 'beneficiaryID_ASC',
-  BeneficiaryIdDesc = 'beneficiaryID_DESC',
   AmountAsc = 'amount_ASC',
   AmountDesc = 'amount_DESC',
-  MessageAsc = 'message_ASC',
-  MessageDesc = 'message_DESC',
-  IsPrivateAsc = 'isPrivate_ASC',
-  IsPrivateDesc = 'isPrivate_DESC',
+  PaidAtAsc = 'paidAt_ASC',
+  PaidAtDesc = 'paidAt_DESC',
   CreatedAtAsc = 'createdAt_ASC',
   CreatedAtDesc = 'createdAt_DESC',
   UpdatedAtAsc = 'updatedAt_ASC',
   UpdatedAtDesc = 'updatedAt_DESC'
-}
-
-export type TransactionResponse = {
-   __typename?: 'TransactionResponse',
-  id: Scalars['String'],
-  status: TransactionStatus,
-};
-
-export enum TransactionStatus {
-  CheckingBeneficiary = 'CHECKING_BENEFICIARY',
-  AddBeneficiary = 'ADD_BENEFICIARY',
-  PendingBeneficiary = 'PENDING_BENEFICIARY',
-  CreatePayment = 'CREATE_PAYMENT',
-  Paid = 'PAID',
-  Failed = 'FAILED'
 }
 
 export type TransactionWhereInput = {
@@ -1084,51 +1072,35 @@ export type TransactionWhereInput = {
   id_not_starts_with?: Maybe<Scalars['ID']>,
   id_ends_with?: Maybe<Scalars['ID']>,
   id_not_ends_with?: Maybe<Scalars['ID']>,
-  status?: Maybe<TransactionStatus>,
-  status_not?: Maybe<TransactionStatus>,
-  status_in?: Maybe<Array<TransactionStatus>>,
-  status_not_in?: Maybe<Array<TransactionStatus>>,
-  sender?: Maybe<UserWhereInput>,
-  recipient?: Maybe<UserWhereInput>,
-  beneficiaryID?: Maybe<Scalars['String']>,
-  beneficiaryID_not?: Maybe<Scalars['String']>,
-  beneficiaryID_in?: Maybe<Array<Scalars['String']>>,
-  beneficiaryID_not_in?: Maybe<Array<Scalars['String']>>,
-  beneficiaryID_lt?: Maybe<Scalars['String']>,
-  beneficiaryID_lte?: Maybe<Scalars['String']>,
-  beneficiaryID_gt?: Maybe<Scalars['String']>,
-  beneficiaryID_gte?: Maybe<Scalars['String']>,
-  beneficiaryID_contains?: Maybe<Scalars['String']>,
-  beneficiaryID_not_contains?: Maybe<Scalars['String']>,
-  beneficiaryID_starts_with?: Maybe<Scalars['String']>,
-  beneficiaryID_not_starts_with?: Maybe<Scalars['String']>,
-  beneficiaryID_ends_with?: Maybe<Scalars['String']>,
-  beneficiaryID_not_ends_with?: Maybe<Scalars['String']>,
-  amount?: Maybe<Scalars['Int']>,
-  amount_not?: Maybe<Scalars['Int']>,
-  amount_in?: Maybe<Array<Scalars['Int']>>,
-  amount_not_in?: Maybe<Array<Scalars['Int']>>,
-  amount_lt?: Maybe<Scalars['Int']>,
-  amount_lte?: Maybe<Scalars['Int']>,
-  amount_gt?: Maybe<Scalars['Int']>,
-  amount_gte?: Maybe<Scalars['Int']>,
-  currency?: Maybe<CurrencyWhereInput>,
-  message?: Maybe<Scalars['String']>,
-  message_not?: Maybe<Scalars['String']>,
-  message_in?: Maybe<Array<Scalars['String']>>,
-  message_not_in?: Maybe<Array<Scalars['String']>>,
-  message_lt?: Maybe<Scalars['String']>,
-  message_lte?: Maybe<Scalars['String']>,
-  message_gt?: Maybe<Scalars['String']>,
-  message_gte?: Maybe<Scalars['String']>,
-  message_contains?: Maybe<Scalars['String']>,
-  message_not_contains?: Maybe<Scalars['String']>,
-  message_starts_with?: Maybe<Scalars['String']>,
-  message_not_starts_with?: Maybe<Scalars['String']>,
-  message_ends_with?: Maybe<Scalars['String']>,
-  message_not_ends_with?: Maybe<Scalars['String']>,
-  isPrivate?: Maybe<Scalars['Boolean']>,
-  isPrivate_not?: Maybe<Scalars['Boolean']>,
+  amount?: Maybe<Scalars['String']>,
+  amount_not?: Maybe<Scalars['String']>,
+  amount_in?: Maybe<Array<Scalars['String']>>,
+  amount_not_in?: Maybe<Array<Scalars['String']>>,
+  amount_lt?: Maybe<Scalars['String']>,
+  amount_lte?: Maybe<Scalars['String']>,
+  amount_gt?: Maybe<Scalars['String']>,
+  amount_gte?: Maybe<Scalars['String']>,
+  amount_contains?: Maybe<Scalars['String']>,
+  amount_not_contains?: Maybe<Scalars['String']>,
+  amount_starts_with?: Maybe<Scalars['String']>,
+  amount_not_starts_with?: Maybe<Scalars['String']>,
+  amount_ends_with?: Maybe<Scalars['String']>,
+  amount_not_ends_with?: Maybe<Scalars['String']>,
+  user?: Maybe<UserWhereInput>,
+  toCurrency?: Maybe<CurrencyWhereInput>,
+  fromCurrency?: Maybe<CurrencyWhereInput>,
+  bankAccount?: Maybe<BankAccountWhereInput>,
+  cryptoAccount?: Maybe<CryptoAccountWhereInput>,
+  adminBankAccount?: Maybe<AdminBankAccountWhereInput>,
+  transactionFee?: Maybe<TransactionFeeWhereInput>,
+  paidAt?: Maybe<Scalars['DateTime']>,
+  paidAt_not?: Maybe<Scalars['DateTime']>,
+  paidAt_in?: Maybe<Array<Scalars['DateTime']>>,
+  paidAt_not_in?: Maybe<Array<Scalars['DateTime']>>,
+  paidAt_lt?: Maybe<Scalars['DateTime']>,
+  paidAt_lte?: Maybe<Scalars['DateTime']>,
+  paidAt_gt?: Maybe<Scalars['DateTime']>,
+  paidAt_gte?: Maybe<Scalars['DateTime']>,
   createdAt?: Maybe<Scalars['DateTime']>,
   createdAt_not?: Maybe<Scalars['DateTime']>,
   createdAt_in?: Maybe<Array<Scalars['DateTime']>>,
@@ -1150,22 +1122,28 @@ export type TransactionWhereInput = {
   NOT?: Maybe<Array<TransactionWhereInput>>,
 };
 
+export enum TUserRole {
+  Admin = 'ADMIN',
+  User = 'USER'
+}
+
 
 export type User = {
    __typename?: 'User',
-  account: Account,
-  contact?: Maybe<Contact>,
+  account?: Maybe<Account>,
+  bankAccount?: Maybe<Array<BankAccount>>,
+  contact: Contact,
+  cryptoAccount?: Maybe<Array<CryptoAccount>>,
   id: Scalars['ID'],
-  recipientBeneficiaryRequests?: Maybe<Array<BeneficiaryRequest>>,
-  senderBeneficiaryRequests?: Maybe<Array<BeneficiaryRequest>>,
-  transactionsReceived?: Maybe<Array<Transaction>>,
-  transactionsSent?: Maybe<Array<Transaction>>,
+  profile?: Maybe<Profile>,
+  role: UserRole,
+  transactions?: Maybe<Array<Transaction>>,
 };
 
 
-export type UserRecipientBeneficiaryRequestsArgs = {
-  where?: Maybe<BeneficiaryRequestWhereInput>,
-  orderBy?: Maybe<BeneficiaryRequestOrderByInput>,
+export type UserBankAccountArgs = {
+  where?: Maybe<BankAccountWhereInput>,
+  orderBy?: Maybe<BankAccountOrderByInput>,
   skip?: Maybe<Scalars['Int']>,
   after?: Maybe<Scalars['String']>,
   before?: Maybe<Scalars['String']>,
@@ -1174,9 +1152,9 @@ export type UserRecipientBeneficiaryRequestsArgs = {
 };
 
 
-export type UserSenderBeneficiaryRequestsArgs = {
-  where?: Maybe<BeneficiaryRequestWhereInput>,
-  orderBy?: Maybe<BeneficiaryRequestOrderByInput>,
+export type UserCryptoAccountArgs = {
+  where?: Maybe<CryptoAccountWhereInput>,
+  orderBy?: Maybe<CryptoAccountOrderByInput>,
   skip?: Maybe<Scalars['Int']>,
   after?: Maybe<Scalars['String']>,
   before?: Maybe<Scalars['String']>,
@@ -1185,7 +1163,7 @@ export type UserSenderBeneficiaryRequestsArgs = {
 };
 
 
-export type UserTransactionsReceivedArgs = {
+export type UserTransactionsArgs = {
   where?: Maybe<TransactionWhereInput>,
   orderBy?: Maybe<TransactionOrderByInput>,
   skip?: Maybe<Scalars['Int']>,
@@ -1195,33 +1173,34 @@ export type UserTransactionsReceivedArgs = {
   last?: Maybe<Scalars['Int']>
 };
 
-
-export type UserTransactionsSentArgs = {
-  where?: Maybe<TransactionWhereInput>,
-  orderBy?: Maybe<TransactionOrderByInput>,
-  skip?: Maybe<Scalars['Int']>,
-  after?: Maybe<Scalars['String']>,
-  before?: Maybe<Scalars['String']>,
-  first?: Maybe<Scalars['Int']>,
-  last?: Maybe<Scalars['Int']>
+export type UserRole = {
+   __typename?: 'UserRole',
+  id: Scalars['ID'],
+  type: TUserRole,
 };
 
-export type UserInput = {
-   __typename?: 'UserInput',
-  id: Scalars['String'],
-  query: Scalars['String'],
-};
-
-export type UserInputRequest = {
-   __typename?: 'UserInputRequest',
-  jobID: Scalars['String'],
-  status?: Maybe<Scalars['String']>,
-  userInputs: Array<Maybe<UserInput>>,
-};
-
-export type UserInputResponse = {
-  id: Scalars['String'],
-  response: Scalars['String'],
+export type UserRoleWhereInput = {
+  id?: Maybe<Scalars['ID']>,
+  id_not?: Maybe<Scalars['ID']>,
+  id_in?: Maybe<Array<Scalars['ID']>>,
+  id_not_in?: Maybe<Array<Scalars['ID']>>,
+  id_lt?: Maybe<Scalars['ID']>,
+  id_lte?: Maybe<Scalars['ID']>,
+  id_gt?: Maybe<Scalars['ID']>,
+  id_gte?: Maybe<Scalars['ID']>,
+  id_contains?: Maybe<Scalars['ID']>,
+  id_not_contains?: Maybe<Scalars['ID']>,
+  id_starts_with?: Maybe<Scalars['ID']>,
+  id_not_starts_with?: Maybe<Scalars['ID']>,
+  id_ends_with?: Maybe<Scalars['ID']>,
+  id_not_ends_with?: Maybe<Scalars['ID']>,
+  type?: Maybe<TUserRole>,
+  type_not?: Maybe<TUserRole>,
+  type_in?: Maybe<Array<TUserRole>>,
+  type_not_in?: Maybe<Array<TUserRole>>,
+  AND?: Maybe<Array<UserRoleWhereInput>>,
+  OR?: Maybe<Array<UserRoleWhereInput>>,
+  NOT?: Maybe<Array<UserRoleWhereInput>>,
 };
 
 export type UserWhereInput = {
@@ -1239,21 +1218,30 @@ export type UserWhereInput = {
   id_not_starts_with?: Maybe<Scalars['ID']>,
   id_ends_with?: Maybe<Scalars['ID']>,
   id_not_ends_with?: Maybe<Scalars['ID']>,
-  account?: Maybe<AccountWhereInput>,
+  role?: Maybe<UserRoleWhereInput>,
   contact?: Maybe<ContactWhereInput>,
-  transactionsSent_every?: Maybe<TransactionWhereInput>,
-  transactionsSent_some?: Maybe<TransactionWhereInput>,
-  transactionsSent_none?: Maybe<TransactionWhereInput>,
-  transactionsReceived_every?: Maybe<TransactionWhereInput>,
-  transactionsReceived_some?: Maybe<TransactionWhereInput>,
-  transactionsReceived_none?: Maybe<TransactionWhereInput>,
-  senderBeneficiaryRequests_every?: Maybe<BeneficiaryRequestWhereInput>,
-  senderBeneficiaryRequests_some?: Maybe<BeneficiaryRequestWhereInput>,
-  senderBeneficiaryRequests_none?: Maybe<BeneficiaryRequestWhereInput>,
-  recipientBeneficiaryRequests_every?: Maybe<BeneficiaryRequestWhereInput>,
-  recipientBeneficiaryRequests_some?: Maybe<BeneficiaryRequestWhereInput>,
-  recipientBeneficiaryRequests_none?: Maybe<BeneficiaryRequestWhereInput>,
+  account?: Maybe<AccountWhereInput>,
+  profile?: Maybe<ProfileWhereInput>,
+  bankAccount_every?: Maybe<BankAccountWhereInput>,
+  bankAccount_some?: Maybe<BankAccountWhereInput>,
+  bankAccount_none?: Maybe<BankAccountWhereInput>,
+  cryptoAccount_every?: Maybe<CryptoAccountWhereInput>,
+  cryptoAccount_some?: Maybe<CryptoAccountWhereInput>,
+  cryptoAccount_none?: Maybe<CryptoAccountWhereInput>,
+  transactions_every?: Maybe<TransactionWhereInput>,
+  transactions_some?: Maybe<TransactionWhereInput>,
+  transactions_none?: Maybe<TransactionWhereInput>,
   AND?: Maybe<Array<UserWhereInput>>,
   OR?: Maybe<Array<UserWhereInput>>,
   NOT?: Maybe<Array<UserWhereInput>>,
+};
+
+export type VerifyEmailInput = {
+  email: Scalars['String'],
+  password: Scalars['String'],
+};
+
+export type VerifyPhoneNumberInput = {
+  code: Scalars['String'],
+  number: Scalars['String'],
 };

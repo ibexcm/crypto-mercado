@@ -2,7 +2,7 @@ endpoint: ${env:PRISMA_ENDPOINT}
 secret: ${env:PRISMA_SECRET}
 
 datamodel:
-  - ./datamodel/schema.graphql
+  - ./schema/schema.graphql
 
 generate:
   - generator: typescript-client
@@ -13,4 +13,4 @@ generate:
     output: ./generated/prisma.graphql
 
 seed:
-  run: ts-node ./datamodel/seed.ts
+  run: ts-node ./schema/seed.ts

@@ -1,31 +1,14 @@
 import {
-  DapiGetAccountsResponse,
   Mutation,
-  MutationAuthenticateArgs,
-  MutationConnectDapiAccountArgs,
-  MutationCreateUserArgs,
   MutationSendVerificationCodeArgs,
-  MutationSetAddressArgs,
-  MutationSetBankAccountArgs,
-  MutationSetFullNameArgs,
   MutationVerifyPhoneNumberArgs,
   Query,
-  QueryGetBankAccountsArgs,
-} from "@ziina/libraries/api";
+} from "@ibexcm/libraries/api";
 import {
-  ConnectDapiAccountMutation,
-  GetBankAccountsQuery,
-  SetAddressMutation,
-  SetBankAccountMutation,
-} from "@ziina/libraries/api/dapi";
-import {
-  AuthenticateMutation,
-  CreateUserMutation,
   SendVerificationCodeMutation,
-  SetFullNameMutation,
   UserQuery,
   VerifyPhoneNumberMutation,
-} from "@ziina/libraries/api/user";
+} from "@ibexcm/libraries/api/user";
 import { ApolloError } from "apollo-server-errors";
 import axios, { AxiosResponse } from "axios";
 import { print } from "graphql";
@@ -64,20 +47,6 @@ class GraphQLClient {
     });
   }
 
-  async createUser(args: MutationCreateUserArgs) {
-    return this.query<
-      MutationCreateUserArgs,
-      AxiosResponse<Pick<Mutation, "createUser">> & { errors?: ApolloError[] }
-    >(CreateUserMutation, args);
-  }
-
-  async authenticate(args: MutationAuthenticateArgs) {
-    return this.query<
-      MutationAuthenticateArgs,
-      AxiosResponse<Pick<Mutation, "authenticate">> & { errors?: ApolloError[] }
-    >(AuthenticateMutation, args);
-  }
-
   async user() {
     return this.query<void, AxiosResponse<Pick<Query, "user">>>(UserQuery);
   }
@@ -94,43 +63,6 @@ class GraphQLClient {
       MutationSendVerificationCodeArgs,
       AxiosResponse<Pick<Mutation, "sendVerificationCode">> & { errors?: ApolloError[] }
     >(SendVerificationCodeMutation, args);
-  }
-
-  async setFullName(args: MutationSetFullNameArgs) {
-    return this.query<
-      MutationSetFullNameArgs,
-      AxiosResponse<Pick<Mutation, "setFullName">> & { errors?: ApolloError[] }
-    >(SetFullNameMutation, args);
-  }
-
-  async setBankAccount(args: MutationSetBankAccountArgs) {
-    return this.query<
-      MutationSetBankAccountArgs,
-      AxiosResponse<Pick<Mutation, "setBankAccount">> & { errors?: ApolloError[] }
-    >(SetBankAccountMutation, args);
-  }
-
-  async setAddress(args: MutationSetAddressArgs) {
-    return this.query<
-      MutationSetAddressArgs,
-      AxiosResponse<Pick<Mutation, "setAddress">> & { errors?: ApolloError[] }
-    >(SetAddressMutation, args);
-  }
-
-  async connectDapiAccount(args: MutationConnectDapiAccountArgs) {
-    return this.query<
-      MutationConnectDapiAccountArgs,
-      AxiosResponse<Pick<Mutation, "connectDapiAccount">> & { errors?: ApolloError[] }
-    >(ConnectDapiAccountMutation, args);
-  }
-
-  async getBankAccounts(args: QueryGetBankAccountsArgs) {
-    return this.query<
-      QueryGetBankAccountsArgs,
-      AxiosResponse<
-        Pick<Query, "getBankAccounts"> & { getBankAccounts: DapiGetAccountsResponse }
-      >
-    >(GetBankAccountsQuery, args);
   }
 }
 

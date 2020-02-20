@@ -13,7 +13,8 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.8.3",
-    "@ziina/database": "*"
+    "@ibexcm/database": "*",
+    "graphql": "14.6.0"
   },
   "devDependencies": {
     "graphql-tag": "^2.10.3"

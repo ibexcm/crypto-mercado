@@ -1,5 +1,5 @@
-import { Prisma, prisma } from "@ziina/database";
-import { InjectionKey, InjectionKeyScope } from "@ziina/libraries/di";
+import { Prisma, prisma } from "@ibexcm/database";
+import { InjectionKey, InjectionKeyScope } from "@ibexcm/libraries/di";
 import { Logger } from "winston";
 import { logger } from "./server/utils/logger";
 

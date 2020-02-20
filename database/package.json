@@ -20,6 +20,8 @@
     "api:schema:compile": "npm run compile"
   },
   "dependencies": {
+    "convict": "^5.2.0",
+    "graphql": "14.6.0",
     "prisma-client-lib": "^1.30.4"
   }
 }

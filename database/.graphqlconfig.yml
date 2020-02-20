@@ -1,6 +1,6 @@
 projects:
   database:
-    schemaPath: ./datamodel/schema.graphql
+    schemaPath: ./schema/schema.graphql
     includes: ["./**/*.graphql"]
     extensions:
       prisma: ./prisma.yml

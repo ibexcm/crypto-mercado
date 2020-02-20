@@ -1,7 +1,7 @@
 import {
   MutationSendVerificationCodeArgs,
   MutationVerifyPhoneNumberArgs,
-} from "@ziina/libraries/api";
+} from "@ibexcm/libraries/api";
 import { rule } from "graphql-shield";
 import { UserError } from "../features/User/errors/UserError";
 import { dbInjectionKey } from "../InjectionKeys";
@@ -14,34 +14,20 @@ export const isUser = rule({ cache: true })(
   },
 );
 
-export const isAccount = rule({ cache: true })(
-  async (parent, args, { dependencies, request: { auth } }: IContext, info) => {
-    const db = dependencies.provide(dbInjectionKey);
-    const accountExists =
-      auth && auth.account && (await db.$exists.account({ id: auth.account.id }));
-
-    if (!accountExists) {
-      return UserError.invalidCredentialError;
-    }
-
-    return true;
-  },
-);
-
 export const isPhoneNumberAvailable = rule({ cache: true })(
   async (
     parent,
-    { number }: MutationVerifyPhoneNumberArgs | MutationSendVerificationCodeArgs,
+    { args: { number } }: MutationVerifyPhoneNumberArgs | MutationSendVerificationCodeArgs,
     { dependencies }: IContext,
     info,
   ) => {
     const db = dependencies.provide(dbInjectionKey);
-    const account = await db
+    const user = await db
       .phoneNumber({ number })
       .contact()
-      .account();
+      .user();
 
-    if (Boolean(account)) {
+    if (Boolean(user)) {
       return UserError.phoneNumberExistsError;
     }
 

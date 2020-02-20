@@ -1,4 +1,4 @@
-import { Dependencies } from "@ziina/libraries/di";
+import { Dependencies } from "@ibexcm/libraries/di";
 import { config } from "./config";
 import { createServer } from "./server/utils/createServer";
 

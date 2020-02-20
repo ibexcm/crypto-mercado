@@ -1,4 +1,4 @@
-import { InjectionKey, InjectionKeyScope } from "@ziina/libraries/di";
+import { InjectionKey, InjectionKeyScope } from "@ibexcm/libraries/di";
 import { IJWTRepository } from "./interfaces/IJWTRepository";
 import JWTRepository from "./repositories/JWTRepository";
 

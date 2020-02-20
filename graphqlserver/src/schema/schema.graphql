@@ -7,15 +7,32 @@ type Query {
 }
 
 type Mutation {
-  createUser(username: String!, password: String!): Session!
-  verifyPhoneNumber(number: String!, code: String!): Session!
-  authenticate(username: String!, password: String!): Session!
-  sendVerificationCode(number: String!): Boolean!
-  setFullName(fullName: String!): Boolean!
-  setProfilePicture(image: Upload!): String!
+  sendVerificationCode(args: SendVerificationCodeInput!): Boolean!
+  verifyPhoneNumber(args: VerifyPhoneNumberInput!): Session!
+  verifyEmail(args: VerifyEmailInput!): Session!
+  authenticate(args: AuthenticateInput!): Session!
 }
 
 type Session {
   token: String
   expiresAt: DateTime
+}
+
+input VerifyEmailInput {
+  email: String!
+  password: String!
+}
+
+input VerifyPhoneNumberInput {
+  number: String!
+  code: String!
+}
+
+input SendVerificationCodeInput {
+  number: String!
+}
+
+input AuthenticateInput {
+  email: String!
+  password: String!
 }

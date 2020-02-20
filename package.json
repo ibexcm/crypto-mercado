@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "description": "IBEX Crypto Mercado",
   "scripts": {
-    "global:dependencies": "npm i -g prettier@1.19.1 convict@5.2.0 rimraf@3.0.2 ts-node@8.6.2 typescript@3.7.5 graphql@14.6.0",
+    "global:dependencies": "npm i -g prettier@1.19.1 rimraf@3.0.2 ts-node@8.6.2 typescript@3.7.5 prisma@^1.34.10",
     "clean": "lerna clean -y",
     "bootstrap": "lerna bootstrap --ci",
     "build": "lerna run build && npm run bootstrap",
@@ -16,7 +16,8 @@
     "rimraf": "^2.6.3",
     "typescript": "^3.7.5",
     "convict": "^5.1.0",
-    "graphql": "14.6.0"
+    "graphql": "14.6.0",
+    "prisma": "^1.34.10"
   },
   "keywords": [],
   "author": "netpoe",

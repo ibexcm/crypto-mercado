@@ -1,4 +1,4 @@
-import { IDependencies } from "@ziina/libraries/di";
+import { IDependencies } from "@ibexcm/libraries/di";
 import { GraphQLServer } from "graphql-yoga";
 import { Server as HttpServer } from "http";
 import { config } from "../../config";

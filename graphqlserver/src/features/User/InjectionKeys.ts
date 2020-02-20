@@ -1,5 +1,5 @@
-import { InjectionKey, InjectionKeyScope } from "@ziina/libraries/di";
-import { dbInjectionKey, loggerInjectionKey } from "../../InjectionKeys";
+import { InjectionKey, InjectionKeyScope } from "@ibexcm/libraries/di";
+import { dbInjectionKey } from "../../InjectionKeys";
 import { fileManagementRepositoryInjectionKey } from "../FileManagement";
 import { sessionRepositoryInjectionKey } from "../Session";
 import { smsVerificationRepositoryInjectionKey } from "../SMSVerification";
@@ -10,7 +10,6 @@ export const userRepositoryInjectionKey: InjectionKey<UserRepository> = {
   scope: InjectionKeyScope.singleton,
   closure: dependencies => {
     const db = dependencies.provide(dbInjectionKey);
-    const logger = dependencies.provide(loggerInjectionKey);
     const sessionRepository = dependencies.provide(sessionRepositoryInjectionKey);
     const smsVerificationRepository = dependencies.provide(
       smsVerificationRepositoryInjectionKey,
@@ -21,7 +20,6 @@ export const userRepositoryInjectionKey: InjectionKey<UserRepository> = {
 
     return new UserRepository(
       db,
-      logger,
       sessionRepository,
       smsVerificationRepository,
       fileManagementRepository,

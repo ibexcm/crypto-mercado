@@ -1,5 +1,5 @@
-import { binding } from "@ziina/database";
-import { IDependencies } from "@ziina/libraries/di";
+import { binding } from "@ibexcm/database";
+import { IDependencies } from "@ibexcm/libraries/di";
 import bodyparser from "body-parser";
 import { GraphQLServer, PubSub } from "graphql-yoga";
 import { ContextParameters } from "graphql-yoga/dist/types";
