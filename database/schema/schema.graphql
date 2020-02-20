@@ -1,8 +1,8 @@
 type User {
   id: ID! @id
   role: UserRole! @relation(link: INLINE)
-  account: Account! @relation(link: INLINE, onDelete: CASCADE)
   contact: Contact! @relation(link: INLINE, onDelete: CASCADE)
+  account: Account @relation(link: INLINE, onDelete: CASCADE)
   profile: Profile @relation(link: INLINE, onDelete: CASCADE)
   bankAccount: [BankAccount] @relation(onDelete: CASCADE)
   cryptoAccount: [CryptoAccount] @relation(onDelete: CASCADE)
@@ -11,7 +11,12 @@ type User {
 
 type UserRole {
   id: ID! @id
-  type: String! @unique # admin | user
+  type: TUserRole! @unique
+}
+
+enum TUserRole {
+  ADMIN
+  USER
 }
 
 type BankAccount {
@@ -100,7 +105,7 @@ type Contact {
 
 type Email {
   id: ID! @id
-  address: String!
+  address: String! @unique
   isCurrent: Boolean @default(value: false)
   contact: Contact!
   verifiedAt: DateTime
@@ -109,7 +114,7 @@ type Email {
 
 type PhoneNumber {
   id: ID! @id
-  number: String!
+  number: String! @unique
   isCurrent: Boolean @default(value: false)
   contact: Contact!
   verifiedAt: DateTime
@@ -149,6 +154,7 @@ type AdminBankAccount {
   fullName: String!
   accountNumber: String! @unique
   bankAccountType: BankAccountType!
+  bank: Bank!
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }

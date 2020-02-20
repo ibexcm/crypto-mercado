@@ -1,0 +1,22 @@
+{
+  "name": "@ibexcm/libraries",
+  "version": "1.0.0",
+  "private": true,
+  "description": "IBEXCM Shared Libraries",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "author": "netpoe",
+  "license": "MIT",
+  "scripts": {
+    "compile": "tsc",
+    "api:schema:compile": "npm run compile"
+  },
+  "dependencies": {
+    "@babel/runtime": "^7.8.3",
+    "@ibexcm/database": "*",
+    "graphql": "14.6.0"
+  },
+  "devDependencies": {
+    "graphql-tag": "^2.10.3"
+  }
+}

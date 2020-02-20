@@ -1,0 +1,22 @@
+{
+  "extends": ["tslint:recommended"],
+  "rules": {
+    "no-any": true,
+    "member-access": false,
+    "object-literal-sort-keys": false,
+    "object-literal-key-quotes": false,
+    "prefer-array-literal": [
+      true,
+      {
+        "allow-type-parameters": true
+      }
+    ],
+    "variable-name": [
+      true,
+      "ban-keywords",
+      "check-format",
+      "allow-pascal-case",
+      "allow-leading-underscore"
+    ]
+  }
+}
