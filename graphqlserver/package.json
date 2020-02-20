@@ -1,0 +1,80 @@
+{
+  "name": "@ibexcm/graphqlserver",
+  "private": true,
+  "version": "1.0.0",
+  "description": "IBEXCM GraphQL server with Prisma graphql-yoga",
+  "main": "index.js",
+  "author": "@netpoe",
+  "license": "MIT",
+  "scripts": {
+    "start": "ts-node-dev --no-notify --respawn ./src",
+    "start:dev": "ts-node-dev --no-notify --respawn --transpileOnly ./src",
+    "dev": "npm-run-all --parallel start playground",
+    "debug": "dotenv -- nodemon -e js,ts,graphql,json -x ts-node --inspect src/index.ts",
+    "playground": "graphql playground",
+    "prebuild": "dotenv -- ts-node -e 'require(`./src/config`)'",
+    "build": "rimraf dist && npm run prebuild && tsc",
+    "serve": "npm run build && dotenv -- node --experimental-worker dist/index.js",
+    "generate:schema": "curl 'http://localhost:4000/' -H 'Accept-Encoding: gzip, deflate, br' -H 'Content-Type: application/json' -H 'Accept: application/json' --data-binary '{\"query\":\"query IntrospectionQuery {\n  __schema {\n    queryType {\n      name\n    }\n    mutationType {\n      name\n    }\n    subscriptionType {\n      name\n    }\n    types {\n      ...FullType\n    }\n    directives {\n      name\n      description\n      locations\n      args {\n        ...InputValue\n      }\n    }\n  }\n}\n\nfragment FullType on __Type {\n  kind\n  name\n  description\n  fields(includeDeprecated: true) {\n    name\n    description\n    args {\n      ...InputValue\n    }\n    type {\n      ...TypeRef\n    }\n    isDeprecated\n    deprecationReason\n  }\n  inputFields {\n    ...InputValue\n  }\n  interfaces {\n    ...TypeRef\n  }\n  enumValues(includeDeprecated: true) {\n    name\n    description\n    isDeprecated\n    deprecationReason\n  }\n  possibleTypes {\n    ...TypeRef\n  }\n}\n\nfragment InputValue on __InputValue {\n  name\n  description\n  type {\n    ...TypeRef\n  }\n  defaultValue\n}\n\nfragment TypeRef on __Type {\n  kind\n  name\n  ofType {\n    kind\n    name\n    ofType {\n      kind\n      name\n      ofType {\n        kind\n        name\n        ofType {\n          kind\n          name\n          ofType {\n            kind\n            name\n            ofType {\n              kind\n              name\n              ofType {\n                kind\n                name\n              }\n            }\n          }\n        }\n      }\n    }\n  }\n}\n\"}' --compressed | jq . >! graph.json",
+    "test": "tsc && NODE_ENV=test npx jest --runInBand --verbose",
+    "api:schema:generate": "graphql-codegen --config codegen.yml"
+  },
+  "dependencies": {
+    "@graphql-codegen/typescript-resolvers": "^1.12.2",
+    "@ziina/database": "*",
+    "@ziina/libraries": "*",
+    "apollo-server-errors": "^2.3.4",
+    "axios": "^0.19.0",
+    "bcryptjs": "^2.4.3",
+    "express-jwt": "^5.3.1",
+    "faker": "^4.1.0",
+    "graphql-shield": "^6.0.6",
+    "graphql-tag": "^2.10.1",
+    "graphql-yoga": "^1.18.3",
+    "jsonwebtoken": "^8.5.1",
+    "luxon": "^1.17.2",
+    "prisma-binding": "^2.3.15",
+    "twilio": "^3.33.4",
+    "winston": "^3.2.1"
+  },
+  "devDependencies": {
+    "@apollo/client": "^3.0.0-beta.33",
+    "@graphql-codegen/cli": "^1.12.2",
+    "@graphql-codegen/typescript": "1.12.2",
+    "@types/axios": "^0.14.0",
+    "@types/bcryptjs": "^2.4.2",
+    "@types/express-jwt": "0.0.42",
+    "@types/faker": "^4.1.9",
+    "@types/graphql-upload": "^8.0.3",
+    "@types/jest": "^25.1.1",
+    "@types/jsonwebtoken": "^8.3.2",
+    "@types/luxon": "^1.12.0",
+    "@types/twilio": "0.0.10",
+    "dotenv-cli": "^2.0.1",
+    "jest": "^25.1.0",
+    "supertest": "^4.0.2",
+    "ts-jest": "^25.2.0",
+    "ts-node-dev": "^1.0.0-pre.42"
+  },
+  "jest": {
+    "transform": {
+      "^.+\\.tsx?$": "ts-jest"
+    },
+    "testEnvironment": "node",
+    "testPathIgnorePatterns": [
+      "<rootDir>/dist/",
+      "<rootDir>/node_modules/"
+    ],
+    "modulePaths": [
+      "<rootDir>/"
+    ],
+    "testRegex": "(/__tests__/.*|\\.(test|spec))\\.(ts|tsx|js)$",
+    "moduleFileExtensions": [
+      "ts",
+      "js",
+      "json",
+      "tsx",
+      "jsx"
+    ]
+  }
+}

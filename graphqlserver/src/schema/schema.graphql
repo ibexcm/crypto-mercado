@@ -1,0 +1,21 @@
+# import User from "@ibexcm/database/generated/prisma.graphql"
+
+scalar Upload
+
+type Query {
+  user: User!
+}
+
+type Mutation {
+  createUser(username: String!, password: String!): Session!
+  verifyPhoneNumber(number: String!, code: String!): Session!
+  authenticate(username: String!, password: String!): Session!
+  sendVerificationCode(number: String!): Boolean!
+  setFullName(fullName: String!): Boolean!
+  setProfilePicture(image: Upload!): String!
+}
+
+type Session {
+  token: String
+  expiresAt: DateTime
+}

@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "target": "ES2018",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "sourceMap": true,
+    "rootDir": ".",
+    "outDir": "lib",
+    "noImplicitAny": false,
+    "declaration": true,
+    "pretty": true
+  },
+  "exclude": ["node_modules", "lib", "generated", "**/archive"]
+}
