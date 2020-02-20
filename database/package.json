@@ -15,7 +15,7 @@
     "deploy": "prisma deploy",
     "deploy:force": "prisma deploy -f",
     "generate": "prisma generate",
-    "seed": "ts-node ./datamodel/seed.ts",
+    "seed": "ts-node ./schema/seed.ts",
     "api:schema:generate": "npm run generate",
     "api:schema:compile": "npm run compile"
   },

@@ -9,11 +9,6 @@
   dependencies:
     "@types/node" "*"
 
-"@types/convict@^4.2.1":
-  version "4.2.1"
-  resolved "https://registry.yarnpkg.com/@types/convict/-/convict-4.2.1.tgz#a827b6447c0afe89950f84be47628fae198dd748"
-  integrity sha512-2cd51m3i0yeY1i3dKxcqJKeS5Q4jZnjP37OseoNeIX1OM0AhmGPuuYmwJ9OqtsU35YrREQxdb2VeX5sM3cwGMQ==
-
 "@types/form-data@0.0.33":
   version "0.0.33"
   resolved "https://registry.yarnpkg.com/@types/form-data/-/form-data-0.0.33.tgz#c9ac85b2a5fd18435b8c85d9ecb50e6d6c893ff8"
@@ -207,7 +202,7 @@ graphql-tag@^2.10.0:
   resolved "https://registry.yarnpkg.com/graphql-tag/-/graphql-tag-2.10.3.tgz#ea1baba5eb8fc6339e4c4cf049dabe522b0edf03"
   integrity sha512-4FOv3ZKfA4WdOKJeHdz6B3F/vxBLSgmBcGeAFPf4n1F64ltJUvOOerNj0rsJxONQGdhUMynQIvd6LzB+1J5oKA==
 
-graphql@^14.3.0:
+graphql@14.6.0, graphql@^14.3.0:
   version "14.6.0"
   resolved "https://registry.yarnpkg.com/graphql/-/graphql-14.6.0.tgz#57822297111e874ea12f5cd4419616930cd83e49"
   integrity sha512-VKzfvHEKybTKjQVpTFrA5yUq2S9ihcZvfJAtsDBBCuV6wauPu1xl/f9ehgVf0FcEJJs4vz6ysb/ZMkGigQZseg==
