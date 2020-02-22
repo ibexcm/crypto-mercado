@@ -30,12 +30,12 @@ const headers = (authToken?: string) => {
   return { ...headers, Authorization: `Bearer ${authToken}` };
 };
 
-const query = <TVariables, TResponse>(
+const query = async <TVariables, TResponse>(
   query,
   variables?: TVariables,
   authToken?: string,
-): Promise<AxiosResponse<TResponse>> => {
-  return axios(`http://${address}:${port}/graphql`, {
+): Promise<TResponse> => {
+  const { data } = await axios(`http://${address}:${port}/graphql`, {
     method: "POST",
     headers: headers(authToken),
     data: {
@@ -43,6 +43,8 @@ const query = <TVariables, TResponse>(
       variables,
     },
   });
+
+  return data;
 };
 
 const authenticate = async (args: MutationAuthenticateArgs) => {

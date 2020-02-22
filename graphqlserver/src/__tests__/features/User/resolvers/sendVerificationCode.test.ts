@@ -2,10 +2,7 @@ import { prisma as db } from "@ibexcm/database";
 import { TestDependencies } from "@ibexcm/libraries/di";
 import { smsVerificationRepositoryInjectionKey } from "../../../../features/SMSVerification";
 import { dbInjectionKey } from "../../../../InjectionKeys";
-import {
-  MockServer,
-  mockSMSVerificationRepository,
-} from "../../../../__test-utils__/mocks";
+import { MockServer, mockSMSVerificationRepository } from "../../../../__test-utils__/mocks";
 import GraphQLClient from "../../../../__test-utils__/mocks/GraphQLClient";
 
 describe("sendVerificationCode", () => {
@@ -29,9 +26,7 @@ describe("sendVerificationCode", () => {
 
   test("success", async () => {
     const {
-      data: {
-        data: { sendVerificationCode },
-      },
+      data: { sendVerificationCode },
     } = await GraphQLClient.sendVerificationCode({ args: { number } });
 
     expect(sendVerificationCode).toBe(true);

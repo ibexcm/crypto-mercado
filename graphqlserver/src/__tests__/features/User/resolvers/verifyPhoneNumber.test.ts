@@ -33,9 +33,7 @@ describe("verifyPhoneNumber", () => {
 
   test("creates user with phone & returns Session", async () => {
     const {
-      data: {
-        data: { verifyPhoneNumber },
-      },
+      data: { verifyPhoneNumber },
     } = await GraphQLClient.verifyPhoneNumber({ args: { number, code } });
 
     const contact = await db.phoneNumber({ number }).contact();
@@ -50,9 +48,7 @@ describe("verifyPhoneNumber", () => {
   });
 
   test("phone number taken", async () => {
-    const {
-      data: { errors },
-    } = await GraphQLClient.verifyPhoneNumber({ args: { number, code } });
+    const { errors } = await GraphQLClient.verifyPhoneNumber({ args: { number, code } });
 
     expect(errors[0].extensions.code).toEqual(UserErrorCode.phoneNumberExists);
   });
@@ -61,9 +57,9 @@ describe("verifyPhoneNumber", () => {
     smsVerificationRepository.verifyCode = (number, code) => Promise.resolve(false);
 
     const newNumber = "+0000000000";
-    const {
-      data: { errors },
-    } = await GraphQLClient.verifyPhoneNumber({ args: { number: newNumber, code } });
+    const { errors } = await GraphQLClient.verifyPhoneNumber({
+      args: { number: newNumber, code },
+    });
 
     expect(errors[0].extensions.code).toEqual(UserErrorCode.verificationCode);
 
