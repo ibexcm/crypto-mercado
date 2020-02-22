@@ -1,10 +1,12 @@
 import {
   Mutation,
+  MutationAuthenticateArgs,
   MutationSendVerificationCodeArgs,
   MutationVerifyPhoneNumberArgs,
   Query,
 } from "@ibexcm/libraries/api";
 import {
+  AuthenticateMutation,
   SendVerificationCodeMutation,
   UserQuery,
   VerifyPhoneNumberMutation,
@@ -16,54 +18,63 @@ import { config } from "../../config";
 
 const { port, address } = config.get("express");
 
-class GraphQLClient {
-  headers: any = {};
+const headers = (authToken?: string) => {
+  let headers = {
+    "Content-Type": "application/json",
+  };
 
-  setAuthHeaders(bearer: string): this {
-    if (!Boolean(bearer)) {
-      delete this.headers["Authorization"];
-      return this;
-    }
-
-    this.headers["Authorization"] = `Bearer ${bearer}`;
-
-    return this;
+  if (!Boolean(authToken)) {
+    return headers;
   }
 
-  async query<TVariables, TResponse>(
-    query,
-    variables?: TVariables,
-  ): Promise<AxiosResponse<TResponse>> {
-    return axios(`http://${address}:${port}/graphql`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        ...this.headers,
-      },
-      data: {
-        query: print(query),
-        variables,
-      },
-    });
-  }
+  return { ...headers, Authorization: `Bearer ${authToken}` };
+};
 
-  async user() {
-    return this.query<void, AxiosResponse<Pick<Query, "user">>>(UserQuery);
-  }
+const query = <TVariables, TResponse>(
+  query,
+  variables?: TVariables,
+  authToken?: string,
+): Promise<AxiosResponse<TResponse>> => {
+  return axios(`http://${address}:${port}/graphql`, {
+    method: "POST",
+    headers: headers(authToken),
+    data: {
+      query: print(query),
+      variables,
+    },
+  });
+};
 
-  async verifyPhoneNumber(args: MutationVerifyPhoneNumberArgs) {
-    return this.query<
-      MutationVerifyPhoneNumberArgs,
-      AxiosResponse<Pick<Mutation, "verifyPhoneNumber">> & { errors?: ApolloError[] }
-    >(VerifyPhoneNumberMutation, args);
-  }
+const authenticate = async (args: MutationAuthenticateArgs) => {
+  return query<
+    MutationAuthenticateArgs,
+    AxiosResponse<Pick<Mutation, "authenticate">> & { errors?: ApolloError[] }
+  >(AuthenticateMutation, args);
+};
 
-  async sendVerificationCode(args: MutationSendVerificationCodeArgs) {
-    return this.query<
-      MutationSendVerificationCodeArgs,
-      AxiosResponse<Pick<Mutation, "sendVerificationCode">> & { errors?: ApolloError[] }
-    >(SendVerificationCodeMutation, args);
-  }
-}
+const user = async (authToken: string) => {
+  return query<void, AxiosResponse<Pick<Query, "user">>>(UserQuery, undefined, authToken);
+};
+
+const verifyPhoneNumber = async (args: MutationVerifyPhoneNumberArgs) => {
+  return query<
+    MutationVerifyPhoneNumberArgs,
+    AxiosResponse<Pick<Mutation, "verifyPhoneNumber">> & { errors?: ApolloError[] }
+  >(VerifyPhoneNumberMutation, args);
+};
+
+const sendVerificationCode = async (args: MutationSendVerificationCodeArgs) => {
+  return query<
+    MutationSendVerificationCodeArgs,
+    AxiosResponse<Pick<Mutation, "sendVerificationCode">> & { errors?: ApolloError[] }
+  >(SendVerificationCodeMutation, args);
+};
+
+const GraphQLClient = {
+  authenticate,
+  user,
+  verifyPhoneNumber,
+  sendVerificationCode,
+};
 
 export default GraphQLClient;

@@ -12,7 +12,6 @@ import GraphQLClient from "../../../../__test-utils__/mocks/GraphQLClient";
 describe("verifyPhoneNumber", () => {
   const number = "+50200000000";
   const code = "123456";
-  const client = new GraphQLClient();
   const dependencies = new TestDependencies();
   const smsVerificationRepository = mockSMSVerificationRepository();
   dependencies.override(dbInjectionKey, _ => db);
@@ -37,7 +36,7 @@ describe("verifyPhoneNumber", () => {
       data: {
         data: { verifyPhoneNumber },
       },
-    } = await client.verifyPhoneNumber({ args: { number, code } });
+    } = await GraphQLClient.verifyPhoneNumber({ args: { number, code } });
 
     const contact = await db.phoneNumber({ number }).contact();
     const user = await db.contact({ id: contact.id }).user();
@@ -53,7 +52,7 @@ describe("verifyPhoneNumber", () => {
   test("phone number taken", async () => {
     const {
       data: { errors },
-    } = await client.verifyPhoneNumber({ args: { number, code } });
+    } = await GraphQLClient.verifyPhoneNumber({ args: { number, code } });
 
     expect(errors[0].extensions.code).toEqual(UserErrorCode.phoneNumberExists);
   });
@@ -64,7 +63,7 @@ describe("verifyPhoneNumber", () => {
     const newNumber = "+0000000000";
     const {
       data: { errors },
-    } = await client.verifyPhoneNumber({ args: { number: newNumber, code } });
+    } = await GraphQLClient.verifyPhoneNumber({ args: { number: newNumber, code } });
 
     expect(errors[0].extensions.code).toEqual(UserErrorCode.verificationCode);
 

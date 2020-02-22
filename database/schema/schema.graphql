@@ -96,8 +96,8 @@ enum Genre {
 
 type Contact {
   id: ID! @id
-  email: [Email]
-  phoneNumber: [PhoneNumber]
+  email: [Email] @relation(onDelete: CASCADE)
+  phoneNumber: [PhoneNumber] @relation(onDelete: CASCADE)
   user: User!
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
