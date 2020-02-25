@@ -16,7 +16,7 @@ export const permissions = shield({
         password: yup.string().required("Password is required"),
       }),
     ),
-    sendVerificationCode: rules.isPhoneNumberAvailable,
+    sendPhoneNumberVerificationCode: rules.isPhoneNumberAvailable,
     verifyPhoneNumber: rules.isPhoneNumberAvailable,
   },
 });

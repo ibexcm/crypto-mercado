@@ -812,7 +812,8 @@ export type GovernmentIdWhereInput = {
 export type Mutation = {
    __typename?: 'Mutation',
   authenticate: Session,
-  sendVerificationCode: Scalars['Boolean'],
+  sendEmailVerificationCode: Scalars['Boolean'],
+  sendPhoneNumberVerificationCode: Scalars['Boolean'],
   verifyEmail: Session,
   verifyPhoneNumber: Session,
 };
@@ -823,8 +824,13 @@ export type MutationAuthenticateArgs = {
 };
 
 
-export type MutationSendVerificationCodeArgs = {
-  args: SendVerificationCodeInput
+export type MutationSendEmailVerificationCodeArgs = {
+  args: SendEmailVerificationCodeInput
+};
+
+
+export type MutationSendPhoneNumberVerificationCodeArgs = {
+  args: SendPhoneNumberVerificationCodeInput
 };
 
 
@@ -978,7 +984,11 @@ export type Query = {
   user: User,
 };
 
-export type SendVerificationCodeInput = {
+export type SendEmailVerificationCodeInput = {
+  number: Scalars['String'],
+};
+
+export type SendPhoneNumberVerificationCodeInput = {
   number: Scalars['String'],
 };
 

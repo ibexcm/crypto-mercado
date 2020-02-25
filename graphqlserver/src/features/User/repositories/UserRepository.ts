@@ -1,6 +1,6 @@
 import { Prisma, UserRoleType } from "@ibexcm/database";
 import {
-  MutationSendVerificationCodeArgs,
+  MutationSendPhoneNumberVerificationCodeArgs,
   MutationVerifyPhoneNumberArgs,
   Session,
 } from "@ibexcm/libraries/api";
@@ -34,9 +34,9 @@ export class UserRepository {
         : [];
   }
 
-  async sendVerificationCode({
+  async sendPhoneNumberVerificationCode({
     args: { number },
-  }: MutationSendVerificationCodeArgs): Promise<boolean> {
+  }: MutationSendPhoneNumberVerificationCodeArgs): Promise<boolean> {
     if (this.verifiedPhoneNumbers.includes(number)) {
       return true;
     }
@@ -45,6 +45,37 @@ export class UserRepository {
   }
 
   async verifyPhoneNumber({
+    args: { number, code },
+  }: MutationVerifyPhoneNumberArgs): Promise<Session> {
+    const isVerified = this.verifiedPhoneNumbers.includes(number)
+      ? true
+      : await this.smsVerificationRepository.verifyCode(number, code);
+
+    if (!isVerified) throw UserError.verificationCodeError;
+
+    const user = await this.db.createUser({
+      role: {
+        connect: {
+          type: UserRoleType.ADMIN,
+        },
+      },
+      contact: {
+        create: {
+          phoneNumber: {
+            create: {
+              number,
+            },
+          },
+        },
+      },
+    });
+
+    const session = await this.sessionRepository.createAuthenticationSession(user);
+
+    return session;
+  }
+
+  async verifyEmail({
     args: { number, code },
   }: MutationVerifyPhoneNumberArgs): Promise<Session> {
     const isVerified = this.verifiedPhoneNumbers.includes(number)

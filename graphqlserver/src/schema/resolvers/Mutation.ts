@@ -1,6 +1,9 @@
-import { sendVerificationCode, verifyPhoneNumber } from "../../features/User/resolvers";
+import {
+  sendPhoneNumberVerificationCode,
+  verifyPhoneNumber,
+} from "../../features/User/resolvers";
 
 export const Mutation = {
   verifyPhoneNumber,
-  sendVerificationCode,
+  sendPhoneNumberVerificationCode,
 };
