@@ -1,9 +1,5 @@
-import { Prisma, UserRoleType } from "@ibexcm/database";
-import {
-  MutationSendPhoneNumberVerificationCodeArgs,
-  MutationVerifyPhoneNumberArgs,
-  Session,
-} from "@ibexcm/libraries/api";
+import { Prisma, User, UserRoleType } from "@ibexcm/database";
+import { MutationSendEmailVerificationCodeArgs, MutationSendPhoneNumberVerificationCodeArgs, MutationVerifyEmailArgs, MutationVerifyPhoneNumberArgs, Session } from "@ibexcm/libraries/api";
 import { config } from "../../../config";
 import { ENVType } from "../../../config/models/ENVType";
 import { IFileManagementRepository } from "../../FileManagement";
@@ -17,6 +13,7 @@ export class UserRepository {
   private smsVerificationRepository: ISMSVerificationRepository;
   private fileManagementRepository: IFileManagementRepository;
   private verifiedPhoneNumbers: string[];
+  private verifiedEmails: string[];
 
   constructor(
     db: Prisma,
@@ -32,6 +29,8 @@ export class UserRepository {
       config.get("env") !== ENVType.production
         ? config.get("flags").verifiedPhoneNumbers
         : [];
+    this.verifiedEmails =
+      config.get("env") !== ENVType.production ? config.get("flags").verifiedEmails : [];
   }
 
   async sendPhoneNumberVerificationCode({
@@ -42,6 +41,17 @@ export class UserRepository {
     }
 
     return await this.smsVerificationRepository.sendVerificationCode(number);
+  }
+
+  async sendEmailVerificationCode({
+    args: { email },
+  }: MutationSendEmailVerificationCodeArgs): Promise<boolean> {
+    if (this.verifiedEmails.includes(email)) {
+      return true;
+    }
+
+    // TODO implement email notification here
+    return true;
   }
 
   async verifyPhoneNumber({
@@ -75,33 +85,32 @@ export class UserRepository {
     return session;
   }
 
-  async verifyEmail({
-    args: { number, code },
-  }: MutationVerifyPhoneNumberArgs): Promise<Session> {
-    const isVerified = this.verifiedPhoneNumbers.includes(number)
-      ? true
-      : await this.smsVerificationRepository.verifyCode(number, code);
+  async verifyEmail(
+    { args: { email, code } }: MutationVerifyEmailArgs,
+    user: User,
+  ): Promise<Session> {
+    const isVerified = this.verifiedEmails.includes(email) ? true : true; // TODO verify email here;
 
     if (!isVerified) throw UserError.verificationCodeError;
 
-    const user = await this.db.createUser({
-      role: {
-        connect: {
-          type: UserRoleType.ADMIN,
-        },
+    const _user = await this.db.updateUser({
+      where: {
+        id: user.id,
       },
-      contact: {
-        create: {
-          phoneNumber: {
-            create: {
-              number,
+      data: {
+        contact: {
+          create: {
+            email: {
+              create: {
+                address: email,
+              },
             },
           },
         },
       },
     });
 
-    const session = await this.sessionRepository.createAuthenticationSession(user);
+    const session = await this.sessionRepository.createAuthenticationSession(_user);
 
     return session;
   }
