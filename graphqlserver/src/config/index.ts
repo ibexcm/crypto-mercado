@@ -18,6 +18,13 @@ const configuration = convict({
       env: "VERIFIED_PHONE_NUMBERS",
       arg: "verified-phone-numbers",
     },
+    verifiedEmails: {
+      doc: "Email addresses that will authenticate without verification.",
+      format: Array,
+      default: new Array(9).fill("u").map((n, i) => `${n}${i}@ibexcm.com`),
+      env: "VERIFIED_EMAILS",
+      arg: "verified-emails",
+    },
   },
 
   express: {
@@ -47,21 +54,36 @@ const configuration = convict({
       arg: "jwt-algorithm",
     },
 
-    secret: {
-      doc: "Base64 encoded secret used for verifying the token",
+    issuer: {
+      doc: "Token issuer",
       format: "String",
-      default: null,
-      env: "JWT_SECRET",
-      arg: "jwt-secret",
+      default: "Ziina",
+      env: "JWT_ISSUER",
+      arg: "jwt-issuer",
     },
 
     audience: {
-      doc:
-        "Service identity (see: https://self-issued.info/docs/draft-ietf-oauth-json-web-token.html#rfc.section.4.1.3)",
+      doc: "Token audience",
       format: "String",
-      default: null,
+      default: "https://ziina.com",
       env: "JWT_AUDIENCE",
       arg: "jwt-audience",
+    },
+
+    privateKey: {
+      doc: "Base64 encoded secret used for verifying the token",
+      format: "String",
+      default: null,
+      env: "JWT_PRIVATE_KEY",
+      arg: "jwt-private-key",
+    },
+
+    publicKey: {
+      doc: "Base64 encoded public key used for verifying the token",
+      format: "String",
+      default: null,
+      env: "JWT_PUBLIC_KEY",
+      arg: "jwt-public-key",
     },
   },
 
@@ -69,7 +91,7 @@ const configuration = convict({
     sid: {
       doc: "Twilio Account SID",
       format: "*",
-      default: null,
+      default: "VC123",
       env: "TWILIO_SID",
       arg: "twilio-sid",
     },
@@ -77,7 +99,7 @@ const configuration = convict({
     aid: {
       doc: "Twilio Account AID",
       format: "*",
-      default: null,
+      default: "AC123",
       env: "TWILIO_AID",
       arg: "twilio-aid",
     },
@@ -85,7 +107,7 @@ const configuration = convict({
     token: {
       doc: "Twilio Account Token",
       format: "*",
-      default: null,
+      default: "token",
       env: "TWILIO_TOKEN",
       arg: "twilio-token",
     },
