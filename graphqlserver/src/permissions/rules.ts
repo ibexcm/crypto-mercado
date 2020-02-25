@@ -1,5 +1,5 @@
 import {
-  MutationSendVerificationCodeArgs,
+  MutationSendPhoneNumberVerificationCodeArgs,
   MutationVerifyPhoneNumberArgs,
 } from "@ibexcm/libraries/api";
 import { rule } from "graphql-shield";
@@ -17,7 +17,9 @@ export const isUser = rule({ cache: true })(
 export const isPhoneNumberAvailable = rule({ cache: true })(
   async (
     parent,
-    { args: { number } }: MutationVerifyPhoneNumberArgs | MutationSendVerificationCodeArgs,
+    {
+      args: { number },
+    }: MutationVerifyPhoneNumberArgs | MutationSendPhoneNumberVerificationCodeArgs,
     { dependencies }: IContext,
     info,
   ) => {

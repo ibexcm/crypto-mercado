@@ -1,13 +1,13 @@
 import {
   Mutation,
   MutationAuthenticateArgs,
-  MutationSendVerificationCodeArgs,
+  MutationSendPhoneNumberVerificationCodeArgs,
   MutationVerifyPhoneNumberArgs,
   Query,
 } from "@ibexcm/libraries/api";
 import {
   AuthenticateMutation,
-  SendVerificationCodeMutation,
+  SendPhoneNumberVerificationCodeMutation,
   UserQuery,
   VerifyPhoneNumberMutation,
 } from "@ibexcm/libraries/api/user";
@@ -65,18 +65,20 @@ const verifyPhoneNumber = async (args: MutationVerifyPhoneNumberArgs) => {
   );
 };
 
-const sendVerificationCode = async (args: MutationSendVerificationCodeArgs) => {
-  return query<MutationSendVerificationCodeArgs, Pick<Mutation, "sendVerificationCode">>(
-    SendVerificationCodeMutation,
-    args,
-  );
+const sendPhoneNumberVerificationCode = async (
+  args: MutationSendPhoneNumberVerificationCodeArgs,
+) => {
+  return query<
+    MutationSendPhoneNumberVerificationCodeArgs,
+    Pick<Mutation, "sendPhoneNumberVerificationCode">
+  >(SendPhoneNumberVerificationCodeMutation, args);
 };
 
 const GraphQLClient = {
   authenticate,
   user,
   verifyPhoneNumber,
-  sendVerificationCode,
+  sendPhoneNumberVerificationCode,
 };
 
 export default GraphQLClient;

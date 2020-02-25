@@ -1,2 +1,2 @@
-export * from "./sendVerificationCode";
+export * from "./sendPhoneNumberVerificationCode";
 export * from "./verifyPhoneNumber";

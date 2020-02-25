@@ -1,4 +1,4 @@
 export * from "./AuthenticateMutation";
-export * from "./SendVerificationCodeMutation";
+export * from "./SendPhoneNumberVerificationCodeMutation";
 export * from "./UserQuery";
 export * from "./VerifyPhoneNumberMutation";

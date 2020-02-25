@@ -7,8 +7,9 @@ type Query {
 }
 
 type Mutation {
-  sendVerificationCode(args: SendVerificationCodeInput!): Boolean!
+  sendPhoneNumberVerificationCode(args: SendPhoneNumberVerificationCodeInput!): Boolean!
   verifyPhoneNumber(args: VerifyPhoneNumberInput!): Session!
+  sendEmailVerificationCode(args: SendEmailVerificationCodeInput!): Boolean!
   verifyEmail(args: VerifyEmailInput!): Session!
   authenticate(args: AuthenticateInput!): Session!
 }
@@ -28,7 +29,11 @@ input VerifyPhoneNumberInput {
   code: String!
 }
 
-input SendVerificationCodeInput {
+input SendPhoneNumberVerificationCodeInput {
+  number: String!
+}
+
+input SendEmailVerificationCodeInput {
   number: String!
 }
 
