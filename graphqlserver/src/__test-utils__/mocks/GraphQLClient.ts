@@ -12,7 +12,7 @@ import {
   VerifyPhoneNumberMutation,
 } from "@ibexcm/libraries/api/user";
 import { ApolloError } from "apollo-server-errors";
-import axios, { AxiosResponse } from "axios";
+import axios from "axios";
 import { print } from "graphql";
 import { config } from "../../config";
 
@@ -34,7 +34,7 @@ const query = async <TVariables, TResponse>(
   query,
   variables?: TVariables,
   authToken?: string,
-): Promise<TResponse> => {
+): Promise<{ data?: TResponse; errors?: ApolloError[] }> => {
   const { data } = await axios(`http://${address}:${port}/graphql`, {
     method: "POST",
     headers: headers(authToken),
@@ -50,26 +50,26 @@ const query = async <TVariables, TResponse>(
 const authenticate = async (args: MutationAuthenticateArgs) => {
   return query<
     MutationAuthenticateArgs,
-    AxiosResponse<Pick<Mutation, "authenticate">> & { errors?: ApolloError[] }
+    Pick<Mutation, "authenticate"> & { errors?: ApolloError[] }
   >(AuthenticateMutation, args);
 };
 
 const user = async (authToken: string) => {
-  return query<void, AxiosResponse<Pick<Query, "user">>>(UserQuery, undefined, authToken);
+  return query<void, Pick<Query, "user">>(UserQuery, undefined, authToken);
 };
 
 const verifyPhoneNumber = async (args: MutationVerifyPhoneNumberArgs) => {
-  return query<
-    MutationVerifyPhoneNumberArgs,
-    AxiosResponse<Pick<Mutation, "verifyPhoneNumber">> & { errors?: ApolloError[] }
-  >(VerifyPhoneNumberMutation, args);
+  return query<MutationVerifyPhoneNumberArgs, Pick<Mutation, "verifyPhoneNumber">>(
+    VerifyPhoneNumberMutation,
+    args,
+  );
 };
 
 const sendVerificationCode = async (args: MutationSendVerificationCodeArgs) => {
-  return query<
-    MutationSendVerificationCodeArgs,
-    AxiosResponse<Pick<Mutation, "sendVerificationCode">> & { errors?: ApolloError[] }
-  >(SendVerificationCodeMutation, args);
+  return query<MutationSendVerificationCodeArgs, Pick<Mutation, "sendVerificationCode">>(
+    SendVerificationCodeMutation,
+    args,
+  );
 };
 
 const GraphQLClient = {
