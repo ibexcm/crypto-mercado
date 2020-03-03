@@ -2,10 +2,12 @@ import { Prisma, User, UserRoleType } from "@ibexcm/database";
 import {
   MutationSendEmailVerificationCodeArgs,
   MutationSendPhoneNumberVerificationCodeArgs,
+  MutationSetPasswordArgs,
   MutationVerifyEmailArgs,
   MutationVerifyPhoneNumberArgs,
   Session,
 } from "@ibexcm/libraries/api";
+import { genSalt, hash } from "bcryptjs";
 import { config } from "../../../config";
 import { ENVType } from "../../../config/models/ENVType";
 import { IEmailVerificationRepository } from "../../EmailVerification";
@@ -116,6 +118,42 @@ export class UserRepository {
                 address,
               },
             },
+          },
+        },
+      },
+    });
+
+    const session = await this.sessionRepository.createAuthenticationSession(_user);
+
+    return session;
+  }
+
+  async setPassword(
+    { args: { password } }: MutationSetPasswordArgs,
+    user: User,
+  ): Promise<Session> {
+    const getClientID = () => {
+      const alpha = Math.random()
+        .toString(36)
+        .replace(/[^a-z]+/g, "")
+        .substr(0, 2)
+        .toUpperCase();
+      const numeric = new Date()
+        .getTime()
+        .toString()
+        .substr(6, 6);
+      return `${alpha}${numeric}`;
+    };
+
+    const _user = await this.db.updateUser({
+      where: {
+        id: user.id,
+      },
+      data: {
+        account: {
+          create: {
+            clientID: getClientID(),
+            password: await hash(password, await genSalt()),
           },
         },
       },

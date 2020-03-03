@@ -7,11 +7,14 @@ type Query {
 }
 
 type Mutation {
+  # ONBOARDING
   sendPhoneNumberVerificationCode(args: SendPhoneNumberVerificationCodeInput!): Boolean!
   verifyPhoneNumber(args: VerifyPhoneNumberInput!): Session!
   sendEmailVerificationCode(args: SendEmailVerificationCodeInput!): Boolean!
   verifyEmail(args: VerifyEmailInput!): Session!
   setPassword(args: SetPasswordInput!): Session!
+
+  # AUTHENTICATION
   authenticate(args: AuthenticateInput!): Session!
 }
 

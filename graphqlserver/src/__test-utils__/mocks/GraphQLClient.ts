@@ -3,6 +3,7 @@ import {
   MutationAuthenticateArgs,
   MutationSendEmailVerificationCodeArgs,
   MutationSendPhoneNumberVerificationCodeArgs,
+  MutationSetPasswordArgs,
   MutationVerifyEmailArgs,
   MutationVerifyPhoneNumberArgs,
   Query,
@@ -11,6 +12,7 @@ import {
   AuthenticateMutation,
   SendEmailVerificationCodeMutation,
   SendPhoneNumberVerificationCodeMutation,
+  SetPasswordMutation,
   UserQuery,
   VerifyEmailMutation,
   VerifyPhoneNumberMutation,
@@ -93,6 +95,14 @@ const verifyEmail = async (args: MutationVerifyEmailArgs, authToken: string) => 
   );
 };
 
+const setPassword = async (args: MutationSetPasswordArgs, authToken: string) => {
+  return query<MutationSetPasswordArgs, Pick<Mutation, "setPassword">>(
+    SetPasswordMutation,
+    args,
+    authToken,
+  );
+};
+
 const GraphQLClient = {
   authenticate,
   user,
@@ -100,6 +110,7 @@ const GraphQLClient = {
   sendPhoneNumberVerificationCode,
   sendEmailVerificationCode,
   verifyEmail,
+  setPassword,
 };
 
 export default GraphQLClient;
