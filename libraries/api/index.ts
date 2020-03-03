@@ -163,7 +163,7 @@ export type AdminBankAccountWhereInput = {
 };
 
 export type AuthenticateInput = {
-  email: Scalars['String'],
+  address: Scalars['String'],
   password: Scalars['String'],
 };
 
@@ -814,6 +814,7 @@ export type Mutation = {
   authenticate: Session,
   sendEmailVerificationCode: Scalars['Boolean'],
   sendPhoneNumberVerificationCode: Scalars['Boolean'],
+  setPassword: Session,
   verifyEmail: Session,
   verifyPhoneNumber: Session,
 };
@@ -831,6 +832,11 @@ export type MutationSendEmailVerificationCodeArgs = {
 
 export type MutationSendPhoneNumberVerificationCodeArgs = {
   args: SendPhoneNumberVerificationCodeInput
+};
+
+
+export type MutationSetPasswordArgs = {
+  args: SetPasswordInput
 };
 
 
@@ -985,7 +991,7 @@ export type Query = {
 };
 
 export type SendEmailVerificationCodeInput = {
-  email: Scalars['String'],
+  address: Scalars['String'],
 };
 
 export type SendPhoneNumberVerificationCodeInput = {
@@ -996,6 +1002,10 @@ export type Session = {
    __typename?: 'Session',
   expiresAt?: Maybe<Scalars['DateTime']>,
   token?: Maybe<Scalars['String']>,
+};
+
+export type SetPasswordInput = {
+  password: Scalars['String'],
 };
 
 export type Transaction = {
@@ -1247,8 +1257,8 @@ export type UserWhereInput = {
 };
 
 export type VerifyEmailInput = {
+  address: Scalars['String'],
   code: Scalars['String'],
-  email: Scalars['String'],
 };
 
 export type VerifyPhoneNumberInput = {

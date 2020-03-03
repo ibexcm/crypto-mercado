@@ -1,3 +1,4 @@
+export * from "./EmailVerification";
 export * from "./GraphQLClient";
 export * from "./MockServer";
 export * from "./Session";

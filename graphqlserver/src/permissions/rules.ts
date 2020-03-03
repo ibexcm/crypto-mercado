@@ -42,13 +42,13 @@ export const isPhoneNumberAvailable = rule({ cache: true })(
 export const isEmailAvailable = rule({ cache: true })(
   async (
     parent,
-    { args: { email } }: MutationVerifyEmailArgs | MutationSendEmailVerificationCodeArgs,
+    { args: { address } }: MutationVerifyEmailArgs | MutationSendEmailVerificationCodeArgs,
     { dependencies }: IContext,
     info,
   ) => {
     const db = dependencies.provide(dbInjectionKey);
     const user = await db
-      .email({ address: email })
+      .email({ address })
       .contact()
       .user();
 

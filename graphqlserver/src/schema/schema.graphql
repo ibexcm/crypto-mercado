@@ -11,6 +11,7 @@ type Mutation {
   verifyPhoneNumber(args: VerifyPhoneNumberInput!): Session!
   sendEmailVerificationCode(args: SendEmailVerificationCodeInput!): Boolean!
   verifyEmail(args: VerifyEmailInput!): Session!
+  setPassword(args: SetPasswordInput!): Session!
   authenticate(args: AuthenticateInput!): Session!
 }
 
@@ -19,8 +20,12 @@ type Session {
   expiresAt: DateTime
 }
 
+input SetPasswordInput {
+  password: String!
+}
+
 input VerifyEmailInput {
-  email: String!
+  address: String!
   code: String!
 }
 
@@ -34,10 +39,10 @@ input SendPhoneNumberVerificationCodeInput {
 }
 
 input SendEmailVerificationCodeInput {
-  email: String!
+  address: String!
 }
 
 input AuthenticateInput {
-  email: String!
+  address: String!
   password: String!
 }

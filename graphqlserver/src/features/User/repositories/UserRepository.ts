@@ -1,7 +1,14 @@
 import { Prisma, User, UserRoleType } from "@ibexcm/database";
-import { MutationSendEmailVerificationCodeArgs, MutationSendPhoneNumberVerificationCodeArgs, MutationVerifyEmailArgs, MutationVerifyPhoneNumberArgs, Session } from "@ibexcm/libraries/api";
+import {
+  MutationSendEmailVerificationCodeArgs,
+  MutationSendPhoneNumberVerificationCodeArgs,
+  MutationVerifyEmailArgs,
+  MutationVerifyPhoneNumberArgs,
+  Session,
+} from "@ibexcm/libraries/api";
 import { config } from "../../../config";
 import { ENVType } from "../../../config/models/ENVType";
+import { IEmailVerificationRepository } from "../../EmailVerification";
 import { IFileManagementRepository } from "../../FileManagement";
 import { ISessionRepository } from "../../Session/interfaces/ISessionRepository";
 import { ISMSVerificationRepository } from "../../SMSVerification";
@@ -11,6 +18,7 @@ export class UserRepository {
   private db: Prisma;
   private sessionRepository: ISessionRepository;
   private smsVerificationRepository: ISMSVerificationRepository;
+  private emailVerificationRepository: IEmailVerificationRepository;
   private fileManagementRepository: IFileManagementRepository;
   private verifiedPhoneNumbers: string[];
   private verifiedEmails: string[];
@@ -20,10 +28,12 @@ export class UserRepository {
     sessionRepository: ISessionRepository,
     smsVerificationRepository: ISMSVerificationRepository,
     fileManagementRepository: IFileManagementRepository,
+    emailVerificationRepository: IEmailVerificationRepository,
   ) {
     this.db = db;
     this.sessionRepository = sessionRepository;
     this.smsVerificationRepository = smsVerificationRepository;
+    this.emailVerificationRepository = emailVerificationRepository;
     this.fileManagementRepository = fileManagementRepository;
     this.verifiedPhoneNumbers =
       config.get("env") !== ENVType.production
@@ -44,14 +54,13 @@ export class UserRepository {
   }
 
   async sendEmailVerificationCode({
-    args: { email },
+    args: { address },
   }: MutationSendEmailVerificationCodeArgs): Promise<boolean> {
-    if (this.verifiedEmails.includes(email)) {
+    if (this.verifiedEmails.includes(address)) {
       return true;
     }
 
-    // TODO implement email notification here
-    return true;
+    return await this.emailVerificationRepository.sendVerificationCode(address);
   }
 
   async verifyPhoneNumber({
@@ -86,10 +95,12 @@ export class UserRepository {
   }
 
   async verifyEmail(
-    { args: { email, code } }: MutationVerifyEmailArgs,
+    { args: { address, code } }: MutationVerifyEmailArgs,
     user: User,
   ): Promise<Session> {
-    const isVerified = this.verifiedEmails.includes(email) ? true : true; // TODO verify email here;
+    const isVerified = this.verifiedEmails.includes(address)
+      ? true
+      : await this.emailVerificationRepository.verifyCode(address, code);
 
     if (!isVerified) throw UserError.verificationCodeError;
 
@@ -102,7 +113,7 @@ export class UserRepository {
           create: {
             email: {
               create: {
-                address: email,
+                address,
               },
             },
           },
