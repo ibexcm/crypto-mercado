@@ -18,5 +18,7 @@ export const permissions = shield({
     ),
     sendPhoneNumberVerificationCode: rules.isPhoneNumberAvailable,
     verifyPhoneNumber: rules.isPhoneNumberAvailable,
+    sendEmailVerificationCode: rules.isEmailAvailable,
+    verifyEmail: rules.isEmailAvailable,
   },
 });

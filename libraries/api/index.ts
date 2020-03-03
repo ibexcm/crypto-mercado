@@ -985,7 +985,7 @@ export type Query = {
 };
 
 export type SendEmailVerificationCodeInput = {
-  number: Scalars['String'],
+  email: Scalars['String'],
 };
 
 export type SendPhoneNumberVerificationCodeInput = {
@@ -1247,8 +1247,8 @@ export type UserWhereInput = {
 };
 
 export type VerifyEmailInput = {
+  code: Scalars['String'],
   email: Scalars['String'],
-  password: Scalars['String'],
 };
 
 export type VerifyPhoneNumberInput = {

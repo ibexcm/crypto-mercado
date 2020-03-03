@@ -19,7 +19,6 @@ export class SessionRepository implements ISessionRepository {
     user: User,
     { duration = "7days" }: { duration?: string } = {},
   ): Promise<Session> {
-    const account = await this.db.user({ id: user.id }).account();
     const expiresIn = ms(duration);
     const expiresAt = DateTime.utc()
       .plus({ millisecond: expiresIn })
@@ -28,7 +27,6 @@ export class SessionRepository implements ISessionRepository {
     const token = this.jwtRepository.sign<IAuthenticationRequest>(
       {
         user,
-        account,
         createdAt: DateTime.utc().toISO(),
         expiresAt,
       },

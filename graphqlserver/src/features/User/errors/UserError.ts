@@ -3,6 +3,7 @@ import { ApolloError } from "apollo-server-errors";
 export enum UserErrorCode {
   usernameTaken = "usernameTaken",
   phoneNumberExists = "phoneNumberExists",
+  emailExists = "emailExists",
   verificationCode = "verificationCode",
   twillioSending = "twillioSending",
   invalidCredential = "invalidCredential",
@@ -24,6 +25,8 @@ const phoneNumberExistsError = new ApolloError(
   "Phone number already taken",
   UserErrorCode.phoneNumberExists,
 );
+
+const emailExistsError = new ApolloError("Email already taken", UserErrorCode.emailExists);
 
 const verificationCodeError = new ApolloError(
   "Verification code is not correct",
@@ -50,6 +53,7 @@ const unableToSetProfilePicture = (error: Error) => {
 export const UserError = {
   usernameTakenError,
   phoneNumberExistsError,
+  emailExistsError,
   verificationCodeError,
   twillioSendingError,
   invalidCredentialError,

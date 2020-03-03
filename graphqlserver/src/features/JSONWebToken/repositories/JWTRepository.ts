@@ -3,22 +3,24 @@ import expressJWT from "express-jwt";
 import * as jsonwebtoken from "jsonwebtoken";
 import { config } from "../../../config";
 
-let { secret, algorithm, audience } = config.get("jwt") as any;
+let { privateKey, publicKey, algorithm, audience, issuer } = config.get("jwt") as any;
 
 export function sign<Payload = unknown>(
   payload: Payload,
   options?: { expiresIn?: string | number },
 ) {
-  return jsonwebtoken.sign(payload as any, Buffer.from(secret, "base64"), {
+  return jsonwebtoken.sign(payload as any, Buffer.from(privateKey, "base64"), {
     audience,
     algorithm,
+    issuer,
     expiresIn: "7days",
     ...options,
   });
 }
 
 export function verify<Payload = unknown>(token: string) {
-  return <Payload>(<unknown>jsonwebtoken.verify(token, Buffer.from(secret, "base64"), {
+  return <Payload>(<unknown>jsonwebtoken.verify(token, Buffer.from(publicKey, "base64"), {
+    issuer,
     audience,
     algorithms: [algorithm],
   }));
@@ -48,7 +50,7 @@ export const auth = {
     userProperty: "auth",
     audience,
     algorithms: [algorithm],
-    secret: Buffer.from(secret, "base64"),
+    secret: Buffer.from(privateKey, "base64"),
     getToken: getTokenFromRequest,
   }),
 };

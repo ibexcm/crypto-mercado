@@ -21,7 +21,7 @@ type Session {
 
 input VerifyEmailInput {
   email: String!
-  password: String!
+  code: String!
 }
 
 input VerifyPhoneNumberInput {
@@ -34,7 +34,7 @@ input SendPhoneNumberVerificationCodeInput {
 }
 
 input SendEmailVerificationCodeInput {
-  number: String!
+  email: String!
 }
 
 input AuthenticateInput {
