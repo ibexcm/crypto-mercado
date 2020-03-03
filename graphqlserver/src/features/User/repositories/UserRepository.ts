@@ -91,9 +91,7 @@ export class UserRepository {
       },
     });
 
-    const session = await this.sessionRepository.createAuthenticationSession(user);
-
-    return session;
+    return await this.sessionRepository.createAuthenticationSession(user);
   }
 
   async verifyEmail(
@@ -112,7 +110,7 @@ export class UserRepository {
       },
       data: {
         contact: {
-          create: {
+          update: {
             email: {
               create: {
                 address,
@@ -123,9 +121,7 @@ export class UserRepository {
       },
     });
 
-    const session = await this.sessionRepository.createAuthenticationSession(_user);
-
-    return session;
+    return await this.sessionRepository.createAuthenticationSession(_user);
   }
 
   async setPassword(
@@ -159,8 +155,6 @@ export class UserRepository {
       },
     });
 
-    const session = await this.sessionRepository.createAuthenticationSession(_user);
-
-    return session;
+    return await this.sessionRepository.createAuthenticationSession(_user);
   }
 }
