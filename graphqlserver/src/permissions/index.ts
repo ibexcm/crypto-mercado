@@ -20,5 +20,6 @@ export const permissions = shield({
     verifyPhoneNumber: rules.isPhoneNumberAvailable,
     sendEmailVerificationCode: rules.isEmailAvailable,
     verifyEmail: rules.isEmailAvailable,
+    setPassword: rules.isUser,
   },
 });

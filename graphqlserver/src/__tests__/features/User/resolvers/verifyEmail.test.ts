@@ -12,7 +12,7 @@ import {
 import GraphQLClient from "../../../../__test-utils__/mocks/GraphQLClient";
 
 describe("verifyEmail", () => {
-  const address = "u1@ibexcm.com";
+  const address = "email1@ibexcm.com";
   const code = "123456";
   const dependencies = new TestDependencies();
   const emailVerificationRepository = mockEmailVerificationRepository();
@@ -79,7 +79,7 @@ describe("verifyEmail", () => {
 
     emailVerificationRepository.verifyCode = (email, code) => Promise.resolve(false);
 
-    const newAddress = "u2@ibexcm.com";
+    const newAddress = "email2@ibexcm.com";
     const { errors } = await GraphQLClient.verifyEmail(
       {
         args: { address: newAddress, code },

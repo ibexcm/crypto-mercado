@@ -1,6 +1,7 @@
 import {
   sendEmailVerificationCode,
   sendPhoneNumberVerificationCode,
+  setPassword,
   verifyEmail,
   verifyPhoneNumber,
 } from "../../features/User/resolvers";
@@ -10,4 +11,5 @@ export const Mutation = {
   sendPhoneNumberVerificationCode,
   verifyEmail,
   sendEmailVerificationCode,
+  setPassword,
 };
