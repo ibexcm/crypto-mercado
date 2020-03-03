@@ -1,5 +1,6 @@
 import { InjectionKey, InjectionKeyScope } from "@ibexcm/libraries/di";
 import { dbInjectionKey } from "../../InjectionKeys";
+import { emailVerificationRepositoryInjectionKey } from "../EmailVerification";
 import { fileManagementRepositoryInjectionKey } from "../FileManagement";
 import { sessionRepositoryInjectionKey } from "../Session";
 import { smsVerificationRepositoryInjectionKey } from "../SMSVerification";
@@ -14,6 +15,9 @@ export const userRepositoryInjectionKey: InjectionKey<UserRepository> = {
     const smsVerificationRepository = dependencies.provide(
       smsVerificationRepositoryInjectionKey,
     );
+    const emailVerificationRepository = dependencies.provide(
+      emailVerificationRepositoryInjectionKey,
+    );
     const fileManagementRepository = dependencies.provide(
       fileManagementRepositoryInjectionKey,
     );
@@ -23,6 +27,7 @@ export const userRepositoryInjectionKey: InjectionKey<UserRepository> = {
       sessionRepository,
       smsVerificationRepository,
       fileManagementRepository,
+      emailVerificationRepository,
     );
   },
 };

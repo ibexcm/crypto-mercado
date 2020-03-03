@@ -1,14 +1,18 @@
 import {
   Mutation,
   MutationAuthenticateArgs,
+  MutationSendEmailVerificationCodeArgs,
   MutationSendPhoneNumberVerificationCodeArgs,
+  MutationVerifyEmailArgs,
   MutationVerifyPhoneNumberArgs,
   Query,
 } from "@ibexcm/libraries/api";
 import {
   AuthenticateMutation,
+  SendEmailVerificationCodeMutation,
   SendPhoneNumberVerificationCodeMutation,
   UserQuery,
+  VerifyEmailMutation,
   VerifyPhoneNumberMutation,
 } from "@ibexcm/libraries/api/user";
 import { ApolloError } from "apollo-server-errors";
@@ -74,11 +78,28 @@ const sendPhoneNumberVerificationCode = async (
   >(SendPhoneNumberVerificationCodeMutation, args);
 };
 
+const sendEmailVerificationCode = async (args: MutationSendEmailVerificationCodeArgs) => {
+  return query<
+    MutationSendEmailVerificationCodeArgs,
+    Pick<Mutation, "sendEmailVerificationCode">
+  >(SendEmailVerificationCodeMutation, args);
+};
+
+const verifyEmail = async (args: MutationVerifyEmailArgs, authToken: string) => {
+  return query<MutationVerifyEmailArgs, Pick<Mutation, "verifyEmail">>(
+    VerifyEmailMutation,
+    args,
+    authToken,
+  );
+};
+
 const GraphQLClient = {
   authenticate,
   user,
   verifyPhoneNumber,
   sendPhoneNumberVerificationCode,
+  sendEmailVerificationCode,
+  verifyEmail,
 };
 
 export default GraphQLClient;

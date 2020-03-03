@@ -12,9 +12,7 @@ const sendVerificationCode = async (number: string) => {
     const { status } = await verify
       .services(sid)
       .verifications.create({ to: number, channel: "sms" });
-
-    console.log(status);
-    return status == "pending";
+    return status === "pending";
   } catch (error) {
     switch (error.code) {
       case 60200:
