@@ -62,7 +62,7 @@ type CryptoAccount {
 
 type Profile {
   id: ID! @id
-  governmentID: [GovernmentID]
+  governmentID: [GovernmentID] @relation(onDelete: CASCADE)
   user: User!
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
@@ -70,21 +70,23 @@ type Profile {
 
 type GovernmentID { # Support for multiple types of IDs
   id: ID! @id
-  dpi: DPI @relation(name: "GovernmentIDToDPI", link: INLINE, onDelete: CASCADE)
+  guatemalaDPI: [guatemalaDPI]
+    @relation(name: "GovernmentIDToGuatemalaDPI", link: TABLE, onDelete: CASCADE)
   profile: Profile!
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
 }
 
-type DPI {
+type guatemalaDPI {
   id: ID! @id
-  imgHash: String!
+  fileHash: String!
   firstName: String
   lastName: String
   CUI: String
   dateOfBirth: DateTime
   genre: Genre
   expiresAt: DateTime
-  isCurrent: Boolean @default(value: false)
-  governmentID: GovernmentID! @relation(name: "GovernmentIDToDPI")
+  governmentID: GovernmentID! @relation(name: "GovernmentIDToGuatemalaDPI")
   verifiedAt: DateTime
   createdAt: DateTime! @createdAt
 }

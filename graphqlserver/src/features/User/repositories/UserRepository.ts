@@ -3,6 +3,7 @@ import {
   MutationSendEmailVerificationCodeArgs,
   MutationSendPhoneNumberVerificationCodeArgs,
   MutationSetPasswordArgs,
+  MutationUploadGovernmentIdArgs,
   MutationVerifyEmailArgs,
   MutationVerifyPhoneNumberArgs,
   Session,
@@ -150,6 +151,34 @@ export class UserRepository {
           create: {
             clientID: getClientID(),
             password: await hash(password, await genSalt()),
+          },
+        },
+      },
+    });
+
+    return await this.sessionRepository.createAuthenticationSession(_user);
+  }
+
+  async uploadGovernmentID(
+    { args: { fileHash } }: MutationUploadGovernmentIdArgs,
+    user: User,
+  ): Promise<Session> {
+    const _user = await this.db.updateUser({
+      where: {
+        id: user.id,
+      },
+      data: {
+        profile: {
+          create: {
+            governmentID: {
+              create: {
+                guatemalaDPI: {
+                  create: {
+                    fileHash,
+                  },
+                },
+              },
+            },
           },
         },
       },
