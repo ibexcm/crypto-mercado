@@ -126,8 +126,9 @@ type TransactionFee {
   fee: String! # decimal / percentage
 }
 
-type SenderAccount {
+type Sender {
   id: ID! @id
+  sender: User!
   bankAccount: BankAccount
   cryptoAccount: CryptoAccount
   adminBankAccount: AdminBankAccount
@@ -144,8 +145,8 @@ type TransactionReceiptEvidence {
 type TransactionReceipt {
   id: ID! @id
   evidence: [TransactionReceiptEvidence]
-  toCurrency: Currency! @relation(name: "TransactionToCurrency")
-  fromCurrency: Currency! @relation(name: "TransactionFromCurrency")
+  toCurrency: Currency! @relation(name: "TransactionReceiptToCurrency")
+  fromCurrency: Currency! @relation(name: "TransactionReceiptFromCurrency")
   paidAt: DateTime # only by admin!
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
@@ -154,9 +155,8 @@ type TransactionReceipt {
 type Transaction {
   id: ID! @id
   amount: String! @default(value: "0.00")
-  sender: User!
-  senderAccount: SenderAccount!
-  transactionFee: TransactionFee!
+  sender: Sender!
+  fee: TransactionFee!
   receipt: TransactionReceipt!
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
