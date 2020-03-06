@@ -16,6 +16,14 @@ async function createCurrencies() {
   });
 }
 
+async function createCountries() {
+  await prisma.createCountry({
+    name: "Guatemala",
+    symbol: "GTQ",
+    phoneNumberCode: "+502",
+  });
+}
+
 async function createUserRoles() {
   await prisma.createUserRole({
     type: UserRoleType.ADMIN,
@@ -29,6 +37,7 @@ async function createUserRoles() {
   try {
     await createCurrencies();
     await createUserRoles();
+    await createCountries();
   } catch (error) {
     console.error(error);
   }

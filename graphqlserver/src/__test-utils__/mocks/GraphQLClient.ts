@@ -4,6 +4,7 @@ import {
   MutationSendEmailVerificationCodeArgs,
   MutationSendPhoneNumberVerificationCodeArgs,
   MutationSetPasswordArgs,
+  MutationUploadGovernmentIdArgs,
   MutationVerifyEmailArgs,
   MutationVerifyPhoneNumberArgs,
   Query,
@@ -13,6 +14,7 @@ import {
   SendEmailVerificationCodeMutation,
   SendPhoneNumberVerificationCodeMutation,
   SetPasswordMutation,
+  UploadGovernmentIDMutation,
   UserQuery,
   VerifyEmailMutation,
   VerifyPhoneNumberMutation,
@@ -103,7 +105,19 @@ const setPassword = async (args: MutationSetPasswordArgs, authToken: string) => 
   );
 };
 
+const uploadGovernmentID = async (
+  args: MutationUploadGovernmentIdArgs,
+  authToken: string,
+) => {
+  return query<MutationUploadGovernmentIdArgs, Pick<Mutation, "uploadGovernmentID">>(
+    UploadGovernmentIDMutation,
+    args,
+    authToken,
+  );
+};
+
 const GraphQLClient = {
+  query,
   authenticate,
   user,
   verifyPhoneNumber,
@@ -111,6 +125,7 @@ const GraphQLClient = {
   sendEmailVerificationCode,
   verifyEmail,
   setPassword,
+  uploadGovernmentID,
 };
 
 export default GraphQLClient;

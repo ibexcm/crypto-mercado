@@ -3,10 +3,12 @@ import {
   MutationSendEmailVerificationCodeArgs,
   MutationSendPhoneNumberVerificationCodeArgs,
   MutationSetPasswordArgs,
+  MutationUploadGovernmentIdArgs,
   MutationVerifyEmailArgs,
   MutationVerifyPhoneNumberArgs,
   Session,
 } from "@ibexcm/libraries/api";
+import { CountryPhoneNumberCode } from "@ibexcm/libraries/models/country";
 import { genSalt, hash } from "bcryptjs";
 import { config } from "../../../config";
 import { ENVType } from "../../../config/models/ENVType";
@@ -89,6 +91,15 @@ export class UserRepository {
           },
         },
       },
+      profile: {
+        create: {
+          country: {
+            connect: {
+              phoneNumberCode: CountryPhoneNumberCode.GTQ,
+            },
+          },
+        },
+      },
     });
 
     return await this.sessionRepository.createAuthenticationSession(user);
@@ -150,6 +161,38 @@ export class UserRepository {
           create: {
             clientID: getClientID(),
             password: await hash(password, await genSalt()),
+          },
+        },
+      },
+    });
+
+    return await this.sessionRepository.createAuthenticationSession(_user);
+  }
+
+  async uploadGovernmentID(
+    { args: { fileHash } }: MutationUploadGovernmentIdArgs,
+    user: User,
+  ): Promise<Session> {
+    const _user = await this.db.updateUser({
+      where: {
+        id: user.id,
+      },
+      data: {
+        profile: {
+          update: {
+            documents: {
+              create: {
+                guatemala: {
+                  create: {
+                    dpi: {
+                      create: {
+                        fileHash,
+                      },
+                    },
+                  },
+                },
+              },
+            },
           },
         },
       },

@@ -3,7 +3,6 @@ import { TestDependencies } from "@ibexcm/libraries/di";
 import { smsVerificationRepositoryInjectionKey } from "../../../../features/SMSVerification";
 import { dbInjectionKey } from "../../../../InjectionKeys";
 import {
-  mockEmailVerificationRepository,
   MockServer,
   mockSMSVerificationRepository,
 } from "../../../../__test-utils__/mocks";
@@ -12,7 +11,6 @@ import GraphQLClient from "../../../../__test-utils__/mocks/GraphQLClient";
 describe("setPassword", () => {
   const code = "123456";
   const dependencies = new TestDependencies();
-  const emailVerificationRepository = mockEmailVerificationRepository();
   dependencies.override(dbInjectionKey, _ => db);
   dependencies.override(smsVerificationRepositoryInjectionKey, _ =>
     mockSMSVerificationRepository(),

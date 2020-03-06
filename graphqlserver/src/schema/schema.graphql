@@ -1,7 +1,5 @@
 # import User from "@ibexcm/database/generated/prisma.graphql"
 
-scalar Upload
-
 type Query {
   user: User!
 }
@@ -13,6 +11,7 @@ type Mutation {
   sendEmailVerificationCode(args: SendEmailVerificationCodeInput!): Boolean!
   verifyEmail(args: VerifyEmailInput!): Session!
   setPassword(args: SetPasswordInput!): Session!
+  uploadGovernmentID(args: UploadGovernmentIDInput!): Session!
 
   # AUTHENTICATION
   authenticate(args: AuthenticateInput!): Session!
@@ -21,6 +20,10 @@ type Mutation {
 type Session {
   token: String
   expiresAt: DateTime
+}
+
+input UploadGovernmentIDInput {
+  fileHash: String!
 }
 
 input SetPasswordInput {

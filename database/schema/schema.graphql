@@ -19,13 +19,16 @@ enum TUserRole {
   USER
 }
 
+type Country {
+  id: ID! @id
+  name: String! @unique
+  symbol: String! @unique
+  phoneNumberCode: String! @unique
+}
+
 type BankAccount {
   id: ID! @id
-  fullName: String!
-  accountNumber: String! @unique
-  bankAccountType: BankAccountType!
-  bank: Bank!
-  isCurrent: Boolean @default(value: false)
+  guatemala: GuatemalaBankAccount
   user: User!
   verifiedAt: DateTime
   createdAt: DateTime! @createdAt
@@ -35,6 +38,7 @@ type Bank { # from seed
   id: ID! @id
   name: String! @unique
   imgHash: String
+  country: Country!
 }
 
 type BankAccountType {
@@ -62,31 +66,18 @@ type CryptoAccount {
 
 type Profile {
   id: ID! @id
-  governmentID: [GovernmentID]
+  documents: ProfileDocument @relation(onDelete: CASCADE)
   user: User!
+  country: Country!
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }
 
-type GovernmentID { # Support for multiple types of IDs
+type ProfileDocument {
   id: ID! @id
-  dpi: DPI @relation(name: "GovernmentIDToDPI", link: INLINE, onDelete: CASCADE)
-  profile: Profile!
-}
-
-type DPI {
-  id: ID! @id
-  imgHash: String!
-  firstName: String
-  lastName: String
-  CUI: String
-  dateOfBirth: DateTime
-  genre: Genre
-  expiresAt: DateTime
-  isCurrent: Boolean @default(value: false)
-  governmentID: GovernmentID! @relation(name: "GovernmentIDToDPI")
-  verifiedAt: DateTime
+  guatemala: GuatemalaDocument @relation(onDelete: CASCADE, link: INLINE)
   createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
 }
 
 enum Genre {
@@ -167,6 +158,38 @@ type Currency {
   name: String! @unique
   symbol: String! @unique
   createdAt: DateTime! @createdAt
+}
+
+# GUATEMALA
+type GuatemalaBankAccount {
+  id: ID! @id
+  fullName: String!
+  accountNumber: String! @unique
+  bankAccountType: BankAccountType!
+  bank: Bank!
+  isCurrent: Boolean @default(value: false)
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
+type GuatemalaDPI {
+  id: ID! @id
+  fileHash: String!
+  firstName: String
+  lastName: String
+  CUI: String
+  dateOfBirth: DateTime
+  genre: Genre
+  expiresAt: DateTime
+  guatemalaDocument: GuatemalaDocument! @relation(name: "GuatemalaDocumentToGuatemalaDPI")
+  verifiedAt: DateTime
+  createdAt: DateTime! @createdAt
+}
+
+type GuatemalaDocument {
+  id: ID! @id
+  dpi: [GuatemalaDPI] @relation(onDelete: CASCADE, name: "GuatemalaDocumentToGuatemalaDPI")
+  profileDocument: ProfileDocument!
 }
 
 # ADMIN Management
