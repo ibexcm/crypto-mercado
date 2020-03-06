@@ -8,6 +8,7 @@ import {
   MutationVerifyPhoneNumberArgs,
   Session,
 } from "@ibexcm/libraries/api";
+import { CountryPhoneNumberCode } from "@ibexcm/libraries/models/country";
 import { genSalt, hash } from "bcryptjs";
 import { config } from "../../../config";
 import { ENVType } from "../../../config/models/ENVType";
@@ -86,6 +87,15 @@ export class UserRepository {
           phoneNumber: {
             create: {
               number,
+            },
+          },
+        },
+      },
+      profile: {
+        create: {
+          country: {
+            connect: {
+              phoneNumberCode: CountryPhoneNumberCode.GTQ,
             },
           },
         },
@@ -169,12 +179,16 @@ export class UserRepository {
       },
       data: {
         profile: {
-          create: {
-            governmentID: {
+          update: {
+            documents: {
               create: {
-                guatemalaDPI: {
+                guatemala: {
                   create: {
-                    fileHash,
+                    dpi: {
+                      create: {
+                        fileHash,
+                      },
+                    },
                   },
                 },
               },

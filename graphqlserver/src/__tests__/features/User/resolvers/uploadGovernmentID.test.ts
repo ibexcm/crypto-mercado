@@ -62,13 +62,14 @@ describe("uploadGovernmentID", () => {
       .contact()
       .user()
       .profile()
-      .governmentID({
+      .documents()
+      .guatemala()
+      .dpi({
         orderBy: "createdAt_DESC",
       });
 
-    const [guatemalaDPI] = await db.guatemalaDPIs({
-      where: { governmentID: { id } },
-      orderBy: "createdAt_DESC",
+    const guatemalaDPI = await db.guatemalaDPI({
+      id,
     });
 
     expect(uploadGovernmentID.token).toBeDefined();
