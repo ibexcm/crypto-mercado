@@ -5,7 +5,27 @@ export const UserQuery = gql`
     user {
       id
       account {
-        username
+        clientID
+      }
+      contact {
+        phoneNumber {
+          number
+        }
+        email {
+          address
+        }
+      }
+      profile {
+        country {
+          id
+          phoneNumberCode
+        }
+      }
+      bankAccounts {
+        guatemala {
+          accountNumber
+          bankAccountType
+        }
       }
     }
   }

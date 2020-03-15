@@ -24,6 +24,28 @@ async function createCountries() {
   });
 }
 
+async function createBanks() {
+  await Promise.all(
+    [
+      "Banco Agromercantil de Guatemala, S.A.",
+      "Banco Azteca de Guatemala, S.A.",
+      "Banco G&T Continental, S.A.",
+      "Banco INV, S.A.",
+      "Banco Industrial, S.A.",
+      "Banco Inmobiliario, S.A.",
+      "Banco Internacional, S.A.",
+      "Banco Promerica",
+      "Banco de Antigua, S.A.",
+      "Banco de Guatemala",
+      "Banco de los trabajadores",
+      "Citibank NA",
+      "El Credito Hipotecario Nacional de Guatemala",
+      "Fichosa Guatemala, S.A. / Banco Americano, S.A.",
+      "Vivibanco",
+    ].map(name => prisma.createBank({ name, country: { connect: { symbol: "GTQ" } } })),
+  );
+}
+
 async function createUserRoles() {
   await prisma.createUserRole({
     type: UserRoleType.ADMIN,
@@ -38,6 +60,7 @@ async function createUserRoles() {
     await createCurrencies();
     await createUserRoles();
     await createCountries();
+    await createBanks();
   } catch (error) {
     console.error(error);
   }

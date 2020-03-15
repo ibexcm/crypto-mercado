@@ -22,5 +22,6 @@ export const permissions = shield({
     verifyEmail: rules.isEmailAvailable,
     setPassword: rules.isUser,
     uploadGovernmentID: rules.isUser,
+    setBankAccount: rules.isUser,
   },
 });

@@ -1,6 +1,7 @@
 import {
   sendEmailVerificationCode,
   sendPhoneNumberVerificationCode,
+  setBankAccount,
   setPassword,
   uploadGovernmentID,
   verifyEmail,
@@ -14,4 +15,5 @@ export const Mutation = {
   sendEmailVerificationCode,
   setPassword,
   uploadGovernmentID,
+  setBankAccount,
 };

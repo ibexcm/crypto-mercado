@@ -3,16 +3,20 @@ import {
   MutationAuthenticateArgs,
   MutationSendEmailVerificationCodeArgs,
   MutationSendPhoneNumberVerificationCodeArgs,
+  MutationSetBankAccountArgs,
   MutationSetPasswordArgs,
   MutationUploadGovernmentIdArgs,
   MutationVerifyEmailArgs,
   MutationVerifyPhoneNumberArgs,
   Query,
+  QueryGetBanksByCountryArgs,
 } from "@ibexcm/libraries/api";
+import { GetBanksByCountryQuery } from "@ibexcm/libraries/api/bank";
 import {
   AuthenticateMutation,
   SendEmailVerificationCodeMutation,
   SendPhoneNumberVerificationCodeMutation,
+  SetBankAccountMutation,
   SetPasswordMutation,
   UploadGovernmentIDMutation,
   UserQuery,
@@ -66,6 +70,13 @@ const user = async (authToken: string) => {
   return query<void, Pick<Query, "user">>(UserQuery, undefined, authToken);
 };
 
+const getBanksByCountry = async (args: QueryGetBanksByCountryArgs) => {
+  return query<QueryGetBanksByCountryArgs, Pick<Query, "getBanksByCountry">>(
+    GetBanksByCountryQuery,
+    args,
+  );
+};
+
 const verifyPhoneNumber = async (args: MutationVerifyPhoneNumberArgs) => {
   return query<MutationVerifyPhoneNumberArgs, Pick<Mutation, "verifyPhoneNumber">>(
     VerifyPhoneNumberMutation,
@@ -116,16 +127,26 @@ const uploadGovernmentID = async (
   );
 };
 
+const setBankAccount = async (args: MutationSetBankAccountArgs, authToken: string) => {
+  return query<MutationSetBankAccountArgs, Pick<Mutation, "setBankAccount">>(
+    SetBankAccountMutation,
+    args,
+    authToken,
+  );
+};
+
 const GraphQLClient = {
   query,
   authenticate,
   user,
+  getBanksByCountry,
   verifyPhoneNumber,
   sendPhoneNumberVerificationCode,
   sendEmailVerificationCode,
   verifyEmail,
   setPassword,
   uploadGovernmentID,
+  setBankAccount,
 };
 
 export default GraphQLClient;

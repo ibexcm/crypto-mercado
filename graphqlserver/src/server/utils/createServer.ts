@@ -5,7 +5,7 @@ import { GraphQLServer, PubSub } from "graphql-yoga";
 import { ContextParameters } from "graphql-yoga/dist/types";
 import { Prisma as PrismaBinding } from "prisma-binding";
 import { jwtRepositoryInjectionKey } from "../../features/JSONWebToken";
-import { permissions } from "../../permissions";
+import { permissions } from "../../middleware/permissions";
 import { resolvers } from "../../schema/resolvers";
 import { IContext } from "../interfaces/IContext";
 
