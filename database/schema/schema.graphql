@@ -159,7 +159,7 @@ type Currency {
 type GuatemalaBankAccount {
   id: ID! @id
   fullName: String!
-  accountNumber: String! @unique
+  accountNumber: String!
   bankAccountType: TGuatemalaBankAccount!
   bank: Bank!
   isCurrent: Boolean @default(value: false)

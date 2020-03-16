@@ -6,6 +6,7 @@ import { ContextParameters } from "graphql-yoga/dist/types";
 import { Prisma as PrismaBinding } from "prisma-binding";
 import { jwtRepositoryInjectionKey } from "../../features/JSONWebToken";
 import { permissions } from "../../middleware/permissions";
+import { transforms } from "../../middleware/transforms";
 import { resolvers } from "../../schema/resolvers";
 import { IContext } from "../interfaces/IContext";
 
@@ -13,7 +14,7 @@ export const createServer = (dependencies: IDependencies) => {
   const server = new GraphQLServer({
     typeDefs: ["./src/schema/schema.graphql"],
     resolvers,
-    middlewares: [permissions],
+    middlewares: [permissions, transforms],
     context: (contextParameters: ContextParameters): IContext => ({
       ...contextParameters,
       binding: new PrismaBinding(binding),

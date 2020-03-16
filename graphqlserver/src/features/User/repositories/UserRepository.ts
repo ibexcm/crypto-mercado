@@ -14,7 +14,6 @@ import { CurrencySymbol } from "@ibexcm/libraries/models/currency";
 import { genSalt, hash } from "bcryptjs";
 import { config } from "../../../config";
 import { ENVType } from "../../../config/models/ENVType";
-import { transformGuatemalaAccountNumber } from "../../../middleware/transforms/setBankAccount";
 import { IEmailVerificationRepository } from "../../EmailVerification";
 import { IFileManagementRepository } from "../../FileManagement";
 import { ISessionRepository } from "../../Session/interfaces/ISessionRepository";
@@ -225,7 +224,7 @@ export class UserRepository {
             guatemala: {
               create: {
                 fullName,
-                accountNumber: transformGuatemalaAccountNumber(accountNumber),
+                accountNumber,
                 bankAccountType: bankAccountType as TGuatemalaBankAccount,
                 bank: {
                   connect: {
