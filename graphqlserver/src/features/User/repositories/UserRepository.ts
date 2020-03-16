@@ -1,7 +1,8 @@
-import { Prisma, User, UserRoleType } from "@ibexcm/database";
+import { Prisma, TGuatemalaBankAccount, User, UserRoleType } from "@ibexcm/database";
 import {
   MutationSendEmailVerificationCodeArgs,
   MutationSendPhoneNumberVerificationCodeArgs,
+  MutationSetBankAccountArgs,
   MutationSetPasswordArgs,
   MutationUploadGovernmentIdArgs,
   MutationVerifyEmailArgs,
@@ -9,6 +10,7 @@ import {
   Session,
 } from "@ibexcm/libraries/api";
 import { CountryPhoneNumberCode } from "@ibexcm/libraries/models/country";
+import { CurrencySymbol } from "@ibexcm/libraries/models/currency";
 import { genSalt, hash } from "bcryptjs";
 import { config } from "../../../config";
 import { ENVType } from "../../../config/models/ENVType";
@@ -189,6 +191,44 @@ export class UserRepository {
                         fileHash,
                       },
                     },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+
+    return await this.sessionRepository.createAuthenticationSession(_user);
+  }
+
+  async setBankAccount(
+    {
+      args: { fullName, accountNumber, bankID, bankAccountType },
+    }: MutationSetBankAccountArgs,
+    user: User,
+  ): Promise<Session> {
+    const _user = await this.db.updateUser({
+      where: {
+        id: user.id,
+      },
+      data: {
+        bankAccounts: {
+          create: {
+            currency: {
+              connect: {
+                symbol: CurrencySymbol.GTQ,
+              },
+            },
+            guatemala: {
+              create: {
+                fullName,
+                accountNumber,
+                bankAccountType: bankAccountType as TGuatemalaBankAccount,
+                bank: {
+                  connect: {
+                    id: bankID,
                   },
                 },
               },

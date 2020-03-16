@@ -5,9 +5,9 @@ import {
   MutationVerifyPhoneNumberArgs,
 } from "@ibexcm/libraries/api";
 import { rule } from "graphql-shield";
-import { UserError } from "../features/User/errors/UserError";
-import { dbInjectionKey } from "../InjectionKeys";
-import { IContext } from "../server/interfaces/IContext";
+import { UserError } from "../../features/User/errors/UserError";
+import { dbInjectionKey } from "../../InjectionKeys";
+import { IContext } from "../../server/interfaces/IContext";
 
 export const isUser = rule({ cache: true })(
   async (parent, args, { dependencies, request: { auth } }: IContext, info) => {

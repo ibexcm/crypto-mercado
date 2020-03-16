@@ -1,7 +1,8 @@
-# import User from "@ibexcm/database/generated/prisma.graphql"
+# import User, Bank from "@ibexcm/database/generated/prisma.graphql"
 
 type Query {
   user: User!
+  getBanksByCountry(args: GetBanksByCountryInput!): [Bank!]!
 }
 
 type Mutation {
@@ -12,6 +13,7 @@ type Mutation {
   verifyEmail(args: VerifyEmailInput!): Session!
   setPassword(args: SetPasswordInput!): Session!
   uploadGovernmentID(args: UploadGovernmentIDInput!): Session!
+  setBankAccount(args: SetBankAccountInput!): Session!
 
   # AUTHENTICATION
   authenticate(args: AuthenticateInput!): Session!
@@ -20,6 +22,17 @@ type Mutation {
 type Session {
   token: String
   expiresAt: DateTime
+}
+
+input GetBanksByCountryInput {
+  countryID: String!
+}
+
+input SetBankAccountInput {
+  accountNumber: String!
+  fullName: String!
+  bankID: String!
+  bankAccountType: String!
 }
 
 input UploadGovernmentIDInput {

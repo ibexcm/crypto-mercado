@@ -4,8 +4,8 @@ type User {
   contact: Contact! @relation(link: INLINE, onDelete: CASCADE)
   account: Account @relation(link: INLINE, onDelete: CASCADE)
   profile: Profile @relation(link: INLINE, onDelete: CASCADE)
-  bankAccount: [BankAccount] @relation(onDelete: CASCADE)
-  cryptoAccount: [CryptoAccount] @relation(onDelete: CASCADE)
+  bankAccounts: [BankAccount] @relation(onDelete: CASCADE)
+  cryptoAccounts: [CryptoAccount] @relation(onDelete: CASCADE)
   transactions: [Transaction] @relation(onDelete: CASCADE)
 }
 
@@ -28,7 +28,8 @@ type Country {
 
 type BankAccount {
   id: ID! @id
-  guatemala: GuatemalaBankAccount
+  guatemala: GuatemalaBankAccount @relation(onDelete: CASCADE)
+  currency: Currency!
   user: User!
   verifiedAt: DateTime
   createdAt: DateTime! @createdAt
@@ -39,12 +40,6 @@ type Bank { # from seed
   name: String! @unique
   imgHash: String
   country: Country!
-}
-
-type BankAccountType {
-  id: ID! @id
-  type: String! # monetaria | ahorro
-  currency: Currency!
 }
 
 type Account {
@@ -164,12 +159,17 @@ type Currency {
 type GuatemalaBankAccount {
   id: ID! @id
   fullName: String!
-  accountNumber: String! @unique
-  bankAccountType: BankAccountType!
+  accountNumber: String!
+  bankAccountType: TGuatemalaBankAccount!
   bank: Bank!
   isCurrent: Boolean @default(value: false)
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
+}
+
+enum TGuatemalaBankAccount {
+  MONETARIA
+  AHORRO
 }
 
 type GuatemalaDPI {
@@ -195,10 +195,8 @@ type GuatemalaDocument {
 # ADMIN Management
 type AdminBankAccount {
   id: ID! @id
-  fullName: String!
-  accountNumber: String! @unique
-  bankAccountType: BankAccountType!
-  bank: Bank!
+  guatemala: GuatemalaBankAccount
+  currency: Currency!
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }

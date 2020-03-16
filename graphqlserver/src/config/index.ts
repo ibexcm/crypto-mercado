@@ -6,7 +6,7 @@ const configuration = convict({
   env: {
     doc: "The applicaton environment.",
     format: ["production", "development", "test"],
-    default: "development",
+    default: "test",
     env: "NODE_ENV",
   },
 
@@ -40,8 +40,16 @@ const configuration = convict({
       doc: "The port to bind HTTP.",
       format: "port",
       default: 4000,
-      env: "HTTP_PORT",
+      env: "GRAPHQL_PORT",
       arg: "port",
+    },
+
+    protocol: {
+      doc: "URL Protocol",
+      format: "*",
+      default: null,
+      env: "URL_PROTOCOL",
+      arg: "protocol",
     },
   },
 

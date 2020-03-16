@@ -1,4 +1,5 @@
 import { forwardTo } from "prisma-binding";
+import { getBanksByCountry } from "../../features/Bank/resolvers";
 import { IContext } from "../../server/interfaces/IContext";
 
 export const Query = {
@@ -15,4 +16,5 @@ export const Query = {
       info,
     );
   },
+  getBanksByCountry,
 };
