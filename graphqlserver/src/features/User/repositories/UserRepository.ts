@@ -89,6 +89,7 @@ export class UserRepository {
           phoneNumber: {
             create: {
               number,
+              verifiedAt: new Date(),
             },
           },
         },
@@ -127,6 +128,7 @@ export class UserRepository {
             email: {
               create: {
                 address,
+                verifiedAt: new Date(),
               },
             },
           },
