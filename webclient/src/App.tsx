@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Route } from "react-router-dom";
 import DependencyContext from "./common/contexts/DependencyContext";
 import { GraphQL } from "./features/app/components";
 import {
+  SendEmailVerificationCode,
   SendPhoneNumberVerificationCode,
   VerifyPhoneNumber,
 } from "./features/onboarding/screens";
@@ -25,6 +26,11 @@ const App: React.FC = () => {
             path={routes.onboarding.verifyPhoneNumber}
             exact
             component={VerifyPhoneNumber}
+          />
+          <Route
+            path={routes.onboarding.sendEmailVerificationCode}
+            exact
+            component={SendEmailVerificationCode}
           />
         </Router>
       </GraphQL>

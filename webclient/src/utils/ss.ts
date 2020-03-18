@@ -1,4 +1,4 @@
-import { get as _get, merge } from "lodash";
+import { merge } from "lodash";
 
 const update = (key: string, value: string | {} = {}) => {
   if (typeof value === "object") {
@@ -10,8 +10,8 @@ const update = (key: string, value: string | {} = {}) => {
   }
 };
 
-const get = (key: string, chain: string, fallback?: any) => {
-  return _get(JSON.parse(sessionStorage.getItem(key) || "{}"), chain, fallback || "");
+const get = (key: string) => {
+  return sessionStorage.getItem(key);
 };
 
 export const ss = {

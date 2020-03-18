@@ -14,6 +14,7 @@ import {
 } from "../../../common/components";
 import DependencyContext from "../../../common/contexts/DependencyContext";
 import { styles } from "../../../common/theme";
+import routes from "../../../routes";
 import { MobileAppBar } from "../components";
 import { OnboardingRepositoryInjectionKeys } from "../InjectionKeys";
 
@@ -44,6 +45,7 @@ const Component: React.FC<IVerifyPhoneNumberProps> = ({
   const onVerifyPhoneNumber = async () => {
     try {
       await executeVerifyPhoneNumberMutation(input);
+      history.push(routes.onboarding.sendEmailVerificationCode);
     } catch (error) {}
   };
 

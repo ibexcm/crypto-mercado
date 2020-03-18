@@ -1,13 +1,6 @@
 import { MutationResult, useMutation } from "@apollo/client";
-import {
-  Mutation,
-  MutationSendPhoneNumberVerificationCodeArgs,
-  MutationVerifyPhoneNumberArgs,
-} from "@ibexcm/libraries/api";
-import {
-  SendPhoneNumberVerificationCodeMutation,
-  VerifyPhoneNumberMutation,
-} from "@ibexcm/libraries/api/user";
+import { Mutation, MutationSendEmailVerificationCodeArgs, MutationSendPhoneNumberVerificationCodeArgs, MutationVerifyPhoneNumberArgs } from "@ibexcm/libraries/api";
+import { SendEmailVerificationCodeMutation, SendPhoneNumberVerificationCodeMutation, VerifyPhoneNumberMutation } from "@ibexcm/libraries/api/user";
 import { AuthTokenRepository } from "../../authentication/repositories/AuthTokenRepository";
 
 export class OnboardingRepository {
@@ -71,6 +64,33 @@ export class OnboardingRepository {
         } = data as Pick<Mutation, "verifyPhoneNumber">;
 
         this.AuthTokenRepository.setAuthToken(token as string);
+      },
+    };
+  }
+
+  useSendEmailVerificationCodeMutation(): {
+    execute: (args: MutationSendEmailVerificationCodeArgs) => Promise<void>;
+  } {
+    const [execute] = useMutation(SendEmailVerificationCodeMutation);
+
+    return {
+      execute: async args => {
+        const {
+          data,
+          error,
+        }: Partial<MutationResult<
+          Pick<Mutation, "sendEmailVerificationCode">
+        >> = await execute({
+          variables: args,
+        });
+
+        if (Boolean(error)) {
+          throw error;
+        }
+
+        if (!Boolean(data?.sendEmailVerificationCode)) {
+          throw new Error("No pudimos enviar el correo.");
+        }
       },
     };
   }

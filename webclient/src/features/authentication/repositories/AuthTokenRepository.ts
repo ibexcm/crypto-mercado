@@ -36,12 +36,6 @@ export class AuthTokenRepository {
     return this.store.set(StoreKeys.authToken, token);
   }
 
-  refreshToken() {
-    const token = this.store.get(StoreKeys.authToken);
-    this.deleteAuthToken();
-    this.setAuthToken(token);
-  }
-
   deleteAuthToken() {
     return this.store.delete(StoreKeys.authToken);
   }

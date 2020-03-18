@@ -13,8 +13,8 @@ export class Store {
     observer.next(value);
   }
 
-  get(key: string): string {
-    return SessionStorage.get(key, "");
+  get(key: string): string | null {
+    return SessionStorage.get(key);
   }
 
   delete(key: string): void {

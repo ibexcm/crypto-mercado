@@ -15,9 +15,7 @@ import routes from "../../../routes";
 import { MobileAppBar } from "../components";
 import { OnboardingRepositoryInjectionKeys } from "../InjectionKeys";
 
-interface ISendPhoneNumberVerificationCodeProps
-  extends WithStyles,
-    RouteComponentProps<{ id: string }> {}
+interface ISendPhoneNumberVerificationCodeProps extends WithStyles, RouteComponentProps {}
 
 const Component: React.FC<ISendPhoneNumberVerificationCodeProps> = ({
   classes,
