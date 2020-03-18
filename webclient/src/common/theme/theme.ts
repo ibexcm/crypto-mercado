@@ -48,6 +48,11 @@ export const theme = createMuiTheme({
         },
       },
     },
+    MuiButton: {
+      sizeLarge: {
+        padding: "12px 22px",
+      },
+    },
     MuiInput: {
       underline: {
         "&:after": {

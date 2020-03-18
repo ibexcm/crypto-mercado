@@ -4,6 +4,7 @@ import React from "react";
 import { RouteComponentProps } from "react-router";
 import {
   Button,
+  InputErrorBox,
   Modal,
   StepsSidebar,
   TextField,
@@ -25,6 +26,7 @@ const Component: React.FC<ISendEmailVerificationCodeProps> = ({
 }) => {
   const dependencies = React.useContext(DependencyContext);
   const OnboardingRepository = dependencies.provide(OnboardingRepositoryInjectionKeys);
+  const [error, setError] = React.useState<Error | null>(null);
   const [input, setInput] = React.useState<MutationSendEmailVerificationCodeArgs>({
     args: {
       address: "",
@@ -37,10 +39,13 @@ const Component: React.FC<ISendEmailVerificationCodeProps> = ({
   } = OnboardingRepository.useSendEmailVerificationCodeMutation();
 
   const onSendVerificationCode = async () => {
+    setError(null);
     try {
       await executeSendEmailVerificationCodeMutation(input);
       setIsModalOpen(true);
-    } catch (error) {}
+    } catch (error) {
+      setError(error);
+    }
   };
 
   const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -91,6 +96,7 @@ const Component: React.FC<ISendEmailVerificationCodeProps> = ({
             type="email"
             mb={3}
           />
+          <InputErrorBox error={error} />
           <Button
             color="primary"
             variant="contained"
