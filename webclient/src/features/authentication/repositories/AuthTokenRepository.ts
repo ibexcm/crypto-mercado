@@ -14,7 +14,10 @@ export class AuthTokenRepository {
   }
 
   useAuthToken() {
-    const [authToken, setAuthToken] = React.useState<string>();
+    const [authToken, setAuthToken] = React.useState<string | undefined>(
+      this.store.get(StoreKeys.authToken),
+    );
+
     let subscription: Subscription;
 
     const subscribe = () => {
@@ -32,8 +35,8 @@ export class AuthTokenRepository {
     return authToken;
   }
 
-  setAuthToken(token: string) {
-    return this.store.set(StoreKeys.authToken, token);
+  setAuthToken(token: string, expires = 7) {
+    return this.store.set(StoreKeys.authToken, token, { expires });
   }
 
   deleteAuthToken() {

@@ -1,19 +1,10 @@
 import { MutationSendEmailVerificationCodeArgs } from "@ibexcm/libraries/api";
-import {
-  Backdrop,
-  Box,
-  Container,
-  Fade,
-  Modal,
-  Paper,
-  Theme,
-  withStyles,
-  WithStyles,
-} from "@material-ui/core";
+import { Box, Container, Theme, withStyles, WithStyles } from "@material-ui/core";
 import React from "react";
 import { RouteComponentProps } from "react-router";
 import {
   Button,
+  Modal,
   StepsSidebar,
   TextField,
   ToolbarPadding,
@@ -66,26 +57,14 @@ const Component: React.FC<ISendEmailVerificationCodeProps> = ({
   return (
     <Box display="flex">
       <Modal
-        aria-labelledby="transition-modal-title"
-        aria-describedby="transition-modal-description"
-        className={classes.modal}
-        open={isModalOpen}
         onClose={() => {
           setIsModalOpen(false);
         }}
-        closeAfterTransition
-        BackdropComponent={Backdrop}
-        BackdropProps={{
-          timeout: 500,
-        }}
+        open={isModalOpen}
       >
-        <Fade in={isModalOpen}>
-          <Paper>
-            <Box p={2} height="35vh">
-              <Typography>Enviamos un correo a {input.args.address}.</Typography>
-            </Box>
-          </Paper>
-        </Fade>
+        <Box p={2} height="35vh">
+          <Typography>Enviamos un correo a {input.args.address}.</Typography>
+        </Box>
       </Modal>
       <StepsSidebar />
       <Container maxWidth="xl">
