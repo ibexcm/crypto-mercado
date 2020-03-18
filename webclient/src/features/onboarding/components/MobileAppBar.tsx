@@ -31,7 +31,7 @@ const Component: React.FC<IMobileAppBarProps> = ({ classes }) => {
 export const MobileAppBar = withStyles((theme: Theme) => ({
   ...styles(theme),
   logoBox: {
-    width: 56,
+    width: 49,
     flexDirection: "column",
     justifyContent: "center",
   },

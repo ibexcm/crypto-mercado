@@ -5,6 +5,7 @@ import { GraphQL } from "./features/app/components";
 import {
   SendEmailVerificationCode,
   SendPhoneNumberVerificationCode,
+  SetPassword,
   VerifyEmail,
   VerifyPhoneNumber,
 } from "./features/onboarding/screens";
@@ -34,6 +35,7 @@ const App: React.FC = () => {
             component={SendEmailVerificationCode}
           />
           <Route path={routes.onboarding.verifyEmail} exact component={VerifyEmail} />
+          <Route path={routes.onboarding.setPassword} exact component={SetPassword} />
         </Router>
       </GraphQL>
     </DependencyContext.Provider>

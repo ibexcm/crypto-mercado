@@ -3,12 +3,14 @@ import {
   Mutation,
   MutationSendEmailVerificationCodeArgs,
   MutationSendPhoneNumberVerificationCodeArgs,
+  MutationSetPasswordArgs,
   MutationVerifyEmailArgs,
   MutationVerifyPhoneNumberArgs,
 } from "@ibexcm/libraries/api";
 import {
   SendEmailVerificationCodeMutation,
   SendPhoneNumberVerificationCodeMutation,
+  SetPasswordMutation,
   VerifyEmailMutation,
   VerifyPhoneNumberMutation,
 } from "@ibexcm/libraries/api/user";
@@ -131,6 +133,37 @@ export class OnboardingRepository {
         const {
           verifyEmail: { token },
         } = data as Pick<Mutation, "verifyEmail">;
+
+        this.AuthTokenRepository.setAuthToken(token as string);
+      },
+    };
+  }
+
+  useSetPasswordMutation(): {
+    execute: (args: MutationSetPasswordArgs) => Promise<void>;
+  } {
+    const [execute] = useMutation(SetPasswordMutation);
+
+    return {
+      execute: async args => {
+        const {
+          data,
+          error,
+        }: Partial<MutationResult<Pick<Mutation, "setPassword">>> = await execute({
+          variables: args,
+        });
+
+        if (Boolean(error)) {
+          throw error;
+        }
+
+        if (!Boolean(data?.setPassword)) {
+          throw new Error("No pudimos crear tu contraseña");
+        }
+
+        const {
+          setPassword: { token },
+        } = data as Pick<Mutation, "setPassword">;
 
         this.AuthTokenRepository.setAuthToken(token as string);
       },
