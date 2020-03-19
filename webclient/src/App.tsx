@@ -6,6 +6,7 @@ import {
   SendEmailVerificationCode,
   SendPhoneNumberVerificationCode,
   SetPassword,
+  UploadGovernmentID,
   VerifyEmail,
   VerifyPhoneNumber,
 } from "./features/onboarding/screens";
@@ -36,6 +37,11 @@ const App: React.FC = () => {
           />
           <Route path={routes.onboarding.verifyEmail} exact component={VerifyEmail} />
           <Route path={routes.onboarding.setPassword} exact component={SetPassword} />
+          <Route
+            path={routes.onboarding.uploadGovernmentID}
+            exact
+            component={UploadGovernmentID}
+          />
         </Router>
       </GraphQL>
     </DependencyContext.Provider>

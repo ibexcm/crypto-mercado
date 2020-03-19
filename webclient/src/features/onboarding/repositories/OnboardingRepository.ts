@@ -4,6 +4,7 @@ import {
   MutationSendEmailVerificationCodeArgs,
   MutationSendPhoneNumberVerificationCodeArgs,
   MutationSetPasswordArgs,
+  MutationUploadGovernmentIdArgs,
   MutationVerifyEmailArgs,
   MutationVerifyPhoneNumberArgs,
 } from "@ibexcm/libraries/api";
@@ -11,6 +12,7 @@ import {
   SendEmailVerificationCodeMutation,
   SendPhoneNumberVerificationCodeMutation,
   SetPasswordMutation,
+  UploadGovernmentIDMutation,
   VerifyEmailMutation,
   VerifyPhoneNumberMutation,
 } from "@ibexcm/libraries/api/user";
@@ -164,6 +166,33 @@ export class OnboardingRepository {
         const {
           setPassword: { token },
         } = data as Pick<Mutation, "setPassword">;
+
+        this.AuthTokenRepository.setAuthToken(token as string);
+      },
+    };
+  }
+
+  useUploadGovernmentIDMutation(): {
+    execute: (args: MutationUploadGovernmentIdArgs) => Promise<void>;
+  } {
+    const [execute] = useMutation(UploadGovernmentIDMutation);
+
+    return {
+      execute: async args => {
+        const {
+          data,
+          error,
+        }: Partial<MutationResult<Pick<Mutation, "uploadGovernmentID">>> = await execute({
+          variables: args,
+        });
+
+        if (Boolean(error) || !Boolean(data?.uploadGovernmentID)) {
+          throw new Error("No pudimos obtener tu DPI.");
+        }
+
+        const {
+          uploadGovernmentID: { token },
+        } = data as Pick<Mutation, "uploadGovernmentID">;
 
         this.AuthTokenRepository.setAuthToken(token as string);
       },

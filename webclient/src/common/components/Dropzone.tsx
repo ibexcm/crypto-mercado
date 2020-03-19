@@ -3,11 +3,13 @@ import CheckCircleOutlineIcon from "@material-ui/icons/CheckCircleOutline";
 import DropzoneJS, { DropzoneFile } from "dropzone";
 import "dropzone/dist/basic.css";
 import "dropzone/dist/dropzone.css";
-import ipfsClient from "ipfs-http-client";
 import React from "react";
+import { IPFSAddFileResponse, uploadFiles } from "../../libraries/ipfs";
 
 export interface IDropzoneProps extends WithStyles, React.HTMLAttributes<HTMLDivElement> {
   onAddFile: (file: DropzoneFile) => void;
+  onUploadEnd: (response: IPFSAddFileResponse[]) => void;
+  message: any;
 }
 
 export const Dropzone = withStyles((theme: Theme) => ({
@@ -24,19 +26,18 @@ export const Dropzone = withStyles((theme: Theme) => ({
       margin: 0,
     },
   },
-}))(({ classes, onAddFile, ...props }: IDropzoneProps) => {
-  const [message, setMessage] = React.useState(<Typography>Upload files</Typography>);
+}))(({ classes, onAddFile, onUploadEnd, message, ...props }: IDropzoneProps) => {
+  const [_, setMessage] = React.useState(message);
 
   React.useEffect(() => {
     DropzoneJS.autoDiscover = false;
 
     const dropzone = new DropzoneJS("#dropzone", {
       url: "/",
-      // autoProcessQueue: false,
-      parallelUploads: 10,
       createImageThumbnails: false,
-      uploadMultiple: true,
+      uploadMultiple: false,
       previewsContainer: "#dropzone-preview",
+      acceptedFiles: "image/jpeg,image/png",
     });
 
     dropzone.on("addedfile", (file: DropzoneFile) => {
@@ -45,43 +46,18 @@ export const Dropzone = withStyles((theme: Theme) => ({
       dzUpload.style.width = `0%`;
       setMessage(
         <Typography>
-          Upload files <CheckCircleOutlineIcon fontSize="small" />
+          Subiendo <CheckCircleOutlineIcon fontSize="small" />
         </Typography>,
       );
-      setTimeout(() => {
-        setMessage(<Typography>Upload more files</Typography>);
-      }, 3000);
     });
 
-    dropzone.uploadFiles = uploadFiles(dropzone);
-  }, [onAddFile]);
-
-  const uploadFiles = (dropzone: Dropzone) => {
-    return async (files: DropzoneFile[]) => {
-      console.log(files);
-      for (const file of files) {
-        dropzone.emit("sending", file);
-      }
-
-      const ipfs = ipfsClient({ host: "ipfs.infura.io", port: "5001", protocol: "https" });
-
-      for (let i = 0; i < files.length; i++) {
-        const file = files[i];
-        const dzUpload = file.previewElement.querySelector(".dz-upload") as HTMLElement;
-        try {
-          const res = await ipfs.add([file], {
-            progress: (loaded: number) => {
-              console.log(loaded);
-              dzUpload.style.width = `${Math.floor((loaded / file.size) * 100)}%`;
-            },
-          });
-          console.log(res);
-        } catch (error) {
-          console.error(error);
-        }
-      }
+    const dropzoneOnUploadEnd = (response: IPFSAddFileResponse[]) => {
+      setMessage(message);
+      onUploadEnd(response);
     };
-  };
+
+    dropzone.uploadFiles = uploadFiles(dropzone, dropzoneOnUploadEnd);
+  }, []);
 
   return (
     <section id="dropzone" className={`dropzone ${classes.root}`} {...props}>
@@ -109,7 +85,7 @@ export const DropzonePreview = withStyles((theme: Theme) => ({
     },
     "& .dz-file-preview": {
       position: "relative",
-      flexBasis: "25%",
+      flexBasis: "100%",
       padding: 3,
     },
     "& .dz-image": {
