@@ -4,6 +4,7 @@ import DependencyContext from "./common/contexts/DependencyContext";
 import { GraphQL } from "./features/app/components";
 import { Home } from "./features/home/screens";
 import {
+  Done,
   SendEmailVerificationCode,
   SendPhoneNumberVerificationCode,
   SetBankAccount,
@@ -45,6 +46,7 @@ const App: React.FC = () => {
             component={UploadGovernmentID}
           />
           <Route path={routes.onboarding.setBankAccount} exact component={SetBankAccount} />
+          <Route path={routes.onboarding.done} exact component={Done} />
         </Router>
       </GraphQL>
     </DependencyContext.Provider>

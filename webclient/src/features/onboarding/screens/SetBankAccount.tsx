@@ -1,9 +1,10 @@
-import { MutationSetBankAccountArgs, TGuatemalaBankAccount } from "@ibexcm/libraries/api";
+import { Bank, Currency, Query } from "@ibexcm/libraries/api";
 import {
   Backdrop,
   Box,
   Container,
   FormControl,
+  Grid,
   InputLabel,
   MenuItem,
   Select,
@@ -25,6 +26,7 @@ import {
 import DependencyContext from "../../../common/contexts/DependencyContext";
 import { styles } from "../../../common/theme";
 import { UserRepositoryInjectionKeys } from "../../../features/user/InjectionKeys";
+import { MutationSetBankAccountArgs, TGuatemalaBankAccount } from "../../../libraries/api";
 import routes from "../../../routes";
 import { MobileAppBar } from "../components";
 import { OnboardingRepositoryInjectionKeys } from "../InjectionKeys";
@@ -41,6 +43,7 @@ const Component: React.FC<Props> = ({ classes, history, match, ...props }) => {
       accountNumber: "",
       bankAccountType: "",
       bankID: "",
+      currencyID: "",
       fullName: "",
     },
   });
@@ -50,14 +53,6 @@ const Component: React.FC<Props> = ({ classes, history, match, ...props }) => {
     loading: isLoadingUserQuery,
     error: userQueryError,
   } = UserRepository.useUserQuery();
-
-  if (isLoadingUserQuery) {
-    return (
-      <Backdrop className={classes.backdrop} open={isLoadingUserQuery}>
-        <CircularProgress color="inherit" />
-      </Backdrop>
-    );
-  }
 
   const {
     execute: executeSetPasswordMutation,
@@ -72,10 +67,53 @@ const Component: React.FC<Props> = ({ classes, history, match, ...props }) => {
     },
   ] = OnboardingRepository.useGetBanksByCountryQuery();
 
+  const [
+    executeGetCurrenciesByCountry,
+    {
+      data: getCurrenciesByCountryData,
+      loading: isLoadingGetCurrenciesByCountry,
+      error: getCurrenciesByCountryError,
+    },
+  ] = OnboardingRepository.useGetCurrenciesByCountryQuery();
+
+  React.useEffect(() => {
+    if (Boolean(userQueryData?.user)) {
+      (async () => {
+        try {
+          const {
+            user: {
+              profile: {
+                country: { id: countryID },
+              },
+            },
+          } = userQueryData;
+          await executeGetBanksByCountry({ args: { countryID } });
+          await executeGetCurrenciesByCountry({ args: { countryID } });
+        } catch (error) {
+          console.error(error);
+        }
+      })();
+    }
+  }, [isLoadingUserQuery]);
+
+  if (
+    isLoadingUserQuery ||
+    isLoadingGetBanksByCountry ||
+    isLoadingGetCurrenciesByCountry ||
+    !Boolean(getBanksByCountryData?.getBanksByCountry) ||
+    !Boolean(getCurrenciesByCountryData?.getCurrenciesByCountry)
+  ) {
+    return (
+      <Backdrop className={classes.backdrop} open={isLoadingUserQuery}>
+        <CircularProgress color="inherit" />
+      </Backdrop>
+    );
+  }
+
   const onSetBankAccount = async () => {
     try {
       await executeSetPasswordMutation(input);
-      history.push(routes.onboarding.uploadGovernmentID);
+      history.push(routes.onboarding.done);
     } catch (error) {
       setError(error);
     }
@@ -96,16 +134,27 @@ const Component: React.FC<Props> = ({ classes, history, match, ...props }) => {
     setInput({ args: { ...input.args, bankID } });
   };
 
-  const onSetBankAccountType = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const bankAccountType = event.target.value;
+  const onSetCurrencyID = (event: React.ChangeEvent<{ name?: string; value: unknown }>) => {
+    const currencyID = event.target.value as string;
+    setInput({ args: { ...input.args, currencyID } });
+  };
+
+  const onSetBankAccountType = (
+    event: React.ChangeEvent<{ name?: string; value: unknown }>,
+  ) => {
+    const bankAccountType = event.target.value as TGuatemalaBankAccount;
     setInput({ args: { ...input.args, bankAccountType } });
   };
 
-  const onKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === "Enter") {
-      onSetBankAccount();
-    }
-  };
+  const { getBanksByCountry: banks } = getBanksByCountryData as Pick<
+    Query,
+    "getBanksByCountry"
+  >;
+
+  const { getCurrenciesByCountry: currencies } = getCurrenciesByCountryData as Pick<
+    Query,
+    "getCurrenciesByCountry"
+  >;
 
   return (
     <Box display="flex">
@@ -115,25 +164,64 @@ const Component: React.FC<Props> = ({ classes, history, match, ...props }) => {
         <ToolbarPadding />
         <Box mb={4}>
           <Typography variant="h5" mb={1}>
-            Elige una contraseña
+            ¿A qué cuenta
+            <br /> depositamos tu dinero?
+          </Typography>
+          <Typography gutterBottom>
+            Ingresa la cuenta bancaria a donde quieres que depositemos los fondos.
           </Typography>
           <Typography>
-            Aunque no guardamos tus llaves privadas, es importante que tu contraseña sea
-            segura.
+            El destinatario debe coincidir con el nombre del DPI que subiste en el paso
+            anterior.
           </Typography>
         </Box>
-        <Box mb={4}>
-          <FormControl variant="filled">
-            <InputLabel id="demo-simple-select-filled-label">Age</InputLabel>
-            <Select value={input.args.bankAccountType} onChange={onSetBankID}>
-              <MenuItem value={10}>{TGuatemalaBankAccount.Monetaria}</MenuItem>
-              <MenuItem value={10}>{TGuatemalaBankAccount.Monetaria}</MenuItem>
-              <MenuItem value={20}>Twenty</MenuItem>
-              <MenuItem value={30}>Thirty</MenuItem>
+        <Box mb={3}>
+          <FormControl fullWidth variant="outlined">
+            <InputLabel>Selecciona un banco</InputLabel>
+            <Select value={input.args.bankID} onChange={onSetBankID} fullWidth>
+              {banks.map((bank: Bank, index) => (
+                <MenuItem key={index} value={bank.id}>
+                  {bank.name}
+                </MenuItem>
+              ))}
             </Select>
           </FormControl>
+        </Box>
+        <Box mb={3}>
+          <Grid container spacing={1}>
+            <Grid item xs={6} lg={6}>
+              <FormControl fullWidth variant="outlined">
+                <InputLabel>Tipo de cuenta</InputLabel>
+                <Select
+                  value={input.args.bankAccountType}
+                  onChange={onSetBankAccountType}
+                  fullWidth
+                >
+                  <MenuItem value={TGuatemalaBankAccount.Monetaria}>
+                    {TGuatemalaBankAccount.Monetaria}
+                  </MenuItem>
+                  <MenuItem value={TGuatemalaBankAccount.Ahorro}>
+                    {TGuatemalaBankAccount.Ahorro}
+                  </MenuItem>
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={6} lg={6}>
+              <FormControl fullWidth variant="outlined">
+                <InputLabel>Divisa</InputLabel>
+                <Select value={input.args.currencyID} onChange={onSetCurrencyID} fullWidth>
+                  {currencies.map((currency: Currency, index) => (
+                    <MenuItem key={index} value={currency.id}>
+                      {currency.symbol}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+          </Grid>
+        </Box>
+        <Box mb={3}>
           <TextField
-            autoFocus
             fullWidth
             label="Número de cuenta"
             placeholder="eg. 01-234567-89"
@@ -141,8 +229,18 @@ const Component: React.FC<Props> = ({ classes, history, match, ...props }) => {
             onChange={onSetAccountNumber}
             value={input.args.accountNumber}
             type="number"
-            mb={3}
           />
+        </Box>
+        <Box mb={3}>
+          <TextField
+            fullWidth
+            label="Nombre completo"
+            variant="outlined"
+            onChange={onSetFullName}
+            value={input.args.fullName}
+          />
+        </Box>
+        <Box mb={4}>
           <InputErrorBox error={error} />
           <Button
             color="primary"

@@ -10,8 +10,10 @@ import {
   MutationVerifyPhoneNumberArgs,
   Query,
   QueryGetBanksByCountryArgs,
+  QueryGetCurrenciesByCountryArgs,
 } from "@ibexcm/libraries/api";
 import { GetBanksByCountryQuery } from "@ibexcm/libraries/api/bank";
+import { GetCurrenciesByCountryQuery } from "@ibexcm/libraries/api/currency";
 import {
   SendEmailVerificationCodeMutation,
   SendPhoneNumberVerificationCodeMutation,
@@ -245,8 +247,24 @@ export class OnboardingRepository {
       QueryGetBanksByCountryArgs
     >(GetBanksByCountryQuery);
 
-    const executeGetBanksByCountry = async args => execute({ variables: args });
+    const executeGetBanksByCountry = async (args: QueryGetBanksByCountryArgs) =>
+      execute({ variables: args });
 
     return [executeGetBanksByCountry, state];
+  }
+
+  useGetCurrenciesByCountryQuery(): [
+    (args: QueryGetCurrenciesByCountryArgs) => Promise<void>,
+    LazyQueryResult<Pick<Query, "getCurrenciesByCountry">, QueryGetCurrenciesByCountryArgs>,
+  ] {
+    const [execute, state] = useLazyQuery<
+      Pick<Query, "getCurrenciesByCountry">,
+      QueryGetCurrenciesByCountryArgs
+    >(GetCurrenciesByCountryQuery);
+
+    const executeGetCurrenciesByCountry = async (args: QueryGetCurrenciesByCountryArgs) =>
+      execute({ variables: args });
+
+    return [executeGetCurrenciesByCountry, state];
   }
 }

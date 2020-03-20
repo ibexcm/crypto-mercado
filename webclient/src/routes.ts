@@ -9,6 +9,7 @@ export const routes = {
     setPassword: "/elige-una-contrasena",
     uploadGovernmentID: "/verifica-tu-identificacion",
     setBankAccount: "/verifica-tu-cuenta-bancaria",
+    done: "/fin",
   },
 };
 

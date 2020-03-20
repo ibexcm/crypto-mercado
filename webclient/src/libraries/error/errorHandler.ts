@@ -1,4 +1,4 @@
-const getErrorMessage = (error: Error): string => {
+const getErrorMessage = (error: Error | null): string => {
   if (!Boolean(error.message)) {
     return "";
   }

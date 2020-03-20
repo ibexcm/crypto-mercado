@@ -35,7 +35,7 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
           en Guatemala
         </Typography>
         <Box mb={6} mt={3}>
-          <Grid container spacing={1}>
+          <Grid container spacing={1} wrap="nowrap">
             <Grid item>
               <CheckCircleOutlineIcon fontSize="small" color="primary" />
             </Grid>
@@ -45,13 +45,23 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
               </Typography>
             </Grid>
           </Grid>
-          <Grid container spacing={1}>
+          <Grid container spacing={1} wrap="nowrap">
             <Grid item>
               <CheckCircleOutlineIcon fontSize="small" color="primary" />
             </Grid>
             <Grid item>
               <Typography fontWeight={500}>
-                Depósito a tu cuenta bancaria en USD ó<br /> GTQ en menos de 24 horas
+                Depósito a tu cuenta bancaria en USD ó GTQ en menos de 24 horas
+              </Typography>
+            </Grid>
+          </Grid>
+          <Grid container spacing={1} wrap="nowrap">
+            <Grid item>
+              <CheckCircleOutlineIcon fontSize="small" color="primary" />
+            </Grid>
+            <Grid item>
+              <Typography fontWeight={500}>
+                Hasta US$10,000.00 de límite de retiro mensual. <sup>[1]</sup>
               </Typography>
             </Grid>
           </Grid>
