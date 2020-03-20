@@ -1,12 +1,14 @@
 {
   "name": "@ibexcm/database",
-  "version": "1.0.0",
-  "private": true,
+  "version": "1.0.2",
   "description": "IBEXCM Database",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "author": "netpoe",
   "license": "MIT",
+  "files": [
+    "lib/**/*"
+  ],
   "scripts": {
     "build": "npm run deploy && npm run generate && npm run compile",
     "compile": "npm run clean && tsc",
@@ -23,5 +25,8 @@
     "convict": "^5.2.0",
     "graphql": "14.6.0",
     "prisma-client-lib": "^1.30.4"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/"
   }
 }
