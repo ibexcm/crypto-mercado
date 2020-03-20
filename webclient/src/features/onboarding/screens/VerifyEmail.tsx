@@ -79,13 +79,14 @@ const Component: React.FC<IVerifyEmailProps> = ({
     try {
       await executeVerifyEmailMutation(input);
       setTimeout(() => {
+        setIsVerifying(false);
         history.push(routes.onboarding.setPassword);
       }, 5000);
     } catch (error) {
       console.error(error);
       setError(error);
+      setIsVerifying(false);
     }
-    setIsVerifying(false);
   };
 
   const getState = () => {

@@ -25,6 +25,11 @@ export class OnboardingRepository {
     this.AuthTokenRepository = AuthTokenRepository;
   }
 
+  reset(): this {
+    this.AuthTokenRepository.deleteAuthToken();
+    return this;
+  }
+
   useSendPhoneNumberVerificationCodeMutation(): {
     execute: (args: MutationSendPhoneNumberVerificationCodeArgs) => Promise<void>;
   } {

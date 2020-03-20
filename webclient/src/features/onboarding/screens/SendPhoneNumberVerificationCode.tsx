@@ -31,6 +31,10 @@ const Component: React.FC<ISendPhoneNumberVerificationCodeProps> = ({
     },
   });
 
+  React.useEffect(() => {
+    OnboardingRepository.reset();
+  }, []);
+
   const {
     execute: executeSendPhoneNumberVerificationCodeMutation,
   } = OnboardingRepository.useSendPhoneNumberVerificationCodeMutation();

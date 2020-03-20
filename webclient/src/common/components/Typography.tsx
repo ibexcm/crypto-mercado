@@ -7,13 +7,14 @@ import {
   fontSize,
   fontStyle,
   fontWeight,
+  FontWeightProps,
   lineHeight,
   space,
   SpaceProps,
   textAlign,
 } from "styled-system";
 
-type TypographyProps = SpaceProps;
+type TypographyProps = SpaceProps | FontWeightProps;
 
 export const Typography = styled(MUITypography)<TypographyProps>`
   ${space}

@@ -2,6 +2,7 @@ import React from "react";
 import { BrowserRouter as Router, Route } from "react-router-dom";
 import DependencyContext from "./common/contexts/DependencyContext";
 import { GraphQL } from "./features/app/components";
+import { Home } from "./features/home/screens";
 import {
   SendEmailVerificationCode,
   SendPhoneNumberVerificationCode,
@@ -19,7 +20,7 @@ const App: React.FC = () => {
     <DependencyContext.Provider value={dependencies}>
       <GraphQL>
         <Router>
-          {/* <Route path={routes.root} exact component={Upload} /> */}
+          <Route path={routes.root} exact component={Home} />
           <Route
             path={routes.onboarding.sendPhoneNumberVerificationCode}
             exact
