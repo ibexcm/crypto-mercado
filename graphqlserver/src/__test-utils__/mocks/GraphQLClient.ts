@@ -10,8 +10,10 @@ import {
   MutationVerifyPhoneNumberArgs,
   Query,
   QueryGetBanksByCountryArgs,
+  QueryGetCurrenciesByCountryArgs,
 } from "@ibexcm/libraries/api";
 import { GetBanksByCountryQuery } from "@ibexcm/libraries/api/bank";
+import { GetCurrenciesByCountryQuery } from "@ibexcm/libraries/api/currency";
 import {
   AuthenticateMutation,
   SendEmailVerificationCodeMutation,
@@ -73,6 +75,13 @@ const user = async (authToken: string) => {
 const getBanksByCountry = async (args: QueryGetBanksByCountryArgs) => {
   return query<QueryGetBanksByCountryArgs, Pick<Query, "getBanksByCountry">>(
     GetBanksByCountryQuery,
+    args,
+  );
+};
+
+const getCurrenciesByCountry = async (args: QueryGetCurrenciesByCountryArgs) => {
+  return query<QueryGetCurrenciesByCountryArgs, Pick<Query, "getCurrenciesByCountry">>(
+    GetCurrenciesByCountryQuery,
     args,
   );
 };
@@ -140,6 +149,7 @@ const GraphQLClient = {
   authenticate,
   user,
   getBanksByCountry,
+  getCurrenciesByCountry,
   verifyPhoneNumber,
   sendPhoneNumberVerificationCode,
   sendEmailVerificationCode,
