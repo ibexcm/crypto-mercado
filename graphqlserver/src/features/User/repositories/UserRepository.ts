@@ -10,7 +10,6 @@ import {
   Session,
 } from "@ibexcm/libraries/api";
 import { CountryPhoneNumberCode } from "@ibexcm/libraries/models/country";
-import { CurrencySymbol } from "@ibexcm/libraries/models/currency";
 import { genSalt, hash } from "bcryptjs";
 import { config } from "../../../config";
 import { ENVType } from "../../../config/models/ENVType";
@@ -89,6 +88,7 @@ export class UserRepository {
           phoneNumber: {
             create: {
               number,
+              verifiedAt: new Date(),
             },
           },
         },
@@ -127,6 +127,7 @@ export class UserRepository {
             email: {
               create: {
                 address,
+                verifiedAt: new Date(),
               },
             },
           },
@@ -205,7 +206,7 @@ export class UserRepository {
 
   async setBankAccount(
     {
-      args: { fullName, accountNumber, bankID, bankAccountType },
+      args: { fullName, accountNumber, bankID, currencyID, bankAccountType },
     }: MutationSetBankAccountArgs,
     user: User,
   ): Promise<Session> {
@@ -218,7 +219,7 @@ export class UserRepository {
           create: {
             currency: {
               connect: {
-                symbol: CurrencySymbol.GTQ,
+                id: currencyID,
               },
             },
             guatemala: {

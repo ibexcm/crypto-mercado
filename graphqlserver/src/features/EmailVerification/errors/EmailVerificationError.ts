@@ -15,7 +15,7 @@ const maxAttemptsReachedError = new ApolloError(
   EmailVerificationErrorCode.maxAttemptsReached,
 );
 
-export const SMSVerificationError = {
+export const EmailVerificationError = {
   invalidEmailAddressError,
   maxAttemptsReachedError,
 };

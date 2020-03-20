@@ -1,8 +1,9 @@
-# import User, Bank from "@ibexcm/database/generated/prisma.graphql"
+# import User, Bank, Currency from "@ibexcm/database/generated/prisma.graphql"
 
 type Query {
   user: User!
   getBanksByCountry(args: GetBanksByCountryInput!): [Bank!]!
+  getCurrenciesByCountry(args: GetCurrenciesByCountryInput!): [Currency!]!
 }
 
 type Mutation {
@@ -28,10 +29,15 @@ input GetBanksByCountryInput {
   countryID: String!
 }
 
+input GetCurrenciesByCountryInput {
+  countryID: String!
+}
+
 input SetBankAccountInput {
   accountNumber: String!
   fullName: String!
   bankID: String!
+  currencyID: String!
   bankAccountType: String!
 }
 

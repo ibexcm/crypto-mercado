@@ -5,3 +5,6 @@ generates:
   ../libraries/api/index.ts:
     plugins:
       - "typescript"
+  ../webclient/src/libraries/api/index.ts:
+    plugins:
+      - "typescript"

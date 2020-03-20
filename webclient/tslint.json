@@ -1,0 +1,25 @@
+{
+  "extends": ["tslint:recommended"],
+  "rules": {
+    "object-literal-key-quotes": false,
+    "object-literal-sort-keys": false,
+    "no-unused-variable": false,
+    "no-unused-expressions": false,
+    "@typescript-eslint/no-unused-expressions": "off",
+    "no-empty-interface": false,
+    "no-any": false,
+    "prefer-array-literal": [
+      true,
+      {
+        "allow-type-parameters": true
+      }
+    ],
+    "variable-name": [
+      true,
+      "ban-keywords",
+      "check-format",
+      "allow-pascal-case",
+      "allow-leading-underscore"
+    ]
+  }
+}

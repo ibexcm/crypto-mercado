@@ -54,12 +54,17 @@ describe("setBankAccount", () => {
       data: { getBanksByCountry },
     } = await GraphQLClient.getBanksByCountry({ args: { countryID } });
 
+    const {
+      data: { getCurrenciesByCountry },
+    } = await GraphQLClient.getCurrenciesByCountry({ args: { countryID } });
+
     const [{ id: bankID }] = getBanksByCountry;
+    const [{ id: currencyID }] = getCurrenciesByCountry;
 
     const {
       data: { setBankAccount },
     } = await GraphQLClient.setBankAccount(
-      { args: { fullName, accountNumber, bankID, bankAccountType } },
+      { args: { fullName, accountNumber, bankID, currencyID, bankAccountType } },
       token,
     );
 
@@ -80,7 +85,7 @@ describe("setBankAccount", () => {
 
     expect(setBankAccount.token).toBeDefined();
     expect(bankAccounts).toHaveLength(1);
-    expect(currency.id).toBeDefined();
+    expect(currency.id).toEqual(currencyID);
     expect(guatemalaBankAccount.fullName).toEqual(fullName);
     expect(guatemalaBankAccount.accountNumber).toEqual(
       transformGuatemalaAccountNumber(accountNumber),

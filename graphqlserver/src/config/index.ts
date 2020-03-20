@@ -14,7 +14,7 @@ const configuration = convict({
     verifiedPhoneNumbers: {
       doc: "Phone numbers that will authenticate without verification.",
       format: Array,
-      default: new Array(9).fill("+502495087").map((n, i) => `${n}0${i}`),
+      default: new Array(9).fill("+000000000").map((n, i) => `${n}0${i}`),
       env: "VERIFIED_PHONE_NUMBERS",
       arg: "verified-phone-numbers",
     },

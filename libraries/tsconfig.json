@@ -1,8 +1,8 @@
 {
   "compilerOptions": {
     "baseUrl": ".",
-    "target": "ES2018",
-    "module": "commonjs",
+    "target": "es5",
+    "module": "esnext",
     "moduleResolution": "node",
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
@@ -13,5 +13,5 @@
     "declaration": true,
     "pretty": true
   },
-  "exclude": ["node_modules", "lib", "generated", "**/archive"]
+  "exclude": ["node_modules", "lib"]
 }
