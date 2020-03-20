@@ -1,16 +1,21 @@
-import { MutationResult, useMutation } from "@apollo/client";
+import { LazyQueryResult, MutationResult, useLazyQuery, useMutation } from "@apollo/client";
 import {
   Mutation,
   MutationSendEmailVerificationCodeArgs,
   MutationSendPhoneNumberVerificationCodeArgs,
+  MutationSetBankAccountArgs,
   MutationSetPasswordArgs,
   MutationUploadGovernmentIdArgs,
   MutationVerifyEmailArgs,
   MutationVerifyPhoneNumberArgs,
+  Query,
+  QueryGetBanksByCountryArgs,
 } from "@ibexcm/libraries/api";
+import { GetBanksByCountryQuery } from "@ibexcm/libraries/api/bank";
 import {
   SendEmailVerificationCodeMutation,
   SendPhoneNumberVerificationCodeMutation,
+  SetBankAccountMutation,
   SetPasswordMutation,
   UploadGovernmentIDMutation,
   VerifyEmailMutation,
@@ -202,5 +207,46 @@ export class OnboardingRepository {
         this.AuthTokenRepository.setAuthToken(token as string);
       },
     };
+  }
+
+  useSetBankAccountMutation(): {
+    execute: (args: MutationSetBankAccountArgs) => Promise<void>;
+  } {
+    const [execute] = useMutation(SetBankAccountMutation);
+
+    return {
+      execute: async args => {
+        const {
+          data,
+          error,
+        }: Partial<MutationResult<Pick<Mutation, "setBankAccount">>> = await execute({
+          variables: args,
+        });
+
+        if (Boolean(error) || !Boolean(data?.setBankAccount)) {
+          throw new Error("No pudimos vincular tu cuenta de banco.");
+        }
+
+        const {
+          setBankAccount: { token },
+        } = data as Pick<Mutation, "setBankAccount">;
+
+        this.AuthTokenRepository.setAuthToken(token as string);
+      },
+    };
+  }
+
+  useGetBanksByCountryQuery(): [
+    (args: QueryGetBanksByCountryArgs) => Promise<void>,
+    LazyQueryResult<Pick<Query, "getBanksByCountry">, QueryGetBanksByCountryArgs>,
+  ] {
+    const [execute, state] = useLazyQuery<
+      Pick<Query, "getBanksByCountry">,
+      QueryGetBanksByCountryArgs
+    >(GetBanksByCountryQuery);
+
+    const executeGetBanksByCountry = async args => execute({ variables: args });
+
+    return [executeGetBanksByCountry, state];
   }
 }

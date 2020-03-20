@@ -6,6 +6,7 @@ import { Home } from "./features/home/screens";
 import {
   SendEmailVerificationCode,
   SendPhoneNumberVerificationCode,
+  SetBankAccount,
   SetPassword,
   UploadGovernmentID,
   VerifyEmail,
@@ -43,6 +44,7 @@ const App: React.FC = () => {
             exact
             component={UploadGovernmentID}
           />
+          <Route path={routes.onboarding.setBankAccount} exact component={SetBankAccount} />
         </Router>
       </GraphQL>
     </DependencyContext.Provider>
