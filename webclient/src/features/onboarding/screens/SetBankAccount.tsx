@@ -83,19 +83,22 @@ const Component: React.FC<Props> = ({ classes, history, match, ...props }) => {
 
   const onSetAccountNumber = (event: React.ChangeEvent<HTMLInputElement>) => {
     const accountNumber = event.target.value;
-    setInput({ ...input, args: { accountNumber } });
+    setInput({ args: { ...input.args, accountNumber } });
   };
+
   const onSetFullName = (event: React.ChangeEvent<HTMLInputElement>) => {
     const fullName = event.target.value;
-    setInput({ ...input, args: { fullName } });
+    setInput({ args: { ...input.args, fullName } });
   };
-  const onSetBankID = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const bankID = event.target.value;
-    setInput({ ...input, args: { bankID } });
+
+  const onSetBankID = (event: React.ChangeEvent<{ name?: string; value: unknown }>) => {
+    const bankID = event.target.value as string;
+    setInput({ args: { ...input.args, bankID } });
   };
+
   const onSetBankAccountType = (event: React.ChangeEvent<HTMLInputElement>) => {
     const bankAccountType = event.target.value;
-    setInput({ ...input, args: { bankAccountType } });
+    setInput({ args: { ...input.args, bankAccountType } });
   };
 
   const onKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
