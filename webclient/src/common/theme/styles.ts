@@ -1,6 +1,10 @@
 import { Theme } from "@material-ui/core";
 
 export const styles = (theme: Theme) => ({
+  drawerContainer: {
+    backgroundColor: "white",
+    display: "flex",
+  },
   backdrop: {
     zIndex: theme.zIndex.drawer + 1,
     color: "#fff",

@@ -60,7 +60,7 @@ const Component: React.FC<ISendEmailVerificationCodeProps> = ({
   };
 
   return (
-    <Box display="flex">
+    <Box className={classes.drawerContainer}>
       <Modal
         onClose={() => {
           setIsModalOpen(false);
@@ -72,7 +72,7 @@ const Component: React.FC<ISendEmailVerificationCodeProps> = ({
         </Box>
       </Modal>
       <StepsSidebar />
-      <Container maxWidth="xl">
+      <Container maxWidth="xs">
         <MobileAppBar />
         <ToolbarPadding />
         <Box mb={4}>

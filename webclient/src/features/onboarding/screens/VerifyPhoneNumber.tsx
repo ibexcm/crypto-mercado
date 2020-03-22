@@ -7,6 +7,7 @@ import React from "react";
 import { RouteComponentProps, StaticContext } from "react-router";
 import {
   Button,
+  InputErrorBox,
   StepsSidebar,
   TextField,
   ToolbarPadding,
@@ -31,6 +32,7 @@ const Component: React.FC<IVerifyPhoneNumberProps> = ({
 }) => {
   const dependencies = React.useContext(DependencyContext);
   const OnboardingRepository = dependencies.provide(OnboardingRepositoryInjectionKeys);
+  const [error, setError] = React.useState<Error | null>(null);
   const [input, setInput] = React.useState<MutationVerifyPhoneNumberArgs>({
     args: {
       number: location.state.number,
@@ -43,10 +45,13 @@ const Component: React.FC<IVerifyPhoneNumberProps> = ({
   } = OnboardingRepository.useVerifyPhoneNumberMutation();
 
   const onVerifyPhoneNumber = async () => {
+    setError(null);
     try {
       await executeVerifyPhoneNumberMutation(input);
       history.push(routes.onboarding.sendEmailVerificationCode);
-    } catch (error) {}
+    } catch (error) {
+      setError(error);
+    }
   };
 
   const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -61,9 +66,9 @@ const Component: React.FC<IVerifyPhoneNumberProps> = ({
   };
 
   return (
-    <Box display="flex">
+    <Box className={classes.drawerContainer}>
       <StepsSidebar />
-      <Container maxWidth="xl">
+      <Container maxWidth="xs">
         <MobileAppBar />
         <ToolbarPadding />
         <Box mb={4}>
@@ -86,6 +91,7 @@ const Component: React.FC<IVerifyPhoneNumberProps> = ({
             type="number"
             mb={3}
           />
+          <InputErrorBox error={error} />
           <Button
             color="primary"
             variant="contained"

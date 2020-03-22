@@ -68,6 +68,7 @@ export const theme = createMuiTheme({
     MuiContainer: {
       root: {
         backgroundColor: "white",
+        minHeight: "100vh",
       },
     },
   },

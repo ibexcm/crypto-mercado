@@ -33,15 +33,11 @@ const Component: React.FC<IStepsSidebarProps> = ({
         justifyContent="space-between"
         height="100%"
       >
-        <AppBar position="relative" elevation={0}>
+        <AppBar position="relative" elevation={0} color="inherit">
           <Toolbar>
             <Box className={classes.logoBox}>
               <Link to={routes.root}>
-                <img
-                  src="/svg/logo-blockchainassetregistry-dark.svg"
-                  width="100%"
-                  height="auto"
-                />
+                <img src="/images/ibex-icon.png" width="100%" height="auto" />
               </Link>
             </Box>
           </Toolbar>
@@ -63,10 +59,9 @@ export const StepsSidebar = withStyles((theme: Theme) => ({
   },
   drawerPaper: {
     width: drawerWidth,
-    backgroundColor: theme.palette.primary.main,
-    color: "white",
+    backgroundColor: "white",
     "& svg": {
-      color: "white",
+      color: theme.palette.primary.main,
     },
     [theme.breakpoints.down("md")]: {
       width: drawerWidthMD,
@@ -77,6 +72,6 @@ export const StepsSidebar = withStyles((theme: Theme) => ({
     display: "flex",
     flexDirection: "column",
     justifyContent: "center",
-    width: 120,
+    width: 63,
   },
 }))(Component);

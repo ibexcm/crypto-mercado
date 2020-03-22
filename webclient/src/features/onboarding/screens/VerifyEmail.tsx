@@ -81,7 +81,7 @@ const Component: React.FC<IVerifyEmailProps> = ({
       setTimeout(() => {
         setIsVerifying(false);
         history.push(routes.onboarding.setPassword);
-      }, 5000);
+      }, 2500);
     } catch (error) {
       console.error(error);
       setError(error);
@@ -122,7 +122,7 @@ const Component: React.FC<IVerifyEmailProps> = ({
   };
 
   return (
-    <Box display="flex">
+    <Box className={classes.drawerContainer}>
       <Modal
         onClose={() => {
           setIsModalOpen(false);
@@ -136,7 +136,7 @@ const Component: React.FC<IVerifyEmailProps> = ({
         </Box>
       </Modal>
       <StepsSidebar />
-      <Container maxWidth="xl">
+      <Container maxWidth="xs">
         <MobileAppBar />
         <ToolbarPadding />
         {getState()}

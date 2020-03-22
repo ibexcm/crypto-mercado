@@ -157,9 +157,9 @@ const Component: React.FC<Props> = ({ classes, history, match, ...props }) => {
   >;
 
   return (
-    <Box display="flex">
+    <Box className={classes.drawerContainer}>
       <StepsSidebar />
-      <Container maxWidth="xl">
+      <Container maxWidth="xs">
         <MobileAppBar />
         <ToolbarPadding />
         <Box mb={4}>

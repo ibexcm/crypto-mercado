@@ -4,7 +4,7 @@ import React from "react";
 
 export const ToolbarPadding = withStyles((theme: Theme) => ({
   toolbar: {
-    ...theme.mixins.toolbar,
+    minHeight: 84,
     [theme.breakpoints.down("sm")]: {
       minHeight: 84,
     },
