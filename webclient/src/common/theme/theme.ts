@@ -60,5 +60,15 @@ export const theme = createMuiTheme({
         },
       },
     },
+    MuiAppBar: {
+      colorDefault: {
+        backgroundColor: "white",
+      },
+    },
+    MuiContainer: {
+      root: {
+        backgroundColor: "white",
+      },
+    },
   },
 });
