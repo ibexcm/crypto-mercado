@@ -1,5 +1,6 @@
 import { MutationSendEmailVerificationCodeArgs } from "@ibexcm/libraries/api";
 import { Box, Container, Theme, withStyles, WithStyles } from "@material-ui/core";
+import MailOutlineIcon from "@material-ui/icons/MailOutline";
 import React from "react";
 import { RouteComponentProps } from "react-router";
 import {
@@ -13,7 +14,7 @@ import {
 } from "../../../common/components";
 import DependencyContext from "../../../common/contexts/DependencyContext";
 import { styles } from "../../../common/theme";
-import { MobileAppBar } from "../components";
+import { MobileAppBar, SidebarNavigation } from "../components";
 import { OnboardingRepositoryInjectionKeys } from "../InjectionKeys";
 
 interface ISendEmailVerificationCodeProps extends WithStyles, RouteComponentProps {}
@@ -21,7 +22,6 @@ interface ISendEmailVerificationCodeProps extends WithStyles, RouteComponentProp
 const Component: React.FC<ISendEmailVerificationCodeProps> = ({
   classes,
   history,
-  match,
   ...props
 }) => {
   const dependencies = React.useContext(DependencyContext);
@@ -67,11 +67,35 @@ const Component: React.FC<ISendEmailVerificationCodeProps> = ({
         }}
         open={isModalOpen}
       >
-        <Box p={2} height="35vh">
-          <Typography>Enviamos un correo a {input.args.address}.</Typography>
+        <Box
+          p={2}
+          height="35vh"
+          display="flex"
+          flexDirection="column"
+          justifyContent="center"
+          alignItems="center"
+        >
+          <Box
+            width={70}
+            height={70}
+            className={classes.emailIconBox}
+            borderRadius="50%"
+            display="flex"
+            flexDirection="column"
+            justifyContent="center"
+            alignItems="center"
+            mb={3}
+          >
+            <MailOutlineIcon fontSize="large" color="primary" />
+          </Box>
+          <Typography align="center">
+            Enviamos un correo a<br /> {input.args.address}.
+          </Typography>
         </Box>
       </Modal>
-      <StepsSidebar />
+      <StepsSidebar>
+        <SidebarNavigation history={history} {...props} />
+      </StepsSidebar>
       <Container maxWidth="xs">
         <MobileAppBar />
         <ToolbarPadding />
@@ -114,4 +138,7 @@ const Component: React.FC<ISendEmailVerificationCodeProps> = ({
 
 export const SendEmailVerificationCode = withStyles((theme: Theme) => ({
   ...styles(theme),
+  emailIconBox: {
+    border: `3px solid ${theme.palette.primary.main}`,
+  },
 }))(Component);

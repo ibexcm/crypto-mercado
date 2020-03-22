@@ -13,7 +13,7 @@ import {
 import DependencyContext from "../../../common/contexts/DependencyContext";
 import { styles } from "../../../common/theme";
 import routes from "../../../routes";
-import { MobileAppBar } from "../components";
+import { MobileAppBar, SidebarNavigation } from "../components";
 import { OnboardingRepositoryInjectionKeys } from "../InjectionKeys";
 
 interface ISendPhoneNumberVerificationCodeProps extends WithStyles, RouteComponentProps {}
@@ -21,7 +21,6 @@ interface ISendPhoneNumberVerificationCodeProps extends WithStyles, RouteCompone
 const Component: React.FC<ISendPhoneNumberVerificationCodeProps> = ({
   classes,
   history,
-  match,
   ...props
 }) => {
   const dependencies = React.useContext(DependencyContext);
@@ -64,7 +63,9 @@ const Component: React.FC<ISendPhoneNumberVerificationCodeProps> = ({
 
   return (
     <Box className={classes.drawerContainer}>
-      <StepsSidebar />
+      <StepsSidebar>
+        <SidebarNavigation history={history} {...props} />
+      </StepsSidebar>
       <Container maxWidth="xs">
         <MobileAppBar />
         <ToolbarPadding />

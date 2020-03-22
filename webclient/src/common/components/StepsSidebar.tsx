@@ -13,12 +13,7 @@ interface IStepsSidebarProps extends WithStyles {
   footer?: any;
 }
 
-const Component: React.FC<IStepsSidebarProps> = ({
-  classes,
-  history,
-  children,
-  footer,
-}) => (
+const Component: React.FC<IStepsSidebarProps> = ({ classes, children, footer }) => (
   <Hidden mdDown>
     <Drawer
       className={classes.drawer}
@@ -27,13 +22,8 @@ const Component: React.FC<IStepsSidebarProps> = ({
         paper: classes.drawerPaper,
       }}
     >
-      <Box
-        display="flex"
-        flexDirection="column"
-        justifyContent="space-between"
-        height="100%"
-      >
-        <AppBar position="relative" elevation={0} color="inherit">
+      <Box display="flex" flexDirection="column" justifyContent="center" height="100%">
+        <AppBar position="absolute" elevation={0} color="inherit">
           <Toolbar>
             <Box className={classes.logoBox}>
               <Link to={routes.root}>
@@ -43,7 +33,8 @@ const Component: React.FC<IStepsSidebarProps> = ({
           </Toolbar>
         </AppBar>
         {children}
-        {footer && footer}
+        {/* {footer && footer} */}
+        <Box></Box>
       </Box>
     </Drawer>
   </Hidden>

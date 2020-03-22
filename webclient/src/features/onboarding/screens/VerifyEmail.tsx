@@ -17,20 +17,14 @@ import {
 import DependencyContext from "../../../common/contexts/DependencyContext";
 import { styles } from "../../../common/theme";
 import routes from "../../../routes";
-import { MobileAppBar } from "../components";
+import { MobileAppBar, SidebarNavigation } from "../components";
 import { OnboardingRepositoryInjectionKeys } from "../InjectionKeys";
 
-interface IVerifyEmailProps
+interface Props
   extends WithStyles,
     RouteComponentProps<{}, StaticContext, SendPhoneNumberVerificationCodeInput> {}
 
-const Component: React.FC<IVerifyEmailProps> = ({
-  classes,
-  history,
-  location,
-  match,
-  ...props
-}) => {
+const Component: React.FC<Props> = ({ classes, history, location, ...props }) => {
   const dependencies = React.useContext(DependencyContext);
   const OnboardingRepository = dependencies.provide(OnboardingRepositoryInjectionKeys);
   const queryParams = new URLSearchParams(location.search);
@@ -135,7 +129,9 @@ const Component: React.FC<IVerifyEmailProps> = ({
           </Typography>
         </Box>
       </Modal>
-      <StepsSidebar />
+      <StepsSidebar>
+        <SidebarNavigation history={history} location={location} {...props} />
+      </StepsSidebar>
       <Container maxWidth="xs">
         <MobileAppBar />
         <ToolbarPadding />

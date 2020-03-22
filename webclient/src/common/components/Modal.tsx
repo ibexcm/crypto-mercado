@@ -27,7 +27,10 @@ const Component: React.FC<Props> = ({ classes, onClose, open, children, ...props
       }}
     >
       <Fade in={open}>
-        <Container maxWidth="xl">
+        <Container
+          maxWidth="xs"
+          style={{ minHeight: "auto", backgroundColor: "transparent" }}
+        >
           <Paper>{children}</Paper>
         </Container>
       </Fade>
