@@ -9,7 +9,7 @@ interface IMobileAppBarProps extends WithStyles {}
 
 const Component: React.FC<IMobileAppBarProps> = ({ classes }) => {
   return (
-    <Hidden smUp>
+    <Hidden smDown>
       <AppBar position="fixed" color="default">
         <Toolbar className={classes.toolbar}>
           <Box className={classes.logoBox}>
@@ -28,7 +28,7 @@ const Component: React.FC<IMobileAppBarProps> = ({ classes }) => {
   );
 };
 
-export const MobileAppBar = withStyles((theme: Theme) => ({
+export const NavBar = withStyles((theme: Theme) => ({
   ...styles(theme),
   logoBox: {
     width: 49,

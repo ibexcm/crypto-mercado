@@ -2,7 +2,9 @@ import { Typography as MUITypography } from "@material-ui/core";
 import styled from "styled-components";
 import {
   color,
+  display,
   flex,
+  FlexProps,
   fontFamily,
   fontSize,
   fontStyle,
@@ -14,9 +16,9 @@ import {
   textAlign,
 } from "styled-system";
 
-type TypographyProps = SpaceProps | FontWeightProps;
+type TypographyProps = SpaceProps | FlexProps | FontWeightProps;
 
-export const Typography = styled(MUITypography)<TypographyProps>`
+export const Typography = styled(MUITypography)<any>`
   ${space}
   ${fontSize}
   ${fontFamily}
@@ -26,4 +28,5 @@ export const Typography = styled(MUITypography)<TypographyProps>`
   ${color}
   ${flex}
   ${textAlign}
+  ${display}
 `;
