@@ -95,6 +95,16 @@ const configuration = convict({
     },
   },
 
+  email: {
+    host: {
+      doc: "Sendgrid email template host",
+      format: "url",
+      default: "http://localhost:3000",
+      env: "SENDGRID_TEMPLATE_HOST",
+      arg: "sendgrid-template-host",
+    },
+  },
+
   twilio: {
     sid: {
       doc: "Twilio Account SID",
@@ -118,40 +128,6 @@ const configuration = convict({
       default: "token",
       env: "TWILIO_TOKEN",
       arg: "twilio-token",
-    },
-  },
-
-  aws: {
-    accessKeyId: {
-      doc: "AWS Access Key ID",
-      format: "*",
-      default: null,
-      env: "AWS_ACCESS_KEY_ID",
-      arg: "aws-access-key-id",
-    },
-
-    secretAccessKey: {
-      doc: "AWS Access Key Secret",
-      format: "*",
-      default: null,
-      env: "AWS_ACCESS_KEY_SECRET",
-      arg: "aws-access-key-secret",
-    },
-
-    region: {
-      doc: "AWS Region",
-      format: "*",
-      default: null,
-      env: "AWS_REGION",
-      arg: "aws-region",
-    },
-
-    profilePictureBucket: {
-      doc: "Bucket for storing profile pictures",
-      format: "*",
-      default: "ziina-profile-pictures-public",
-      env: "PROFILE_PICTURES_BUCKET",
-      arg: "profile-pictures-bucket",
     },
   },
 });

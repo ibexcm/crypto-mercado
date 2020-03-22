@@ -4,6 +4,7 @@ import { EmailVerificationError } from "../errors/EmailVerificationError";
 import { IEmailVerificationRepository } from "../interfaces/IEmailVerificationRepository";
 
 const { sid, aid, token } = config.get("twilio");
+const { host } = config.get("email");
 const { verify } = Twilio(aid, token);
 
 const sendVerificationCode = async (address: string) => {
@@ -14,7 +15,7 @@ const sendVerificationCode = async (address: string) => {
         from: "soporte@ibexcm.com",
         from_name: "IBEX Mercado",
         substitutions: {
-          username: address,
+          url: `${host}/verifica-tu-correo?a=${address}`,
         },
       },
       to: address,
