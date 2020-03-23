@@ -27,13 +27,13 @@ export const styles = (theme: Theme) => ({
     marginLeft: theme.spacing(1),
   },
   sidebarNavigationLink: {
-    color: theme.palette.text.primary,
+    color: "white",
     textDecoration: "none",
   },
   sidebarNavigationSelectedLink: {
-    fontWeight: 700,
+    fontWeight: 900,
     "& p": {
-      fontWeight: 700,
+      fontWeight: 900,
     },
   },
   card: {

@@ -1,5 +1,6 @@
 import { MutationResult, useMutation } from "@apollo/client";
-import { Mutation, MutationAuthenticateArgs } from "@ibexcm/libraries/api";
+import { Mutation, MutationAdminAuthenticateArgs } from "@ibexcm/libraries/api";
+import { AdminAuthenticateMutation } from "@ibexcm/libraries/api/user";
 import { AuthTokenRepository } from "./AuthTokenRepository";
 
 export class AuthenticationRepository {
@@ -9,10 +10,10 @@ export class AuthenticationRepository {
     this.authTokenRepository = authTokenRepository;
   }
 
-  useAuthenticateMutation(): {
-    execute: (args: MutationAuthenticateArgs) => Promise<void>;
+  useAdminAuthenticateMutation(): {
+    execute: (args: MutationAdminAuthenticateArgs) => Promise<void>;
   } {
-    const [execute] = useMutation(Authenticate);
+    const [execute] = useMutation(AdminAuthenticateMutation);
 
     return {
       execute: async args => {
@@ -24,7 +25,7 @@ export class AuthenticationRepository {
         });
 
         if (Boolean(error) || !Boolean(data?.adminAuthenticate)) {
-          throw new Error("No pudimos verificar el SMS");
+          throw new Error("Acceso denegado.");
         }
 
         const {

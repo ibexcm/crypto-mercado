@@ -1,5 +1,5 @@
 import {
-  MutationAuthenticateArgs,
+  MutationAdminAuthenticateArgs,
   SendPhoneNumberVerificationCodeInput,
 } from "@ibexcm/libraries/api";
 import { Box, Container, Grid, Theme, withStyles, WithStyles } from "@material-ui/core";
@@ -13,6 +13,7 @@ import {
 } from "../../../common/components";
 import DependencyContext from "../../../common/contexts/DependencyContext";
 import { styles } from "../../../common/theme";
+import routes from "../../../routes";
 import { NavBar } from "../components";
 import { AuthenticationRepositoryInjectionKeys } from "../InjectionKeys";
 
@@ -26,7 +27,7 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
     AuthenticationRepositoryInjectionKeys,
   );
   const [error, setError] = React.useState<Error | null>(null);
-  const [input, setInput] = React.useState<MutationAuthenticateArgs>({
+  const [input, setInput] = React.useState<MutationAdminAuthenticateArgs>({
     args: {
       address: "",
       password: "",
@@ -35,13 +36,13 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
 
   const {
     execute: executeAdminAuthenticateMutation,
-  } = AuthenticationRepository.useAuthenticateMutation();
+  } = AuthenticationRepository.useAdminAuthenticateMutation();
 
   const onAdminAuthenticate = async () => {
     setError(null);
     try {
       await executeAdminAuthenticateMutation(input);
-      // history.push(routes.onboarding.sendEmailVerificationCode);
+      history.push(routes.kyc.approval);
     } catch (error) {
       setError(error);
     }
@@ -64,7 +65,7 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
   };
 
   return (
-    <Box className={classes.homeContainer}>
+    <Box>
       <Container maxWidth="lg">
         <NavBar />
         <Box
@@ -89,9 +90,8 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
                   mb={3}
                 />
                 <TextField
-                  autoFocus
                   fullWidth
-                  label="Código"
+                  label="Contraseña"
                   variant="outlined"
                   onChange={onChangePassword}
                   onKeyPress={onKeyPress}
