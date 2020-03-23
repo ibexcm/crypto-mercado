@@ -18,7 +18,7 @@ export const theme = createMuiTheme({
       active: "#434343",
     },
     background: {
-      default: "whitesmoke",
+      default: "white",
     },
     primary: {
       light: lighten(0.05, "#044900"),
@@ -67,7 +67,6 @@ export const theme = createMuiTheme({
     },
     MuiContainer: {
       root: {
-        backgroundColor: "white",
         minHeight: "100vh",
       },
     },

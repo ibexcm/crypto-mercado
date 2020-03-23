@@ -1,19 +1,7 @@
-import {
-  sendEmailVerificationCode,
-  sendPhoneNumberVerificationCode,
-  setBankAccount,
-  setPassword,
-  uploadGovernmentID,
-  verifyEmail,
-  verifyPhoneNumber,
-} from "../../features/User/resolvers";
+import { mutations as authenticationMutations } from "../../features/Authentication/resolvers";
+import { mutations as onboardingMutations } from "../../features/Onboarding/resolvers";
 
 export const Mutation = {
-  verifyPhoneNumber,
-  sendPhoneNumberVerificationCode,
-  verifyEmail,
-  sendEmailVerificationCode,
-  setPassword,
-  uploadGovernmentID,
-  setBankAccount,
+  ...onboardingMutations,
+  ...authenticationMutations,
 };

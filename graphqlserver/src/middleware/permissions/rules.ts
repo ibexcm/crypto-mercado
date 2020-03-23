@@ -1,11 +1,16 @@
 import {
+  MutationAdminAuthenticateArgs,
+  MutationAuthenticateArgs,
   MutationSendEmailVerificationCodeArgs,
   MutationSendPhoneNumberVerificationCodeArgs,
   MutationVerifyEmailArgs,
   MutationVerifyPhoneNumberArgs,
+  TUserRole,
 } from "@ibexcm/libraries/api";
+import { compare } from "bcryptjs";
 import { rule } from "graphql-shield";
-import { UserError } from "../../features/User/errors/UserError";
+import { AuthenticationError } from "../../features/Authentication/errors/AuthenticationError";
+import { OnboardingError } from "../../features/Onboarding/errors/OnboardingError";
 import { dbInjectionKey } from "../../InjectionKeys";
 import { IContext } from "../../server/interfaces/IContext";
 
@@ -13,6 +18,127 @@ export const isUser = rule({ cache: true })(
   async (parent, args, { dependencies, request: { auth } }: IContext, info) => {
     const db = dependencies.provide(dbInjectionKey);
     return auth && auth.user && db.$exists.user({ id: auth.user.id });
+  },
+);
+
+export const isKYCApproved = rule({ cache: true })(
+  async (
+    parent,
+    { args: { address } }: MutationAuthenticateArgs,
+    { dependencies, request: { auth } }: IContext,
+    info,
+  ) => {
+    const db = dependencies.provide(dbInjectionKey);
+    const bankAccounts = await db
+      .email({ address })
+      .contact()
+      .user()
+      .bankAccounts();
+
+    if (bankAccounts.length <= 0) {
+      return AuthenticationError.invalidBankAccountError;
+    }
+
+    if (bankAccounts.some(bankAccount => !Boolean(bankAccount.verifiedAt))) {
+      return AuthenticationError.invalidBankAccountError;
+    }
+
+    const profileDocuments = await db
+      .email({ address })
+      .contact()
+      .user()
+      .profile()
+      .documents()
+      .guatemala()
+      .dpi();
+
+    if (profileDocuments.length <= 0) {
+      return AuthenticationError.invalidProfileDocumentError;
+    }
+
+    if (profileDocuments.some(document => !Boolean(document.verifiedAt))) {
+      return AuthenticationError.invalidProfileDocumentError;
+    }
+
+    return true;
+  },
+);
+
+export const isValidPassword = rule({ cache: true })(
+  async (
+    parent,
+    { args: { address, password } }: MutationAuthenticateArgs,
+    { dependencies, request: { auth } }: IContext,
+    info,
+  ) => {
+    const db = dependencies.provide(dbInjectionKey);
+    const account = await db
+      .email({ address })
+      .contact()
+      .user()
+      .account();
+
+    const isPasswordCorrect = await compare(password, account.password);
+    if (!isPasswordCorrect) {
+      return AuthenticationError.invalidPasswordError;
+    }
+
+    return true;
+  },
+);
+
+export const isValidAdminAuthentication = rule({ cache: true })(
+  async (
+    parent,
+    { args: { address, password } }: MutationAdminAuthenticateArgs,
+    { dependencies, request: { auth } }: IContext,
+    info,
+  ) => {
+    const db = dependencies.provide(dbInjectionKey);
+    const role = await db
+      .email({ address })
+      .contact()
+      .user()
+      .role();
+
+    if (role.type !== TUserRole.Admin) {
+      return AuthenticationError.invalidAdminRoleError;
+    }
+
+    const account = await db
+      .email({ address })
+      .contact()
+      .user()
+      .account();
+
+    const isPasswordCorrect = await compare(password, account.password);
+    if (!isPasswordCorrect) {
+      return AuthenticationError.invalidPasswordError;
+    }
+
+    return true;
+  },
+);
+
+export const usernameExists = rule({ cache: true })(
+  async (
+    parent,
+    { args: { address } }: MutationAuthenticateArgs,
+    { dependencies, request: { auth } }: IContext,
+    info,
+  ) => {
+    const db = dependencies.provide(dbInjectionKey);
+    const account = await db
+      .email({ address })
+      .contact()
+      .user()
+      .account();
+
+    if (!Boolean(account)) {
+      return AuthenticationError.invalidUsernameError;
+    }
+
+    return true;
   },
 );
 
@@ -32,7 +158,7 @@ export const isPhoneNumberAvailable = rule({ cache: true })(
       .user();
 
     if (Boolean(user)) {
-      return UserError.phoneNumberExistsError;
+      return OnboardingError.phoneNumberExistsError;
     }
 
     return true;
@@ -53,7 +179,7 @@ export const isEmailAvailable = rule({ cache: true })(
       .user();
 
     if (Boolean(user)) {
-      return UserError.emailExistsError;
+      return OnboardingError.emailExistsError;
     }
 
     return true;

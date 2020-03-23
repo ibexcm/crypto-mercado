@@ -1,30 +1,7 @@
-import {
-  Mutation,
-  MutationAuthenticateArgs,
-  MutationSendEmailVerificationCodeArgs,
-  MutationSendPhoneNumberVerificationCodeArgs,
-  MutationSetBankAccountArgs,
-  MutationSetPasswordArgs,
-  MutationUploadGovernmentIdArgs,
-  MutationVerifyEmailArgs,
-  MutationVerifyPhoneNumberArgs,
-  Query,
-  QueryGetBanksByCountryArgs,
-  QueryGetCurrenciesByCountryArgs,
-} from "@ibexcm/libraries/api";
+import { Mutation, MutationAdminAuthenticateArgs, MutationAuthenticateArgs, MutationSendEmailVerificationCodeArgs, MutationSendPhoneNumberVerificationCodeArgs, MutationSetBankAccountArgs, MutationSetPasswordArgs, MutationUploadGovernmentIdArgs, MutationVerifyEmailArgs, MutationVerifyPhoneNumberArgs, Query, QueryGetBanksByCountryArgs, QueryGetCurrenciesByCountryArgs } from "@ibexcm/libraries/api";
 import { GetBanksByCountryQuery } from "@ibexcm/libraries/api/bank";
 import { GetCurrenciesByCountryQuery } from "@ibexcm/libraries/api/currency";
-import {
-  AuthenticateMutation,
-  SendEmailVerificationCodeMutation,
-  SendPhoneNumberVerificationCodeMutation,
-  SetBankAccountMutation,
-  SetPasswordMutation,
-  UploadGovernmentIDMutation,
-  UserQuery,
-  VerifyEmailMutation,
-  VerifyPhoneNumberMutation,
-} from "@ibexcm/libraries/api/user";
+import { AdminAuthenticateMutation, AuthenticateMutation, SendEmailVerificationCodeMutation, SendPhoneNumberVerificationCodeMutation, SetBankAccountMutation, SetPasswordMutation, UploadGovernmentIDMutation, UserQuery, VerifyEmailMutation, VerifyPhoneNumberMutation } from "@ibexcm/libraries/api/user";
 import { ApolloError } from "apollo-server-errors";
 import axios from "axios";
 import { print } from "graphql";
@@ -66,6 +43,13 @@ const authenticate = async (args: MutationAuthenticateArgs) => {
     MutationAuthenticateArgs,
     Pick<Mutation, "authenticate"> & { errors?: ApolloError[] }
   >(AuthenticateMutation, args);
+};
+
+const adminAuthenticate = async (args: MutationAdminAuthenticateArgs) => {
+  return query<
+    MutationAdminAuthenticateArgs,
+    Pick<Mutation, "adminAuthenticate"> & { errors?: ApolloError[] }
+  >(AdminAuthenticateMutation, args);
 };
 
 const user = async (authToken: string) => {
@@ -147,6 +131,7 @@ const setBankAccount = async (args: MutationSetBankAccountArgs, authToken: strin
 const GraphQLClient = {
   query,
   authenticate,
+  adminAuthenticate,
   user,
   getBanksByCountry,
   getCurrenciesByCountry,

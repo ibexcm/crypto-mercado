@@ -1,5 +1,4 @@
 import { prisma } from "../generated/client";
-import { UserRoleType } from "./models/UserRoleType";
 
 async function createCurrencies() {
   await prisma.createCurrency({
@@ -48,10 +47,10 @@ async function createBanks() {
 
 async function createUserRoles() {
   await prisma.createUserRole({
-    type: UserRoleType.ADMIN,
+    type: "ADMIN",
   });
   await prisma.createUserRole({
-    type: UserRoleType.USER,
+    type: "CUSTOMER",
   });
 }
 

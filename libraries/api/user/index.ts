@@ -1,3 +1,4 @@
+export * from "./AdminAuthenticateMutation";
 export * from "./AuthenticateMutation";
 export * from "./SendEmailVerificationCodeMutation";
 export * from "./SendPhoneNumberVerificationCodeMutation";
