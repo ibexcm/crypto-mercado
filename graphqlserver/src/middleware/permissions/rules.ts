@@ -1,10 +1,7 @@
-import {
-  MutationSendEmailVerificationCodeArgs,
-  MutationSendPhoneNumberVerificationCodeArgs,
-  MutationVerifyEmailArgs,
-  MutationVerifyPhoneNumberArgs,
-} from "@ibexcm/libraries/api";
+import { MutationAuthenticateArgs, MutationSendEmailVerificationCodeArgs, MutationSendPhoneNumberVerificationCodeArgs, MutationVerifyEmailArgs, MutationVerifyPhoneNumberArgs } from "@ibexcm/libraries/api";
+import { compare } from "bcryptjs";
 import { rule } from "graphql-shield";
+import { AuthenticationError } from "../../features/Authentication/errors/AuthenticationError";
 import { OnboardingError } from "../../features/Onboarding/errors/OnboardingError";
 import { dbInjectionKey } from "../../InjectionKeys";
 import { IContext } from "../../server/interfaces/IContext";
@@ -13,6 +10,94 @@ export const isUser = rule({ cache: true })(
   async (parent, args, { dependencies, request: { auth } }: IContext, info) => {
     const db = dependencies.provide(dbInjectionKey);
     return auth && auth.user && db.$exists.user({ id: auth.user.id });
+  },
+);
+
+export const isKYCApproved = rule({ cache: true })(
+  async (
+    parent,
+    { args: { address } }: MutationAuthenticateArgs,
+    { dependencies, request: { auth } }: IContext,
+    info,
+  ) => {
+    const db = dependencies.provide(dbInjectionKey);
+    const bankAccounts = await db
+      .email({ address })
+      .contact()
+      .user()
+      .bankAccounts();
+
+    if (bankAccounts.length <= 0) {
+      return AuthenticationError.invalidBankAccountError;
+    }
+
+    if (bankAccounts.some(bankAccount => !Boolean(bankAccount.verifiedAt))) {
+      return AuthenticationError.invalidBankAccountError;
+    }
+
+    const profileDocuments = await db
+      .email({ address })
+      .contact()
+      .user()
+      .profile()
+      .documents()
+      .guatemala()
+      .dpi();
+
+    if (profileDocuments.length <= 0) {
+      return AuthenticationError.invalidProfileDocumentError;
+    }
+
+    if (profileDocuments.some(document => !Boolean(document.verifiedAt))) {
+      return AuthenticationError.invalidProfileDocumentError;
+    }
+
+    return true;
+  },
+);
+
+export const isValidPassword = rule({ cache: true })(
+  async (
+    parent,
+    { args: { address, password } }: MutationAuthenticateArgs,
+    { dependencies, request: { auth } }: IContext,
+    info,
+  ) => {
+    const db = dependencies.provide(dbInjectionKey);
+    const account = await db
+      .email({ address })
+      .contact()
+      .user()
+      .account();
+
+    const isPasswordCorrect = await compare(password, account.password);
+    if (!isPasswordCorrect) {
+      return AuthenticationError.invalidPasswordError;
+    }
+
+    return true;
+  },
+);
+
+export const usernameExists = rule({ cache: true })(
+  async (
+    parent,
+    { args: { address } }: MutationAuthenticateArgs,
+    { dependencies, request: { auth } }: IContext,
+    info,
+  ) => {
+    const db = dependencies.provide(dbInjectionKey);
+    const account = await db
+      .email({ address })
+      .contact()
+      .user()
+      .account();
+
+    if (!Boolean(account)) {
+      return AuthenticationError.invalidUsernameError;
+    }
+
+    return true;
   },
 );
 

@@ -1,4 +1,4 @@
-import { inputRule, shield } from "graphql-shield";
+import { and, shield } from "graphql-shield";
 import * as rules from "./rules";
 
 export const permissions = shield({
@@ -7,15 +7,7 @@ export const permissions = shield({
   },
 
   Mutation: {
-    authenticate: inputRule(yup =>
-      yup.object({
-        username: yup
-          .string()
-          .min(3)
-          .required("Username must be of at least 3 characters"),
-        password: yup.string().required("Password is required"),
-      }),
-    ),
+    authenticate: and(rules.isKYCApproved, rules.isValidPassword, rules.usernameExists),
     sendPhoneNumberVerificationCode: rules.isPhoneNumberAvailable,
     verifyPhoneNumber: rules.isPhoneNumberAvailable,
     sendEmailVerificationCode: rules.isEmailAvailable,

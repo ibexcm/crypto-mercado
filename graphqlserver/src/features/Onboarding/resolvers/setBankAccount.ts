@@ -1,6 +1,6 @@
 import { MutationSetBankAccountArgs, Session } from "@ibexcm/libraries/api";
 import { IContext } from "../../../server/interfaces/IContext";
-import { userRepositoryInjectionKey } from "../InjectionKeys";
+import { onboardingRepositoryInjectionKey } from "../InjectionKeys";
 
 export async function setBankAccount(
   parent,
@@ -8,6 +8,6 @@ export async function setBankAccount(
   { dependencies, request }: IContext,
   info,
 ): Promise<Session> {
-  const userRepository = dependencies.provide(userRepositoryInjectionKey);
+  const userRepository = dependencies.provide(onboardingRepositoryInjectionKey);
   return await userRepository.setBankAccount(args, request.auth.user);
 }

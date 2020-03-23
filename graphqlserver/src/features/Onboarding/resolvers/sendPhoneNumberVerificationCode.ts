@@ -1,6 +1,6 @@
 import { MutationSendPhoneNumberVerificationCodeArgs } from "@ibexcm/libraries/api";
 import { IContext } from "../../../server/interfaces/IContext";
-import { userRepositoryInjectionKey } from "../InjectionKeys";
+import { onboardingRepositoryInjectionKey } from "../InjectionKeys";
 
 export async function sendPhoneNumberVerificationCode(
   parent,
@@ -8,6 +8,6 @@ export async function sendPhoneNumberVerificationCode(
   { dependencies }: IContext,
   info,
 ): Promise<boolean> {
-  const userRepository = dependencies.provide(userRepositoryInjectionKey);
+  const userRepository = dependencies.provide(onboardingRepositoryInjectionKey);
   return userRepository.sendPhoneNumberVerificationCode(args);
 }

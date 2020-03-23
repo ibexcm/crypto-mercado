@@ -6,8 +6,8 @@ import { sessionRepositoryInjectionKey } from "../Session";
 import { smsVerificationRepositoryInjectionKey } from "../SMSVerification";
 import { OnboardingRepository } from "./repositories/OnboardingRepository";
 
-export const userRepositoryInjectionKey: InjectionKey<OnboardingRepository> = {
-  name: "userRepository",
+export const onboardingRepositoryInjectionKey: InjectionKey<OnboardingRepository> = {
+  name: "OnboardingRepository",
   scope: InjectionKeyScope.singleton,
   closure: dependencies => {
     const db = dependencies.provide(dbInjectionKey);

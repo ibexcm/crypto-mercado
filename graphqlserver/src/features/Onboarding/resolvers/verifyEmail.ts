@@ -1,6 +1,6 @@
 import { MutationVerifyEmailArgs, Session } from "@ibexcm/libraries/api";
 import { IContext } from "../../../server/interfaces/IContext";
-import { userRepositoryInjectionKey } from "../InjectionKeys";
+import { onboardingRepositoryInjectionKey } from "../InjectionKeys";
 
 export async function verifyEmail(
   parent,
@@ -8,6 +8,6 @@ export async function verifyEmail(
   { dependencies, request }: IContext,
   info,
 ): Promise<Session> {
-  const userRepository = dependencies.provide(userRepositoryInjectionKey);
+  const userRepository = dependencies.provide(onboardingRepositoryInjectionKey);
   return await userRepository.verifyEmail(args, request.auth.user);
 }
