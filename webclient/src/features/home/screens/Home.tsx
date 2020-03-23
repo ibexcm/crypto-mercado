@@ -40,10 +40,10 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
             <Grid item lg={7}>
               <Box className={classes.introText}>
                 <Typography variant="h5" fontWeight={500}>
-                  Compra/Venta de Bitcoin
+                  Compra y vende Bitcoin
                 </Typography>
                 <Typography variant="h5" fontWeight={500}>
-                  en Guatemala
+                  en Guatemala.
                 </Typography>
               </Box>
               <Box display="flex" className={classes.currencyPairsRow}>
