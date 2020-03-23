@@ -1,4 +1,4 @@
-import { Prisma, TGuatemalaBankAccount, User, UserRoleType } from "@ibexcm/database";
+import { Prisma, TGuatemalaBankAccount, User } from "@ibexcm/database";
 import {
   MutationSendEmailVerificationCodeArgs,
   MutationSendPhoneNumberVerificationCodeArgs,
@@ -80,7 +80,7 @@ export class OnboardingRepository {
     const user = await this.db.createUser({
       role: {
         connect: {
-          type: UserRoleType.ADMIN,
+          type: "CUSTOMER",
         },
       },
       contact: {

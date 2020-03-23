@@ -7,6 +7,9 @@ export const permissions = shield({
   },
 
   Mutation: {
+    // ADMIN
+    adminAuthenticate: rules.isValidAdminAuthentication,
+
     authenticate: and(rules.isKYCApproved, rules.isValidPassword, rules.usernameExists),
     sendPhoneNumberVerificationCode: rules.isPhoneNumberAvailable,
     verifyPhoneNumber: rules.isPhoneNumberAvailable,

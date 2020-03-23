@@ -1,11 +1,17 @@
 import { ApolloError } from "apollo-server-errors";
 
 export enum AuthenticationErrorCode {
+  invalidAdminRole = "invalidAdminRole",
   invalidUsername = "invalidUsername",
   invalidPassword = "invalidPassword",
   invalidBankAccount = "invalidBankAccount",
   invalidProfileDocument = "invalidProfileDocument",
 }
+
+const invalidAdminRoleError = new ApolloError(
+  "User is not an admin",
+  AuthenticationErrorCode.invalidAdminRole,
+);
 
 const invalidUsernameError = new ApolloError(
   "Username does not exist",
@@ -32,4 +38,5 @@ export const AuthenticationError = {
   invalidPasswordError,
   invalidBankAccountError,
   invalidProfileDocumentError,
+  invalidAdminRoleError,
 };

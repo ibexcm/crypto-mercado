@@ -1,4 +1,12 @@
-import { MutationAuthenticateArgs, MutationSendEmailVerificationCodeArgs, MutationSendPhoneNumberVerificationCodeArgs, MutationVerifyEmailArgs, MutationVerifyPhoneNumberArgs } from "@ibexcm/libraries/api";
+import {
+  MutationAdminAuthenticateArgs,
+  MutationAuthenticateArgs,
+  MutationSendEmailVerificationCodeArgs,
+  MutationSendPhoneNumberVerificationCodeArgs,
+  MutationVerifyEmailArgs,
+  MutationVerifyPhoneNumberArgs,
+  TUserRole,
+} from "@ibexcm/libraries/api";
 import { compare } from "bcryptjs";
 import { rule } from "graphql-shield";
 import { AuthenticationError } from "../../features/Authentication/errors/AuthenticationError";
@@ -64,6 +72,39 @@ export const isValidPassword = rule({ cache: true })(
     info,
   ) => {
     const db = dependencies.provide(dbInjectionKey);
+    const account = await db
+      .email({ address })
+      .contact()
+      .user()
+      .account();
+
+    const isPasswordCorrect = await compare(password, account.password);
+    if (!isPasswordCorrect) {
+      return AuthenticationError.invalidPasswordError;
+    }
+
+    return true;
+  },
+);
+
+export const isValidAdminAuthentication = rule({ cache: true })(
+  async (
+    parent,
+    { args: { address, password } }: MutationAdminAuthenticateArgs,
+    { dependencies, request: { auth } }: IContext,
+    info,
+  ) => {
+    const db = dependencies.provide(dbInjectionKey);
+    const role = await db
+      .email({ address })
+      .contact()
+      .user()
+      .role();
+
+    if (role.type !== TUserRole.Admin) {
+      return AuthenticationError.invalidAdminRoleError;
+    }
+
     const account = await db
       .email({ address })
       .contact()
