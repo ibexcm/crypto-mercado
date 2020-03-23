@@ -4,6 +4,9 @@ export const UserQuery = gql`
   query UserQuery {
     user {
       id
+      role {
+        type
+      }
       account {
         clientID
       }

@@ -1,5 +1,9 @@
 import { Prisma } from "@ibexcm/database";
-import { MutationAuthenticateArgs, Session } from "@ibexcm/libraries/api";
+import {
+  MutationAdminAuthenticateArgs,
+  MutationAuthenticateArgs,
+  Session,
+} from "@ibexcm/libraries/api";
 import { ISessionRepository } from "../../Session/interfaces/ISessionRepository";
 
 export class AuthenticationRepository {
@@ -14,6 +18,17 @@ export class AuthenticationRepository {
   async authenticate({
     args: { address, password },
   }: MutationAuthenticateArgs): Promise<Session> {
+    const user = await this.db
+      .email({ address })
+      .contact()
+      .user();
+
+    return await this.sessionRepository.createAuthenticationSession(user);
+  }
+
+  async adminAuthenticate({
+    args: { address },
+  }: MutationAdminAuthenticateArgs): Promise<Session> {
     const user = await this.db
       .email({ address })
       .contact()

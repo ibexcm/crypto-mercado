@@ -18,6 +18,10 @@ type Mutation {
 
   # AUTHENTICATION
   authenticate(args: AuthenticateInput!): Session!
+
+  # ADMIN
+  # AUTHENTICATION: admin* must be the prefix for admin endpoints
+  adminAuthenticate(args: AdminAuthenticateInput!): Session!
 }
 
 type Session {
@@ -68,6 +72,11 @@ input SendEmailVerificationCodeInput {
 }
 
 input AuthenticateInput {
+  address: String!
+  password: String!
+}
+
+input AdminAuthenticateInput {
   address: String!
   password: String!
 }
