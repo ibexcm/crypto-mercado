@@ -16,7 +16,7 @@ type UserRole {
 
 enum TUserRole {
   ADMIN
-  USER
+  CUSTOMER
 }
 
 type Country {
