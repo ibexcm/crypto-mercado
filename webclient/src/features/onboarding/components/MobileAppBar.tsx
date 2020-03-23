@@ -9,27 +9,32 @@ interface IMobileAppBarProps extends WithStyles {}
 
 const Component: React.FC<IMobileAppBarProps> = ({ classes }) => {
   return (
-    <Hidden smUp>
-      <AppBar position="fixed" color="default">
-        <Toolbar className={classes.toolbar}>
-          <Box className={classes.logoBox}>
+    <AppBar position="fixed" color="default" className={classes.mobileNavBar}>
+      <Toolbar className={classes.toolbar}>
+        <Box className={classes.logoBox}>
+          <Hidden smUp>
             <Link to={routes.root}>
               <img src="/images/ibex-icon.png" width="100%" height="auto" />
             </Link>
-          </Box>
-          <Box className={classes.some}>
-            <Link to={routes.root} className={classes.navBarLink}>
-              INICIAR SESIÓN
-            </Link>
-          </Box>
-        </Toolbar>
-      </AppBar>
-    </Hidden>
+          </Hidden>
+        </Box>
+        <Box className={classes.some}>
+          <Link to={routes.root} className={classes.navBarLink}>
+            INICIAR SESIÓN
+          </Link>
+        </Box>
+      </Toolbar>
+    </AppBar>
   );
 };
 
 export const MobileAppBar = withStyles((theme: Theme) => ({
   ...styles(theme),
+  mobileNavBar: {
+    [theme.breakpoints.up("sm")]: {
+      boxShadow: "none",
+    },
+  },
   logoBox: {
     width: 49,
     flexDirection: "column",

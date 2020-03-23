@@ -28,12 +28,12 @@ import { styles } from "../../../common/theme";
 import { UserRepositoryInjectionKeys } from "../../../features/user/InjectionKeys";
 import { MutationSetBankAccountArgs, TGuatemalaBankAccount } from "../../../libraries/api";
 import routes from "../../../routes";
-import { MobileAppBar } from "../components";
+import { MobileAppBar, SidebarNavigation } from "../components";
 import { OnboardingRepositoryInjectionKeys } from "../InjectionKeys";
 
 interface Props extends WithStyles, RouteComponentProps {}
 
-const Component: React.FC<Props> = ({ classes, history, match, ...props }) => {
+const Component: React.FC<Props> = ({ classes, history, ...props }) => {
   const dependencies = React.useContext(DependencyContext);
   const OnboardingRepository = dependencies.provide(OnboardingRepositoryInjectionKeys);
   const UserRepository = dependencies.provide(UserRepositoryInjectionKeys);
@@ -111,6 +111,7 @@ const Component: React.FC<Props> = ({ classes, history, match, ...props }) => {
   }
 
   const onSetBankAccount = async () => {
+    setError(null);
     try {
       await executeSetPasswordMutation(input);
       history.push(routes.onboarding.done);
@@ -146,6 +147,12 @@ const Component: React.FC<Props> = ({ classes, history, match, ...props }) => {
     setInput({ args: { ...input.args, bankAccountType } });
   };
 
+  const onKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "Enter") {
+      onSetBankAccount();
+    }
+  };
+
   const { getBanksByCountry: banks } = getBanksByCountryData as Pick<
     Query,
     "getBanksByCountry"
@@ -157,9 +164,11 @@ const Component: React.FC<Props> = ({ classes, history, match, ...props }) => {
   >;
 
   return (
-    <Box display="flex">
-      <StepsSidebar />
-      <Container maxWidth="xl">
+    <Box className={classes.drawerContainer}>
+      <StepsSidebar>
+        <SidebarNavigation history={history} {...props} />
+      </StepsSidebar>
+      <Container maxWidth="xs">
         <MobileAppBar />
         <ToolbarPadding />
         <Box mb={4}>
@@ -227,6 +236,7 @@ const Component: React.FC<Props> = ({ classes, history, match, ...props }) => {
             placeholder="eg. 01-234567-89"
             variant="outlined"
             onChange={onSetAccountNumber}
+            onKeyPress={onKeyPress}
             value={input.args.accountNumber}
             type="number"
           />
@@ -237,6 +247,7 @@ const Component: React.FC<Props> = ({ classes, history, match, ...props }) => {
             label="Nombre completo"
             variant="outlined"
             onChange={onSetFullName}
+            onKeyPress={onKeyPress}
             value={input.args.fullName}
           />
         </Box>

@@ -7,6 +7,7 @@ import React from "react";
 import { RouteComponentProps, StaticContext } from "react-router";
 import {
   Button,
+  InputErrorBox,
   StepsSidebar,
   TextField,
   ToolbarPadding,
@@ -15,7 +16,7 @@ import {
 import DependencyContext from "../../../common/contexts/DependencyContext";
 import { styles } from "../../../common/theme";
 import routes from "../../../routes";
-import { MobileAppBar } from "../components";
+import { MobileAppBar, SidebarNavigation } from "../components";
 import { OnboardingRepositoryInjectionKeys } from "../InjectionKeys";
 
 interface IVerifyPhoneNumberProps
@@ -26,11 +27,11 @@ const Component: React.FC<IVerifyPhoneNumberProps> = ({
   classes,
   history,
   location,
-  match,
   ...props
 }) => {
   const dependencies = React.useContext(DependencyContext);
   const OnboardingRepository = dependencies.provide(OnboardingRepositoryInjectionKeys);
+  const [error, setError] = React.useState<Error | null>(null);
   const [input, setInput] = React.useState<MutationVerifyPhoneNumberArgs>({
     args: {
       number: location.state.number,
@@ -43,10 +44,13 @@ const Component: React.FC<IVerifyPhoneNumberProps> = ({
   } = OnboardingRepository.useVerifyPhoneNumberMutation();
 
   const onVerifyPhoneNumber = async () => {
+    setError(null);
     try {
       await executeVerifyPhoneNumberMutation(input);
       history.push(routes.onboarding.sendEmailVerificationCode);
-    } catch (error) {}
+    } catch (error) {
+      setError(error);
+    }
   };
 
   const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -61,9 +65,11 @@ const Component: React.FC<IVerifyPhoneNumberProps> = ({
   };
 
   return (
-    <Box display="flex">
-      <StepsSidebar />
-      <Container maxWidth="xl">
+    <Box className={classes.drawerContainer}>
+      <StepsSidebar>
+        <SidebarNavigation history={history} location={location} {...props} />
+      </StepsSidebar>
+      <Container maxWidth="xs">
         <MobileAppBar />
         <ToolbarPadding />
         <Box mb={4}>
@@ -86,6 +92,7 @@ const Component: React.FC<IVerifyPhoneNumberProps> = ({
             type="number"
             mb={3}
           />
+          <InputErrorBox error={error} />
           <Button
             color="primary"
             variant="contained"

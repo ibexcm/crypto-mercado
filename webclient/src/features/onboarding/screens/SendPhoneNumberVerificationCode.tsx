@@ -4,6 +4,7 @@ import React from "react";
 import { RouteComponentProps } from "react-router";
 import {
   Button,
+  InputErrorBox,
   StepsSidebar,
   TextField,
   ToolbarPadding,
@@ -12,7 +13,7 @@ import {
 import DependencyContext from "../../../common/contexts/DependencyContext";
 import { styles } from "../../../common/theme";
 import routes from "../../../routes";
-import { MobileAppBar } from "../components";
+import { MobileAppBar, SidebarNavigation } from "../components";
 import { OnboardingRepositoryInjectionKeys } from "../InjectionKeys";
 
 interface ISendPhoneNumberVerificationCodeProps extends WithStyles, RouteComponentProps {}
@@ -20,11 +21,11 @@ interface ISendPhoneNumberVerificationCodeProps extends WithStyles, RouteCompone
 const Component: React.FC<ISendPhoneNumberVerificationCodeProps> = ({
   classes,
   history,
-  match,
   ...props
 }) => {
   const dependencies = React.useContext(DependencyContext);
   const OnboardingRepository = dependencies.provide(OnboardingRepositoryInjectionKeys);
+  const [error, setError] = React.useState<Error | null>(null);
   const [input, setInput] = React.useState<MutationSendPhoneNumberVerificationCodeArgs>({
     args: {
       number: "+502",
@@ -40,10 +41,13 @@ const Component: React.FC<ISendPhoneNumberVerificationCodeProps> = ({
   } = OnboardingRepository.useSendPhoneNumberVerificationCodeMutation();
 
   const onSendVerificationCode = async () => {
+    setError(null);
     try {
       await executeSendPhoneNumberVerificationCodeMutation(input);
       history.push(routes.onboarding.verifyPhoneNumber, { number: input.args.number });
-    } catch (error) {}
+    } catch (error) {
+      setError(error);
+    }
   };
 
   const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -58,9 +62,11 @@ const Component: React.FC<ISendPhoneNumberVerificationCodeProps> = ({
   };
 
   return (
-    <Box display="flex">
-      <StepsSidebar />
-      <Container maxWidth="xl">
+    <Box className={classes.drawerContainer}>
+      <StepsSidebar>
+        <SidebarNavigation history={history} {...props} />
+      </StepsSidebar>
+      <Container maxWidth="xs">
         <MobileAppBar />
         <ToolbarPadding />
         <Box mb={4}>
@@ -81,6 +87,7 @@ const Component: React.FC<ISendPhoneNumberVerificationCodeProps> = ({
             type="tel"
             mb={3}
           />
+          <InputErrorBox error={error} />
           <Button
             color="primary"
             variant="contained"

@@ -25,113 +25,123 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
   };
 
   return (
-    <Container maxWidth="xl">
-      <MobileNavBar />
-      <NavBar />
-      <Box minHeight="100vh" flexDirection="column" display="flex" justifyContent="center">
-        <ToolbarPadding />
-        <Grid container>
-          <Grid item lg={6}>
-            <Box className={classes.introText}>
-              <Typography variant="h5" fontWeight={500}>
-                Compra/Venta de Bitcoin
-              </Typography>
-              <Typography variant="h5" fontWeight={500}>
-                en Guatemala
-              </Typography>
-            </Box>
-            <Box display="flex" className={classes.currencyPairsRow}>
-              <Typography
-                mr={2}
-                color="textSecondary"
-                variant="h5"
-                className={classes.currencyPairText}
+    <Box className={classes.homeContainer}>
+      <Container maxWidth="lg">
+        <MobileNavBar />
+        <NavBar />
+        <Box
+          minHeight="100vh"
+          flexDirection="column"
+          display="flex"
+          justifyContent="center"
+        >
+          <ToolbarPadding />
+          <Grid container>
+            <Grid item lg={7}>
+              <Box className={classes.introText}>
+                <Typography variant="h5" fontWeight={500}>
+                  Compra y vende Bitcoin
+                </Typography>
+                <Typography variant="h5" fontWeight={500}>
+                  en Guatemala.
+                </Typography>
+              </Box>
+              <Box display="flex" className={classes.currencyPairsRow}>
+                <Typography
+                  mr={2}
+                  color="textSecondary"
+                  variant="h5"
+                  className={classes.currencyPairText}
+                >
+                  GTQ
+                  <SwapHorizIcon fontSize="large" />
+                  BTC
+                </Typography>
+                <Typography
+                  color="textSecondary"
+                  variant="h5"
+                  className={classes.currencyPairText}
+                >
+                  USD
+                  <SwapHorizIcon fontSize="large" />
+                  BTC
+                </Typography>
+              </Box>
+              <Box mb={6} mt={3}>
+                <Grid container spacing={1} wrap="nowrap">
+                  <Grid item>
+                    <CheckCircleOutlineIcon fontSize="small" color="primary" />
+                  </Grid>
+                  <Grid item>
+                    <Typography fontWeight={500} gutterBottom>
+                      Sin custodia de tus llaves privadas
+                    </Typography>
+                  </Grid>
+                </Grid>
+                <Grid container spacing={1} wrap="nowrap">
+                  <Grid item>
+                    <CheckCircleOutlineIcon fontSize="small" color="primary" />
+                  </Grid>
+                  <Grid item>
+                    <Typography fontWeight={500} gutterBottom>
+                      Compra BTC desde Q.1000,00
+                    </Typography>
+                  </Grid>
+                </Grid>
+                <Grid container spacing={1} wrap="nowrap">
+                  <Grid item>
+                    <CheckCircleOutlineIcon fontSize="small" color="primary" />
+                  </Grid>
+                  <Grid item>
+                    <Typography fontWeight={500}>
+                      Depósito a tu cuenta bancaria en menos de 24 horas
+                    </Typography>
+                  </Grid>
+                </Grid>
+                <Grid container spacing={1} wrap="nowrap">
+                  <Grid item>
+                    <CheckCircleOutlineIcon fontSize="small" color="primary" />
+                  </Grid>
+                  <Grid item>
+                    <Typography fontWeight={500}>
+                      Hasta US$10,000.00 de límite de retiro mensual. <sup>[1]</sup>
+                    </Typography>
+                  </Grid>
+                </Grid>
+                <Grid container spacing={1} wrap="nowrap">
+                  <Grid item>
+                    <CheckCircleOutlineIcon fontSize="small" color="primary" />
+                  </Grid>
+                  <Grid item>
+                    <Typography fontWeight={500} gutterBottom>
+                      Hasta 1.5% TRM
+                    </Typography>
+                  </Grid>
+                </Grid>
+              </Box>
+              <Button
+                color="primary"
+                variant="contained"
+                fullWidth
+                size="large"
+                onClick={onCreateAccount}
+                className={classes.ctaButton}
               >
-                GTQ
-                <SwapHorizIcon fontSize="large" />
-                BTC
-              </Typography>
-              <Typography
-                color="textSecondary"
-                variant="h5"
-                className={classes.currencyPairText}
-              >
-                USD
-                <SwapHorizIcon fontSize="large" />
-                BTC
-              </Typography>
-            </Box>
-            <Box mb={6} mt={3}>
-              <Grid container spacing={1} wrap="nowrap">
-                <Grid item>
-                  <CheckCircleOutlineIcon fontSize="small" color="primary" />
-                </Grid>
-                <Grid item>
-                  <Typography fontWeight={500} gutterBottom>
-                    Sin custodia de tus llaves privadas
-                  </Typography>
-                </Grid>
-              </Grid>
-              <Grid container spacing={1} wrap="nowrap">
-                <Grid item>
-                  <CheckCircleOutlineIcon fontSize="small" color="primary" />
-                </Grid>
-                <Grid item>
-                  <Typography fontWeight={500} gutterBottom>
-                    Compra BTC desde Q.1000,00
-                  </Typography>
-                </Grid>
-              </Grid>
-              <Grid container spacing={1} wrap="nowrap">
-                <Grid item>
-                  <CheckCircleOutlineIcon fontSize="small" color="primary" />
-                </Grid>
-                <Grid item>
-                  <Typography fontWeight={500}>
-                    Depósito a tu cuenta bancaria en menos de 24 horas
-                  </Typography>
-                </Grid>
-              </Grid>
-              <Grid container spacing={1} wrap="nowrap">
-                <Grid item>
-                  <CheckCircleOutlineIcon fontSize="small" color="primary" />
-                </Grid>
-                <Grid item>
-                  <Typography fontWeight={500}>
-                    Hasta US$10,000.00 de límite de retiro mensual. <sup>[1]</sup>
-                  </Typography>
-                </Grid>
-              </Grid>
-              <Grid container spacing={1} wrap="nowrap">
-                <Grid item>
-                  <CheckCircleOutlineIcon fontSize="small" color="primary" />
-                </Grid>
-                <Grid item>
-                  <Typography fontWeight={500} gutterBottom>
-                    Hasta 1.5% TRM
-                  </Typography>
-                </Grid>
-              </Grid>
-            </Box>
-            <Button
-              color="primary"
-              variant="contained"
-              fullWidth
-              size="large"
-              onClick={onCreateAccount}
-              className={classes.ctaButton}
-            >
-              Crea una cuenta
-            </Button>
+                Crea una cuenta
+              </Button>
+            </Grid>
           </Grid>
-        </Grid>
-      </Box>
-    </Container>
+        </Box>
+      </Container>
+    </Box>
   );
 };
 
 export const Home = withStyles((theme: Theme) => ({
   ...styles(theme),
+  homeContainer: {
+    backgroundColor: "white",
+  },
   introText: {
     "& h5": {
       fontWeight: 900,

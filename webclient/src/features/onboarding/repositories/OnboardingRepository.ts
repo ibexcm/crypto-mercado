@@ -218,22 +218,28 @@ export class OnboardingRepository {
 
     return {
       execute: async args => {
-        const {
-          data,
-          error,
-        }: Partial<MutationResult<Pick<Mutation, "setBankAccount">>> = await execute({
-          variables: args,
-        });
+        const message =
+          "No pudimos vincular tu cuenta de banco. Revisa los campos e intenta de nuevo.";
+        try {
+          const {
+            data,
+            error,
+          }: Partial<MutationResult<Pick<Mutation, "setBankAccount">>> = await execute({
+            variables: args,
+          });
 
-        if (Boolean(error) || !Boolean(data?.setBankAccount)) {
-          throw new Error("No pudimos vincular tu cuenta de banco.");
+          if (Boolean(error) || !Boolean(data?.setBankAccount)) {
+            throw new Error(message);
+          }
+
+          const {
+            setBankAccount: { token },
+          } = data as Pick<Mutation, "setBankAccount">;
+
+          this.AuthTokenRepository.setAuthToken(token as string);
+        } catch (error) {
+          throw new Error(message);
         }
-
-        const {
-          setBankAccount: { token },
-        } = data as Pick<Mutation, "setBankAccount">;
-
-        this.AuthTokenRepository.setAuthToken(token as string);
       },
     };
   }
