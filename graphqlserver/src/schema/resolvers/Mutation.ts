@@ -6,7 +6,7 @@ import {
   uploadGovernmentID,
   verifyEmail,
   verifyPhoneNumber,
-} from "../../features/User/resolvers";
+} from "../../features/Onboarding/resolvers";
 
 export const Mutation = {
   verifyPhoneNumber,

@@ -1,7 +1,7 @@
 import { prisma as db } from "@ibexcm/database";
 import { TestDependencies } from "@ibexcm/libraries/di";
+import { OnboardingErrorCode } from "../../../../features/Onboarding/errors/OnboardingError";
 import { smsVerificationRepositoryInjectionKey } from "../../../../features/SMSVerification";
-import { UserErrorCode } from "../../../../features/User/errors/UserError";
 import { dbInjectionKey } from "../../../../InjectionKeys";
 import {
   MockServer,
@@ -50,7 +50,7 @@ describe("verifyPhoneNumber", () => {
   test("phone number taken", async () => {
     const { errors } = await GraphQLClient.verifyPhoneNumber({ args: { number, code } });
 
-    expect(errors[0].extensions.code).toEqual(UserErrorCode.phoneNumberExists);
+    expect(errors[0].extensions.code).toEqual(OnboardingErrorCode.phoneNumberExists);
   });
 
   test("incorrect code", async () => {
@@ -61,7 +61,7 @@ describe("verifyPhoneNumber", () => {
       args: { number: newNumber, code },
     });
 
-    expect(errors[0].extensions.code).toEqual(UserErrorCode.verificationCode);
+    expect(errors[0].extensions.code).toEqual(OnboardingErrorCode.verificationCode);
 
     const phoneNumber = await db.phoneNumber({ number: newNumber });
     expect(phoneNumber).toBeNull();

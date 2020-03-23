@@ -17,9 +17,9 @@ import { IEmailVerificationRepository } from "../../EmailVerification";
 import { IFileManagementRepository } from "../../FileManagement";
 import { ISessionRepository } from "../../Session/interfaces/ISessionRepository";
 import { ISMSVerificationRepository } from "../../SMSVerification";
-import { UserError } from "../errors/UserError";
+import { OnboardingError } from "../errors/OnboardingError";
 
-export class UserRepository {
+export class OnboardingRepository {
   private db: Prisma;
   private sessionRepository: ISessionRepository;
   private smsVerificationRepository: ISMSVerificationRepository;
@@ -75,7 +75,7 @@ export class UserRepository {
       ? true
       : await this.smsVerificationRepository.verifyCode(number, code);
 
-    if (!isVerified) throw UserError.verificationCodeError;
+    if (!isVerified) throw OnboardingError.verificationCodeError;
 
     const user = await this.db.createUser({
       role: {
@@ -115,7 +115,7 @@ export class UserRepository {
       ? true
       : await this.emailVerificationRepository.verifyCode(address, code);
 
-    if (!isVerified) throw UserError.verificationCodeError;
+    if (!isVerified) throw OnboardingError.verificationCodeError;
 
     const _user = await this.db.updateUser({
       where: {

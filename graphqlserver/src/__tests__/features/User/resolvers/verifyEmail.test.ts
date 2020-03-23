@@ -1,8 +1,8 @@
 import { prisma as db } from "@ibexcm/database";
 import { TestDependencies } from "@ibexcm/libraries/di";
 import { emailVerificationRepositoryInjectionKey } from "../../../../features/EmailVerification";
+import { OnboardingErrorCode } from "../../../../features/Onboarding/errors/OnboardingError";
 import { smsVerificationRepositoryInjectionKey } from "../../../../features/SMSVerification";
-import { UserErrorCode } from "../../../../features/User/errors/UserError";
 import { dbInjectionKey } from "../../../../InjectionKeys";
 import {
   mockEmailVerificationRepository,
@@ -67,7 +67,7 @@ describe("verifyEmail", () => {
 
     const { errors } = await GraphQLClient.verifyEmail({ args: { address, code } }, token);
 
-    expect(errors[0].extensions.code).toEqual(UserErrorCode.emailExists);
+    expect(errors[0].extensions.code).toEqual(OnboardingErrorCode.emailExists);
   });
 
   test("incorrect code", async () => {
@@ -87,7 +87,7 @@ describe("verifyEmail", () => {
       token,
     );
 
-    expect(errors[0].extensions.code).toEqual(UserErrorCode.verificationCode);
+    expect(errors[0].extensions.code).toEqual(OnboardingErrorCode.verificationCode);
 
     const email = await db.email({ address: newAddress });
     expect(email).toBeNull();

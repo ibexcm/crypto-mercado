@@ -4,9 +4,9 @@ import { emailVerificationRepositoryInjectionKey } from "../EmailVerification";
 import { fileManagementRepositoryInjectionKey } from "../FileManagement";
 import { sessionRepositoryInjectionKey } from "../Session";
 import { smsVerificationRepositoryInjectionKey } from "../SMSVerification";
-import { UserRepository } from "./repositories/UserRepository";
+import { OnboardingRepository } from "./repositories/OnboardingRepository";
 
-export const userRepositoryInjectionKey: InjectionKey<UserRepository> = {
+export const userRepositoryInjectionKey: InjectionKey<OnboardingRepository> = {
   name: "userRepository",
   scope: InjectionKeyScope.singleton,
   closure: dependencies => {
@@ -22,7 +22,7 @@ export const userRepositoryInjectionKey: InjectionKey<UserRepository> = {
       fileManagementRepositoryInjectionKey,
     );
 
-    return new UserRepository(
+    return new OnboardingRepository(
       db,
       sessionRepository,
       smsVerificationRepository,

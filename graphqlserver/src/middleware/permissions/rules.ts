@@ -5,7 +5,7 @@ import {
   MutationVerifyPhoneNumberArgs,
 } from "@ibexcm/libraries/api";
 import { rule } from "graphql-shield";
-import { UserError } from "../../features/User/errors/UserError";
+import { OnboardingError } from "../../features/Onboarding/errors/OnboardingError";
 import { dbInjectionKey } from "../../InjectionKeys";
 import { IContext } from "../../server/interfaces/IContext";
 
@@ -32,7 +32,7 @@ export const isPhoneNumberAvailable = rule({ cache: true })(
       .user();
 
     if (Boolean(user)) {
-      return UserError.phoneNumberExistsError;
+      return OnboardingError.phoneNumberExistsError;
     }
 
     return true;
@@ -53,7 +53,7 @@ export const isEmailAvailable = rule({ cache: true })(
       .user();
 
     if (Boolean(user)) {
-      return UserError.emailExistsError;
+      return OnboardingError.emailExistsError;
     }
 
     return true;
