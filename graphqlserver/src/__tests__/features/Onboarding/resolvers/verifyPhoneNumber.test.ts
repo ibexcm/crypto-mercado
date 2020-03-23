@@ -38,11 +38,16 @@ describe("verifyPhoneNumber", () => {
 
     const contact = await db.phoneNumber({ number }).contact();
     const user = await db.contact({ id: contact.id }).user();
+    const role = await db
+      .contact({ id: contact.id })
+      .user()
+      .role();
     const phoneNumber = await db.phoneNumber({ number });
 
     expect(verifyPhoneNumber.token).toBeDefined();
     expect(contact.id).toBeDefined();
     expect(user.id).toBeDefined();
+    expect(role.type).toEqual("CUSTOMER");
     expect(phoneNumber.number).toEqual(number);
     expect(phoneNumber.verifiedAt).toBeDefined();
   });
