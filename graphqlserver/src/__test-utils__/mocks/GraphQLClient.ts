@@ -1,7 +1,33 @@
-import { Mutation, MutationAdminAuthenticateArgs, MutationAuthenticateArgs, MutationSendEmailVerificationCodeArgs, MutationSendPhoneNumberVerificationCodeArgs, MutationSetBankAccountArgs, MutationSetPasswordArgs, MutationUploadGovernmentIdArgs, MutationVerifyEmailArgs, MutationVerifyPhoneNumberArgs, Query, QueryGetBanksByCountryArgs, QueryGetCurrenciesByCountryArgs } from "@ibexcm/libraries/api";
+import {
+  Mutation,
+  MutationAdminAuthenticateArgs,
+  MutationAuthenticateArgs,
+  MutationSendEmailVerificationCodeArgs,
+  MutationSendPhoneNumberVerificationCodeArgs,
+  MutationSetBankAccountArgs,
+  MutationSetPasswordArgs,
+  MutationUploadGovernmentIdArgs,
+  MutationVerifyEmailArgs,
+  MutationVerifyPhoneNumberArgs,
+  Query,
+  QueryGetBanksByCountryArgs,
+  QueryGetCurrenciesByCountryArgs,
+} from "@ibexcm/libraries/api";
 import { GetBanksByCountryQuery } from "@ibexcm/libraries/api/bank";
 import { GetCurrenciesByCountryQuery } from "@ibexcm/libraries/api/currency";
-import { AdminAuthenticateMutation, AuthenticateMutation, SendEmailVerificationCodeMutation, SendPhoneNumberVerificationCodeMutation, SetBankAccountMutation, SetPasswordMutation, UploadGovernmentIDMutation, UserQuery, VerifyEmailMutation, VerifyPhoneNumberMutation } from "@ibexcm/libraries/api/user";
+import { AdminGetUsersWithPendingKYCApprovalQuery } from "@ibexcm/libraries/api/kyc";
+import {
+  AdminAuthenticateMutation,
+  AuthenticateMutation,
+  SendEmailVerificationCodeMutation,
+  SendPhoneNumberVerificationCodeMutation,
+  SetBankAccountMutation,
+  SetPasswordMutation,
+  UploadGovernmentIDMutation,
+  UserQuery,
+  VerifyEmailMutation,
+  VerifyPhoneNumberMutation,
+} from "@ibexcm/libraries/api/user";
 import { ApolloError } from "apollo-server-errors";
 import axios from "axios";
 import { print } from "graphql";
@@ -39,17 +65,25 @@ const query = async <TVariables, TResponse>(
 };
 
 const authenticate = async (args: MutationAuthenticateArgs) => {
-  return query<
-    MutationAuthenticateArgs,
-    Pick<Mutation, "authenticate"> & { errors?: ApolloError[] }
-  >(AuthenticateMutation, args);
+  return query<MutationAuthenticateArgs, Pick<Mutation, "authenticate">>(
+    AuthenticateMutation,
+    args,
+  );
 };
 
 const adminAuthenticate = async (args: MutationAdminAuthenticateArgs) => {
-  return query<
-    MutationAdminAuthenticateArgs,
-    Pick<Mutation, "adminAuthenticate"> & { errors?: ApolloError[] }
-  >(AdminAuthenticateMutation, args);
+  return query<MutationAdminAuthenticateArgs, Pick<Mutation, "adminAuthenticate">>(
+    AdminAuthenticateMutation,
+    args,
+  );
+};
+
+const adminGetUsersWithPendingKYCApproval = async (authToken: string) => {
+  return query<void, Pick<Query, "adminGetUsersWithPendingKYCApproval">>(
+    AdminGetUsersWithPendingKYCApprovalQuery,
+    null,
+    authToken,
+  );
 };
 
 const user = async (authToken: string) => {
@@ -142,6 +176,7 @@ const GraphQLClient = {
   setPassword,
   uploadGovernmentID,
   setBankAccount,
+  adminGetUsersWithPendingKYCApproval,
 };
 
 export default GraphQLClient;

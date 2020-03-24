@@ -4,6 +4,10 @@ import * as rules from "./rules";
 export const permissions = shield({
   Query: {
     user: rules.isUser,
+
+    // ADMIN
+    // KYC
+    adminGetUsersWithPendingKYCApproval: rules.isAdmin,
   },
 
   Mutation: {

@@ -4,7 +4,7 @@ import { sessionRepositoryInjectionKey } from "../Session";
 import { AuthenticationRepository } from "./repositories/AuthenticationRepository";
 
 export const authenticationRepositoryInjectionKey: InjectionKey<AuthenticationRepository> = {
-  name: "UserRepository",
+  name: "AuthenticationRepository",
   scope: InjectionKeyScope.singleton,
   closure: dependencies => {
     const db = dependencies.provide(dbInjectionKey);

@@ -1138,6 +1138,11 @@ export type ProfileWhereInput = {
 
 export type Query = {
    __typename?: 'Query',
+  /** 
+ * ADMIN
+   * KYC
+ */
+  adminGetUsersWithPendingKYCApproval: Array<User>,
   getBanksByCountry: Array<Bank>,
   getCurrenciesByCountry: Array<Currency>,
   user: User,
