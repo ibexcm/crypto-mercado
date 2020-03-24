@@ -84,6 +84,11 @@ export type AccountWhereInput = {
   NOT?: Maybe<Array<AccountWhereInput>>,
 };
 
+export type AdminAuthenticateInput = {
+  address: Scalars['String'],
+  password: Scalars['String'],
+};
+
 export type AdminBankAccount = {
    __typename?: 'AdminBankAccount',
   id: Scalars['ID'],
@@ -129,6 +134,10 @@ export type AdminBankAccountWhereInput = {
   AND?: Maybe<Array<AdminBankAccountWhereInput>>,
   OR?: Maybe<Array<AdminBankAccountWhereInput>>,
   NOT?: Maybe<Array<AdminBankAccountWhereInput>>,
+};
+
+export type AdminGetUserInput = {
+  id: Scalars['String'],
 };
 
 export type AuthenticateInput = {
@@ -620,6 +629,7 @@ export type GuatemalaBankAccount = {
   bankAccountType: TGuatemalaBankAccount,
   bank: Bank,
   isCurrent?: Maybe<Scalars['Boolean']>,
+  verifiedAt?: Maybe<Scalars['DateTime']>,
   createdAt: Scalars['DateTime'],
   updatedAt: Scalars['DateTime'],
 };
@@ -674,6 +684,14 @@ export type GuatemalaBankAccountWhereInput = {
   bank?: Maybe<BankWhereInput>,
   isCurrent?: Maybe<Scalars['Boolean']>,
   isCurrent_not?: Maybe<Scalars['Boolean']>,
+  verifiedAt?: Maybe<Scalars['DateTime']>,
+  verifiedAt_not?: Maybe<Scalars['DateTime']>,
+  verifiedAt_in?: Maybe<Array<Scalars['DateTime']>>,
+  verifiedAt_not_in?: Maybe<Array<Scalars['DateTime']>>,
+  verifiedAt_lt?: Maybe<Scalars['DateTime']>,
+  verifiedAt_lte?: Maybe<Scalars['DateTime']>,
+  verifiedAt_gt?: Maybe<Scalars['DateTime']>,
+  verifiedAt_gte?: Maybe<Scalars['DateTime']>,
   createdAt?: Maybe<Scalars['DateTime']>,
   createdAt_not?: Maybe<Scalars['DateTime']>,
   createdAt_in?: Maybe<Array<Scalars['DateTime']>>,
@@ -890,6 +908,11 @@ export type GuatemalaDpiWhereInput = {
 
 export type Mutation = {
    __typename?: 'Mutation',
+  /** 
+ * ADMIN
+   * AUTHENTICATION: admin* must be the prefix for admin endpoints
+ */
+  adminAuthenticate: Session,
   /** AUTHENTICATION */
   authenticate: Session,
   sendEmailVerificationCode: Scalars['Boolean'],
@@ -900,6 +923,11 @@ export type Mutation = {
   uploadGovernmentID: Session,
   verifyEmail: Session,
   verifyPhoneNumber: Session,
+};
+
+
+export type MutationAdminAuthenticateArgs = {
+  args: AdminAuthenticateInput
 };
 
 
@@ -1114,9 +1142,21 @@ export type ProfileWhereInput = {
 
 export type Query = {
    __typename?: 'Query',
+  /** USER */
+  adminGetUser: User,
+  /** 
+ * ADMIN
+   * KYC
+ */
+  adminGetUsersWithPendingKYCApproval: Array<User>,
   getBanksByCountry: Array<Bank>,
   getCurrenciesByCountry: Array<Currency>,
   user: User,
+};
+
+
+export type QueryAdminGetUserArgs = {
+  args: AdminGetUserInput
 };
 
 
@@ -1467,7 +1507,7 @@ export type TransactionWhereInput = {
 
 export enum TUserRole {
   Admin = 'ADMIN',
-  User = 'USER'
+  Customer = 'CUSTOMER'
 }
 
 export type UploadGovernmentIdInput = {

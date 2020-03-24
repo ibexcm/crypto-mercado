@@ -8,3 +8,6 @@ generates:
   ../webclient/src/libraries/api/index.ts:
     plugins:
       - "typescript"
+  ../adminclient/src/libraries/api/index.ts:
+    plugins:
+      - "typescript"

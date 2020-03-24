@@ -1,4 +1,4 @@
-import { SendPhoneNumberVerificationCodeInput } from "@ibexcm/libraries/api";
+import { SendPhoneNumberVerificationCodeInput, User } from "@ibexcm/libraries/api";
 import {
   Backdrop,
   Box,
@@ -16,10 +16,11 @@ import {
 } from "@material-ui/core";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import React from "react";
-import { RouteComponentProps, StaticContext } from "react-router";
+import { generatePath, RouteComponentProps, StaticContext } from "react-router";
 import { Button, Sidebar, ToolbarPadding, Typography } from "../../../common/components";
 import DependencyContext from "../../../common/contexts/DependencyContext";
 import { styles } from "../../../common/theme";
+import routes from "../../../routes";
 import { KYCRepositoryInjectionKeys } from "../InjectionKeys";
 
 interface Props
@@ -43,6 +44,10 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
       </Backdrop>
     );
   }
+
+  const onEvaluate = (user: User) => {
+    history.push(generatePath(routes.kyc.evaluate, { id: user.id }));
+  };
 
   return (
     <Box className={classes.drawerContainer}>
@@ -84,7 +89,13 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
                         </TableCell>
                         <TableCell>{user.bankAccounts[0].currency.symbol}</TableCell>
                         <TableCell>
-                          <Button variant="outlined" color="primary">
+                          <Button
+                            variant="outlined"
+                            color="primary"
+                            onClick={() => {
+                              onEvaluate(user);
+                            }}
+                          >
                             Evaluar
                           </Button>
                         </TableCell>
