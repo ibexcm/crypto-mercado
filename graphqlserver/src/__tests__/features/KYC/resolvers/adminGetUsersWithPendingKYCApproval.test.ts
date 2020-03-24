@@ -1,5 +1,7 @@
 import { prisma as db } from "@ibexcm/database";
 import { TestDependencies } from "@ibexcm/libraries/di";
+import Faker from "faker";
+import { AuthenticationErrorCode } from "../../../../features/Authentication/errors/AuthenticationError";
 import { emailVerificationRepositoryInjectionKey } from "../../../../features/EmailVerification";
 import { smsVerificationRepositoryInjectionKey } from "../../../../features/SMSVerification";
 import onboardUser from "../../../../__test-utils__/helpers/onboardUser";
@@ -27,6 +29,9 @@ describe("adminGetUsersWithPendingKYCApproval", () => {
 
   beforeAll(async () => {
     await server.start();
+  });
+
+  beforeEach(async () => {
     await db.deleteManyUsers();
   });
 
@@ -81,5 +86,58 @@ describe("adminGetUsersWithPendingKYCApproval", () => {
       expect(user.bankAccounts[0].guatemala.fullName).toBeDefined();
       expect(user.bankAccounts[0].guatemala.bankAccountType).toBeDefined();
     }
+  });
+
+  test("returns only users who finished the onboarding process", async () => {
+    const address = "u2@ibexcm.com";
+    const password = "password";
+
+    const user = await onboardUser({ address, password });
+
+    await db.updateUser({
+      where: {
+        id: user.id,
+      },
+      data: {
+        role: {
+          connect: {
+            type: "ADMIN",
+          },
+        },
+      },
+    });
+
+    const {
+      data: {
+        adminAuthenticate: { token },
+      },
+    } = await GraphQLClient.adminAuthenticate({ args: { address, password } });
+
+    const length = 5;
+    await Promise.all(new Array(length).fill(null).map(() => onboardUser()));
+
+    await GraphQLClient.verifyPhoneNumber({
+      args: { number: Faker.phone.phoneNumber(), code: "12345" },
+    });
+
+    const {
+      data: { adminGetUsersWithPendingKYCApproval },
+    } = await GraphQLClient.adminGetUsersWithPendingKYCApproval(token);
+
+    expect(adminGetUsersWithPendingKYCApproval).toHaveLength(length);
+  });
+
+  test("fails when user is not ADMIN", async () => {
+    const {
+      data: {
+        verifyPhoneNumber: { token },
+      },
+    } = await GraphQLClient.verifyPhoneNumber({
+      args: { number: Faker.phone.phoneNumber(), code: "12345" },
+    });
+
+    const { errors } = await GraphQLClient.adminGetUsersWithPendingKYCApproval(token);
+
+    expect(errors[0].extensions.code).toEqual(AuthenticationErrorCode.invalidAdminRole);
   });
 });
