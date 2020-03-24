@@ -10,7 +10,7 @@ export default async ({
   number?: string;
   address?: string;
   password?: string;
-}) => {
+} = {}) => {
   const code = "123456";
   const fullName = "Full Bank Account Name Pérez";
   const accountNumber = "01-234567-89";

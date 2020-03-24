@@ -70,5 +70,11 @@ export const theme = createMuiTheme({
         minHeight: "100vh",
       },
     },
+    MuiTableCell: {
+      stickyHeader: {
+        backgroundColor: "#231F20",
+        color: "white",
+      },
+    },
   },
 });

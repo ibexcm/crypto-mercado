@@ -4,6 +4,10 @@ type Query {
   user: User!
   getBanksByCountry(args: GetBanksByCountryInput!): [Bank!]!
   getCurrenciesByCountry(args: GetCurrenciesByCountryInput!): [Currency!]!
+
+  # ADMIN
+  # KYC
+  adminGetUsersWithPendingKYCApproval: [User!]!
 }
 
 type Mutation {

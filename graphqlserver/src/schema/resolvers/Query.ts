@@ -1,6 +1,7 @@
 import { forwardTo } from "prisma-binding";
-import { getBanksByCountry } from "../../features/Bank/resolvers";
-import { getCurrenciesByCountry } from "../../features/Currency/resolvers";
+import { queries as bankQueries } from "../../features/Bank/resolvers";
+import { queries as currencyQueries } from "../../features/Currency/resolvers";
+import { queries as kycQueries } from "../../features/KYC/resolvers";
 import { IContext } from "../../server/interfaces/IContext";
 
 export const Query = {
@@ -17,6 +18,7 @@ export const Query = {
       info,
     );
   },
-  getBanksByCountry,
-  getCurrenciesByCountry,
+  ...bankQueries,
+  ...currencyQueries,
+  ...kycQueries,
 };
