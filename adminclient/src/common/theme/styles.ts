@@ -5,6 +5,12 @@ export const styles = (theme: Theme) => ({
     backgroundColor: "white",
     display: "flex",
   },
+  tableContainer: {
+    maxHeight: "70vh",
+  },
+  mainContainer: {
+    paddingBottom: 6,
+  },
   backdrop: {
     zIndex: theme.zIndex.drawer + 1,
     color: "#fff",

@@ -40,6 +40,9 @@ export const AdminGetUsersWithPendingKYCApprovalQuery = gql`
           accountNumber
           bankAccountType
           fullName
+          bank {
+            name
+          }
         }
       }
     }
