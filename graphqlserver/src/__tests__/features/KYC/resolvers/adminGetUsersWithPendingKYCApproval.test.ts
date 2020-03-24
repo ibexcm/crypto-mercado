@@ -85,6 +85,7 @@ describe("adminGetUsersWithPendingKYCApproval", () => {
       expect(user.bankAccounts[0].guatemala.accountNumber).toBeDefined();
       expect(user.bankAccounts[0].guatemala.fullName).toBeDefined();
       expect(user.bankAccounts[0].guatemala.bankAccountType).toBeDefined();
+      expect(user.bankAccounts[0].guatemala.bank.name).toBeDefined();
     }
   });
 
