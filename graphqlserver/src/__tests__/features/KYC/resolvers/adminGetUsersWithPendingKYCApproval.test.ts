@@ -4,6 +4,7 @@ import Faker from "faker";
 import { AuthenticationErrorCode } from "../../../../features/Authentication/errors/AuthenticationError";
 import { emailVerificationRepositoryInjectionKey } from "../../../../features/EmailVerification";
 import { smsVerificationRepositoryInjectionKey } from "../../../../features/SMSVerification";
+import onboardAdminUser from "../../../../__test-utils__/helpers/onboardAdminUser";
 import onboardUser from "../../../../__test-utils__/helpers/onboardUser";
 import {
   mockEmailVerificationRepository,
@@ -43,20 +44,7 @@ describe("adminGetUsersWithPendingKYCApproval", () => {
     const address = "u1@ibexcm.com";
     const password = "password";
 
-    const user = await onboardUser({ address, password });
-
-    await db.updateUser({
-      where: {
-        id: user.id,
-      },
-      data: {
-        role: {
-          connect: {
-            type: "ADMIN",
-          },
-        },
-      },
-    });
+    await onboardAdminUser({ address, password }, db);
 
     const {
       data: {
@@ -93,20 +81,7 @@ describe("adminGetUsersWithPendingKYCApproval", () => {
     const address = "u2@ibexcm.com";
     const password = "password";
 
-    const user = await onboardUser({ address, password });
-
-    await db.updateUser({
-      where: {
-        id: user.id,
-      },
-      data: {
-        role: {
-          connect: {
-            type: "ADMIN",
-          },
-        },
-      },
-    });
+    await onboardAdminUser({ address, password }, db);
 
     const {
       data: {
