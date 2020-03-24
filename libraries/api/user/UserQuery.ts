@@ -1,35 +1,20 @@
 import gql from "graphql-tag";
-import { UserRole } from "./fragments";
+import { Account, BankAccounts, Contact, Profile, UserRole } from "./fragments";
 
 export const UserQuery = gql`
   query UserQuery {
     user {
       id
       ...UserRole
-      account {
-        clientID
-      }
-      contact {
-        phoneNumber {
-          number
-        }
-        email {
-          address
-        }
-      }
-      profile {
-        country {
-          id
-          phoneNumberCode
-        }
-      }
-      bankAccounts {
-        guatemala {
-          accountNumber
-          bankAccountType
-        }
-      }
+      ...Account
+      ...Contact
+      ...Profile
+      ...BankAccounts
     }
   }
   ${UserRole}
+  ${Account}
+  ${Contact}
+  ${Profile}
+  ${BankAccounts}
 `;
