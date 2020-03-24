@@ -1,12 +1,11 @@
 import gql from "graphql-tag";
+import { UserRole } from "./fragments";
 
 export const UserQuery = gql`
   query UserQuery {
     user {
       id
-      role {
-        type
-      }
+      ...UserRole
       account {
         clientID
       }
@@ -32,4 +31,5 @@ export const UserQuery = gql`
       }
     }
   }
+  ${UserRole}
 `;

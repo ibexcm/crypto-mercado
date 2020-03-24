@@ -10,6 +10,7 @@ import {
   MutationVerifyEmailArgs,
   MutationVerifyPhoneNumberArgs,
   Query,
+  QueryAdminGetUserArgs,
   QueryGetBanksByCountryArgs,
   QueryGetCurrenciesByCountryArgs,
 } from "@ibexcm/libraries/api";
@@ -18,6 +19,7 @@ import { GetCurrenciesByCountryQuery } from "@ibexcm/libraries/api/currency";
 import { AdminGetUsersWithPendingKYCApprovalQuery } from "@ibexcm/libraries/api/kyc";
 import {
   AdminAuthenticateMutation,
+  AdminGetUserQuery,
   AuthenticateMutation,
   SendEmailVerificationCodeMutation,
   SendPhoneNumberVerificationCodeMutation,
@@ -88,6 +90,14 @@ const adminGetUsersWithPendingKYCApproval = async (authToken: string) => {
 
 const user = async (authToken: string) => {
   return query<void, Pick<Query, "user">>(UserQuery, undefined, authToken);
+};
+
+const adminGetUser = async (args: QueryAdminGetUserArgs, authToken: string) => {
+  return query<QueryAdminGetUserArgs, Pick<Query, "adminGetUser">>(
+    AdminGetUserQuery,
+    args,
+    authToken,
+  );
 };
 
 const getBanksByCountry = async (args: QueryGetBanksByCountryArgs) => {
@@ -166,6 +176,7 @@ const GraphQLClient = {
   query,
   authenticate,
   adminAuthenticate,
+  adminGetUser,
   user,
   getBanksByCountry,
   getCurrenciesByCountry,

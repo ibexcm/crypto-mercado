@@ -13,14 +13,20 @@ import {
   Prisma,
   Profile,
   ProfileDocument,
+  User,
   UserRole,
 } from "@ibexcm/database";
+import { QueryAdminGetUserArgs } from "@ibexcm/libraries/api";
 
 export class UserRepository {
   private db: Prisma;
 
   constructor(db: Prisma) {
     this.db = db;
+  }
+
+  async adminGetUser({ args: { id } }: QueryAdminGetUserArgs): Promise<User> {
+    return await this.db.user({ id });
   }
 
   async role(id: string): Promise<UserRole> {

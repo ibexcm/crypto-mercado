@@ -1,12 +1,11 @@
 import gql from "graphql-tag";
+import { UserRole } from "../user/fragments";
 
 export const AdminGetUsersWithPendingKYCApprovalQuery = gql`
   query AdminGetUsersWithPendingKYCApprovalQuery {
     adminGetUsersWithPendingKYCApproval {
       id
-      role {
-        type
-      }
+      ...UserRole
       account {
         clientID
       }
@@ -47,4 +46,5 @@ export const AdminGetUsersWithPendingKYCApprovalQuery = gql`
       }
     }
   }
+  ${UserRole}
 `;

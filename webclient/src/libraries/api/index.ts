@@ -136,6 +136,10 @@ export type AdminBankAccountWhereInput = {
   NOT?: Maybe<Array<AdminBankAccountWhereInput>>,
 };
 
+export type AdminGetUserInput = {
+  id: Scalars['String'],
+};
+
 export type AuthenticateInput = {
   address: Scalars['String'],
   password: Scalars['String'],
@@ -1138,6 +1142,8 @@ export type ProfileWhereInput = {
 
 export type Query = {
    __typename?: 'Query',
+  /** USER */
+  adminGetUser: User,
   /** 
  * ADMIN
    * KYC
@@ -1146,6 +1152,11 @@ export type Query = {
   getBanksByCountry: Array<Bank>,
   getCurrenciesByCountry: Array<Currency>,
   user: User,
+};
+
+
+export type QueryAdminGetUserArgs = {
+  args: AdminGetUserInput
 };
 
 

@@ -8,6 +8,9 @@ type Query {
   # ADMIN
   # KYC
   adminGetUsersWithPendingKYCApproval: [User!]!
+
+  # USER
+  adminGetUser(args: AdminGetUserInput!): User!
 }
 
 type Mutation {
@@ -31,6 +34,10 @@ type Mutation {
 type Session {
   token: String
   expiresAt: DateTime
+}
+
+input AdminGetUserInput {
+  id: String!
 }
 
 input GetBanksByCountryInput {
