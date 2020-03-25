@@ -10,7 +10,15 @@ export const Profile = gql`
       documents {
         guatemala {
           dpi {
+            id
             fileHash
+            firstName
+            lastName
+            genre
+            CUI
+            dateOfBirth
+            verifiedAt
+            expiresAt
           }
         }
       }

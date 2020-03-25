@@ -20,6 +20,8 @@ generated/
 database/config/*.json
 graphqlserver/src/config/*.json
 libraries/api/index.ts
+webclient/src/libraries/api/index.ts
+adminclient/src/libraries/api/index.ts
 yarn-error.log
 lerna-debug.log
 .vscode

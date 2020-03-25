@@ -182,15 +182,12 @@ export type BankAccount = {
   guatemala?: Maybe<GuatemalaBankAccount>,
   currency: Currency,
   user: User,
-  verifiedAt?: Maybe<Scalars['DateTime']>,
   createdAt: Scalars['DateTime'],
 };
 
 export enum BankAccountOrderByInput {
   IdAsc = 'id_ASC',
   IdDesc = 'id_DESC',
-  VerifiedAtAsc = 'verifiedAt_ASC',
-  VerifiedAtDesc = 'verifiedAt_DESC',
   CreatedAtAsc = 'createdAt_ASC',
   CreatedAtDesc = 'createdAt_DESC'
 }
@@ -213,14 +210,6 @@ export type BankAccountWhereInput = {
   guatemala?: Maybe<GuatemalaBankAccountWhereInput>,
   currency?: Maybe<CurrencyWhereInput>,
   user?: Maybe<UserWhereInput>,
-  verifiedAt?: Maybe<Scalars['DateTime']>,
-  verifiedAt_not?: Maybe<Scalars['DateTime']>,
-  verifiedAt_in?: Maybe<Array<Scalars['DateTime']>>,
-  verifiedAt_not_in?: Maybe<Array<Scalars['DateTime']>>,
-  verifiedAt_lt?: Maybe<Scalars['DateTime']>,
-  verifiedAt_lte?: Maybe<Scalars['DateTime']>,
-  verifiedAt_gt?: Maybe<Scalars['DateTime']>,
-  verifiedAt_gte?: Maybe<Scalars['DateTime']>,
   createdAt?: Maybe<Scalars['DateTime']>,
   createdAt_not?: Maybe<Scalars['DateTime']>,
   createdAt_in?: Maybe<Array<Scalars['DateTime']>>,
