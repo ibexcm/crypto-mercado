@@ -29,11 +29,48 @@ type Mutation {
   # ADMIN
   # AUTHENTICATION: admin* must be the prefix for admin endpoints
   adminAuthenticate(args: AdminAuthenticateInput!): Session!
+
+  # KYC
+  adminKYCApproveUser(
+    userArgs: AdminKYCApproveUserInput!
+    governmentIDArgs: AdminKYCApproveUserGovernmentIDInput!
+    bankAccountArgs: AdminKYCApproveUserBankAccountInput!
+  ): Boolean!
+  adminKYCRejectUser(
+    userArgs: AdminKYCRejectUserInput!
+    rejectArgs: AdminKYCRejectUserInput!
+  ): Boolean!
 }
 
 type Session {
   token: String
   expiresAt: DateTime
+}
+
+input AdminKYCApproveUserInput {
+  id: String!
+}
+
+input AdminKYCRejectUserInput {
+  id: String!
+}
+
+input AdminKYCRejectUserInput {
+  reason: String
+}
+
+input AdminKYCApproveUserBankAccountInput {
+  id: String!
+}
+
+input AdminKYCApproveUserGovernmentIDInput {
+  id: String!
+  firstName: String!
+  lastName: String!
+  CUI: String!
+  dateOfBirth: String!
+  genre: String!
+  expiresAt: String!
 }
 
 input AdminGetUserInput {

@@ -31,7 +31,6 @@ type BankAccount {
   guatemala: GuatemalaBankAccount @relation(onDelete: CASCADE)
   currency: Currency!
   user: User!
-  verifiedAt: DateTime
   createdAt: DateTime! @createdAt
 }
 
@@ -75,7 +74,7 @@ type ProfileDocument {
   updatedAt: DateTime! @updatedAt
 }
 
-enum Genre {
+enum TGenre {
   MALE
   FEMALE
 }
@@ -180,7 +179,7 @@ type GuatemalaDPI {
   lastName: String
   CUI: String
   dateOfBirth: DateTime
-  genre: Genre
+  genre: TGenre
   expiresAt: DateTime
   guatemalaDocument: GuatemalaDocument! @relation(name: "GuatemalaDocumentToGuatemalaDPI")
   verifiedAt: DateTime

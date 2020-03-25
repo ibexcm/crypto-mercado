@@ -103,6 +103,30 @@ const configuration = convict({
       env: "SENDGRID_TEMPLATE_HOST",
       arg: "sendgrid-template-host",
     },
+    from: {
+      doc: "Email from",
+      format: "email",
+      default: null,
+      env: "EMAIL_FROM",
+      arg: "email-from",
+    },
+  },
+
+  sendgrid: {
+    apiKey: {
+      doc: "Sendgrid API Key",
+      format: "*",
+      default: null,
+      env: "SENDGRID_API_KEY",
+      arg: "sendgrid-api-key",
+    },
+    apiUrl: {
+      doc: "Sendgrid API URL",
+      format: "url",
+      default: null,
+      env: "SENDGRID_API_URL",
+      arg: "sendgrid-api-url",
+    },
   },
 
   twilio: {

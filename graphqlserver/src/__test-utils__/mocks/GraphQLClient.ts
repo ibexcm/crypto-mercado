@@ -1,35 +1,8 @@
-import {
-  Mutation,
-  MutationAdminAuthenticateArgs,
-  MutationAuthenticateArgs,
-  MutationSendEmailVerificationCodeArgs,
-  MutationSendPhoneNumberVerificationCodeArgs,
-  MutationSetBankAccountArgs,
-  MutationSetPasswordArgs,
-  MutationUploadGovernmentIdArgs,
-  MutationVerifyEmailArgs,
-  MutationVerifyPhoneNumberArgs,
-  Query,
-  QueryAdminGetUserArgs,
-  QueryGetBanksByCountryArgs,
-  QueryGetCurrenciesByCountryArgs,
-} from "@ibexcm/libraries/api";
+import { Mutation, MutationAdminAuthenticateArgs, MutationAdminKycApproveUserArgs, MutationAdminKycRejectUserArgs, MutationAuthenticateArgs, MutationSendEmailVerificationCodeArgs, MutationSendPhoneNumberVerificationCodeArgs, MutationSetBankAccountArgs, MutationSetPasswordArgs, MutationUploadGovernmentIdArgs, MutationVerifyEmailArgs, MutationVerifyPhoneNumberArgs, Query, QueryAdminGetUserArgs, QueryGetBanksByCountryArgs, QueryGetCurrenciesByCountryArgs } from "@ibexcm/libraries/api";
 import { GetBanksByCountryQuery } from "@ibexcm/libraries/api/bank";
 import { GetCurrenciesByCountryQuery } from "@ibexcm/libraries/api/currency";
-import { AdminGetUsersWithPendingKYCApprovalQuery } from "@ibexcm/libraries/api/kyc";
-import {
-  AdminAuthenticateMutation,
-  AdminGetUserQuery,
-  AuthenticateMutation,
-  SendEmailVerificationCodeMutation,
-  SendPhoneNumberVerificationCodeMutation,
-  SetBankAccountMutation,
-  SetPasswordMutation,
-  UploadGovernmentIDMutation,
-  UserQuery,
-  VerifyEmailMutation,
-  VerifyPhoneNumberMutation,
-} from "@ibexcm/libraries/api/user";
+import { AdminGetUsersWithPendingKYCApprovalQuery, AdminKYCApproveUserMutation, AdminKYCRejectUserMutation } from "@ibexcm/libraries/api/kyc";
+import { AdminAuthenticateMutation, AdminGetUserQuery, AuthenticateMutation, SendEmailVerificationCodeMutation, SendPhoneNumberVerificationCodeMutation, SetBankAccountMutation, SetPasswordMutation, UploadGovernmentIDMutation, UserQuery, VerifyEmailMutation, VerifyPhoneNumberMutation } from "@ibexcm/libraries/api/user";
 import { ApolloError } from "apollo-server-errors";
 import axios from "axios";
 import { print } from "graphql";
@@ -172,6 +145,28 @@ const setBankAccount = async (args: MutationSetBankAccountArgs, authToken: strin
   );
 };
 
+const adminKYCApproveUser = async (
+  args: MutationAdminKycApproveUserArgs,
+  authToken: string,
+) => {
+  return query<MutationAdminKycApproveUserArgs, Pick<Mutation, "adminKYCApproveUser">>(
+    AdminKYCApproveUserMutation,
+    args,
+    authToken,
+  );
+};
+
+const adminKYCRejectUser = async (
+  args: MutationAdminKycRejectUserArgs,
+  authToken: string,
+) => {
+  return query<MutationAdminKycRejectUserArgs, Pick<Mutation, "adminKYCRejectUser">>(
+    AdminKYCRejectUserMutation,
+    args,
+    authToken,
+  );
+};
+
 const GraphQLClient = {
   query,
   authenticate,
@@ -188,6 +183,8 @@ const GraphQLClient = {
   uploadGovernmentID,
   setBankAccount,
   adminGetUsersWithPendingKYCApproval,
+  adminKYCApproveUser,
+  adminKYCRejectUser,
 };
 
 export default GraphQLClient;

@@ -140,6 +140,29 @@ export type AdminGetUserInput = {
   id: Scalars['String'],
 };
 
+export type AdminKycApproveUserBankAccountInput = {
+  id: Scalars['String'],
+};
+
+export type AdminKycApproveUserGovernmentIdInput = {
+  CUI: Scalars['String'],
+  dateOfBirth: Scalars['String'],
+  expiresAt: Scalars['String'],
+  firstName: Scalars['String'],
+  genre: Scalars['String'],
+  id: Scalars['String'],
+  lastName: Scalars['String'],
+};
+
+export type AdminKycApproveUserInput = {
+  id: Scalars['String'],
+};
+
+export type AdminKycRejectUserInput = {
+  id: Scalars['String'],
+  reason?: Maybe<Scalars['String']>,
+};
+
 export type AuthenticateInput = {
   address: Scalars['String'],
   password: Scalars['String'],
@@ -608,11 +631,6 @@ export type EmailWhereInput = {
   NOT?: Maybe<Array<EmailWhereInput>>,
 };
 
-export enum Genre {
-  Male = 'MALE',
-  Female = 'FEMALE'
-}
-
 export type GetBanksByCountryInput = {
   countryID: Scalars['String'],
 };
@@ -763,7 +781,7 @@ export type GuatemalaDpi = {
   lastName?: Maybe<Scalars['String']>,
   CUI?: Maybe<Scalars['String']>,
   dateOfBirth?: Maybe<Scalars['DateTime']>,
-  genre?: Maybe<Genre>,
+  genre?: Maybe<TGenre>,
   expiresAt?: Maybe<Scalars['DateTime']>,
   guatemalaDocument: GuatemalaDocument,
   verifiedAt?: Maybe<Scalars['DateTime']>,
@@ -872,10 +890,10 @@ export type GuatemalaDpiWhereInput = {
   dateOfBirth_lte?: Maybe<Scalars['DateTime']>,
   dateOfBirth_gt?: Maybe<Scalars['DateTime']>,
   dateOfBirth_gte?: Maybe<Scalars['DateTime']>,
-  genre?: Maybe<Genre>,
-  genre_not?: Maybe<Genre>,
-  genre_in?: Maybe<Array<Genre>>,
-  genre_not_in?: Maybe<Array<Genre>>,
+  genre?: Maybe<TGenre>,
+  genre_not?: Maybe<TGenre>,
+  genre_in?: Maybe<Array<TGenre>>,
+  genre_not_in?: Maybe<Array<TGenre>>,
   expiresAt?: Maybe<Scalars['DateTime']>,
   expiresAt_not?: Maybe<Scalars['DateTime']>,
   expiresAt_in?: Maybe<Array<Scalars['DateTime']>>,
@@ -913,6 +931,9 @@ export type Mutation = {
    * AUTHENTICATION: admin* must be the prefix for admin endpoints
  */
   adminAuthenticate: Session,
+  /** KYC */
+  adminKYCApproveUser: Scalars['Boolean'],
+  adminKYCRejectUser: Scalars['Boolean'],
   /** AUTHENTICATION */
   authenticate: Session,
   sendEmailVerificationCode: Scalars['Boolean'],
@@ -928,6 +949,19 @@ export type Mutation = {
 
 export type MutationAdminAuthenticateArgs = {
   args: AdminAuthenticateInput
+};
+
+
+export type MutationAdminKycApproveUserArgs = {
+  userArgs: AdminKycApproveUserInput,
+  governmentIDArgs: AdminKycApproveUserGovernmentIdInput,
+  bankAccountArgs: AdminKycApproveUserBankAccountInput
+};
+
+
+export type MutationAdminKycRejectUserArgs = {
+  userArgs: AdminKycRejectUserInput,
+  rejectArgs: AdminKycRejectUserInput
 };
 
 
@@ -1227,6 +1261,11 @@ export type SetBankAccountInput = {
 export type SetPasswordInput = {
   password: Scalars['String'],
 };
+
+export enum TGenre {
+  Male = 'MALE',
+  Female = 'FEMALE'
+}
 
 export enum TGuatemalaBankAccount {
   Monetaria = 'MONETARIA',
