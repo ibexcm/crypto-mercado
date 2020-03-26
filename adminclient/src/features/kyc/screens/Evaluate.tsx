@@ -21,6 +21,7 @@ import {
 import DependencyContext from "../../../common/contexts/DependencyContext";
 import { styles } from "../../../common/theme";
 import { AdminKycApproveUserGovernmentIdInput } from "../../../libraries/api";
+import routes from "../../../routes";
 import { UserRepositoryInjectionKeys } from "../../user/InjectionKeys";
 import { KYCRepositoryInjectionKeys } from "../InjectionKeys";
 
@@ -34,13 +35,13 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
   const [governmentIDInput, setGovernmentIDInput] = React.useState<
     AdminKycApproveUserGovernmentIdInput
   >({
-    id: null,
-    CUI: null,
-    dateOfBirth: null,
-    expiresAt: null,
-    firstName: null,
-    genre: null,
-    lastName: null,
+    id: "",
+    CUI: "",
+    dateOfBirth: "",
+    expiresAt: "",
+    firstName: "",
+    genre: "",
+    lastName: "",
   });
 
   const {
@@ -91,10 +92,13 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
           id: bankAccountID,
         },
       });
+      history.push(routes.kyc.approval);
     } catch (error) {
       setError(error);
     }
   };
+
+  const getValue = (...args) => args.filter(Boolean)[0] || undefined;
 
   const {
     adminGetUser: { profile, bankAccounts },
@@ -174,7 +178,7 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
                     onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                       onSetGovernmentIDInput(event, "firstName");
                     }}
-                    value={governmentIDInput.firstName || document.firstName}
+                    value={getValue(governmentIDInput.firstName, document.firstName)}
                     mb={3}
                   />
                   <TextField
@@ -184,7 +188,7 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
                     onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                       onSetGovernmentIDInput(event, "lastName");
                     }}
-                    value={governmentIDInput.lastName || document.lastName}
+                    value={getValue(governmentIDInput.lastName, document.lastName)}
                     mb={3}
                   />
                   <TextField
@@ -194,7 +198,7 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
                     onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                       onSetGovernmentIDInput(event, "CUI");
                     }}
-                    value={governmentIDInput.CUI || document.CUI}
+                    value={getValue(governmentIDInput.CUI, document.CUI)}
                   />
                 </Grid>
                 <Grid item lg={4}>
@@ -206,7 +210,7 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
                     onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                       onSetGovernmentIDInput(event, "dateOfBirth");
                     }}
-                    value={governmentIDInput.dateOfBirth || document.dateOfBirth}
+                    value={getValue(governmentIDInput.dateOfBirth, document.dateOfBirth)}
                     mb={3}
                   />
                   <TextField
@@ -216,7 +220,7 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
                     onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                       onSetGovernmentIDInput(event, "genre");
                     }}
-                    value={governmentIDInput.genre || document.genre}
+                    value={getValue(governmentIDInput.genre, document.genre)}
                     mb={3}
                   />
                   <TextField
@@ -227,7 +231,7 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
                     onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                       onSetGovernmentIDInput(event, "expiresAt");
                     }}
-                    value={governmentIDInput.expiresAt || document.expiresAt}
+                    value={getValue(governmentIDInput.expiresAt, document.expiresAt)}
                   />
                 </Grid>
                 <Grid
@@ -245,7 +249,16 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
                   </Typography>
                   <Grid container spacing={2}>
                     <Grid item lg={6}>
-                      <Button fullWidth variant="outlined" color="primary" size="large">
+                      <Button
+                        fullWidth
+                        variant="outlined"
+                        color="primary"
+                        size="large"
+                        disabled={
+                          Boolean(document.verifiedAt) &&
+                          Boolean(bankAccount.guatemala.verifiedAt)
+                        }
+                      >
                         Rechazar
                       </Button>
                     </Grid>
@@ -255,6 +268,10 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
                         variant="contained"
                         color="primary"
                         size="large"
+                        disabled={
+                          Boolean(document.verifiedAt) &&
+                          Boolean(bankAccount.guatemala.verifiedAt)
+                        }
                         onClick={() => {
                           onAdminKYCApproveUser(document.id, bankAccount.id);
                         }}
