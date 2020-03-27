@@ -4,13 +4,13 @@ export const BankAccounts = gql`
   fragment BankAccounts on User {
     bankAccounts {
       id
+      verifiedAt
       currency {
         name
         symbol
       }
       guatemala {
         id
-        verifiedAt
         accountNumber
         bankAccountType
         fullName

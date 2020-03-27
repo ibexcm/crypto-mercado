@@ -89,8 +89,7 @@ describe("adminKYCApproveUser", () => {
     expect(document.dateOfBirth).toBeDefined();
 
     const [bankAccount] = await db.user({ id: pendingApprovalUser.id }).bankAccounts();
-    const guatemala = await db.bankAccount({ id: bankAccount.id }).guatemala();
-    expect(guatemala.verifiedAt).toBeDefined();
+    expect(bankAccount.verifiedAt).toBeDefined();
   });
 
   test("fails when user is not ADMIN", async () => {

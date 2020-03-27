@@ -6,11 +6,7 @@ import { emailVerificationRepositoryInjectionKey } from "../../../../features/Em
 import { smsVerificationRepositoryInjectionKey } from "../../../../features/SMSVerification";
 import onboardAdminUser from "../../../../__test-utils__/helpers/onboardAdminUser";
 import onboardUser from "../../../../__test-utils__/helpers/onboardUser";
-import {
-  mockEmailVerificationRepository,
-  MockServer,
-  mockSMSVerificationRepository,
-} from "../../../../__test-utils__/mocks";
+import { mockEmailVerificationRepository, MockServer, mockSMSVerificationRepository } from "../../../../__test-utils__/mocks";
 import GraphQLClient from "../../../../__test-utils__/mocks/GraphQLClient";
 
 describe("adminGetUsersWithPendingKYCApproval", () => {
@@ -69,9 +65,9 @@ describe("adminGetUsersWithPendingKYCApproval", () => {
       expect(user.profile.country.phoneNumberCode).toBeDefined();
       expect(user.profile.documents.guatemala.dpi[0].fileHash).toBeDefined();
       expect(user.profile.documents.guatemala.dpi[0].verifiedAt).toBeNull();
+      expect(user.bankAccounts[0].verifiedAt).toBeNull();
       expect(user.bankAccounts[0].currency.name).toBeDefined();
       expect(user.bankAccounts[0].currency.symbol).toBeDefined();
-      expect(user.bankAccounts[0].guatemala.verifiedAt).toBeNull();
       expect(user.bankAccounts[0].guatemala.accountNumber).toBeDefined();
       expect(user.bankAccounts[0].guatemala.fullName).toBeDefined();
       expect(user.bankAccounts[0].guatemala.bankAccountType).toBeDefined();

@@ -1,4 +1,12 @@
-import { MutationAdminAuthenticateArgs, MutationAuthenticateArgs, MutationSendEmailVerificationCodeArgs, MutationSendPhoneNumberVerificationCodeArgs, MutationVerifyEmailArgs, MutationVerifyPhoneNumberArgs, TUserRole } from "@ibexcm/libraries/api";
+import {
+  MutationAdminAuthenticateArgs,
+  MutationAuthenticateArgs,
+  MutationSendEmailVerificationCodeArgs,
+  MutationSendPhoneNumberVerificationCodeArgs,
+  MutationVerifyEmailArgs,
+  MutationVerifyPhoneNumberArgs,
+  TUserRole,
+} from "@ibexcm/libraries/api";
 import { compare } from "bcryptjs";
 import { rule } from "graphql-shield";
 import { AuthenticationError } from "../../features/Authentication/errors/AuthenticationError";
@@ -14,21 +22,14 @@ export const isUser = rule({ cache: true })(
 );
 
 export const isAdmin = rule({ cache: true })(
-  async (
-    parent,
-    args,
-    { dependencies, request: { auth } }: IContext,
-    info,
-  ) => {
+  async (parent, args, { dependencies, request: { auth } }: IContext, info) => {
     const db = dependencies.provide(dbInjectionKey);
 
     if (!Boolean(auth) || !Boolean(auth.user)) {
       return new Error("Acceso restringido.");
     }
 
-    const role = await db
-      .user({ id: auth.user.id })
-      .role();
+    const role = await db.user({ id: auth.user.id }).role();
 
     if (role.type !== TUserRole.Admin) {
       return AuthenticationError.invalidAdminRoleError;

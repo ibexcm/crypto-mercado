@@ -21,8 +21,8 @@ export class KYCRepository {
           type_not: "ADMIN",
         },
         bankAccounts_every: {
+          verifiedAt: null,
           guatemala: {
-            verifiedAt: null,
             accountNumber_not: null,
             fullName_not: null,
             bankAccountType_not: null,
@@ -65,11 +65,7 @@ export class KYCRepository {
         id: bankAccountID,
       },
       data: {
-        guatemala: {
-          update: {
-            verifiedAt: new Date(),
-          },
-        },
+        verifiedAt: new Date(),
       },
     });
 
