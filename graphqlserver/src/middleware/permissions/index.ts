@@ -8,11 +8,17 @@ export const permissions = shield({
     // ADMIN
     // KYC
     adminGetUsersWithPendingKYCApproval: rules.isAdmin,
+
+    // USER
+    adminGetUser: rules.isAdmin,
   },
 
   Mutation: {
     // ADMIN
     adminAuthenticate: rules.isValidAdminAuthentication,
+    // KYC
+    adminKYCApproveUser: rules.isAdmin,
+    adminKYCRejectUser: rules.isAdmin,
 
     authenticate: and(rules.isKYCApproved, rules.isValidPassword, rules.usernameExists),
     sendPhoneNumberVerificationCode: rules.isPhoneNumberAvailable,

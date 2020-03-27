@@ -75,7 +75,7 @@ type ProfileDocument {
   updatedAt: DateTime! @updatedAt
 }
 
-enum Genre {
+enum TGenre {
   MALE
   FEMALE
 }
@@ -163,7 +163,6 @@ type GuatemalaBankAccount {
   bankAccountType: TGuatemalaBankAccount!
   bank: Bank!
   isCurrent: Boolean @default(value: false)
-  verifiedAt: DateTime
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }
@@ -180,7 +179,7 @@ type GuatemalaDPI {
   lastName: String
   CUI: String
   dateOfBirth: DateTime
-  genre: Genre
+  genre: TGenre
   expiresAt: DateTime
   guatemalaDocument: GuatemalaDocument! @relation(name: "GuatemalaDocumentToGuatemalaDPI")
   verifiedAt: DateTime

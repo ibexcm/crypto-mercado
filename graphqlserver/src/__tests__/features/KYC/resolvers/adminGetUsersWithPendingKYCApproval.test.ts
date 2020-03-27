@@ -4,12 +4,9 @@ import Faker from "faker";
 import { AuthenticationErrorCode } from "../../../../features/Authentication/errors/AuthenticationError";
 import { emailVerificationRepositoryInjectionKey } from "../../../../features/EmailVerification";
 import { smsVerificationRepositoryInjectionKey } from "../../../../features/SMSVerification";
+import onboardAdminUser from "../../../../__test-utils__/helpers/onboardAdminUser";
 import onboardUser from "../../../../__test-utils__/helpers/onboardUser";
-import {
-  mockEmailVerificationRepository,
-  MockServer,
-  mockSMSVerificationRepository,
-} from "../../../../__test-utils__/mocks";
+import { mockEmailVerificationRepository, MockServer, mockSMSVerificationRepository } from "../../../../__test-utils__/mocks";
 import GraphQLClient from "../../../../__test-utils__/mocks/GraphQLClient";
 
 describe("adminGetUsersWithPendingKYCApproval", () => {
@@ -43,20 +40,7 @@ describe("adminGetUsersWithPendingKYCApproval", () => {
     const address = "u1@ibexcm.com";
     const password = "password";
 
-    const user = await onboardUser({ address, password });
-
-    await db.updateUser({
-      where: {
-        id: user.id,
-      },
-      data: {
-        role: {
-          connect: {
-            type: "ADMIN",
-          },
-        },
-      },
-    });
+    await onboardAdminUser({ address, password }, db);
 
     const {
       data: {
@@ -80,6 +64,8 @@ describe("adminGetUsersWithPendingKYCApproval", () => {
       expect(user.contact.email[0].address).toBeDefined();
       expect(user.profile.country.phoneNumberCode).toBeDefined();
       expect(user.profile.documents.guatemala.dpi[0].fileHash).toBeDefined();
+      expect(user.profile.documents.guatemala.dpi[0].verifiedAt).toBeNull();
+      expect(user.bankAccounts[0].verifiedAt).toBeNull();
       expect(user.bankAccounts[0].currency.name).toBeDefined();
       expect(user.bankAccounts[0].currency.symbol).toBeDefined();
       expect(user.bankAccounts[0].guatemala.accountNumber).toBeDefined();
@@ -93,20 +79,7 @@ describe("adminGetUsersWithPendingKYCApproval", () => {
     const address = "u2@ibexcm.com";
     const password = "password";
 
-    const user = await onboardUser({ address, password });
-
-    await db.updateUser({
-      where: {
-        id: user.id,
-      },
-      data: {
-        role: {
-          connect: {
-            type: "ADMIN",
-          },
-        },
-      },
-    });
+    await onboardAdminUser({ address, password }, db);
 
     const {
       data: {

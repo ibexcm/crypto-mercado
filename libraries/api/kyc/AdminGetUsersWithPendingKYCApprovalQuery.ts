@@ -1,50 +1,20 @@
 import gql from "graphql-tag";
+import { Account, BankAccounts, Contact, Profile, UserRole } from "../user/fragments";
 
 export const AdminGetUsersWithPendingKYCApprovalQuery = gql`
   query AdminGetUsersWithPendingKYCApprovalQuery {
     adminGetUsersWithPendingKYCApproval {
       id
-      role {
-        type
-      }
-      account {
-        clientID
-      }
-      contact {
-        phoneNumber {
-          number
-        }
-        email {
-          address
-        }
-      }
-      profile {
-        country {
-          id
-          phoneNumberCode
-        }
-        documents {
-          guatemala {
-            dpi {
-              fileHash
-            }
-          }
-        }
-      }
-      bankAccounts {
-        currency {
-          name
-          symbol
-        }
-        guatemala {
-          accountNumber
-          bankAccountType
-          fullName
-          bank {
-            name
-          }
-        }
-      }
+      ...UserRole
+      ...Account
+      ...Contact
+      ...Profile
+      ...BankAccounts
     }
   }
+  ${UserRole}
+  ${Account}
+  ${Contact}
+  ${Profile}
+  ${BankAccounts}
 `;
