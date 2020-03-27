@@ -68,8 +68,10 @@ describe("adminGetUsersWithPendingKYCApproval", () => {
       expect(user.contact.email[0].address).toBeDefined();
       expect(user.profile.country.phoneNumberCode).toBeDefined();
       expect(user.profile.documents.guatemala.dpi[0].fileHash).toBeDefined();
+      expect(user.profile.documents.guatemala.dpi[0].verifiedAt).toBeNull();
       expect(user.bankAccounts[0].currency.name).toBeDefined();
       expect(user.bankAccounts[0].currency.symbol).toBeDefined();
+      expect(user.bankAccounts[0].guatemala.verifiedAt).toBeNull();
       expect(user.bankAccounts[0].guatemala.accountNumber).toBeDefined();
       expect(user.bankAccounts[0].guatemala.fullName).toBeDefined();
       expect(user.bankAccounts[0].guatemala.bankAccountType).toBeDefined();

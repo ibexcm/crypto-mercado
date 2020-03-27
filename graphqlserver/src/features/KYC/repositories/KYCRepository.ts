@@ -22,6 +22,7 @@ export class KYCRepository {
         },
         bankAccounts_every: {
           guatemala: {
+            verifiedAt: null,
             accountNumber_not: null,
             fullName_not: null,
             bankAccountType_not: null,
@@ -35,6 +36,7 @@ export class KYCRepository {
             guatemala: {
               dpi_every: {
                 id_not: null,
+                verifiedAt: null,
               },
             },
           },
