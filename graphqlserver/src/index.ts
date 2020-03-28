@@ -1,12 +1,21 @@
 import { Dependencies } from "@ibexcm/libraries/di";
+import fs from "fs";
 import { config } from "./config";
 import { createServer } from "./server/utils/createServer";
 
-const { port, address, protocol } = config.get("express");
+const { port, address, protocol, endpoint } = config.get("express");
 
 const dependencies = new Dependencies();
 const server = createServer(dependencies);
 
-server.createHttpServer(server.options).listen(port, address, () => {
+const key = fs.readFileSync('/etc/letsencrypt/live/apitest.ibexcm.com/privkey.pem', 'utf8');
+const cert = fs.readFileSync('/etc/letsencrypt/live/apitest.ibexcm.com/cert.pem', 'utf8');
+
+server.createHttpServer({
+  ...server.options,
+  https: {
+    key, cert,
+  }
+}).listen(port, address, () => {
   console.log(`Server is running on ${protocol}://${address}:${port}`);
 });

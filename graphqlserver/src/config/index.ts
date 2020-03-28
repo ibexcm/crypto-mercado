@@ -36,6 +36,14 @@ const configuration = convict({
       arg: "address",
     },
 
+    endpoint: {
+      doc: "The endpoint address to bind.",
+      format: "url",
+      default: null,
+      env: "GRAPHQL_ENDPOINT",
+      arg: "graphql-endpoint",
+    },
+
     port: {
       doc: "The port to bind HTTP.",
       format: "port",
@@ -65,7 +73,7 @@ const configuration = convict({
     issuer: {
       doc: "Token issuer",
       format: "String",
-      default: "Ziina",
+      default: "IBEXCM",
       env: "JWT_ISSUER",
       arg: "jwt-issuer",
     },
@@ -73,7 +81,7 @@ const configuration = convict({
     audience: {
       doc: "Token audience",
       format: "String",
-      default: "https://ziina.com",
+      default: "https://apitest.ibexcm.com",
       env: "JWT_AUDIENCE",
       arg: "jwt-audience",
     },
