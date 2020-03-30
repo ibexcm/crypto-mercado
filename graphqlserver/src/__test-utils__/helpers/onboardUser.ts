@@ -63,5 +63,5 @@ export default async ({
     data: { user },
   } = await GraphQLClient.user(token);
 
-  return user;
+  return { user, token };
 };

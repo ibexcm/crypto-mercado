@@ -1,13 +1,24 @@
 import { prisma as db } from "@ibexcm/database";
-import { AdminKycApproveUserBankAccountInput, AdminKycApproveUserGovernmentIdInput, TGenre } from "@ibexcm/libraries/api";
 import { TestDependencies } from "@ibexcm/libraries/di";
 import Faker from "faker";
 import { AuthenticationErrorCode } from "../../../../features/Authentication/errors/AuthenticationError";
-import { emailNotificationsRepositoryInjectionKey, emailVerificationRepositoryInjectionKey } from "../../../../features/EmailVerification";
+import {
+  emailNotificationsRepositoryInjectionKey,
+  emailVerificationRepositoryInjectionKey,
+} from "../../../../features/EmailVerification";
 import { smsVerificationRepositoryInjectionKey } from "../../../../features/SMSVerification";
+import {
+  getBankAccountArgs,
+  getGovernmentIDArgs,
+} from "../../../../__test-utils__/helpers/adminKYCApproveUser";
 import onboardAdminUser from "../../../../__test-utils__/helpers/onboardAdminUser";
 import onboardUser from "../../../../__test-utils__/helpers/onboardUser";
-import { mockEmailNotificationsRepository, mockEmailVerificationRepository, MockServer, mockSMSVerificationRepository } from "../../../../__test-utils__/mocks";
+import {
+  mockEmailNotificationsRepository,
+  mockEmailVerificationRepository,
+  MockServer,
+  mockSMSVerificationRepository,
+} from "../../../../__test-utils__/mocks";
 import GraphQLClient from "../../../../__test-utils__/mocks/GraphQLClient";
 
 describe("adminKYCApproveUser", () => {
@@ -51,7 +62,7 @@ describe("adminKYCApproveUser", () => {
       },
     } = await GraphQLClient.adminAuthenticate({ args: { address, password } });
 
-    const pendingApprovalUser = await onboardUser();
+    const { user: pendingApprovalUser } = await onboardUser();
     const [{ id: documentID }] = await db
       .user({ id: pendingApprovalUser.id })
       .profile()
@@ -111,18 +122,4 @@ describe("adminKYCApproveUser", () => {
 
     expect(errors[0].extensions.code).toEqual(AuthenticationErrorCode.invalidAdminRole);
   });
-});
-
-const getGovernmentIDArgs = (id: string): AdminKycApproveUserGovernmentIdInput => ({
-  firstName: "First Name",
-  lastName: "Last Name",
-  expiresAt: "2020-03-24",
-  CUI: "123456789",
-  genre: TGenre.Female,
-  dateOfBirth: "1989-01-01",
-  id,
-});
-
-const getBankAccountArgs = (id: string): AdminKycApproveUserBankAccountInput => ({
-  id,
 });

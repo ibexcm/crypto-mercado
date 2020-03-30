@@ -53,14 +53,6 @@ export const isKYCApproved = rule({ cache: true })(
       .user()
       .bankAccounts();
 
-    if (bankAccounts.length <= 0) {
-      return AuthenticationError.invalidBankAccountError;
-    }
-
-    if (bankAccounts.some(bankAccount => !Boolean(bankAccount.verifiedAt))) {
-      return AuthenticationError.invalidBankAccountError;
-    }
-
     const profileDocuments = await db
       .email({ address })
       .contact()
@@ -70,15 +62,28 @@ export const isKYCApproved = rule({ cache: true })(
       .guatemala()
       .dpi();
 
-    if (profileDocuments.length <= 0) {
+    if (
+      bankAccounts.some(bankAccount => Boolean(bankAccount.verifiedAt)) &&
+      profileDocuments.some(document => Boolean(document.verifiedAt))
+    ) {
+      return true;
+    }
+
+    if (
+      bankAccounts.length <= 0 ||
+      bankAccounts.every(bankAccount => !Boolean(bankAccount.verifiedAt))
+    ) {
+      return AuthenticationError.invalidBankAccountError;
+    }
+
+    if (
+      profileDocuments.length <= 0 ||
+      profileDocuments.every(document => !Boolean(document.verifiedAt))
+    ) {
       return AuthenticationError.invalidProfileDocumentError;
     }
 
-    if (profileDocuments.some(document => !Boolean(document.verifiedAt))) {
-      return AuthenticationError.invalidProfileDocumentError;
-    }
-
-    return true;
+    return false;
   },
 );
 
