@@ -1,5 +1,10 @@
 import { Theme } from "@material-ui/core";
 
+export const toolbarHeightDesktop = 98;
+export const toolbarHeightMobile = 56;
+export const logoWidthDesktop = 161;
+export const logoWidthMobile = 49;
+
 export const styles = (theme: Theme) => ({
   drawerContainer: {
     backgroundColor: "white",
@@ -15,11 +20,12 @@ export const styles = (theme: Theme) => ({
   },
   toolbar: {
     justifyContent: "space-between",
-    minHeight: 98,
+    minHeight: toolbarHeightDesktop,
     [theme.breakpoints.down("sm")]: {
-      minHeight: 56,
+      minHeight: toolbarHeightMobile,
     },
   },
+
   modal: {
     display: "flex",
     alignItems: "center",

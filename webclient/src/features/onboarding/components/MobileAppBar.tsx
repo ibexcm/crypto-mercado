@@ -2,7 +2,7 @@ import { AppBar, Box, Hidden, Theme, Toolbar, WithStyles } from "@material-ui/co
 import { withStyles } from "@material-ui/styles";
 import React from "react";
 import { Link } from "react-router-dom";
-import { styles } from "../../../common/theme";
+import { logoWidthMobile, styles } from "../../../common/theme";
 import routes from "../../../routes";
 
 interface IMobileAppBarProps extends WithStyles {}
@@ -36,7 +36,7 @@ export const MobileAppBar = withStyles((theme: Theme) => ({
     },
   },
   logoBox: {
-    width: 49,
+    width: logoWidthMobile,
     flexDirection: "column",
     justifyContent: "center",
   },

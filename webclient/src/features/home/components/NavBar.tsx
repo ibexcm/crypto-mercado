@@ -10,7 +10,7 @@ import {
 import { withStyles } from "@material-ui/styles";
 import React from "react";
 import { Link } from "react-router-dom";
-import { styles } from "../../../common/theme";
+import { logoWidthDesktop, styles } from "../../../common/theme";
 import routes from "../../../routes";
 
 interface IMobileAppBarProps extends WithStyles {}
@@ -43,7 +43,7 @@ const Component: React.FC<IMobileAppBarProps> = ({ classes }) => {
 export const NavBar = withStyles((theme: Theme) => ({
   ...styles(theme),
   logoBox: {
-    width: 161,
+    width: logoWidthDesktop,
     flexDirection: "column",
     justifyContent: "center",
   },
