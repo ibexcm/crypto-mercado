@@ -20,7 +20,7 @@ export const permissions = shield({
     adminKYCApproveUser: rules.isAdmin,
     adminKYCRejectUser: rules.isAdmin,
 
-    authenticate: and(rules.isKYCApproved, rules.isValidPassword, rules.usernameExists),
+    authenticate: and(rules.usernameExists, rules.isValidPassword, rules.isKYCApproved),
     sendPhoneNumberVerificationCode: rules.isPhoneNumberAvailable,
     verifyPhoneNumber: rules.isPhoneNumberAvailable,
     sendEmailVerificationCode: rules.isEmailAvailable,

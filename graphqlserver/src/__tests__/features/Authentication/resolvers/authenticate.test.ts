@@ -89,4 +89,17 @@ describe("authenticate", () => {
 
     expect(errors[0].extensions.code).toEqual(AuthenticationErrorCode.invalidUsername);
   });
+
+  test("KYC pending", async () => {
+    const address = "u4@ibexcm.com";
+    const password = "password";
+
+    await onboardUser({ address, password });
+
+    const { errors } = await GraphQLClient.authenticate({
+      args: { address, password },
+    });
+
+    expect(errors[0].extensions.code).toEqual(AuthenticationErrorCode.invalidBankAccount);
+  });
 });
