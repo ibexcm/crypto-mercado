@@ -15,7 +15,10 @@ export const styles = (theme: Theme) => ({
   },
   toolbar: {
     justifyContent: "space-between",
-    [theme.breakpoints.down("sm")]: {},
+    minHeight: 98,
+    [theme.breakpoints.down("sm")]: {
+      minHeight: 56,
+    },
   },
   modal: {
     display: "flex",

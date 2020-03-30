@@ -1,7 +1,14 @@
 import { SendPhoneNumberVerificationCodeInput } from "@ibexcm/libraries/api";
-import { Box, Container, Grid, Theme, withStyles, WithStyles } from "@material-ui/core";
+import {
+  Box,
+  Container,
+  Grid,
+  Hidden,
+  Theme,
+  withStyles,
+  WithStyles,
+} from "@material-ui/core";
 import CheckCircleOutlineIcon from "@material-ui/icons/CheckCircleOutline";
-import SwapHorizIcon from "@material-ui/icons/SwapHoriz";
 import React from "react";
 import { RouteComponentProps, StaticContext } from "react-router";
 import { Button, ToolbarPadding, Typography } from "../../../common/components";
@@ -40,31 +47,16 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
             <Grid item lg={7}>
               <Box className={classes.introText}>
                 <Typography variant="h5" fontWeight={500}>
-                  Compra y vende Bitcoin
-                </Typography>
-                <Typography variant="h5" fontWeight={500}>
-                  en Guatemala.
+                  Respaldamos tu Esfuerzo.
                 </Typography>
               </Box>
-              <Box display="flex" className={classes.currencyPairsRow}>
+              <Box>
                 <Typography
-                  mr={2}
-                  color="textSecondary"
                   variant="h5"
+                  color="textSecondary"
                   className={classes.currencyPairText}
                 >
-                  GTQ
-                  <SwapHorizIcon fontSize="large" />
-                  BTC
-                </Typography>
-                <Typography
-                  color="textSecondary"
-                  variant="h5"
-                  className={classes.currencyPairText}
-                >
-                  USD
-                  <SwapHorizIcon fontSize="large" />
-                  BTC
+                  Compra y Vende Bitcoin en Guatemala
                 </Typography>
               </Box>
               <Box mb={6} mt={3}>
@@ -119,16 +111,18 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
                   </Grid>
                 </Grid>
               </Box>
-              <Button
-                color="primary"
-                variant="contained"
-                fullWidth
-                size="large"
-                onClick={onCreateAccount}
-                className={classes.ctaButton}
-              >
-                Crea una cuenta
-              </Button>
+              <Hidden only={["xs", "sm", "lg", "md", "xl"]}>
+                <Button
+                  color="primary"
+                  variant="contained"
+                  fullWidth
+                  size="large"
+                  onClick={onCreateAccount}
+                  className={classes.ctaButton}
+                >
+                  Crea una cuenta
+                </Button>
+              </Hidden>
             </Grid>
           </Grid>
         </Box>
@@ -157,6 +151,7 @@ export const Home = withStyles((theme: Theme) => ({
     },
   },
   currencyPairText: {
+    fontWeight: 500,
     display: "flex",
     flexDirection: "row",
     [theme.breakpoints.down("sm")]: {

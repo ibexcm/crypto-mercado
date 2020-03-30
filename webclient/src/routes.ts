@@ -1,15 +1,23 @@
 export const routes = {
   root: "/",
   home: {},
+  authentication: {
+    signIn: "/inicia-sesion",
+  },
   onboarding: {
-    sendPhoneNumberVerificationCode: "/ingresa-tu-telefono",
-    verifyPhoneNumber: "/verifica-tu-telefono",
-    sendEmailVerificationCode: "/ingresa-tu-correo",
-    verifyEmail: "/verifica-tu-correo",
-    setPassword: "/elige-una-contrasena",
-    uploadGovernmentID: "/verifica-tu-identificacion",
-    setBankAccount: "/verifica-tu-cuenta-bancaria",
-    done: "/fin",
+    sendPhoneNumberVerificationCode: "/kyc/ingresa-tu-telefono",
+    verifyPhoneNumber: "/kyc/verifica-tu-telefono",
+    sendEmailVerificationCode: "/kyc/ingresa-tu-correo",
+    verifyEmail: "/kyc/verifica-tu-correo",
+    setPassword: "/kyc/elige-una-contrasena",
+    uploadGovernmentID: "/kyc/verifica-tu-identificacion",
+    setBankAccount: "/kyc/verifica-tu-cuenta-bancaria",
+    done: "/kyc/fin",
+  },
+  dashboard: {
+    transactions: {
+      index: "/dashboard/tx",
+    },
   },
 };
 
