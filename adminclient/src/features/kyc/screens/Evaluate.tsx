@@ -255,8 +255,7 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
                         color="primary"
                         size="large"
                         disabled={
-                          Boolean(document.verifiedAt) &&
-                          Boolean(bankAccount.guatemala.verifiedAt)
+                          Boolean(document.verifiedAt) && Boolean(bankAccount.verifiedAt)
                         }
                       >
                         Rechazar
@@ -269,8 +268,7 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
                         color="primary"
                         size="large"
                         disabled={
-                          Boolean(document.verifiedAt) &&
-                          Boolean(bankAccount.guatemala.verifiedAt)
+                          Boolean(document.verifiedAt) && Boolean(bankAccount.verifiedAt)
                         }
                         onClick={() => {
                           onAdminKYCApproveUser(document.id, bankAccount.id);
