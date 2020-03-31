@@ -1,4 +1,4 @@
-# import User, Bank, Currency from "@ibexcm/database/generated/prisma.graphql"
+# import User, Bank, Currency, Transaction from "@ibexcm/database/generated/prisma.graphql"
 
 type Query {
   user: User!
@@ -26,6 +26,9 @@ type Mutation {
   # AUTHENTICATION
   authenticate(args: AuthenticateInput!): Session!
 
+  # TRANSACTIONS
+  createTransaction(args: CreateTransactionInput!): Transaction!
+
   # ADMIN
   # AUTHENTICATION: admin* must be the prefix for admin endpoints
   adminAuthenticate(args: AdminAuthenticateInput!): Session!
@@ -45,6 +48,12 @@ type Mutation {
 type Session {
   token: String
   expiresAt: DateTime
+}
+
+input CreateTransactionInput {
+  amount: String
+  cryptoAccountID: String
+  bankAccountID: String
 }
 
 input AdminKYCApproveUserInput {
