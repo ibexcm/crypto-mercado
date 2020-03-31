@@ -151,8 +151,8 @@ type BankReceiptEvidence {
 
 type TransactionReceiptEvidence {
   id: ID! @id
-  bitcoinReceipt: BitcoinReceiptEvidence
-  bankReceipt: BankReceiptEvidence
+  bitcoinReceipt: BitcoinReceiptEvidence @relation(onDelete: CASCADE)
+  bankReceipt: BankReceiptEvidence @relation(onDelete: CASCADE)
   transaction: Transaction!
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
@@ -160,7 +160,7 @@ type TransactionReceiptEvidence {
 
 type TransactionReceipt {
   id: ID! @id
-  evidence: [TransactionReceiptEvidence]
+  evidence: [TransactionReceiptEvidence] @relation(onDelete: CASCADE)
   fromCurrency: Currency! @relation(name: "TransactionReceiptFromCurrency")
   toCurrency: Currency! @relation(name: "TransactionReceiptToCurrency")
   paidAt: DateTime # only by admin!
@@ -172,10 +172,11 @@ type TransactionReceipt {
 type Transaction {
   id: ID! @id
   amount: String! @default(value: "0.00")
-  sender: Sender! @relation(name: "SenderToTransaction", link: INLINE)
-  recipient: Recipient! @relation(name: "RecipientToTransaction", link: INLINE)
+  sender: Sender! @relation(name: "SenderToTransaction", link: INLINE, onDelete: CASCADE)
+  recipient: Recipient!
+    @relation(name: "RecipientToTransaction", link: INLINE, onDelete: CASCADE)
   receipt: TransactionReceipt!
-    @relation(name: "TransactionReceiptToTransaction", link: INLINE)
+    @relation(name: "TransactionReceiptToTransaction", link: INLINE, onDelete: CASCADE)
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }
