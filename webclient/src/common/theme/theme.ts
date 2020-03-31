@@ -25,6 +25,11 @@ export const theme = createMuiTheme({
       main: "#044900",
       dark: darken(0.05, "#044900"),
     },
+    warning: {
+      light: lighten(0.05, "#ffb74d"),
+      main: "#ffb74d",
+      dark: darken(0.05, "#ffb74d"),
+    },
     secondary: {
       light: lighten(0.05, "#231F20"),
       main: "#231F20",
@@ -34,13 +39,20 @@ export const theme = createMuiTheme({
   typography: {
     fontFamily: "Montserrat, sans-serif",
     h5: {
-      fontWeight: 500,
+      fontWeight: 900,
     },
     subtitle2: {
       fontSize: "1.1rem",
     },
   },
   overrides: {
+    MuiCardContent: {
+      root: {
+        "&:last-child": {
+          paddingBottom: 16,
+        },
+      },
+    },
     MuiInputLabel: {
       root: {
         "&.Mui-focused": {

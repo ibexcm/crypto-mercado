@@ -1,5 +1,6 @@
 {
   "projects": {
-    "default": "ibex-webclient"
+    "default": "ibex-webclient",
+    "prod": "ibexwebclient"
   }
 }

@@ -48,7 +48,7 @@ describe("adminGetUser", () => {
     } = await GraphQLClient.adminAuthenticate({ args: { address, password } });
 
     const length = 2;
-    const [user1] = await Promise.all(
+    const [{ user: user1 }] = await Promise.all(
       new Array(length).fill(null).map(() => onboardUser()),
     );
 

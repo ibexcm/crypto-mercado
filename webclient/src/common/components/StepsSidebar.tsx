@@ -4,6 +4,7 @@ import { History } from "history";
 import React from "react";
 import { Link } from "react-router-dom";
 import routes from "../../routes";
+import { toolbarHeightDesktop } from "../theme";
 
 export const drawerWidth = 350;
 export const drawerWidthMD = 280;
@@ -27,7 +28,7 @@ const Component: React.FC<IStepsSidebarProps> = ({ classes, children, footer }) 
           <Toolbar>
             <Box className={classes.logoBox}>
               <Link to={routes.root}>
-                <img src="/images/ibex-icon.png" width="100%" height="auto" />
+                <img src="/svg/ibex-logo.svg" width="100%" height="auto" />
               </Link>
             </Box>
           </Toolbar>
@@ -59,10 +60,10 @@ export const StepsSidebar = withStyles((theme: Theme) => ({
     },
   },
   logoBox: {
-    minHeight: 98,
+    minHeight: toolbarHeightDesktop,
     display: "flex",
     flexDirection: "column",
     justifyContent: "center",
-    width: 63,
+    width: 161,
   },
 }))(Component);

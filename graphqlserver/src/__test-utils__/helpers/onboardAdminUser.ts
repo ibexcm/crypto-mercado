@@ -9,7 +9,7 @@ export default async (
   } = {},
   db: Prisma,
 ) => {
-  const user = await onboardUser(args);
+  const { user } = await onboardUser(args);
 
   await db.updateUser({
     where: {

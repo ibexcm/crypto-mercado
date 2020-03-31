@@ -38,7 +38,7 @@ describe("adminAuthenticate", () => {
     const address = "u1@ibexcm.com";
     const password = "password";
 
-    const user = await onboardUser({ address, password });
+    const { user } = await onboardUser({ address, password });
 
     await db.updateUser({
       where: {
@@ -86,7 +86,7 @@ describe("adminAuthenticate", () => {
     const address = "u3@ibexcm.com";
     const password = "password";
 
-    const user = await onboardUser({ address, password });
+    const { user } = await onboardUser({ address, password });
 
     await db.updateUser({
       where: {

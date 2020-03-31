@@ -2,6 +2,7 @@ import React from "react";
 import { BrowserRouter as Router, Route } from "react-router-dom";
 import DependencyContext from "./common/contexts/DependencyContext";
 import { GraphQL } from "./features/app/components";
+import { Authenticate } from "./features/authentication/screens";
 import { Home } from "./features/home/screens";
 import {
   Done,
@@ -23,6 +24,11 @@ const App: React.FC = () => {
       <GraphQL>
         <Router>
           <Route path={routes.root} exact component={Home} />
+
+          {/* AUTHENTICATION */}
+          <Route path={routes.authentication.signIn} exact component={Authenticate} />
+
+          {/* ONBOARDING */}
           <Route
             path={routes.onboarding.sendPhoneNumberVerificationCode}
             exact
