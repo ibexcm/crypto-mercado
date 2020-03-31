@@ -29,6 +29,9 @@ export const permissions = shield({
     // TRANSACTION
     createTransaction: and(rules.isUser, rules.isKYCApproved),
 
+    // CRYPTO ACCOUNTS
+    createBitcoinAccount: and(rules.isUser, rules.isKYCApproved),
+
     // ADMIN
     // AUTH
     adminAuthenticate: rules.isValidAdminAuthentication,

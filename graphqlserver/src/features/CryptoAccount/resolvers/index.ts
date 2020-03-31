@@ -1,5 +1,10 @@
 import { IContext } from "../../../server/interfaces/IContext";
 import { cryptoAccountRepositoryInjectionKey } from "../InjectionKeys";
+import { createBitcoinAccount } from "./createBitcoinAccount";
+
+export const mutations = {
+  createBitcoinAccount,
+};
 
 export const types = {
   CryptoAccount: {

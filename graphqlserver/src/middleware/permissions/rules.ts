@@ -2,6 +2,7 @@ import { BankAccount, GuatemalaDPI } from "@ibexcm/database";
 import {
   MutationAdminAuthenticateArgs,
   MutationAuthenticateArgs,
+  MutationCreateBitcoinAccountArgs,
   MutationSendEmailVerificationCodeArgs,
   MutationSendPhoneNumberVerificationCodeArgs,
   MutationVerifyEmailArgs,
@@ -43,15 +44,15 @@ export const isAdmin = rule({ cache: true })(
 export const isKYCApproved = rule({ cache: true })(
   async (
     parent,
-    { args: { address } }: MutationAuthenticateArgs,
+    { args: { address } }: MutationAuthenticateArgs | MutationCreateBitcoinAccountArgs,
     { dependencies, request: { auth } }: IContext,
-    info,
+    { fieldName },
   ) => {
     const db = dependencies.provide(dbInjectionKey);
     let bankAccounts: BankAccount[] = [];
     let profileDocuments: GuatemalaDPI[] = [];
 
-    if (Boolean(address)) {
+    if (fieldName === "authenticate") {
       bankAccounts = await db
         .email({ address })
         .contact()

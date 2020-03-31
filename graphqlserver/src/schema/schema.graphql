@@ -29,6 +29,9 @@ type Mutation {
   # TRANSACTIONS
   createTransaction(args: CreateTransactionInput!): Transaction!
 
+  # CRYPTO ACCOUNTS
+  createBitcoinAccount(args: CreateBitcoinAccountInput!): Boolean!
+
   # ADMIN
   # AUTHENTICATION: admin* must be the prefix for admin endpoints
   adminAuthenticate(args: AdminAuthenticateInput!): Session!
@@ -48,6 +51,10 @@ type Mutation {
 type Session {
   token: String
   expiresAt: DateTime
+}
+
+input CreateBitcoinAccountInput {
+  address: String!
 }
 
 input CreateTransactionInput {

@@ -22,7 +22,11 @@ export const getBankAccountArgs = (id: string): AdminKycApproveUserBankAccountIn
   id,
 });
 
-export default async (user: User, db: Prisma, { address }: { address?: string }) => {
+export default async (
+  user: User,
+  db: Prisma,
+  { address }: { address?: string } = { address: Faker.internet.email() },
+) => {
   const [{ id: documentID }] = await db
     .user({ id: user.id })
     .profile()
@@ -36,7 +40,7 @@ export default async (user: User, db: Prisma, { address }: { address?: string })
 
   const password = "password";
 
-  await onboardAdminUser({ address: address ?? Faker.internet.email(), password }, db);
+  await onboardAdminUser({ address, password }, db);
 
   const {
     data: {
@@ -51,5 +55,5 @@ export default async (user: User, db: Prisma, { address }: { address?: string })
     token,
   );
 
-  return adminKYCApproveUser;
+  return { address, password, token };
 };

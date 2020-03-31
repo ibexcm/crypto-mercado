@@ -1,15 +1,21 @@
 import { Prisma } from "@ibexcm/database";
+import { CurrencySymbol } from "@ibexcm/libraries/models/currency";
+import Faker from "faker";
 import onboardUser from "./onboardUser";
 
 export default async (
-  args: {
+  {
+    number,
+    address,
+    password,
+  }: {
     number?: string;
     address?: string;
     password?: string;
   } = {},
   db: Prisma,
 ) => {
-  const { user } = await onboardUser(args);
+  const { user } = await onboardUser({ address, password, number });
 
   await db.updateUser({
     where: {
@@ -19,6 +25,20 @@ export default async (
       role: {
         connect: {
           type: "ADMIN",
+        },
+      },
+      cryptoAccounts: {
+        create: {
+          currency: {
+            connect: {
+              symbol: CurrencySymbol.BTC,
+            },
+          },
+          bitcoin: {
+            create: {
+              address: Faker.finance.bitcoinAddress(),
+            },
+          },
         },
       },
     },
