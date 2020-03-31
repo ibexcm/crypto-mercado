@@ -26,7 +26,7 @@ export class TransactionRepository {
 
   async createTransaction(
     args: MutationCreateTransactionArgs,
-    user: User,
+    senderUser: User,
   ): Promise<Transaction> {
     const [recipientUser] = await this.db.users({
       where: {
@@ -42,13 +42,13 @@ export class TransactionRepository {
       first: 1,
     });
 
-    const sender = this.getOnCreateTransactionSender(user, args);
+    const sender = this.getOnCreateTransactionSender(senderUser, args);
     const recipient = await this.getOnCreateTransactionRecipient(recipientUser, args);
     const receipt = await this.getTransactionReceipt(args);
 
-    const {
-      args: { amount },
-    } = args;
+    const { args: input } = args;
+
+    const amount = input?.amount || "0.00";
 
     return await this.db.createTransaction({
       amount,
@@ -112,7 +112,7 @@ export class TransactionRepository {
 
   private async getRecipientTargetAccount(
     recipientUser: User,
-    { args: { bankAccountID, cryptoAccountID } }: MutationCreateTransactionArgs,
+    { args: { bankAccountID } }: MutationCreateTransactionArgs,
   ): Promise<
     | Pick<RecipientCreateWithoutTransactionInput, "bankAccount">
     | Pick<RecipientCreateWithoutTransactionInput, "cryptoAccount">
@@ -152,7 +152,7 @@ export class TransactionRepository {
       },
     };
 
-    const targetAccount = this.getRecipientTargetAccount(recipientUser, args);
+    const targetAccount = await this.getRecipientTargetAccount(recipientUser, args);
 
     recipient.create = {
       ...recipient.create,
@@ -163,14 +163,14 @@ export class TransactionRepository {
   }
 
   private getOnCreateTransactionSender(
-    user: User,
+    senderUser: User,
     { args: { bankAccountID, cryptoAccountID } }: MutationCreateTransactionArgs,
   ): SenderCreateOneWithoutTransactionInput {
     const sender: SenderCreateOneWithoutTransactionInput = {
       create: {
         user: {
           connect: {
-            id: user.id,
+            id: senderUser.id,
           },
         },
       },
@@ -196,7 +196,7 @@ export class TransactionRepository {
         user: {
           ...sender.create.user,
         },
-        bankAccount: {
+        cryptoAccount: {
           connect: {
             id: cryptoAccountID,
           },
