@@ -2,6 +2,7 @@ import { prisma as db } from "@ibexcm/database";
 import { TestDependencies } from "@ibexcm/libraries/di";
 import Faker from "faker";
 import { config } from "../../../../config";
+import { CryptoAccountErrorCode } from "../../../../features/CryptoAccount/errors/CryptoAccountError";
 import {
   emailNotificationsRepositoryInjectionKey,
   emailVerificationRepositoryInjectionKey,
@@ -64,5 +65,26 @@ describe("createBitcoinAccount", () => {
     );
 
     expect(createBitcoinAccount).toBe(true);
+  });
+
+  test("address exists", async () => {
+    const { user: newUser, address, password } = await onboardUser();
+
+    await adminKYCApproveUser(newUser, db, { address: adminAccountEmailAddress });
+
+    const { token } = await authenticate({ address, password });
+
+    const bitcoinAddress = Faker.finance.bitcoinAddress();
+
+    await GraphQLClient.createBitcoinAccount({ args: { address: bitcoinAddress } }, token);
+
+    const { errors } = await GraphQLClient.createBitcoinAccount(
+      { args: { address: bitcoinAddress } },
+      token,
+    );
+
+    expect(errors[0].extensions.code).toBe(
+      CryptoAccountErrorCode.bitcoinAddressAlreadyExists,
+    );
   });
 });
