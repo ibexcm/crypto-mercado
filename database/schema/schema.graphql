@@ -51,9 +51,17 @@ type Account {
   updatedAt: DateTime! @updatedAt
 }
 
-type CryptoAccount {
+type BitcoinAccount {
   id: ID! @id
   address: String! @unique
+  xpub: String
+  cryptoAccount: CryptoAccount!
+    @relation(name: "BitcoinAccountToCryptoAccount", link: INLINE)
+}
+
+type CryptoAccount {
+  id: ID! @id
+  bitcoin: BitcoinAccount @relation(name: "BitcoinAccountToCryptoAccount")
   user: User!
   currency: Currency!
   createdAt: DateTime! @createdAt
@@ -110,20 +118,42 @@ type PhoneNumber {
 type TransactionFee {
   id: ID! @id
   fee: String! # decimal / percentage
+  transaction: Transaction! @relation(name: "TransactionFeeToTransaction", link: INLINE)
 }
 
 type Sender {
   id: ID! @id
-  sender: User!
-  bankAccount: BankAccount
-  cryptoAccount: CryptoAccount
-  adminBankAccount: AdminBankAccount
+  user: User!
+  bankAccount: BankAccount @relation(name: "SenderToBankAccount", link: INLINE)
+  cryptoAccount: CryptoAccount @relation(name: "SenderToCryptoAccount", link: INLINE)
+  transaction: Transaction! @relation(name: "SenderToTransaction")
+}
+
+type Recipient {
+  id: ID! @id
+  user: User!
+  bankAccount: BankAccount @relation(name: "RecipientToBankAccount", link: INLINE)
+  cryptoAccount: CryptoAccount @relation(name: "RecipientToCryptoAccount", link: INLINE)
+  transaction: Transaction! @relation(name: "RecipientToTransaction")
+}
+
+type BitcoinReceiptEvidence {
+  id: ID! @id
+  transactionHash: String
+  transaction: Transaction!
+}
+
+type BankReceiptEvidence {
+  id: ID! @id
+  fileHash: String
+  transaction: Transaction!
 }
 
 type TransactionReceiptEvidence {
   id: ID! @id
-  bitcoinTxID: String
-  fileHash: String
+  bitcoinReceipt: BitcoinReceiptEvidence
+  bankReceipt: BankReceiptEvidence
+  transaction: Transaction!
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }
@@ -131,9 +161,10 @@ type TransactionReceiptEvidence {
 type TransactionReceipt {
   id: ID! @id
   evidence: [TransactionReceiptEvidence]
-  toCurrency: Currency! @relation(name: "TransactionReceiptToCurrency")
   fromCurrency: Currency! @relation(name: "TransactionReceiptFromCurrency")
+  toCurrency: Currency! @relation(name: "TransactionReceiptToCurrency")
   paidAt: DateTime # only by admin!
+  transaction: Transaction! @relation(name: "TransactionReceiptToTransaction")
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }
@@ -141,9 +172,10 @@ type TransactionReceipt {
 type Transaction {
   id: ID! @id
   amount: String! @default(value: "0.00")
-  sender: Sender!
-  fee: TransactionFee!
+  sender: Sender! @relation(name: "SenderToTransaction", link: INLINE)
+  recipient: Recipient! @relation(name: "RecipientToTransaction", link: INLINE)
   receipt: TransactionReceipt!
+    @relation(name: "TransactionReceiptToTransaction", link: INLINE)
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }
@@ -190,13 +222,4 @@ type GuatemalaDocument {
   id: ID! @id
   dpi: [GuatemalaDPI] @relation(onDelete: CASCADE, name: "GuatemalaDocumentToGuatemalaDPI")
   profileDocument: ProfileDocument!
-}
-
-# ADMIN Management
-type AdminBankAccount {
-  id: ID! @id
-  guatemala: GuatemalaBankAccount
-  currency: Currency!
-  createdAt: DateTime! @createdAt
-  updatedAt: DateTime! @updatedAt
 }
