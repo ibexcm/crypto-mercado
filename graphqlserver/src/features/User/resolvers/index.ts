@@ -42,5 +42,9 @@ export const types = {
       const UserRepository = dependencies.provide(userRepositoryInjectionKey);
       return UserRepository.bankAccounts(id);
     },
+    transactions: ({ id }, args, { dependencies }: IContext) => {
+      const UserRepository = dependencies.provide(userRepositoryInjectionKey);
+      return UserRepository.transactions(id);
+    },
   },
 };

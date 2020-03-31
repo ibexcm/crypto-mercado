@@ -50,12 +50,27 @@ export class TransactionRepository {
 
     const amount = input?.amount || "0.00";
 
-    return await this.db.createTransaction({
+    const transaction = await this.db.createTransaction({
       amount,
       receipt,
       recipient,
       sender,
     });
+
+    await this.db.updateUser({
+      where: {
+        id: senderUser.id,
+      },
+      data: {
+        transactions: {
+          connect: {
+            id: transaction.id,
+          },
+        },
+      },
+    });
+
+    return transaction;
   }
 
   async sender(id: string): Promise<Sender> {
