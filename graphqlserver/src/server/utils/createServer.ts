@@ -4,7 +4,7 @@ import bodyparser from "body-parser";
 import { GraphQLServer, PubSub } from "graphql-yoga";
 import { ContextParameters } from "graphql-yoga/dist/types";
 import { Prisma as PrismaBinding } from "prisma-binding";
-import { jwtRepositoryInjectionKey } from "../../features/JSONWebToken";
+import { jwtRepositoryInjectionKey } from "../../libraries/JSONWebToken";
 import { permissions } from "../../middleware/permissions";
 import { transforms } from "../../middleware/transforms";
 import { resolvers } from "../../schema/resolvers";

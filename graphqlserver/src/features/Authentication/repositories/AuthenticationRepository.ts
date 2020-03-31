@@ -4,7 +4,7 @@ import {
   MutationAuthenticateArgs,
   Session,
 } from "@ibexcm/libraries/api";
-import { ISessionRepository } from "../../Session/interfaces/ISessionRepository";
+import { ISessionRepository } from "../../../libraries/Session/interfaces/ISessionRepository";
 
 export class AuthenticationRepository {
   private db: Prisma;

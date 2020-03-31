@@ -3,7 +3,7 @@ import {
   MutationAdminKycApproveUserArgs,
   MutationAdminKycRejectUserArgs,
 } from "@ibexcm/libraries/api";
-import { IEmailNotificationsRepository } from "../../../features/EmailVerification/interfaces/IEmailNotificationsRepository";
+import { IEmailNotificationsRepository } from "../../../libraries/EmailVerification/interfaces/IEmailNotificationsRepository";
 
 export class KYCRepository {
   private db: Prisma;

@@ -1,7 +1,7 @@
 import { prisma as db } from "@ibexcm/database";
 import { TestDependencies } from "@ibexcm/libraries/di";
-import { emailVerificationRepositoryInjectionKey } from "../../../../features/EmailVerification";
-import { smsVerificationRepositoryInjectionKey } from "../../../../features/SMSVerification";
+import { emailVerificationRepositoryInjectionKey } from "../../../../libraries/EmailVerification";
+import { smsVerificationRepositoryInjectionKey } from "../../../../libraries/SMSVerification";
 import onboardAdminUser from "../../../../__test-utils__/helpers/onboardAdminUser";
 import onboardUser from "../../../../__test-utils__/helpers/onboardUser";
 import {

@@ -1,8 +1,8 @@
 import { prisma as db } from "@ibexcm/database";
 import { TGuatemalaBankAccount } from "@ibexcm/libraries/api";
 import { TestDependencies } from "@ibexcm/libraries/di";
-import { smsVerificationRepositoryInjectionKey } from "../../../../features/SMSVerification";
 import { dbInjectionKey } from "../../../../InjectionKeys";
+import { smsVerificationRepositoryInjectionKey } from "../../../../libraries/SMSVerification";
 import { transformGuatemalaAccountNumber } from "../../../../middleware/transforms/setBankAccount";
 import {
   MockServer,

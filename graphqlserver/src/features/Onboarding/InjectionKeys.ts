@@ -1,9 +1,9 @@
 import { InjectionKey, InjectionKeyScope } from "@ibexcm/libraries/di";
 import { dbInjectionKey } from "../../InjectionKeys";
-import { emailVerificationRepositoryInjectionKey } from "../EmailVerification";
-import { fileManagementRepositoryInjectionKey } from "../FileManagement";
-import { sessionRepositoryInjectionKey } from "../Session";
-import { smsVerificationRepositoryInjectionKey } from "../SMSVerification";
+import { emailVerificationRepositoryInjectionKey } from "../../libraries/EmailVerification";
+import { fileManagementRepositoryInjectionKey } from "../../libraries/FileManagement";
+import { sessionRepositoryInjectionKey } from "../../libraries/Session";
+import { smsVerificationRepositoryInjectionKey } from "../../libraries/SMSVerification";
 import { OnboardingRepository } from "./repositories/OnboardingRepository";
 
 export const onboardingRepositoryInjectionKey: InjectionKey<OnboardingRepository> = {

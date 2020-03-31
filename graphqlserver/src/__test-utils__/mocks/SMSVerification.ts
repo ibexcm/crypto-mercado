@@ -1,4 +1,4 @@
-import { ISMSVerificationRepository } from "../../features/SMSVerification";
+import { ISMSVerificationRepository } from "../../libraries/SMSVerification";
 
 export const mockSMSVerificationRepository = (): ISMSVerificationRepository => {
   return {
