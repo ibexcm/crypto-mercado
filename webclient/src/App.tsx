@@ -14,6 +14,7 @@ import {
   VerifyEmail,
   VerifyPhoneNumber,
 } from "./features/onboarding/screens";
+import { TransactionsIndex } from "./features/transaction/screens";
 import { routes } from "./routes";
 
 const App: React.FC = () => {
@@ -53,6 +54,13 @@ const App: React.FC = () => {
           />
           <Route path={routes.onboarding.setBankAccount} exact component={SetBankAccount} />
           <Route path={routes.onboarding.done} exact component={Done} />
+
+          {/* TRANSACTION */}
+          <Route
+            path={routes.dashboard.transactions.index}
+            exact
+            component={TransactionsIndex}
+          />
         </Router>
       </GraphQL>
     </DependencyContext.Provider>
