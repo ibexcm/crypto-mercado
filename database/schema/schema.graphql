@@ -55,13 +55,13 @@ type BitcoinAccount {
   id: ID! @id
   address: String! @unique
   xpub: String
-  cryptoAccount: CryptoAccount!
-    @relation(name: "BitcoinAccountToCryptoAccount", link: INLINE)
+  cryptoAccount: CryptoAccount! @relation(name: "BitcoinAccountToCryptoAccount")
 }
 
 type CryptoAccount {
   id: ID! @id
-  bitcoin: BitcoinAccount @relation(name: "BitcoinAccountToCryptoAccount")
+  bitcoin: BitcoinAccount
+    @relation(name: "BitcoinAccountToCryptoAccount", link: INLINE, onDelete: CASCADE)
   user: User!
   currency: Currency!
   createdAt: DateTime! @createdAt
