@@ -1,4 +1,5 @@
 import gql from "graphql-tag";
+import { Transaction } from "../transaction/fragments";
 import {
   Account,
   BankAccounts,
@@ -18,6 +19,9 @@ export const UserQuery = gql`
       ...Profile
       ...BankAccounts
       ...CryptoAccounts
+      transactions {
+        ...Transaction
+      }
     }
   }
   ${UserRole}
@@ -26,4 +30,5 @@ export const UserQuery = gql`
   ${Profile}
   ${BankAccounts}
   ${CryptoAccounts}
+  ${Transaction}
 `;
