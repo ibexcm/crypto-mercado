@@ -4,7 +4,7 @@ import { PubSub } from "graphql-yoga";
 import { ContextParameters } from "graphql-yoga/dist/types";
 import { Prisma as PrismaBinding } from "prisma-binding";
 import { ExecutionParams } from "subscriptions-transport-ws";
-import { IAuthenticationRequest } from "../../features/Session";
+import { IAuthenticationRequest } from "../../libraries/Session";
 
 export interface IContext extends ContextParameters {
   dependencies: IDependencies;

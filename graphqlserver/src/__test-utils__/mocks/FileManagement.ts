@@ -1,5 +1,5 @@
-import { IFileManagementRepository } from "../../features/FileManagement";
 import { ReadStream } from "fs";
+import { IFileManagementRepository } from "../../libraries/FileManagement";
 
 export const mockFileManagementRepository = (): IFileManagementRepository => {
   return {

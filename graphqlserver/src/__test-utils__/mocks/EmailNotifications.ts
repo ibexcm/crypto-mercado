@@ -1,4 +1,4 @@
-import { IEmailNotificationsRepository } from "../../features/EmailVerification/interfaces/IEmailNotificationsRepository";
+import { IEmailNotificationsRepository } from "../../libraries/EmailVerification/interfaces/IEmailNotificationsRepository";
 
 export const mockEmailNotificationsRepository = (): IEmailNotificationsRepository => {
   return {

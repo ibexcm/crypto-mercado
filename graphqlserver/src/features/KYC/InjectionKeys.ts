@@ -1,6 +1,6 @@
 import { InjectionKey, InjectionKeyScope } from "@ibexcm/libraries/di";
-import { emailNotificationsRepositoryInjectionKey } from "../../features/EmailVerification";
 import { dbInjectionKey } from "../../InjectionKeys";
+import { emailNotificationsRepositoryInjectionKey } from "../../libraries/EmailVerification";
 import { KYCRepository } from "./repositories/KYCRepository";
 
 export const kycRepositoryInjectionKey: InjectionKey<KYCRepository> = {

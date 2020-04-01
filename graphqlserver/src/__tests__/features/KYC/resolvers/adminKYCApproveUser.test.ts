@@ -5,8 +5,8 @@ import { AuthenticationErrorCode } from "../../../../features/Authentication/err
 import {
   emailNotificationsRepositoryInjectionKey,
   emailVerificationRepositoryInjectionKey,
-} from "../../../../features/EmailVerification";
-import { smsVerificationRepositoryInjectionKey } from "../../../../features/SMSVerification";
+} from "../../../../libraries/EmailVerification";
+import { smsVerificationRepositoryInjectionKey } from "../../../../libraries/SMSVerification";
 import {
   getBankAccountArgs,
   getGovernmentIDArgs,

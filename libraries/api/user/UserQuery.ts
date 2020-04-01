@@ -1,5 +1,13 @@
 import gql from "graphql-tag";
-import { Account, BankAccounts, Contact, Profile, UserRole } from "./fragments";
+import { Transaction } from "../transaction/fragments";
+import {
+  Account,
+  BankAccounts,
+  Contact,
+  CryptoAccounts,
+  Profile,
+  UserRole,
+} from "./fragments";
 
 export const UserQuery = gql`
   query UserQuery {
@@ -10,6 +18,10 @@ export const UserQuery = gql`
       ...Contact
       ...Profile
       ...BankAccounts
+      ...CryptoAccounts
+      transactions {
+        ...Transaction
+      }
     }
   }
   ${UserRole}
@@ -17,4 +29,6 @@ export const UserQuery = gql`
   ${Contact}
   ${Profile}
   ${BankAccounts}
+  ${CryptoAccounts}
+  ${Transaction}
 `;

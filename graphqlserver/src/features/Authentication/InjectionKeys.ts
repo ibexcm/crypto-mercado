@@ -1,6 +1,6 @@
 import { InjectionKey, InjectionKeyScope } from "@ibexcm/libraries/di";
 import { dbInjectionKey } from "../../InjectionKeys";
-import { sessionRepositoryInjectionKey } from "../Session";
+import { sessionRepositoryInjectionKey } from "../../libraries/Session";
 import { AuthenticationRepository } from "./repositories/AuthenticationRepository";
 
 export const authenticationRepositoryInjectionKey: InjectionKey<AuthenticationRepository> = {

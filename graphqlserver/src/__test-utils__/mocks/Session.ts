@@ -1,5 +1,5 @@
 import { Session, User } from "@ibexcm/libraries/api";
-import { ISessionRepository } from "../../features/Session/interfaces/ISessionRepository";
+import { ISessionRepository } from "../../libraries/Session/interfaces/ISessionRepository";
 
 export const mockSessionRepository = (
   token: string,

@@ -2,11 +2,15 @@ import { prisma as db } from "@ibexcm/database";
 import { TestDependencies } from "@ibexcm/libraries/di";
 import Faker from "faker";
 import { AuthenticationErrorCode } from "../../../../features/Authentication/errors/AuthenticationError";
-import { emailVerificationRepositoryInjectionKey } from "../../../../features/EmailVerification";
-import { smsVerificationRepositoryInjectionKey } from "../../../../features/SMSVerification";
+import { emailVerificationRepositoryInjectionKey } from "../../../../libraries/EmailVerification";
+import { smsVerificationRepositoryInjectionKey } from "../../../../libraries/SMSVerification";
 import onboardAdminUser from "../../../../__test-utils__/helpers/onboardAdminUser";
 import onboardUser from "../../../../__test-utils__/helpers/onboardUser";
-import { mockEmailVerificationRepository, MockServer, mockSMSVerificationRepository } from "../../../../__test-utils__/mocks";
+import {
+  mockEmailVerificationRepository,
+  MockServer,
+  mockSMSVerificationRepository,
+} from "../../../../__test-utils__/mocks";
 import GraphQLClient from "../../../../__test-utils__/mocks/GraphQLClient";
 
 describe("adminGetUsersWithPendingKYCApproval", () => {

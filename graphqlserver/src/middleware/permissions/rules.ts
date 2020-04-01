@@ -1,6 +1,8 @@
+import { BankAccount, GuatemalaDPI } from "@ibexcm/database";
 import {
   MutationAdminAuthenticateArgs,
   MutationAuthenticateArgs,
+  MutationCreateBitcoinAccountArgs,
   MutationSendEmailVerificationCodeArgs,
   MutationSendPhoneNumberVerificationCodeArgs,
   MutationVerifyEmailArgs,
@@ -42,25 +44,39 @@ export const isAdmin = rule({ cache: true })(
 export const isKYCApproved = rule({ cache: true })(
   async (
     parent,
-    { args: { address } }: MutationAuthenticateArgs,
+    { args: { address } }: MutationAuthenticateArgs | MutationCreateBitcoinAccountArgs,
     { dependencies, request: { auth } }: IContext,
-    info,
+    { fieldName },
   ) => {
     const db = dependencies.provide(dbInjectionKey);
-    const bankAccounts = await db
-      .email({ address })
-      .contact()
-      .user()
-      .bankAccounts();
+    let bankAccounts: BankAccount[] = [];
+    let profileDocuments: GuatemalaDPI[] = [];
 
-    const profileDocuments = await db
-      .email({ address })
-      .contact()
-      .user()
-      .profile()
-      .documents()
-      .guatemala()
-      .dpi();
+    if (fieldName === "authenticate") {
+      bankAccounts = await db
+        .email({ address })
+        .contact()
+        .user()
+        .bankAccounts();
+
+      profileDocuments = await db
+        .email({ address })
+        .contact()
+        .user()
+        .profile()
+        .documents()
+        .guatemala()
+        .dpi();
+    } else {
+      bankAccounts = await db.user({ id: auth.user.id }).bankAccounts();
+
+      profileDocuments = await db
+        .user({ id: auth.user.id })
+        .profile()
+        .documents()
+        .guatemala()
+        .dpi();
+    }
 
     if (
       bankAccounts.some(bankAccount => Boolean(bankAccount.verifiedAt)) &&
