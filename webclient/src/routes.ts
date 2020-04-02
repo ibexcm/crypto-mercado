@@ -15,6 +15,11 @@ export const routes = {
     done: "/kyc/fin",
   },
   dashboard: {
+    bitcoin: {
+      sell: "/dashboard/vender-bitcoin",
+      buy: "/dashboard/comprar-bitcoin",
+      confirmPurchase: "/dashboard/comprar-bitcoin/confirmar",
+    },
     transactions: {
       index: "/dashboard/tx",
     },

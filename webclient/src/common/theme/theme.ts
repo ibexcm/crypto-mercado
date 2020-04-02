@@ -41,6 +41,9 @@ export const theme = createMuiTheme({
     h5: {
       fontWeight: 900,
     },
+    overline: {
+      fontWeight: 900,
+    },
     subtitle2: {
       fontSize: "1.1rem",
     },

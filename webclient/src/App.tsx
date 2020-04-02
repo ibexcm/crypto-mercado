@@ -14,7 +14,7 @@ import {
   VerifyEmail,
   VerifyPhoneNumber,
 } from "./features/onboarding/screens";
-import { TransactionsIndex } from "./features/transaction/screens";
+import { SellBitcoin, TransactionsIndex } from "./features/transaction/screens";
 import { routes } from "./routes";
 
 const App: React.FC = () => {
@@ -61,6 +61,7 @@ const App: React.FC = () => {
             exact
             component={TransactionsIndex}
           />
+          <Route path={routes.dashboard.bitcoin.sell} exact component={SellBitcoin} />
         </Router>
       </GraphQL>
     </DependencyContext.Provider>
