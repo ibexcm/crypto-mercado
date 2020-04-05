@@ -26,6 +26,16 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
   const dependencies = React.useContext(DependencyContext);
   const OnboardingRepository = dependencies.provide(OnboardingRepositoryInjectionKeys);
 
+  React.useEffect(() => {
+    (() => {
+      const script = document.createElement("script");
+      script.src =
+        "https://static.zdassets.com/ekr/snippet.js?key=52b88740-ebcc-4f1c-81e1-4fd827f40adf";
+      script.id = "ze-snippet";
+      document.querySelector("body").appendChild(script);
+    })();
+  }, []);
+
   const onCreateAccount = () => {
     OnboardingRepository.reset();
     history.push(routes.onboarding.sendPhoneNumberVerificationCode);
