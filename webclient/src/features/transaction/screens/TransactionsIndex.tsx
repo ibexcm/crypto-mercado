@@ -73,7 +73,7 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
                     variant="contained"
                     onClick={onSellBitcoin}
                   >
-                    Comprar BTC
+                    Vender BTC
                   </Button>
                 </Grid>
                 <Grid item xs={6}>
@@ -84,7 +84,7 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
                     size="large"
                     onClick={onBuyBitcoin}
                   >
-                    Vender BTC
+                    Comprar BTC
                   </Button>
                 </Grid>
               </Grid>

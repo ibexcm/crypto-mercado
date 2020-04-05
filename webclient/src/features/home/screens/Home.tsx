@@ -47,16 +47,7 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
             <Grid item lg={7}>
               <Box className={classes.introText}>
                 <Typography variant="h5" fontWeight={500}>
-                  Respaldamos tu Esfuerzo.
-                </Typography>
-              </Box>
-              <Box>
-                <Typography
-                  variant="h5"
-                  color="textSecondary"
-                  className={classes.currencyPairText}
-                >
-                  Compra y Vende Bitcoin en Guatemala
+                  <em>ACTIVOS DIGITALES EN QUETZALES</em>
                 </Typography>
               </Box>
               <Box mb={6} mt={3}>
@@ -66,7 +57,7 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
                   </Grid>
                   <Grid item>
                     <Typography fontWeight={500} gutterBottom>
-                      Sin custodia de tus llaves privadas
+                      La mejor tarifa del mercado guatemalteco.
                     </Typography>
                   </Grid>
                 </Grid>
@@ -76,7 +67,8 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
                   </Grid>
                   <Grid item>
                     <Typography fontWeight={500} gutterBottom>
-                      Compra BTC desde Q.1000,00
+                      Transferencias directas a tu wallet / cuenta bancaria en menos de 24
+                      hrs
                     </Typography>
                   </Grid>
                 </Grid>
@@ -86,27 +78,7 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
                   </Grid>
                   <Grid item>
                     <Typography fontWeight={500}>
-                      Depósito a tu cuenta bancaria en menos de 24 horas
-                    </Typography>
-                  </Grid>
-                </Grid>
-                <Grid container spacing={1} wrap="nowrap">
-                  <Grid item>
-                    <CheckCircleOutlineIcon fontSize="small" color="primary" />
-                  </Grid>
-                  <Grid item>
-                    <Typography fontWeight={500}>
-                      Hasta US$10,000.00 de límite de retiro mensual. <sup>[1]</sup>
-                    </Typography>
-                  </Grid>
-                </Grid>
-                <Grid container spacing={1} wrap="nowrap">
-                  <Grid item>
-                    <CheckCircleOutlineIcon fontSize="small" color="primary" />
-                  </Grid>
-                  <Grid item>
-                    <Typography fontWeight={500} gutterBottom>
-                      Hasta 1.5% TRM
+                      Deposita / transfiere tus Q's o USD's a nuestras cuentas en el BAC
                     </Typography>
                   </Grid>
                 </Grid>

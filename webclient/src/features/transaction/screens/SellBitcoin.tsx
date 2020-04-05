@@ -1,10 +1,8 @@
 import { SendPhoneNumberVerificationCodeInput } from "@ibexcm/libraries/api";
 import {
   Box,
-  Checkbox,
   Container,
   Divider,
-  FormControlLabel,
   Grid,
   Hidden,
   InputAdornment,
@@ -15,7 +13,6 @@ import {
 } from "@material-ui/core";
 import React from "react";
 import { RouteComponentProps, StaticContext } from "react-router";
-import { Link } from "react-router-dom";
 import {
   Button,
   StepsSidebar,
@@ -87,11 +84,10 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
                   <Paper>
                     <TextField
                       fullWidth
-                      autoFocus
-                      label="¿Cuánto quieres recibir?"
+                      label="¿Cuánto deseas vender?"
                       variant="outlined"
                       InputProps={{
-                        endAdornment: <InputAdornment position="end">USD</InputAdornment>,
+                        endAdornment: <InputAdornment position="end">BTC</InputAdornment>,
                       }}
                       // onChange={onChange}
                       // onKeyPress={onKeyPress}
@@ -108,7 +104,7 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
                       <Grid item>
                         <Typography color="textSecondary">Precio actual BTC</Typography>
                       </Grid>
-                      <Grid item xs={5}>
+                      <Grid item xs={6}>
                         <Typography>USD 6254.00</Typography>
                       </Grid>
                     </Grid>
@@ -120,7 +116,7 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
                     <Grid item>
                       <Typography color="textSecondary">Cantidad</Typography>
                     </Grid>
-                    <Grid item xs={5}>
+                    <Grid item xs={6}>
                       <Typography>USD 1000.00</Typography>
                     </Grid>
                   </Grid>
@@ -128,17 +124,15 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
                     <Grid item>
                       <Typography color="textSecondary">Comisión IBEX (3.5%)</Typography>
                     </Grid>
-                    <Grid item xs={5}>
+                    <Grid item xs={6}>
                       <Typography>USD 35.00</Typography>
                     </Grid>
                   </Grid>
                   <Grid container justify="flex-end" spacing={1}>
                     <Grid item>
-                      <Typography color="textSecondary">
-                        IVA x Comisión IBEX (12%)
-                      </Typography>
+                      <Typography color="textSecondary">IVA (12%)</Typography>
                     </Grid>
-                    <Grid item xs={5}>
+                    <Grid item xs={6}>
                       <Typography>USD 12.00</Typography>
                     </Grid>
                   </Grid>
@@ -149,7 +143,7 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
                     <Grid item>
                       <Typography color="primary">Recibes</Typography>
                     </Grid>
-                    <Grid item xs={5}>
+                    <Grid item xs={6}>
                       <Typography color="secondary" fontWeight={900}>
                         USD 955.00
                       </Typography>
@@ -157,53 +151,31 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
                   </Grid>
                   <Grid container justify="flex-end" spacing={1}>
                     <Grid item>
+                      <Typography color="primary">Tasa de cambio (7.65)</Typography>
+                    </Grid>
+                    <Grid item xs={6}>
+                      <Typography color="secondary" fontWeight={900}>
+                        GTQ 9000.00
+                      </Typography>
+                    </Grid>
+                  </Grid>
+                  <Grid container justify="flex-end" spacing={1}>
+                    <Grid item>
                       <Typography color="primary">Total a enviar</Typography>
                     </Grid>
-                    <Grid item xs={5}>
-                      <Typography color="secondary">BTC 0.123456789</Typography>
+                    <Grid item xs={6}>
+                      <Typography color="secondary" fontWeight={900}>
+                        BTC 0.123456789
+                      </Typography>
                     </Grid>
                   </Grid>
                 </Box>
-                <Box mb={1}>
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        // checked={state.checkedB}
-                        // onChange={handleChange}
-                        name="aml-terms"
-                        color="primary"
-                      />
-                    }
-                    label={
-                      <Typography align="justify" variant="caption">
-                        Al dar click en "Confirmar", acepto los{" "}
-                        <Link to={routes.dashboard.bitcoin.sell}>
-                          términos y condiciones
-                        </Link>{" "}
-                        y sostengo que esta es una operación legítima conforme a las leyes
-                        de Anti Lavado de Dinero de la jurisdicción de Guatemala.
-                      </Typography>
-                    }
-                  />
-                </Box>
                 <Box mb={3}>
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        // checked={state.checkedB}
-                        // onChange={handleChange}
-                        name="fluctuation"
-                        color="primary"
-                      />
-                    }
-                    label={
-                      <Typography align="justify" variant="caption">
-                        Al dar click en "Confirmar", comprendo que debido a las
-                        fluctuaciones del precio de Bitcoin, puedo recibir una cantidad
-                        mayor o menor a la especificada en el desglose anterior.
-                      </Typography>
-                    }
-                  />
+                  <Typography align="justify" variant="caption">
+                    Al dar click en "Confirmar", comprendo que debido a las fluctuaciones
+                    del precio de Bitcoin, puedo recibir una cantidad mayor o menor a la
+                    especificada en el desglose anterior.
+                  </Typography>
                 </Box>
                 <Hidden smDown>
                   <Box>
