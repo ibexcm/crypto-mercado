@@ -31,11 +31,11 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
   const TransactionRepository = dependencies.provide(TransactionRepositoryInjectionKeys);
 
   const onSellBitcoin = () => {
-    history.push(routes.dashboard.bitcoin.sell);
+    history.push(routes.dashboard.btc.sell.checkout);
   };
 
   const onBuyBitcoin = () => {
-    history.push(routes.dashboard.bitcoin.buy);
+    history.push(routes.dashboard.btc.buy.checkout);
   };
 
   return (

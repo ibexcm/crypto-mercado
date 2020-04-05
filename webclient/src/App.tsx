@@ -61,7 +61,7 @@ const App: React.FC = () => {
             exact
             component={TransactionsIndex}
           />
-          <Route path={routes.dashboard.bitcoin.sell} exact component={SellBitcoin} />
+          <Route path={routes.dashboard.btc.sell.checkout} exact component={SellBitcoin} />
         </Router>
       </GraphQL>
     </DependencyContext.Provider>

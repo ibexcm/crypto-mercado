@@ -38,8 +38,8 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
     history.push(routes.dashboard.transactions.index);
   };
 
-  const onBuyBitcoin = () => {
-    history.push(routes.dashboard.bitcoin.confirmPurchase);
+  const onConfirm = () => {
+    history.push(routes.dashboard.btc.sell.confirm);
   };
 
   return (
@@ -197,7 +197,7 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
                           variant="contained"
                           color="secondary"
                           size="large"
-                          onClick={onBuyBitcoin}
+                          onClick={onConfirm}
                         >
                           Confirmar
                         </Button>
@@ -230,7 +230,7 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
                     variant="contained"
                     color="secondary"
                     size="large"
-                    onClick={onBuyBitcoin}
+                    onClick={onConfirm}
                   >
                     Confirmar
                   </Button>
