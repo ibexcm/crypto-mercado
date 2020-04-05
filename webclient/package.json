@@ -21,6 +21,7 @@
     "lodash": "^4.17.15",
     "luxon": "^1.21.3",
     "polished": "^3.4.1",
+    "qrcode": "^1.4.4",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-router-dom": "^5.0.1",

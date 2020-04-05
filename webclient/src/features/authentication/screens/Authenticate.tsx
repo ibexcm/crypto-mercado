@@ -151,7 +151,4 @@ export const Authenticate = withStyles((theme: Theme) => ({
   homeContainer: {
     backgroundColor: "white",
   },
-  warnCard: {
-    backgroundColor: theme.palette.warning.light,
-  },
 }))(Component);

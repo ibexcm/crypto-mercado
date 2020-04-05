@@ -88,4 +88,7 @@ export const styles = (theme: Theme) => ({
     color: theme.palette.text.primary,
     textDecoration: "none",
   },
+  warnCard: {
+    backgroundColor: theme.palette.warning.light,
+  },
 });

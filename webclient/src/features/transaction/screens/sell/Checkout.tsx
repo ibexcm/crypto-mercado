@@ -19,12 +19,12 @@ import {
   TextField,
   ToolbarPadding,
   Typography,
-} from "../../../common/components";
-import DependencyContext from "../../../common/contexts/DependencyContext";
-import { styles } from "../../../common/theme";
-import routes from "../../../routes";
-import { MobileNavBar } from "../components";
-import { TransactionRepositoryInjectionKeys } from "../InjectionKeys";
+} from "../../../../common/components";
+import DependencyContext from "../../../../common/contexts/DependencyContext";
+import { styles } from "../../../../common/theme";
+import routes from "../../../../routes";
+import { MobileNavBar } from "../../components";
+import { TransactionRepositoryInjectionKeys } from "../../InjectionKeys";
 
 interface Props
   extends WithStyles,
@@ -39,7 +39,7 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
   };
 
   const onConfirm = () => {
-    history.push(routes.dashboard.btc.sell.confirm);
+    history.push(routes.dashboard.sell.confirm);
   };
 
   return (
@@ -244,6 +244,6 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
   );
 };
 
-export const SellBitcoin = withStyles((theme: Theme) => ({
+export const Checkout = withStyles((theme: Theme) => ({
   ...styles(theme),
 }))(Component);
