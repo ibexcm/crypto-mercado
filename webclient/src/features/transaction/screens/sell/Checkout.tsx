@@ -65,6 +65,22 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
               <Grid item xs={12} lg={5}>
                 <Box mb={3}>
                   <Paper>
+                    <TextField
+                      fullWidth
+                      label="¿Cuánto deseas vender?"
+                      variant="outlined"
+                      InputProps={{
+                        endAdornment: <InputAdornment position="end">BTC</InputAdornment>,
+                      }}
+                      // onChange={onChange}
+                      // onKeyPress={onKeyPress}
+                      // value={input.args.address}
+                      type="number"
+                    />
+                  </Paper>
+                </Box>
+                <Box mb={3}>
+                  <Paper>
                     <Box p={2}>
                       <Typography variant="body2" mb={3}>
                         Cuenta bancaria de destino
@@ -78,22 +94,6 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
                         </Typography>
                       </Box>
                     </Box>
-                  </Paper>
-                </Box>
-                <Box mb={3}>
-                  <Paper>
-                    <TextField
-                      fullWidth
-                      label="¿Cuánto deseas vender?"
-                      variant="outlined"
-                      InputProps={{
-                        endAdornment: <InputAdornment position="end">BTC</InputAdornment>,
-                      }}
-                      // onChange={onChange}
-                      // onKeyPress={onKeyPress}
-                      // value={input.args.address}
-                      type="number"
-                    />
                   </Paper>
                 </Box>
               </Grid>
