@@ -1,5 +1,6 @@
 import React from "react";
 import { BrowserRouter as Router, Route } from "react-router-dom";
+import { PrivateRoute } from "./common/components";
 import DependencyContext from "./common/contexts/DependencyContext";
 import { GraphQL } from "./features/app/components";
 import { Authenticate } from "./features/authentication/screens";
@@ -64,19 +65,31 @@ const App: React.FC = () => {
           <Route path={routes.onboarding.done} exact component={Done} />
 
           {/* TRANSACTION */}
-          <Route
+          <PrivateRoute
             path={routes.dashboard.transactions.index}
             exact
             component={TransactionsIndex}
           />
 
           {/* SELL */}
-          <Route path={routes.dashboard.sell.checkout} exact component={SellCheckout} />
-          <Route path={routes.dashboard.sell.confirm} exact component={SellConfirm} />
+          <PrivateRoute
+            path={routes.dashboard.sell.checkout}
+            exact
+            component={SellCheckout}
+          />
+          <PrivateRoute
+            path={routes.dashboard.sell.confirm}
+            exact
+            component={SellConfirm}
+          />
 
           {/* BUY */}
-          <Route path={routes.dashboard.buy.checkout} exact component={BuyCheckout} />
-          <Route path={routes.dashboard.buy.confirm} exact component={BuyConfirm} />
+          <PrivateRoute
+            path={routes.dashboard.buy.checkout}
+            exact
+            component={BuyCheckout}
+          />
+          <PrivateRoute path={routes.dashboard.buy.confirm} exact component={BuyConfirm} />
         </Router>
       </GraphQL>
     </DependencyContext.Provider>
