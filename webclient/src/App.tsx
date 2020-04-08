@@ -16,6 +16,10 @@ import {
 } from "./features/onboarding/screens";
 import { TransactionsIndex } from "./features/transaction/screens";
 import {
+  Checkout as BuyCheckout,
+  Confirm as BuyConfirm,
+} from "./features/transaction/screens/buy";
+import {
   Checkout as SellCheckout,
   Confirm as SellConfirm,
 } from "./features/transaction/screens/sell";
@@ -69,6 +73,10 @@ const App: React.FC = () => {
           {/* SELL */}
           <Route path={routes.dashboard.sell.checkout} exact component={SellCheckout} />
           <Route path={routes.dashboard.sell.confirm} exact component={SellConfirm} />
+
+          {/* BUY */}
+          <Route path={routes.dashboard.buy.checkout} exact component={BuyCheckout} />
+          <Route path={routes.dashboard.buy.confirm} exact component={BuyConfirm} />
         </Router>
       </GraphQL>
     </DependencyContext.Provider>
