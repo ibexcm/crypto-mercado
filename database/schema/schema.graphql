@@ -30,6 +30,7 @@ type BankAccount {
   id: ID! @id
   guatemala: GuatemalaBankAccount @relation(onDelete: CASCADE)
   currency: Currency!
+  country: Country!
   user: User!
   verifiedAt: DateTime
   createdAt: DateTime! @createdAt
