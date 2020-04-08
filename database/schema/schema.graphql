@@ -127,15 +127,11 @@ type ExchangeRate {
 type TransactionFee {
   id: ID! @id
   fee: String! # decimal / percentage
-  receipt: TransactionReceipt!
-    @relation(name: "TransactionFeeToTransactionReceipt", link: INLINE)
 }
 
 type TransactionTax {
   id: ID! @id
   tax: String! # decimal / percentage
-  receipt: TransactionReceipt!
-    @relation(name: "TransactionTaxToTransactionReceipt", link: INLINE)
 }
 
 type Sender {
