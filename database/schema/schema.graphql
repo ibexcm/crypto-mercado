@@ -167,8 +167,8 @@ type BankReceiptEvidence {
 
 type TransactionReceiptEvidence {
   id: ID! @id
-  bitcoinReceipt: BitcoinReceiptEvidence @relation(onDelete: CASCADE)
-  bankReceipt: BankReceiptEvidence @relation(onDelete: CASCADE)
+  bitcoinReceipt: BitcoinReceiptEvidence @relation(onDelete: CASCADE, link: INLINE)
+  bankReceipt: BankReceiptEvidence @relation(onDelete: CASCADE, link: INLINE)
   transaction: Transaction!
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt

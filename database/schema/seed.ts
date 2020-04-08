@@ -41,7 +41,7 @@ async function createBanks() {
       "El Credito Hipotecario Nacional de Guatemala",
       "Fichosa Guatemala, S.A. / Banco Americano, S.A.",
       "Vivibanco",
-    ].map(name => prisma.createBank({ name, country: { connect: { symbol: "GTQ" } } })),
+    ].map((name) => prisma.createBank({ name, country: { connect: { symbol: "GTQ" } } })),
   );
 }
 
@@ -54,12 +54,24 @@ async function createUserRoles() {
   });
 }
 
-(async function() {
+async function createExchangeRates() {
+  await prisma.createExchangeRate({
+    price: "7.65",
+    currency: {
+      connect: {
+        symbol: "GTQ",
+      },
+    },
+  });
+}
+
+(async function () {
   try {
     await createCurrencies();
     await createUserRoles();
     await createCountries();
     await createBanks();
+    await createExchangeRates();
   } catch (error) {
     console.error(error);
   }
