@@ -115,10 +115,26 @@ type PhoneNumber {
   createdAt: DateTime! @createdAt
 }
 
+type ExchangeRate {
+  id: ID! @id
+  price: String!
+  currency: Currency!
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
 type TransactionFee {
   id: ID! @id
   fee: String! # decimal / percentage
-  transaction: Transaction! @relation(name: "TransactionFeeToTransaction", link: INLINE)
+  receipt: TransactionReceipt!
+    @relation(name: "TransactionFeeToTransactionReceipt", link: INLINE)
+}
+
+type TransactionTax {
+  id: ID! @id
+  tax: String! # decimal / percentage
+  receipt: TransactionReceipt!
+    @relation(name: "TransactionTaxToTransactionReceipt", link: INLINE)
 }
 
 type Sender {
@@ -140,13 +156,13 @@ type Recipient {
 type BitcoinReceiptEvidence {
   id: ID! @id
   transactionHash: String
-  transaction: Transaction!
+  evidence: TransactionReceiptEvidence!
 }
 
 type BankReceiptEvidence {
   id: ID! @id
   fileHash: String
-  transaction: Transaction!
+  evidence: TransactionReceiptEvidence!
 }
 
 type TransactionReceiptEvidence {
@@ -163,6 +179,9 @@ type TransactionReceipt {
   evidence: [TransactionReceiptEvidence] @relation(onDelete: CASCADE)
   fromCurrency: Currency! @relation(name: "TransactionReceiptFromCurrency")
   toCurrency: Currency! @relation(name: "TransactionReceiptToCurrency")
+  fee: TransactionFee! @relation(name: "TransactionReceiptToTransactionFee")
+  tax: TransactionTax! @relation(name: "TransactionReceiptToTransactionTax")
+  exchangeRate: ExchangeRate @relation(name: "TransactionReceiptToExchangeRate")
   paidAt: DateTime # only by admin!
   transaction: Transaction! @relation(name: "TransactionReceiptToTransaction")
   createdAt: DateTime! @createdAt
