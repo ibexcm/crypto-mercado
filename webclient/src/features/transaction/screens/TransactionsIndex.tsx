@@ -46,10 +46,44 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
         <Box className={classes.topContainer}>
           <Container style={{ minHeight: "auto" }}>
             <ToolbarPadding />
-            <Box mb={4}>
-              <Typography variant="h5">Transacciones</Typography>
-              <Typography>Histórico de compra/venta de BTC</Typography>
-            </Box>
+            <Hidden mdDown>
+              <Box mb={4}>
+                <Grid container spacing={2}>
+                  <Grid item lg={6}>
+                    <Typography variant="h5">Transacciones</Typography>
+                    <Typography>Histórico de compra/venta de BTC</Typography>
+                  </Grid>
+                  <Grid item lg={6}>
+                    <Box>
+                      <Grid container spacing={2} justify="flex-end">
+                        <Grid item>
+                          <Button
+                            fullWidth
+                            color="default"
+                            size="large"
+                            variant="contained"
+                            onClick={onSellBitcoin}
+                          >
+                            Vender BTC
+                          </Button>
+                        </Grid>
+                        <Grid item>
+                          <Button
+                            fullWidth
+                            variant="contained"
+                            color="secondary"
+                            size="large"
+                            onClick={onBuyBitcoin}
+                          >
+                            Comprar BTC
+                          </Button>
+                        </Grid>
+                      </Grid>
+                    </Box>
+                  </Grid>
+                </Grid>
+              </Box>
+            </Hidden>
           </Container>
         </Box>
         <Box className={classes.mainContainer}>
