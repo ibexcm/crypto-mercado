@@ -127,11 +127,15 @@ type ExchangeRate {
 type TransactionFee {
   id: ID! @id
   fee: String! # decimal / percentage
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
 }
 
 type TransactionTax {
   id: ID! @id
   tax: String! # decimal / percentage
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
 }
 
 type Sender {
@@ -154,31 +158,47 @@ type BitcoinReceiptEvidence {
   id: ID! @id
   transactionHash: String
   evidence: TransactionReceiptEvidence!
+    @relation(name: "TransactionReceiptEvidenceToBitcoinReceiptEvidence")
 }
 
 type BankReceiptEvidence {
   id: ID! @id
   fileHash: String
   evidence: TransactionReceiptEvidence!
+    @relation(name: "TransactionReceiptEvidenceToBankReceiptEvidence")
 }
 
 type TransactionReceiptEvidence {
   id: ID! @id
-  bitcoinReceipt: BitcoinReceiptEvidence @relation(onDelete: CASCADE, link: INLINE)
-  bankReceipt: BankReceiptEvidence @relation(onDelete: CASCADE, link: INLINE)
-  transaction: Transaction!
+  bitcoinReceipt: BitcoinReceiptEvidence
+    @relation(
+      name: "TransactionReceiptEvidenceToBitcoinReceiptEvidence"
+      link: INLINE
+      onDelete: CASCADE
+    )
+  bankReceipt: BankReceiptEvidence
+    @relation(
+      name: "TransactionReceiptEvidenceToBankReceiptEvidence"
+      link: INLINE
+      onDelete: CASCADE
+    )
+  transaction: Transaction! @relation(name: "TransactionReceiptEvidenceToTransaction")
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }
 
 type TransactionReceipt {
   id: ID! @id
-  evidence: [TransactionReceiptEvidence] @relation(onDelete: CASCADE)
+  evidence: [TransactionReceiptEvidence]
+    @relation(name: "TransactionReceiptToTransactionReceiptEvidence", onDelete: CASCADE)
   fromCurrency: Currency! @relation(name: "TransactionReceiptFromCurrency")
   toCurrency: Currency! @relation(name: "TransactionReceiptToCurrency")
-  fee: TransactionFee! @relation(name: "TransactionReceiptToTransactionFee")
-  tax: TransactionTax! @relation(name: "TransactionReceiptToTransactionTax")
-  exchangeRate: ExchangeRate @relation(name: "TransactionReceiptToExchangeRate")
+  fee: TransactionFee!
+    @relation(name: "TransactionReceiptToTransactionFee", onDelete: CASCADE)
+  tax: TransactionTax!
+    @relation(name: "TransactionReceiptToTransactionTax", onDelete: CASCADE)
+  exchangeRate: ExchangeRate
+    @relation(name: "TransactionReceiptToExchangeRate", onDelete: CASCADE)
   paidAt: DateTime # only by admin!
   transaction: Transaction! @relation(name: "TransactionReceiptToTransaction")
   createdAt: DateTime! @createdAt
