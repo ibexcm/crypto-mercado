@@ -14,6 +14,7 @@ import {
 import React from "react";
 import { RouteComponentProps, StaticContext } from "react-router";
 import {
+  Backdrop,
   Button,
   StepsSidebar,
   TextField,
@@ -23,6 +24,7 @@ import {
 import DependencyContext from "../../../../common/contexts/DependencyContext";
 import { styles } from "../../../../common/theme";
 import routes from "../../../../routes";
+import { UserRepositoryInjectionKeys } from "../../../user/InjectionKeys";
 import { MobileNavBar } from "../../components";
 import { TransactionRepositoryInjectionKeys } from "../../InjectionKeys";
 
@@ -33,6 +35,13 @@ interface Props
 const Component: React.FC<Props> = ({ classes, history, location, match, ...props }) => {
   const dependencies = React.useContext(DependencyContext);
   const TransactionRepository = dependencies.provide(TransactionRepositoryInjectionKeys);
+  const UserRepository = dependencies.provide(UserRepositoryInjectionKeys);
+
+  const { data, loading, error } = UserRepository.useUserQuery();
+
+  if (loading) {
+    return <Backdrop open={loading} />;
+  }
 
   const onCancel = () => {
     history.push(routes.dashboard.transactions.index);
@@ -41,6 +50,10 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
   const onConfirm = () => {
     history.push(routes.dashboard.sell.confirm);
   };
+
+  const { bankAccounts } = data.user;
+  const [bankAccount] = bankAccounts;
+  const { guatemala: guatemalaBankAccount } = bankAccount;
 
   return (
     <Box className={classes.drawerContainer} position="relative">
@@ -86,11 +99,16 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
                         Cuenta bancaria de destino
                       </Typography>
                       <Box>
-                        <Typography variant="h6">0123456789</Typography>
-                        <Typography>Full Name Account Pérez</Typography>
-                        <Typography>Monetaria, USD</Typography>
+                        <Typography variant="h6">
+                          {guatemalaBankAccount.accountNumber}
+                        </Typography>
+                        <Typography>{guatemalaBankAccount.fullName}</Typography>
+                        <Typography>
+                          {guatemalaBankAccount.bankAccountType},{" "}
+                          {bankAccount.currency.symbol}
+                        </Typography>
                         <Typography color="textSecondary">
-                          Banco Agromercantil SA de Guatemala
+                          {guatemalaBankAccount.bank.name}
                         </Typography>
                       </Box>
                     </Box>

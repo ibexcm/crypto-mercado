@@ -11,6 +11,7 @@ import {
 import React from "react";
 import { RouteComponentProps, StaticContext } from "react-router";
 import {
+  Backdrop,
   Button,
   StepsSidebar,
   ToolbarPadding,
@@ -18,9 +19,10 @@ import {
 } from "../../../common/components";
 import DependencyContext from "../../../common/contexts/DependencyContext";
 import { styles } from "../../../common/theme";
+import { Transaction } from "../../../libraries/api";
 import routes from "../../../routes";
+import { UserRepositoryInjectionKeys } from "../../user/InjectionKeys";
 import { MobileNavBar, TransactionItem } from "../components";
-import { TransactionRepositoryInjectionKeys } from "../InjectionKeys";
 
 interface Props
   extends WithStyles,
@@ -28,7 +30,13 @@ interface Props
 
 const Component: React.FC<Props> = ({ classes, history, location, match, ...props }) => {
   const dependencies = React.useContext(DependencyContext);
-  const TransactionRepository = dependencies.provide(TransactionRepositoryInjectionKeys);
+  const UserRepository = dependencies.provide(UserRepositoryInjectionKeys);
+
+  const { data, loading, error } = UserRepository.useUserQuery();
+
+  if (loading) {
+    return <Backdrop open={loading} />;
+  }
 
   const onSellBitcoin = () => {
     history.push(routes.dashboard.sell.checkout);
@@ -38,6 +46,8 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
     history.push(routes.dashboard.buy.checkout);
   };
 
+  const { transactions } = data.user;
+
   return (
     <Box className={classes.drawerContainer} position="relative">
       <StepsSidebar variant="primary"></StepsSidebar>
@@ -46,13 +56,13 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
         <Box className={classes.topContainer}>
           <Container style={{ minHeight: "auto" }}>
             <ToolbarPadding />
-            <Hidden mdDown>
-              <Box mb={4}>
-                <Grid container spacing={2}>
-                  <Grid item lg={6}>
-                    <Typography variant="h5">Transacciones</Typography>
-                    <Typography>Histórico de compra/venta de BTC</Typography>
-                  </Grid>
+            <Box mb={4}>
+              <Grid container spacing={2}>
+                <Grid item lg={6}>
+                  <Typography variant="h5">Transacciones</Typography>
+                  <Typography>Histórico de compra/venta de BTC</Typography>
+                </Grid>
+                <Hidden mdDown>
                   <Grid item lg={6}>
                     <Box>
                       <Grid container spacing={2} justify="flex-end">
@@ -81,18 +91,16 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
                       </Grid>
                     </Box>
                   </Grid>
-                </Grid>
-              </Box>
-            </Hidden>
+                </Hidden>
+              </Grid>
+            </Box>
           </Container>
         </Box>
         <Box className={classes.mainContainer}>
           <Container style={{ minHeight: "auto" }}>
-            {Array(30)
-              .fill(null)
-              .map(() => (
-                <TransactionItem />
-              ))}
+            {transactions.map((transaction: Transaction) => (
+              <TransactionItem transaction={transaction} key={transaction.id} />
+            ))}
           </Container>
         </Box>
         <Hidden smUp>
