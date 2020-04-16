@@ -57,6 +57,21 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
     getTransactionBreakdownState,
   ] = TransactionRepository.useGetTransactionBreakdownQuery();
 
+  const execute = (bankAccountID: string) => {
+    executeGetTransactionBreakdownQuery({
+      args: { ...input.args, sender: { bankAccountID } },
+    });
+  };
+
+  React.useEffect(() => {
+    if (!Boolean(userQueryData?.user?.bankAccounts)) {
+      return;
+    }
+
+    const [{ id: bankAccountID }] = userQueryData.user.bankAccounts;
+    execute(bankAccountID);
+  }, [userQueryData]);
+
   React.useEffect(() => {
     if (!Boolean(userQueryData?.user?.bankAccounts)) {
       return;
@@ -66,21 +81,14 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
       clearInterval(intervalID);
     }
 
-    const execute = () => {
-      const [{ id: bankAccountID }] = userQueryData.user.bankAccounts;
-      executeGetTransactionBreakdownQuery({
-        args: { ...input.args, sender: { bankAccountID } },
-      });
-    };
+    const [{ id: bankAccountID }] = userQueryData.user.bankAccounts;
 
-    execute();
-
-    intervalID = setInterval(execute, 15000);
+    intervalID = setInterval(() => {
+      execute(bankAccountID);
+    }, 15000);
 
     return () => clearInterval(intervalID);
-  }, [userQueryData, input.args.amount]);
-
-  const getAmount = () => input.args.amount;
+  }, [input.args.amount]);
 
   const onDebounceTextChange = React.useRef(
     debounce(
