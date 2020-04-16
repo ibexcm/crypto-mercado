@@ -8,12 +8,14 @@ export class ExchangeRateRepository {
   }
 
   async getLatestByCurrency(currency: Currency): Promise<ExchangeRate> {
-    return await this.db.exchangeRates({
-      where: {
-        currency: { id: currency.id },
-      },
-      orderBy: "createdAt_DESC",
-      first: 1,
-    })[0];
+    return (
+      await this.db.exchangeRates({
+        where: {
+          currency: { id: currency.id },
+        },
+        orderBy: "createdAt_DESC",
+        first: 1,
+      })
+    )[0];
   }
 }
