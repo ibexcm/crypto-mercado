@@ -21,10 +21,12 @@
     "lodash": "^4.17.15",
     "luxon": "^1.21.3",
     "polished": "^3.4.1",
+    "qrcode": "^1.4.4",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-router-dom": "^5.0.1",
     "react-scripts": "^3.4.0",
+    "spinners-react": "^1.0.3",
     "styled-components": "^5.0.1",
     "styled-system": "^5.1.5"
   },

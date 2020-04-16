@@ -6,11 +6,14 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { Typography } from "../../../common/components";
 import { styles } from "../../../common/theme";
+import { Transaction } from "../../../libraries/api";
 import routes from "../../../routes";
 
-interface Props extends WithStyles {}
+interface Props extends WithStyles {
+  transaction: Transaction;
+}
 
-const Component: React.FC<Props> = ({ classes }) => {
+const Component: React.FC<Props> = ({ classes, transaction }) => {
   return (
     // <Hidden smUp>
     <Link to={routes.dashboard.transactions.index} className={classes.link}>
@@ -26,17 +29,21 @@ const Component: React.FC<Props> = ({ classes }) => {
             >
               <Box display="flex" flexDirection="column" justifyContent="center">
                 <Typography color="primary" className={classes.amount}>
-                  20000000.00
+                  {transaction.amount}
                 </Typography>
               </Box>
               <Box display="flex" flexDirection="column" justifyContent="center">
-                <Typography color="primary">GTQ</Typography>
+                <Typography color="primary">
+                  {transaction.receipt.fromCurrency.symbol}
+                </Typography>
               </Box>
               <Box display="flex" flexDirection="column" justifyContent="center">
                 <ArrowRightAltIcon color="disabled" />
               </Box>
               <Box display="flex" flexDirection="column" justifyContent="center">
-                <Typography color="secondary">BTC</Typography>
+                <Typography color="secondary">
+                  {transaction.receipt.toCurrency.symbol}
+                </Typography>
               </Box>
             </Box>
           </Grid>

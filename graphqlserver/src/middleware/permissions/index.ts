@@ -4,6 +4,7 @@ import * as rules from "./rules";
 export const permissions = shield({
   Query: {
     user: rules.isUser,
+    getTransactionBreakdown: rules.isUser,
 
     // ADMIN
     // KYC

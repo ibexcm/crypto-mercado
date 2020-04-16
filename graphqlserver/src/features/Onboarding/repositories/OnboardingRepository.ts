@@ -210,6 +210,8 @@ export class OnboardingRepository {
     }: MutationSetBankAccountArgs,
     user: User,
   ): Promise<Session> {
+    const country = await this.db.bank({ id: bankID }).country();
+
     const _user = await this.db.updateUser({
       where: {
         id: user.id,
@@ -220,6 +222,11 @@ export class OnboardingRepository {
             currency: {
               connect: {
                 id: currencyID,
+              },
+            },
+            country: {
+              connect: {
+                id: country.id,
               },
             },
             guatemala: {

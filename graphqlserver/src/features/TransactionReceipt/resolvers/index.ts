@@ -15,5 +15,23 @@ export const types = {
       );
       return TransactionReceiptRepository.toCurrency(id);
     },
+    fee: ({ id }, args, { dependencies }: IContext) => {
+      const TransactionReceiptRepository = dependencies.provide(
+        transactionReceiptRepositoryInjectionKey,
+      );
+      return TransactionReceiptRepository.fee(id);
+    },
+    tax: ({ id }, args, { dependencies }: IContext) => {
+      const TransactionReceiptRepository = dependencies.provide(
+        transactionReceiptRepositoryInjectionKey,
+      );
+      return TransactionReceiptRepository.tax(id);
+    },
+    exchangeRate: ({ id }, args, { dependencies }: IContext) => {
+      const TransactionReceiptRepository = dependencies.provide(
+        transactionReceiptRepositoryInjectionKey,
+      );
+      return TransactionReceiptRepository.exchangeRate(id);
+    },
   },
 };

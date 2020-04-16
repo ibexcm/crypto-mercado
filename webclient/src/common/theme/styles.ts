@@ -12,6 +12,9 @@ export const styles = (theme: Theme) => ({
   },
   topContainer: {
     height: "30vh",
+    display: "flex" as "flex",
+    flexDirection: "column" as "column",
+    justifyContent: "flex-end" as "flex-end",
     [theme.breakpoints.down("sm")]: {
       height: "25vh",
     },
@@ -84,5 +87,8 @@ export const styles = (theme: Theme) => ({
   navBarLink: {
     color: theme.palette.text.primary,
     textDecoration: "none",
+  },
+  warnCard: {
+    backgroundColor: theme.palette.warning.light,
   },
 });
