@@ -1,8 +1,10 @@
-import { SendPhoneNumberVerificationCodeInput } from "@ibexcm/libraries/api";
+import {
+  QueryGetTransactionBreakdownArgs,
+  SendPhoneNumberVerificationCodeInput,
+} from "@ibexcm/libraries/api";
 import {
   Box,
   Container,
-  Divider,
   Grid,
   Hidden,
   InputAdornment,
@@ -11,6 +13,7 @@ import {
   withStyles,
   WithStyles,
 } from "@material-ui/core";
+import { debounce } from "lodash";
 import React from "react";
 import { RouteComponentProps, StaticContext } from "react-router";
 import {
@@ -25,7 +28,7 @@ import DependencyContext from "../../../../common/contexts/DependencyContext";
 import { styles } from "../../../../common/theme";
 import routes from "../../../../routes";
 import { UserRepositoryInjectionKeys } from "../../../user/InjectionKeys";
-import { MobileNavBar } from "../../components";
+import { MobileNavBar, OnSellTransactionBreakdown } from "../../components";
 import { TransactionRepositoryInjectionKeys } from "../../InjectionKeys";
 
 interface Props
@@ -37,10 +40,60 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
   const TransactionRepository = dependencies.provide(TransactionRepositoryInjectionKeys);
   const UserRepository = dependencies.provide(UserRepositoryInjectionKeys);
 
-  const { data, loading, error } = UserRepository.useUserQuery();
+  let intervalID;
+  const [input, setInput] = React.useState<QueryGetTransactionBreakdownArgs>({
+    args: {
+      amount: "0.00",
+    },
+  });
 
-  if (loading) {
-    return <Backdrop open={loading} />;
+  const {
+    data: userQueryData,
+    loading: isUserQueryLoading,
+    error: userQueryError,
+  } = UserRepository.useUserQuery();
+  const [
+    executeGetTransactionBreakdownQuery,
+    getTransactionBreakdownState,
+  ] = TransactionRepository.useGetTransactionBreakdownQuery();
+
+  React.useEffect(() => {
+    if (!Boolean(userQueryData?.user?.bankAccounts)) {
+      return;
+    }
+
+    if (intervalID) {
+      clearInterval(intervalID);
+    }
+
+    const execute = () => {
+      const [{ id: bankAccountID }] = userQueryData.user.bankAccounts;
+      executeGetTransactionBreakdownQuery({
+        args: { ...input.args, sender: { bankAccountID } },
+      });
+    };
+
+    execute();
+
+    intervalID = setInterval(execute, 15000);
+
+    return () => clearInterval(intervalID);
+  }, [userQueryData, input.args.amount]);
+
+  const getAmount = () => input.args.amount;
+
+  const onDebounceTextChange = React.useRef(
+    debounce(
+      (
+        query: (args: QueryGetTransactionBreakdownArgs) => void,
+        args: QueryGetTransactionBreakdownArgs,
+      ) => query(args),
+      500,
+    ),
+  );
+
+  if (isUserQueryLoading) {
+    return <Backdrop open={isUserQueryLoading} />;
   }
 
   const onCancel = () => {
@@ -51,7 +104,25 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
     history.push(routes.dashboard.sell.confirm);
   };
 
-  const { bankAccounts } = data.user;
+  const onAmountChange = async (
+    event: React.ChangeEvent<HTMLInputElement>,
+    bankAccountID: string,
+  ) => {
+    try {
+      const amount = event.target.value;
+
+      setInput({ args: { amount } });
+
+      onDebounceTextChange.current.cancel();
+      onDebounceTextChange.current(executeGetTransactionBreakdownQuery, {
+        args: { amount, sender: { bankAccountID } },
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const { bankAccounts } = userQueryData.user;
   const [bankAccount] = bankAccounts;
   const { guatemala: guatemalaBankAccount } = bankAccount;
 
@@ -85,9 +156,10 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
                       InputProps={{
                         endAdornment: <InputAdornment position="end">BTC</InputAdornment>,
                       }}
-                      // onChange={onChange}
-                      // onKeyPress={onKeyPress}
-                      // value={input.args.address}
+                      onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                        onAmountChange(event, bankAccount.id);
+                      }}
+                      value={input.args.amount}
                       type="number"
                     />
                   </Paper>
@@ -116,78 +188,9 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
                 </Box>
               </Grid>
               <Grid item xs={12} lg={5}>
-                <Box mb={3} textAlign="right">
-                  <Box mb={1}>
-                    <Grid container justify="flex-end" spacing={1}>
-                      <Grid item>
-                        <Typography color="textSecondary">Precio actual BTC</Typography>
-                      </Grid>
-                      <Grid item xs={6}>
-                        <Typography>USD 6254.00</Typography>
-                      </Grid>
-                    </Grid>
-                  </Box>
-                  <Typography variant="overline" color="primary" mb={3}>
-                    Desglose
-                  </Typography>
-                  <Grid container justify="flex-end" spacing={1}>
-                    <Grid item>
-                      <Typography color="textSecondary">Cantidad</Typography>
-                    </Grid>
-                    <Grid item xs={6}>
-                      <Typography>USD 1000.00</Typography>
-                    </Grid>
-                  </Grid>
-                  <Grid container justify="flex-end" spacing={1}>
-                    <Grid item>
-                      <Typography color="textSecondary">Comisión IBEX (3.5%)</Typography>
-                    </Grid>
-                    <Grid item xs={6}>
-                      <Typography>USD 35.00</Typography>
-                    </Grid>
-                  </Grid>
-                  <Grid container justify="flex-end" spacing={1}>
-                    <Grid item>
-                      <Typography color="textSecondary">IVA (12%)</Typography>
-                    </Grid>
-                    <Grid item xs={6}>
-                      <Typography>USD 12.00</Typography>
-                    </Grid>
-                  </Grid>
-                  <Box my={1}>
-                    <Divider />
-                  </Box>
-                  <Grid container justify="flex-end" spacing={1}>
-                    <Grid item>
-                      <Typography color="primary">Recibes</Typography>
-                    </Grid>
-                    <Grid item xs={6}>
-                      <Typography color="secondary" fontWeight={900}>
-                        USD 955.00
-                      </Typography>
-                    </Grid>
-                  </Grid>
-                  <Grid container justify="flex-end" spacing={1}>
-                    <Grid item>
-                      <Typography color="primary">Tasa de cambio (7.65)</Typography>
-                    </Grid>
-                    <Grid item xs={6}>
-                      <Typography color="secondary" fontWeight={900}>
-                        GTQ 9000.00
-                      </Typography>
-                    </Grid>
-                  </Grid>
-                  <Grid container justify="flex-end" spacing={1}>
-                    <Grid item>
-                      <Typography color="primary">Total a enviar</Typography>
-                    </Grid>
-                    <Grid item xs={6}>
-                      <Typography color="secondary" fontWeight={900}>
-                        BTC 0.123456789
-                      </Typography>
-                    </Grid>
-                  </Grid>
-                </Box>
+                <OnSellTransactionBreakdown
+                  getTransactionBreakdownState={getTransactionBreakdownState}
+                />
                 <Box mb={3}>
                   <Typography align="justify" variant="caption">
                     Al dar click en "Confirmar", comprendo que debido a las fluctuaciones
