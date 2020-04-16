@@ -1,0 +1,25 @@
+input CreateTransactionUserInput {
+  cryptoAccountID: String
+  bankAccountID: String
+}
+
+input GetTransactionBreakdownInput {
+  amount: String
+  sender: CreateTransactionUserInput
+}
+
+union TransactionBreakdown = BitcoinToFiatTransactionBreakdown
+
+type BitcoinToFiatTransactionBreakdown {
+  price: TransactionBreakdownField!
+  amount: TransactionBreakdownField!
+  fee: TransactionBreakdownField!
+  tax: TransactionBreakdownField!
+  total: TransactionBreakdownField!
+  exchangeRate: TransactionBreakdownField
+}
+
+type TransactionBreakdownField {
+  key: String!
+  value: String!
+}
