@@ -197,8 +197,7 @@ type TransactionReceipt {
     @relation(name: "TransactionReceiptToTransactionFee", onDelete: CASCADE)
   tax: TransactionTax!
     @relation(name: "TransactionReceiptToTransactionTax", onDelete: CASCADE)
-  exchangeRate: ExchangeRate
-    @relation(name: "TransactionReceiptToExchangeRate", onDelete: CASCADE)
+  exchangeRate: ExchangeRate @relation(name: "TransactionReceiptToExchangeRate")
   paidAt: DateTime # only by admin!
   transaction: Transaction! @relation(name: "TransactionReceiptToTransaction")
   createdAt: DateTime! @createdAt
