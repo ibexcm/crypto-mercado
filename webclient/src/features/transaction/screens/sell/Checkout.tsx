@@ -1,4 +1,5 @@
 import {
+  BankAccount,
   QueryGetTransactionBreakdownArgs,
   SendPhoneNumberVerificationCodeInput,
 } from "@ibexcm/libraries/api";
@@ -56,6 +57,10 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
     executeGetTransactionBreakdownQuery,
     getTransactionBreakdownState,
   ] = TransactionRepository.useGetTransactionBreakdownQuery();
+  const {
+    execute: executeCreateTransactionMutation,
+    state: createTransactionMutationState,
+  } = TransactionRepository.useCreateTransactionMutation();
 
   const execute = (bankAccountID: string) => {
     executeGetTransactionBreakdownQuery({
@@ -108,8 +113,15 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
     history.push(routes.dashboard.transactions.index);
   };
 
-  const onConfirm = () => {
-    history.push(routes.dashboard.sell.confirm);
+  const onConfirm = async (bankAccountID: string) => {
+    try {
+      await executeCreateTransactionMutation({
+        args: { amount: input.args.amount, sender: { bankAccountID } },
+      });
+      history.push(routes.dashboard.sell.confirm);
+    } catch (error) {
+      // TODO handle error
+    }
   };
 
   const onAmountChange = async (
@@ -126,9 +138,39 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
         args: { amount, sender: { bankAccountID } },
       });
     } catch (error) {
+      // TODO handle error
       console.error(error);
     }
   };
+
+  const getActions = (bankAccount: BankAccount) => (
+    <Grid container spacing={2}>
+      <Grid item xs={6}>
+        <Button
+          fullWidth
+          color="default"
+          size="large"
+          variant="contained"
+          onClick={onCancel}
+        >
+          Cancelar
+        </Button>
+      </Grid>
+      <Grid item xs={6}>
+        <Button
+          fullWidth
+          variant="contained"
+          color="secondary"
+          size="large"
+          onClick={() => {
+            onConfirm(bankAccount.id);
+          }}
+        >
+          Confirmar
+        </Button>
+      </Grid>
+    </Grid>
+  );
 
   const { bankAccounts } = userQueryData.user;
   const [bankAccount] = bankAccounts;
@@ -207,32 +249,7 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
                   </Typography>
                 </Box>
                 <Hidden smDown>
-                  <Box>
-                    <Grid container spacing={2}>
-                      <Grid item xs={6}>
-                        <Button
-                          fullWidth
-                          color="default"
-                          size="large"
-                          variant="contained"
-                          onClick={onCancel}
-                        >
-                          Cancelar
-                        </Button>
-                      </Grid>
-                      <Grid item xs={6}>
-                        <Button
-                          fullWidth
-                          variant="contained"
-                          color="secondary"
-                          size="large"
-                          onClick={onConfirm}
-                        >
-                          Confirmar
-                        </Button>
-                      </Grid>
-                    </Grid>
-                  </Box>
+                  <Box>{getActions(bankAccount)}</Box>
                 </Hidden>
               </Grid>
             </Grid>
@@ -240,32 +257,7 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
         </Box>
         <Hidden smUp>
           <Box className={classes.fixedActionsContainer}>
-            <Container style={{ minHeight: "auto" }}>
-              <Grid container spacing={2}>
-                <Grid item xs={6}>
-                  <Button
-                    fullWidth
-                    color="default"
-                    size="large"
-                    variant="contained"
-                    onClick={onCancel}
-                  >
-                    Cancelar
-                  </Button>
-                </Grid>
-                <Grid item xs={6}>
-                  <Button
-                    fullWidth
-                    variant="contained"
-                    color="secondary"
-                    size="large"
-                    onClick={onConfirm}
-                  >
-                    Confirmar
-                  </Button>
-                </Grid>
-              </Grid>
-            </Container>
+            <Container style={{ minHeight: "auto" }}>{getActions(bankAccount)}</Container>
           </Box>
         </Hidden>
       </Container>

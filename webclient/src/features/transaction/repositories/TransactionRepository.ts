@@ -1,6 +1,13 @@
-import { LazyQueryResult, useLazyQuery } from "@apollo/client";
-import { QueryGetTransactionBreakdownArgs } from "@ibexcm/libraries/api";
-import { GetTransactionBreakdownQuery } from "@ibexcm/libraries/api/transaction";
+import { LazyQueryResult, MutationResult, useLazyQuery, useMutation } from "@apollo/client";
+import {
+  Mutation,
+  MutationCreateTransactionArgs,
+  QueryGetTransactionBreakdownArgs,
+} from "@ibexcm/libraries/api";
+import {
+  CreateTransactionMutation,
+  GetTransactionBreakdownQuery,
+} from "@ibexcm/libraries/api/transaction";
 import { Query } from "../../../libraries/api";
 
 export class TransactionRepository {
@@ -21,5 +28,34 @@ export class TransactionRepository {
     ) => execute({ variables: args });
 
     return [executeGetTransasactionBreakdownQuery, state];
+  }
+
+  useCreateTransactionMutation(): {
+    execute: (args: MutationCreateTransactionArgs) => Promise<void>;
+    state: MutationResult<Pick<Mutation, "createTransaction">>;
+  } {
+    const [execute, state] = useMutation(CreateTransactionMutation);
+
+    return {
+      execute: async (args) => {
+        const message = "No pudimos crear la transacción";
+        try {
+          const {
+            data,
+            error,
+          }: Partial<MutationResult<Pick<Mutation, "createTransaction">>> = await execute({
+            variables: args,
+          });
+
+          if (Boolean(error) || !Boolean(data?.createTransaction)) {
+            throw new Error(message);
+          }
+        } catch (error) {
+          console.error(error);
+          throw new Error(message);
+        }
+      },
+      state,
+    };
   }
 }
