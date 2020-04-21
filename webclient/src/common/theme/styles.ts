@@ -10,6 +10,38 @@ export const styles = (theme: Theme) => ({
     backgroundColor: "white",
     display: "flex",
   },
+  topContainer: {
+    height: "30vh",
+    display: "flex" as "flex",
+    flexDirection: "column" as "column",
+    justifyContent: "flex-end" as "flex-end",
+    [theme.breakpoints.down("sm")]: {
+      height: "25vh",
+    },
+  },
+  mainContainer: {
+    height: "70vh",
+    [theme.breakpoints.down("sm")]: {
+      height: "75vh",
+    },
+    backgroundColor: "whitesmoke",
+    overflowY: "scroll" as "scroll",
+    paddingTop: theme.spacing(3),
+    paddingBottom: 98,
+  },
+  fixedActionsContainer: {
+    position: "fixed" as "fixed",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    width: "100%",
+    paddingTop: theme.spacing(2),
+    paddingBottom: theme.spacing(2),
+    backgroundColor: theme.palette.primary.main,
+    "& > div": {
+      minHeight: "auto" as "auto",
+    },
+  },
   backdrop: {
     zIndex: theme.zIndex.drawer + 1,
     color: "#fff",
@@ -25,7 +57,6 @@ export const styles = (theme: Theme) => ({
       minHeight: toolbarHeightMobile,
     },
   },
-
   modal: {
     display: "flex",
     alignItems: "center",
@@ -56,5 +87,8 @@ export const styles = (theme: Theme) => ({
   navBarLink: {
     color: theme.palette.text.primary,
     textDecoration: "none",
+  },
+  warnCard: {
+    backgroundColor: theme.palette.warning.light,
   },
 });

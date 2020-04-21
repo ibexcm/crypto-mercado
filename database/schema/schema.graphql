@@ -30,6 +30,7 @@ type BankAccount {
   id: ID! @id
   guatemala: GuatemalaBankAccount @relation(onDelete: CASCADE)
   currency: Currency!
+  country: Country!
   user: User!
   verifiedAt: DateTime
   createdAt: DateTime! @createdAt
@@ -51,9 +52,17 @@ type Account {
   updatedAt: DateTime! @updatedAt
 }
 
-type CryptoAccount {
+type BitcoinAccount {
   id: ID! @id
   address: String! @unique
+  xpub: String
+  cryptoAccount: CryptoAccount! @relation(name: "BitcoinAccountToCryptoAccount")
+}
+
+type CryptoAccount {
+  id: ID! @id
+  bitcoin: BitcoinAccount
+    @relation(name: "BitcoinAccountToCryptoAccount", link: INLINE, onDelete: CASCADE)
   user: User!
   currency: Currency!
   createdAt: DateTime! @createdAt
@@ -107,23 +116,73 @@ type PhoneNumber {
   createdAt: DateTime! @createdAt
 }
 
+type ExchangeRate {
+  id: ID! @id
+  price: String!
+  currency: Currency!
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
 type TransactionFee {
   id: ID! @id
   fee: String! # decimal / percentage
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
+type TransactionTax {
+  id: ID! @id
+  tax: String! # decimal / percentage
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
 }
 
 type Sender {
   id: ID! @id
-  sender: User!
-  bankAccount: BankAccount
-  cryptoAccount: CryptoAccount
-  adminBankAccount: AdminBankAccount
+  user: User!
+  bankAccount: BankAccount @relation(name: "SenderToBankAccount", link: INLINE)
+  cryptoAccount: CryptoAccount @relation(name: "SenderToCryptoAccount", link: INLINE)
+  transaction: Transaction! @relation(name: "SenderToTransaction")
+}
+
+type Recipient {
+  id: ID! @id
+  user: User!
+  bankAccount: BankAccount @relation(name: "RecipientToBankAccount", link: INLINE)
+  cryptoAccount: CryptoAccount @relation(name: "RecipientToCryptoAccount", link: INLINE)
+  transaction: Transaction! @relation(name: "RecipientToTransaction")
+}
+
+type BitcoinReceiptEvidence {
+  id: ID! @id
+  transactionHash: String
+  evidence: TransactionReceiptEvidence!
+    @relation(name: "TransactionReceiptEvidenceToBitcoinReceiptEvidence")
+}
+
+type BankReceiptEvidence {
+  id: ID! @id
+  fileHash: String
+  evidence: TransactionReceiptEvidence!
+    @relation(name: "TransactionReceiptEvidenceToBankReceiptEvidence")
 }
 
 type TransactionReceiptEvidence {
   id: ID! @id
-  bitcoinTxID: String
-  fileHash: String
+  bitcoinReceipt: BitcoinReceiptEvidence
+    @relation(
+      name: "TransactionReceiptEvidenceToBitcoinReceiptEvidence"
+      link: INLINE
+      onDelete: CASCADE
+    )
+  bankReceipt: BankReceiptEvidence
+    @relation(
+      name: "TransactionReceiptEvidenceToBankReceiptEvidence"
+      link: INLINE
+      onDelete: CASCADE
+    )
+  transaction: Transaction! @relation(name: "TransactionReceiptEvidenceToTransaction")
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }
@@ -131,9 +190,16 @@ type TransactionReceiptEvidence {
 type TransactionReceipt {
   id: ID! @id
   evidence: [TransactionReceiptEvidence]
-  toCurrency: Currency! @relation(name: "TransactionReceiptToCurrency")
+    @relation(name: "TransactionReceiptToTransactionReceiptEvidence", onDelete: CASCADE)
   fromCurrency: Currency! @relation(name: "TransactionReceiptFromCurrency")
+  toCurrency: Currency! @relation(name: "TransactionReceiptToCurrency")
+  fee: TransactionFee!
+    @relation(name: "TransactionReceiptToTransactionFee", onDelete: CASCADE)
+  tax: TransactionTax!
+    @relation(name: "TransactionReceiptToTransactionTax", onDelete: CASCADE)
+  exchangeRate: ExchangeRate @relation(name: "TransactionReceiptToExchangeRate")
   paidAt: DateTime # only by admin!
+  transaction: Transaction! @relation(name: "TransactionReceiptToTransaction")
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }
@@ -141,9 +207,11 @@ type TransactionReceipt {
 type Transaction {
   id: ID! @id
   amount: String! @default(value: "0.00")
-  sender: Sender!
-  fee: TransactionFee!
+  sender: Sender! @relation(name: "SenderToTransaction", link: INLINE, onDelete: CASCADE)
+  recipient: Recipient!
+    @relation(name: "RecipientToTransaction", link: INLINE, onDelete: CASCADE)
   receipt: TransactionReceipt!
+    @relation(name: "TransactionReceiptToTransaction", link: INLINE, onDelete: CASCADE)
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }
@@ -190,13 +258,4 @@ type GuatemalaDocument {
   id: ID! @id
   dpi: [GuatemalaDPI] @relation(onDelete: CASCADE, name: "GuatemalaDocumentToGuatemalaDPI")
   profileDocument: ProfileDocument!
-}
-
-# ADMIN Management
-type AdminBankAccount {
-  id: ID! @id
-  guatemala: GuatemalaBankAccount
-  currency: Currency!
-  createdAt: DateTime! @createdAt
-  updatedAt: DateTime! @updatedAt
 }

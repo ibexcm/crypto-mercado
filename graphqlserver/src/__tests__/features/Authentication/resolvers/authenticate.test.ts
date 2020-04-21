@@ -4,8 +4,8 @@ import { AuthenticationErrorCode } from "../../../../features/Authentication/err
 import {
   emailNotificationsRepositoryInjectionKey,
   emailVerificationRepositoryInjectionKey,
-} from "../../../../features/EmailVerification";
-import { smsVerificationRepositoryInjectionKey } from "../../../../features/SMSVerification";
+} from "../../../../libraries/EmailVerification";
+import { smsVerificationRepositoryInjectionKey } from "../../../../libraries/SMSVerification";
 import adminKYCApproveUser from "../../../../__test-utils__/helpers/adminKYCApproveUser";
 import onboardUser from "../../../../__test-utils__/helpers/onboardUser";
 import {

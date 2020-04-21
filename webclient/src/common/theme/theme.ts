@@ -37,8 +37,11 @@ export const theme = createMuiTheme({
     },
   },
   typography: {
-    fontFamily: "Montserrat, sans-serif",
+    fontFamily: "'Nunito Sans', sans-serif",
     h5: {
+      fontWeight: 900,
+    },
+    overline: {
       fontWeight: 900,
     },
     subtitle2: {
@@ -61,6 +64,9 @@ export const theme = createMuiTheme({
       },
     },
     MuiButton: {
+      root: {
+        fontWeight: 600,
+      },
       sizeLarge: {
         padding: "12px 22px",
       },

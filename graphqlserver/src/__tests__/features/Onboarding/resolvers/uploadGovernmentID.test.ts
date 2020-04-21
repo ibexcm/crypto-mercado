@@ -4,8 +4,8 @@ import IpfsClient from "@ibexcm/libraries/ipfs/client";
 import FormData from "form-data";
 import fs from "fs";
 import { promisify } from "util";
-import { smsVerificationRepositoryInjectionKey } from "../../../../features/SMSVerification";
 import { dbInjectionKey } from "../../../../InjectionKeys";
+import { smsVerificationRepositoryInjectionKey } from "../../../../libraries/SMSVerification";
 import {
   MockServer,
   mockSMSVerificationRepository,

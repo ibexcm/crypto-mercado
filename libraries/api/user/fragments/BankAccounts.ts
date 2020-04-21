@@ -6,6 +6,7 @@ export const BankAccounts = gql`
       id
       verifiedAt
       currency {
+        id
         name
         symbol
       }
@@ -15,6 +16,7 @@ export const BankAccounts = gql`
         bankAccountType
         fullName
         bank {
+          id
           name
         }
       }

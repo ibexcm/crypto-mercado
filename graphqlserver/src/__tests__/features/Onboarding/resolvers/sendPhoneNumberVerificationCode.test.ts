@@ -1,7 +1,7 @@
 import { prisma as db } from "@ibexcm/database";
 import { TestDependencies } from "@ibexcm/libraries/di";
-import { smsVerificationRepositoryInjectionKey } from "../../../../features/SMSVerification";
 import { dbInjectionKey } from "../../../../InjectionKeys";
+import { smsVerificationRepositoryInjectionKey } from "../../../../libraries/SMSVerification";
 import {
   MockServer,
   mockSMSVerificationRepository,

@@ -12,23 +12,38 @@ export const drawerWidthMD = 280;
 interface IStepsSidebarProps extends WithStyles {
   history?: History;
   footer?: any;
+  variant?: "primary" | "default";
 }
 
-const Component: React.FC<IStepsSidebarProps> = ({ classes, children, footer }) => (
+const Component: React.FC<IStepsSidebarProps> = ({
+  classes,
+  children,
+  variant,
+  footer,
+}) => (
   <Hidden mdDown>
     <Drawer
       className={classes.drawer}
       variant="permanent"
       classes={{
-        paper: classes.drawerPaper,
+        paper: variant === "primary" ? classes.drawerPaperPrimary : classes.drawerPaper,
       }}
     >
       <Box display="flex" flexDirection="column" justifyContent="center" height="100%">
-        <AppBar position="absolute" elevation={0} color="inherit">
+        <AppBar
+          position="absolute"
+          elevation={0}
+          color="inherit"
+          className={classes.appBarPaper}
+        >
           <Toolbar>
             <Box className={classes.logoBox}>
               <Link to={routes.root}>
-                <img src="/svg/ibex-logo.svg" width="100%" height="auto" />
+                {variant === "primary" ? (
+                  <img src="/svg/ibex-logo-white.svg" width="100%" height="auto" />
+                ) : (
+                  <img src="/svg/ibex-logo.svg" width="100%" height="auto" />
+                )}
               </Link>
             </Box>
           </Toolbar>
@@ -59,11 +74,24 @@ export const StepsSidebar = withStyles((theme: Theme) => ({
       width: drawerWidthMD,
     },
   },
+  drawerPaperPrimary: {
+    width: drawerWidth,
+    backgroundColor: theme.palette.primary.main,
+    "& svg": {
+      color: "white",
+    },
+    [theme.breakpoints.down("md")]: {
+      width: drawerWidthMD,
+    },
+  },
   logoBox: {
     minHeight: toolbarHeightDesktop,
     display: "flex",
     flexDirection: "column",
     justifyContent: "center",
     width: 161,
+  },
+  appBarPaper: {
+    backgroundColor: "transparent",
   },
 }))(Component);

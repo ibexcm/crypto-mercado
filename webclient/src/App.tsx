@@ -1,5 +1,6 @@
 import React from "react";
-import { BrowserRouter as Router, Route } from "react-router-dom";
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import { PrivateRoute } from "./common/components";
 import DependencyContext from "./common/contexts/DependencyContext";
 import { GraphQL } from "./features/app/components";
 import { Authenticate } from "./features/authentication/screens";
@@ -14,6 +15,15 @@ import {
   VerifyEmail,
   VerifyPhoneNumber,
 } from "./features/onboarding/screens";
+import { TransactionsIndex } from "./features/transaction/screens";
+import {
+  Checkout as BuyCheckout,
+  Confirm as BuyConfirm,
+} from "./features/transaction/screens/buy";
+import {
+  Checkout as SellCheckout,
+  Confirm as SellConfirm,
+} from "./features/transaction/screens/sell";
 import { routes } from "./routes";
 
 const App: React.FC = () => {
@@ -23,36 +33,73 @@ const App: React.FC = () => {
     <DependencyContext.Provider value={dependencies}>
       <GraphQL>
         <Router>
-          <Route path={routes.root} exact component={Home} />
+          <Switch>
+            <Route path={routes.root} exact component={Home} />
 
-          {/* AUTHENTICATION */}
-          <Route path={routes.authentication.signIn} exact component={Authenticate} />
+            {/* AUTHENTICATION */}
+            <Route path={routes.authentication.signIn} exact component={Authenticate} />
 
-          {/* ONBOARDING */}
-          <Route
-            path={routes.onboarding.sendPhoneNumberVerificationCode}
-            exact
-            component={SendPhoneNumberVerificationCode}
-          />
-          <Route
-            path={routes.onboarding.verifyPhoneNumber}
-            exact
-            component={VerifyPhoneNumber}
-          />
-          <Route
-            path={routes.onboarding.sendEmailVerificationCode}
-            exact
-            component={SendEmailVerificationCode}
-          />
-          <Route path={routes.onboarding.verifyEmail} exact component={VerifyEmail} />
-          <Route path={routes.onboarding.setPassword} exact component={SetPassword} />
-          <Route
-            path={routes.onboarding.uploadGovernmentID}
-            exact
-            component={UploadGovernmentID}
-          />
-          <Route path={routes.onboarding.setBankAccount} exact component={SetBankAccount} />
-          <Route path={routes.onboarding.done} exact component={Done} />
+            {/* ONBOARDING */}
+            <Route
+              path={routes.onboarding.sendPhoneNumberVerificationCode}
+              exact
+              component={SendPhoneNumberVerificationCode}
+            />
+            <Route
+              path={routes.onboarding.verifyPhoneNumber}
+              exact
+              component={VerifyPhoneNumber}
+            />
+            <Route
+              path={routes.onboarding.sendEmailVerificationCode}
+              exact
+              component={SendEmailVerificationCode}
+            />
+            <Route path={routes.onboarding.verifyEmail} exact component={VerifyEmail} />
+            <Route path={routes.onboarding.setPassword} exact component={SetPassword} />
+            <Route
+              path={routes.onboarding.uploadGovernmentID}
+              exact
+              component={UploadGovernmentID}
+            />
+            <Route
+              path={routes.onboarding.setBankAccount}
+              exact
+              component={SetBankAccount}
+            />
+            <Route path={routes.onboarding.done} exact component={Done} />
+
+            {/* TRANSACTION */}
+            <PrivateRoute
+              path={routes.dashboard.transactions.index}
+              exact
+              component={TransactionsIndex}
+            />
+
+            {/* SELL */}
+            <PrivateRoute
+              path={routes.dashboard.sell.checkout}
+              exact
+              component={SellCheckout}
+            />
+            <PrivateRoute
+              path={routes.dashboard.sell.confirm}
+              exact
+              component={SellConfirm}
+            />
+
+            {/* BUY */}
+            <PrivateRoute
+              path={routes.dashboard.buy.checkout}
+              exact
+              component={BuyCheckout}
+            />
+            <PrivateRoute
+              path={routes.dashboard.buy.confirm}
+              exact
+              component={BuyConfirm}
+            />
+          </Switch>
         </Router>
       </GraphQL>
     </DependencyContext.Provider>

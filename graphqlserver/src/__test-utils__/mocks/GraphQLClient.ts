@@ -1,8 +1,49 @@
-import { Mutation, MutationAdminAuthenticateArgs, MutationAdminKycApproveUserArgs, MutationAdminKycRejectUserArgs, MutationAuthenticateArgs, MutationSendEmailVerificationCodeArgs, MutationSendPhoneNumberVerificationCodeArgs, MutationSetBankAccountArgs, MutationSetPasswordArgs, MutationUploadGovernmentIdArgs, MutationVerifyEmailArgs, MutationVerifyPhoneNumberArgs, Query, QueryAdminGetUserArgs, QueryGetBanksByCountryArgs, QueryGetCurrenciesByCountryArgs } from "@ibexcm/libraries/api";
+import {
+  Mutation,
+  MutationAdminAuthenticateArgs,
+  MutationAdminKycApproveUserArgs,
+  MutationAdminKycRejectUserArgs,
+  MutationAuthenticateArgs,
+  MutationCreateBitcoinAccountArgs,
+  MutationCreateTransactionArgs,
+  MutationSendEmailVerificationCodeArgs,
+  MutationSendPhoneNumberVerificationCodeArgs,
+  MutationSetBankAccountArgs,
+  MutationSetPasswordArgs,
+  MutationUploadGovernmentIdArgs,
+  MutationVerifyEmailArgs,
+  MutationVerifyPhoneNumberArgs,
+  Query,
+  QueryAdminGetUserArgs,
+  QueryGetBanksByCountryArgs,
+  QueryGetCurrenciesByCountryArgs,
+  QueryGetTransactionBreakdownArgs,
+} from "@ibexcm/libraries/api";
 import { GetBanksByCountryQuery } from "@ibexcm/libraries/api/bank";
+import { CreateBitcoinAccountMutation } from "@ibexcm/libraries/api/cryptoAccount";
 import { GetCurrenciesByCountryQuery } from "@ibexcm/libraries/api/currency";
-import { AdminGetUsersWithPendingKYCApprovalQuery, AdminKYCApproveUserMutation, AdminKYCRejectUserMutation } from "@ibexcm/libraries/api/kyc";
-import { AdminAuthenticateMutation, AdminGetUserQuery, AuthenticateMutation, SendEmailVerificationCodeMutation, SendPhoneNumberVerificationCodeMutation, SetBankAccountMutation, SetPasswordMutation, UploadGovernmentIDMutation, UserQuery, VerifyEmailMutation, VerifyPhoneNumberMutation } from "@ibexcm/libraries/api/user";
+import {
+  AdminGetUsersWithPendingKYCApprovalQuery,
+  AdminKYCApproveUserMutation,
+  AdminKYCRejectUserMutation,
+} from "@ibexcm/libraries/api/kyc";
+import {
+  CreateTransactionMutation,
+  GetTransactionBreakdownQuery,
+} from "@ibexcm/libraries/api/transaction";
+import {
+  AdminAuthenticateMutation,
+  AdminGetUserQuery,
+  AuthenticateMutation,
+  SendEmailVerificationCodeMutation,
+  SendPhoneNumberVerificationCodeMutation,
+  SetBankAccountMutation,
+  SetPasswordMutation,
+  UploadGovernmentIDMutation,
+  UserQuery,
+  VerifyEmailMutation,
+  VerifyPhoneNumberMutation,
+} from "@ibexcm/libraries/api/user";
 import { ApolloError } from "apollo-server-errors";
 import axios from "axios";
 import { print } from "graphql";
@@ -167,6 +208,39 @@ const adminKYCRejectUser = async (
   );
 };
 
+const createTransaction = async (
+  args: MutationCreateTransactionArgs,
+  authToken: string,
+) => {
+  return query<MutationCreateTransactionArgs, Pick<Mutation, "createTransaction">>(
+    CreateTransactionMutation,
+    args,
+    authToken,
+  );
+};
+
+const getTransactionBreakdown = async (
+  args: QueryGetTransactionBreakdownArgs,
+  authToken: string,
+) => {
+  return query<QueryGetTransactionBreakdownArgs, Pick<Query, "getTransactionBreakdown">>(
+    GetTransactionBreakdownQuery,
+    args,
+    authToken,
+  );
+};
+
+const createBitcoinAccount = async (
+  args: MutationCreateBitcoinAccountArgs,
+  authToken: string,
+) => {
+  return query<MutationCreateBitcoinAccountArgs, Pick<Mutation, "createBitcoinAccount">>(
+    CreateBitcoinAccountMutation,
+    args,
+    authToken,
+  );
+};
+
 const GraphQLClient = {
   query,
   authenticate,
@@ -185,6 +259,9 @@ const GraphQLClient = {
   adminGetUsersWithPendingKYCApproval,
   adminKYCApproveUser,
   adminKYCRejectUser,
+  createTransaction,
+  createBitcoinAccount,
+  getTransactionBreakdown,
 };
 
 export default GraphQLClient;

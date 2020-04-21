@@ -25,6 +25,13 @@ const configuration = convict({
       env: "VERIFIED_EMAILS",
       arg: "verified-emails",
     },
+    adminAccountEmailAddress: {
+      doc: "The email address of the admin user with the target crypto and fiat accounts",
+      format: "email",
+      default: null,
+      env: "ADMIN_ACCOUNT_EMAIL_ADDRESS",
+      arg: "admin-account-email-address",
+    },
   },
 
   express: {
