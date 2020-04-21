@@ -1,6 +1,7 @@
 import { Box, Grid, Paper, Theme, WithStyles } from "@material-ui/core";
 import ArrowRightAltIcon from "@material-ui/icons/ArrowRightAlt";
 import ChevronRightIcon from "@material-ui/icons/ChevronRight";
+import ScheduleIcon from "@material-ui/icons/Schedule";
 import { withStyles } from "@material-ui/styles";
 import React from "react";
 import { Link } from "react-router-dom";
@@ -25,23 +26,25 @@ const Component: React.FC<Props> = ({ classes, transaction }) => {
               flexDirection="row"
               justifyContent="flex-end"
               className={classes.currencies}
-              minHeight={48}
             >
-              <Box display="flex" flexDirection="column" justifyContent="center">
-                <Typography color="primary" className={classes.amount}>
+              <Box className={classes.rowItemBox}>
+                <Typography color="secondary" className={classes.amount}>
                   {transaction.amount}
                 </Typography>
               </Box>
-              <Box display="flex" flexDirection="column" justifyContent="center">
-                <Typography color="primary">
+              <Box className={classes.rowItemBox}>
+                <Typography color="secondary">
                   {transaction.receipt.fromCurrency.symbol}
                 </Typography>
               </Box>
-              <Box display="flex" flexDirection="column" justifyContent="center">
+              <Box className={classes.rowItemBox}>
                 <ArrowRightAltIcon color="disabled" />
               </Box>
-              <Box display="flex" flexDirection="column" justifyContent="center">
-                <Typography color="secondary">
+              <Box className={classes.rowItemBox} pr={1}>
+                <ScheduleIcon fontSize="small" color="primary" />
+              </Box>
+              <Box className={classes.rowItemBox}>
+                <Typography color="primary">
                   {transaction.receipt.toCurrency.symbol}
                 </Typography>
               </Box>
@@ -79,7 +82,13 @@ export const TransactionItem = withStyles((theme: Theme) => ({
   },
   amount: {
     textAlign: "right",
-    width: 120,
-    paddingRight: theme.spacing(2),
+    // width: 120,
+    paddingRight: theme.spacing(1),
+  },
+  rowItemBox: {
+    display: "flex",
+    justifyContent: "center",
+    flexDirection: "column",
+    minHeight: 48,
   },
 }))(Component);
