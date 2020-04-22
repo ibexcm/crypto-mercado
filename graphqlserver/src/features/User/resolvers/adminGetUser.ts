@@ -9,6 +9,6 @@ export async function adminGetUser(
   { dependencies, request }: IContext,
   info,
 ): Promise<User> {
-  const KYCRepository = dependencies.provide(userRepositoryInjectionKey);
-  return await KYCRepository.adminGetUser(args);
+  const UserRepository = dependencies.provide(userRepositoryInjectionKey);
+  return await UserRepository.adminGetUser(args);
 }
