@@ -14,6 +14,10 @@ export class CryptoAccountRepository {
     return await this.db.cryptoAccount({ id }).currency();
   }
 
+  async bitcoin(id: string): Promise<Currency> {
+    return await this.db.cryptoAccount({ id }).bitcoin();
+  }
+
   async createBitcoinAccount(
     { args: { address } }: MutationCreateBitcoinAccountArgs,
     user: User,
