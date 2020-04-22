@@ -16,7 +16,7 @@ import {
 } from "@material-ui/core";
 import { debounce } from "lodash";
 import React from "react";
-import { RouteComponentProps, StaticContext } from "react-router";
+import { generatePath, RouteComponentProps, StaticContext } from "react-router";
 import {
   Backdrop,
   Button,
@@ -115,10 +115,11 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
 
   const onConfirm = async (bankAccountID: string) => {
     try {
-      await executeCreateTransactionMutation({
+      const transaction = await executeCreateTransactionMutation({
         args: { amount: input.args.amount, sender: { bankAccountID } },
       });
-      history.push(routes.dashboard.sell.confirm);
+
+      history.push(generatePath(routes.dashboard.sell.confirm, { id: transaction.id }));
     } catch (error) {
       // TODO handle error
     }

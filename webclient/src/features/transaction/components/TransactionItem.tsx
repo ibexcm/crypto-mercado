@@ -82,7 +82,6 @@ export const TransactionItem = withStyles((theme: Theme) => ({
   },
   amount: {
     textAlign: "right",
-    // width: 120,
     paddingRight: theme.spacing(1),
   },
   rowItemBox: {

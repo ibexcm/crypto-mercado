@@ -1,4 +1,3 @@
-import { SendPhoneNumberVerificationCodeInput } from "@ibexcm/libraries/api";
 import {
   Box,
   Card,
@@ -14,8 +13,9 @@ import {
 import FileCopyIcon from "@material-ui/icons/FileCopy";
 import QRCode from "qrcode";
 import React from "react";
-import { RouteComponentProps, StaticContext } from "react-router";
+import { RouteComponentProps } from "react-router";
 import {
+  Backdrop,
   Button,
   StepsSidebar,
   ToolbarPadding,
@@ -27,9 +27,7 @@ import routes from "../../../../routes";
 import { MobileNavBar } from "../../components";
 import { TransactionRepositoryInjectionKeys } from "../../InjectionKeys";
 
-interface Props
-  extends WithStyles,
-    RouteComponentProps<{}, StaticContext, SendPhoneNumberVerificationCodeInput> {}
+interface Props extends WithStyles, RouteComponentProps<{ id: string }> {}
 
 const Component: React.FC<Props> = ({ classes, history, location, match, ...props }) => {
   const dependencies = React.useContext(DependencyContext);
@@ -37,19 +35,65 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
 
   const [qrcodeDataURL, setQRCodeDataURL] = React.useState(null);
 
+  const {
+    data: getTransactionQueryData,
+    loading: isTransactionQueryLoading,
+    error: getTransactionQueryError,
+  } = TransactionRepository.useGetTransactionQuery({
+    args: { transactionID: match.params.id },
+  });
+
   React.useEffect(() => {
-    (async () => {
+    const loadQRCode = async (address, amount) => {
       try {
-        const url = await QRCode.toDataURL(
-          "bitcoin:175tWpb8K1S7NmH4Zx6rewF9WQrcZv245W?amount=20.3",
-          { margin: 1, quality: 1 },
-        );
+        const url = await QRCode.toDataURL(`bitcoin:${address}?amount=${amount}`, {
+          margin: 1,
+          quality: 1,
+        });
         setQRCodeDataURL(url);
       } catch (error) {
         console.error(error);
       }
-    })();
-  }, []);
+    };
+
+    if (!Boolean(getTransactionQueryData?.getTransaction)) {
+      loadQRCode("", "0.00");
+      return;
+    }
+
+    const {
+      id,
+      createdAt,
+      amount,
+      sender,
+      recipient,
+      receipt,
+    } = getTransactionQueryData.getTransaction;
+
+    const {
+      bitcoin: { address },
+    } = recipient.cryptoAccount;
+
+    loadQRCode(address, amount);
+  }, [getTransactionQueryData]);
+
+  if (isTransactionQueryLoading) {
+    return <Backdrop open={isTransactionQueryLoading} />;
+  }
+
+  const {
+    id,
+    createdAt,
+    amount,
+    sender,
+    recipient,
+    receipt,
+  } = getTransactionQueryData.getTransaction;
+
+  const {
+    currency: { symbol },
+    bitcoin: { address },
+  } = recipient.cryptoAccount;
 
   const onEnd = () => {
     history.push(routes.dashboard.transactions.index);
@@ -62,14 +106,14 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
           <Typography align="center" variant="body2" mb={2}>
             Envía{" "}
             <Typography align="center" variant="body2" fontWeight={900} component="span">
-              0.123456 BTC
+              {amount} {symbol}
             </Typography>
             <br />
             únicamente a esta dirección:
           </Typography>
           <Paper variant="outlined" className={classes.cryptoAddress}>
             <Typography p={1} align="center" variant="body2" fontWeight={900}>
-              3FvbouBfdexEsLJJGZc1Pn6VeizfmDwozC
+              {address}
             </Typography>
           </Paper>
           <Box mt={2}>

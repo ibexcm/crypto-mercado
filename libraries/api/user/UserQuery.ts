@@ -19,7 +19,7 @@ export const UserQuery = gql`
       ...Profile
       ...BankAccounts
       ...CryptoAccounts
-      transactions {
+      transactions(orderBy: createdAt_DESC) {
         ...Transaction
       }
     }
