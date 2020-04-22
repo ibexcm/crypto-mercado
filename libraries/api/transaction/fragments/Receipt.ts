@@ -6,6 +6,14 @@ export const Receipt = gql`
       id
       paidAt
       createdAt
+      fee {
+        id
+        fee
+      }
+      tax {
+        id
+        tax
+      }
       evidence {
         id
         bitcoinReceipt {

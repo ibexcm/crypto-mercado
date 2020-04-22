@@ -5,6 +5,7 @@ export const permissions = shield({
   Query: {
     user: rules.isUser,
     getTransactionBreakdown: rules.isUser,
+    getTransaction: rules.isUser,
 
     // ADMIN
     // KYC

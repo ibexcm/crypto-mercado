@@ -15,6 +15,7 @@ import {
   BitcoinToFiatTransactionBreakdown,
   CreateTransactionUserInput,
   MutationCreateTransactionArgs,
+  QueryGetTransactionArgs,
   QueryGetTransactionBreakdownArgs,
   TransactionBreakdown,
 } from "@ibexcm/libraries/api";
@@ -25,6 +26,7 @@ import math from "../../../libraries/math";
 import { IBitcoinRepository } from "../../Bitcoin/interfaces/IBitcoinRepository";
 import { ExchangeRateRepository } from "../../ExchangeRate/repositories/ExchangeRateRepository";
 import { TransactionFeeRepository } from "../../TransactionFee/repositories/TransactionFeeRepository";
+import { TransactionError } from "../errors/TransactionError";
 import { TransactionTaxRepository } from "./TransactionTaxRepository";
 
 const { adminAccountEmailAddress } = config.get("flags");
@@ -52,6 +54,17 @@ export class TransactionRepository {
     this.TransactionFeeRepository = TransactionFeeRepository;
     this.TransactionTaxRepository = TransactionTaxRepository;
     this.ExchangeRateRepository = ExchangeRateRepository;
+  }
+
+  async getTransaction({
+    args: { transactionID },
+  }: QueryGetTransactionArgs): Promise<Transaction> {
+    const transactionExists = await this.db.$exists.transaction({ id: transactionID });
+    if (!transactionExists) {
+      throw TransactionError.transactionDoesNotExist;
+    }
+
+    return await this.db.transaction({ id: transactionID });
   }
 
   async getTransactionBreakdown(
