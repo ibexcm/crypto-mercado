@@ -37,8 +37,8 @@ export class UserRepository {
     return await this.db.user({ id }).account();
   }
 
-  async transactions(id: string): Promise<Account> {
-    return await this.db.user({ id }).transactions();
+  async transactions(id: string, args): Promise<Account> {
+    return await this.db.user({ id }).transactions(args);
   }
 
   async contact(

@@ -1,3 +1,7 @@
+input GetTransactionInput {
+  transactionID: String!
+}
+
 input CreateTransactionUserInput {
   cryptoAccountID: String
   bankAccountID: String
