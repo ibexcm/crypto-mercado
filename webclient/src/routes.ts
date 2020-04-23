@@ -25,6 +25,7 @@ export const routes = {
     },
     transactions: {
       index: "/dashboard/tx",
+      details: "/dashboard/tx/:id",
     },
   },
 };

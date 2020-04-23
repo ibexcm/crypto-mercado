@@ -9,7 +9,7 @@ import {
   WithStyles,
 } from "@material-ui/core";
 import React from "react";
-import { RouteComponentProps, StaticContext } from "react-router";
+import { generatePath, RouteComponentProps, StaticContext } from "react-router";
 import {
   Backdrop,
   Button,
@@ -44,6 +44,12 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
 
   const onBuyBitcoin = () => {
     history.push(routes.dashboard.buy.checkout);
+  };
+
+  const onClickTransactionItem = (transaction: Transaction) => {
+    history.push(
+      generatePath(routes.dashboard.transactions.details, { id: transaction.id }),
+    );
   };
 
   const { transactions } = data.user;
@@ -99,7 +105,11 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
         <Box className={classes.mainContainer}>
           <Container style={{ minHeight: "auto" }}>
             {transactions.map((transaction: Transaction) => (
-              <TransactionItem transaction={transaction} key={transaction.id} />
+              <TransactionItem
+                transaction={transaction}
+                onClickTransactionItem={onClickTransactionItem}
+                key={transaction.id}
+              />
             ))}
           </Container>
         </Box>

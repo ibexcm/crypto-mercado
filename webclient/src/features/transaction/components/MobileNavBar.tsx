@@ -13,7 +13,7 @@ const Component: React.FC<IMobileAppBarProps> = ({ classes }) => {
       <AppBar position="fixed" color="default">
         <Toolbar className={classes.toolbar}>
           <Box className={classes.logoBox}>
-            <Link to={routes.root}>
+            <Link to={routes.dashboard.transactions.index}>
               <img src="/svg/ibex-icon.svg" width="100%" height="auto" />
             </Link>
           </Box>

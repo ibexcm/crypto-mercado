@@ -91,4 +91,10 @@ export const styles = (theme: Theme) => ({
   warnCard: {
     backgroundColor: theme.palette.warning.light,
   },
+  rowItemBox: {
+    display: "flex" as "flex",
+    justifyContent: "center" as "center",
+    flexDirection: "column" as "column",
+    minHeight: 48,
+  },
 });

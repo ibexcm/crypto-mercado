@@ -61,14 +61,7 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
       return;
     }
 
-    const {
-      id,
-      createdAt,
-      amount,
-      sender,
-      recipient,
-      receipt,
-    } = getTransactionQueryData.getTransaction;
+    const { amount, recipient } = getTransactionQueryData.getTransaction;
 
     const {
       bitcoin: { address },
@@ -95,7 +88,7 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
     bitcoin: { address },
   } = recipient.cryptoAccount;
 
-  const onEnd = () => {
+  const onFinish = () => {
     history.push(routes.dashboard.transactions.index);
   };
 
@@ -117,7 +110,7 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
             </Typography>
           </Paper>
           <Box mt={2}>
-            <Button fullWidth color="default" onClick={onEnd}>
+            <Button fullWidth color="default">
               <FileCopyIcon /> Copiar
             </Button>
           </Box>
@@ -167,7 +160,7 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
                     variant="contained"
                     color="secondary"
                     size="large"
-                    onClick={onEnd}
+                    onClick={onFinish}
                   >
                     Terminar
                   </Button>
@@ -184,7 +177,7 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
                 variant="contained"
                 color="secondary"
                 size="large"
-                onClick={onEnd}
+                onClick={onFinish}
               >
                 Terminar
               </Button>
