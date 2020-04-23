@@ -102,6 +102,8 @@ describe("getTransaction", () => {
     expect(getTransaction.receipt.tax).toBeDefined();
     expect(getTransaction.sender.id).toBeDefined();
     expect(getTransaction.recipient.id).toBeDefined();
+    expect(getTransaction.recipient.cryptoAccount.bitcoin.address).toBeDefined();
+    expect(getTransaction.recipient.cryptoAccount.currency.symbol).toBeDefined();
   });
 
   test("transaction does not exist", async () => {
