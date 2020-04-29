@@ -180,7 +180,7 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
   return (
     <Box className={classes.drawerContainer} position="relative">
       <StepsSidebar variant="primary"></StepsSidebar>
-      <Container disableGutters>
+      <Container disableGutters maxWidth={false}>
         <MobileNavBar />
         <Box className={classes.topContainer}>
           <Container style={{ minHeight: "auto" }}>
