@@ -1,7 +1,6 @@
 import { prisma as db } from "@ibexcm/database";
 import { TestDependencies } from "@ibexcm/libraries/di";
 import { CurrencySymbol } from "@ibexcm/libraries/models/currency";
-import Faker from "faker";
 import { config } from "../../../../config";
 import {
   emailNotificationsRepositoryInjectionKey,
@@ -10,6 +9,7 @@ import {
 import { smsVerificationRepositoryInjectionKey } from "../../../../libraries/SMSVerification";
 import adminKYCApproveUser from "../../../../__test-utils__/helpers/adminKYCApproveUser";
 import authenticate from "../../../../__test-utils__/helpers/authenticate";
+import generateBitcoinAddress from "../../../../__test-utils__/helpers/generateBitcoinAddress";
 import onboardUser from "../../../../__test-utils__/helpers/onboardUser";
 import setAdminBankAccounts from "../../../../__test-utils__/helpers/setAdminBankAccounts";
 import {
@@ -108,7 +108,7 @@ describe("getTransactionBreakdown", () => {
     const { token } = await authenticate({ address, password });
 
     await GraphQLClient.createBitcoinAccount(
-      { args: { address: Faker.finance.bitcoinAddress() } },
+      { args: { address: await generateBitcoinAddress() } },
       token,
     );
 

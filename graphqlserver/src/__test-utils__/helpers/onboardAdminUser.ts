@@ -1,6 +1,6 @@
 import { Prisma } from "@ibexcm/database";
 import { CurrencySymbol } from "@ibexcm/libraries/models/currency";
-import Faker from "faker";
+import generateBitcoinAddress from "./generateBitcoinAddress";
 import onboardUser from "./onboardUser";
 
 export default async (
@@ -36,7 +36,7 @@ export default async (
           },
           bitcoin: {
             create: {
-              address: Faker.finance.bitcoinAddress(),
+              address: await generateBitcoinAddress(),
             },
           },
         },
