@@ -2,15 +2,23 @@ import { prisma as db } from "@ibexcm/database";
 import { TGuatemalaBankAccount } from "@ibexcm/libraries/api";
 import { TestDependencies } from "@ibexcm/libraries/di";
 import { CurrencySymbol } from "@ibexcm/libraries/models/currency";
-import Faker from "faker";
 import { config } from "../../../../config";
-import { emailNotificationsRepositoryInjectionKey, emailVerificationRepositoryInjectionKey } from "../../../../libraries/EmailVerification";
+import {
+  emailNotificationsRepositoryInjectionKey,
+  emailVerificationRepositoryInjectionKey,
+} from "../../../../libraries/EmailVerification";
 import { smsVerificationRepositoryInjectionKey } from "../../../../libraries/SMSVerification";
 import adminKYCApproveUser from "../../../../__test-utils__/helpers/adminKYCApproveUser";
 import authenticate from "../../../../__test-utils__/helpers/authenticate";
+import generateBitcoinAddress from "../../../../__test-utils__/helpers/generateBitcoinAddress";
 import onboardUser from "../../../../__test-utils__/helpers/onboardUser";
 import setAdminBankAccounts from "../../../../__test-utils__/helpers/setAdminBankAccounts";
-import { mockEmailNotificationsRepository, mockEmailVerificationRepository, MockServer, mockSMSVerificationRepository } from "../../../../__test-utils__/mocks";
+import {
+  mockEmailNotificationsRepository,
+  mockEmailVerificationRepository,
+  MockServer,
+  mockSMSVerificationRepository,
+} from "../../../../__test-utils__/mocks";
 import GraphQLClient from "../../../../__test-utils__/mocks/GraphQLClient";
 
 const { adminAccountEmailAddress } = config.get("flags");
@@ -113,7 +121,7 @@ describe("createTransaction", () => {
 
     const { token } = await authenticate({ address, password });
 
-    const bitcoinAddress = Faker.finance.bitcoinAddress();
+    const bitcoinAddress = await generateBitcoinAddress();
 
     await GraphQLClient.createBitcoinAccount({ args: { address: bitcoinAddress } }, token);
 
@@ -182,7 +190,7 @@ describe("createTransaction", () => {
 
     const { token } = await authenticate({ address, password });
 
-    const bitcoinAddress = Faker.finance.bitcoinAddress();
+    const bitcoinAddress = await generateBitcoinAddress();
 
     await GraphQLClient.createBitcoinAccount({ args: { address: bitcoinAddress } }, token);
 
@@ -277,7 +285,7 @@ describe("createTransaction", () => {
       token,
     );
 
-    const bitcoinAddress = Faker.finance.bitcoinAddress();
+    const bitcoinAddress = await generateBitcoinAddress();
 
     const {
       data: { createBitcoinAccount },

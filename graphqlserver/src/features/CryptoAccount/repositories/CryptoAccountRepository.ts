@@ -1,6 +1,7 @@
 import { Currency, Prisma, User } from "@ibexcm/database";
 import { MutationCreateBitcoinAccountArgs } from "@ibexcm/libraries/api";
 import { CurrencySymbol } from "@ibexcm/libraries/models/currency";
+import ValidateBitcoinAddress from "bitcoin-address-validation";
 import { CryptoAccountError } from "../errors/CryptoAccountError";
 
 export class CryptoAccountRepository {
@@ -22,6 +23,11 @@ export class CryptoAccountRepository {
     { args: { address } }: MutationCreateBitcoinAccountArgs,
     user: User,
   ): Promise<boolean> {
+    const isValidAddress = ValidateBitcoinAddress(address);
+    if (!Boolean(isValidAddress)) {
+      throw CryptoAccountError.invalidBitcoinAddressExistsError;
+    }
+
     const cryptoAccountExists = await this.db.$exists.bitcoinAccount({ address });
     if (cryptoAccountExists) {
       throw CryptoAccountError.bitcoinAddressAlreadyExistsError;
