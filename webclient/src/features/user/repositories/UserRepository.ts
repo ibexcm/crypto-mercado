@@ -48,6 +48,13 @@ export class UserRepository {
           if (Boolean(error?.graphQLErrors) && error.graphQLErrors.length > 0) {
             if (
               (error as ApolloError).graphQLErrors[0].extensions.code ===
+              "invalidBitcoinAddress"
+            ) {
+              throw new Error("Dirección inválida");
+            }
+
+            if (
+              (error as ApolloError).graphQLErrors[0].extensions.code ===
               "bitcoinAddressAlreadyExists"
             ) {
               throw new Error("Esta dirección ya existe.");
