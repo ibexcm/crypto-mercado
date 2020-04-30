@@ -1,5 +1,6 @@
 import { prisma as db } from "@ibexcm/database";
 import { TestDependencies } from "@ibexcm/libraries/di";
+import { CurrencySymbol } from "@ibexcm/libraries/models/currency";
 import Faker from "faker";
 import { config } from "../../../../config";
 import {
@@ -10,6 +11,7 @@ import { smsVerificationRepositoryInjectionKey } from "../../../../libraries/SMS
 import adminKYCApproveUser from "../../../../__test-utils__/helpers/adminKYCApproveUser";
 import authenticate from "../../../../__test-utils__/helpers/authenticate";
 import onboardUser from "../../../../__test-utils__/helpers/onboardUser";
+import setAdminBankAccounts from "../../../../__test-utils__/helpers/setAdminBankAccounts";
 import {
   mockEmailNotificationsRepository,
   mockEmailVerificationRepository,
@@ -64,7 +66,7 @@ describe("getTransactionBreakdown", () => {
       data: { user },
     } = await GraphQLClient.user(token);
 
-    const [{ id: bankAccountID, currency }] = user.bankAccounts;
+    const [{ id: bankAccountID }] = user.bankAccounts;
     const amount = "0.01234";
 
     const {
@@ -94,24 +96,36 @@ describe("getTransactionBreakdown", () => {
     expect(getTransactionBreakdown.exchangeRate).toBeNull();
   });
 
-  test("gets USD to BTC transaction breakdown: the user BUYS BTC with a USD bank deposit.", async () => {
+  test("gets GTQ to BTC transaction breakdown: the user BUYS BTC with a GTQ bank deposit.", async () => {
     const { user: newUser, address, password } = await onboardUser();
 
-    await adminKYCApproveUser(newUser, db, { address: adminAccountEmailAddress });
+    const { token: adminToken } = await adminKYCApproveUser(newUser, db, {
+      address: adminAccountEmailAddress,
+    });
+
+    await setAdminBankAccounts(adminToken);
 
     const { token } = await authenticate({ address, password });
-
-    const {
-      data: { user },
-    } = await GraphQLClient.user(token);
 
     await GraphQLClient.createBitcoinAccount(
       { args: { address: Faker.finance.bitcoinAddress() } },
       token,
     );
 
-    const [{ id: cryptoAccountID, currency }] = user.cryptoAccounts;
+    const {
+      data: { user },
+    } = await GraphQLClient.user(token);
+
+    const [{ id: cryptoAccountID }] = user.cryptoAccounts;
     const amount = "0.01234";
+
+    const {
+      data: { getAdminBankAccounts },
+    } = await GraphQLClient.getAdminBankAccounts(token);
+
+    const [adminBankAccount] = getAdminBankAccounts.filter(
+      bankAccount => bankAccount.currency.symbol === CurrencySymbol.GTQ,
+    );
 
     const {
       data: { getTransactionBreakdown },
@@ -121,6 +135,9 @@ describe("getTransactionBreakdown", () => {
           amount,
           sender: {
             cryptoAccountID,
+          },
+          recipient: {
+            bankAccountID: adminBankAccount.id,
           },
         },
       },
@@ -137,6 +154,6 @@ describe("getTransactionBreakdown", () => {
     expect(getTransactionBreakdown.tax.value).toBeDefined();
     expect(getTransactionBreakdown.total.key).toBeDefined();
     expect(getTransactionBreakdown.total.value).toBeDefined();
-    expect(getTransactionBreakdown.exchangeRate).toBeNull();
+    expect(getTransactionBreakdown.exchangeRate).toBeDefined();
   });
 });

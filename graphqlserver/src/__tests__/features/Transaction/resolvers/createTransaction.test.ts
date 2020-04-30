@@ -4,20 +4,13 @@ import { TestDependencies } from "@ibexcm/libraries/di";
 import { CurrencySymbol } from "@ibexcm/libraries/models/currency";
 import Faker from "faker";
 import { config } from "../../../../config";
-import {
-  emailNotificationsRepositoryInjectionKey,
-  emailVerificationRepositoryInjectionKey,
-} from "../../../../libraries/EmailVerification";
+import { emailNotificationsRepositoryInjectionKey, emailVerificationRepositoryInjectionKey } from "../../../../libraries/EmailVerification";
 import { smsVerificationRepositoryInjectionKey } from "../../../../libraries/SMSVerification";
 import adminKYCApproveUser from "../../../../__test-utils__/helpers/adminKYCApproveUser";
 import authenticate from "../../../../__test-utils__/helpers/authenticate";
 import onboardUser from "../../../../__test-utils__/helpers/onboardUser";
-import {
-  mockEmailNotificationsRepository,
-  mockEmailVerificationRepository,
-  MockServer,
-  mockSMSVerificationRepository,
-} from "../../../../__test-utils__/mocks";
+import setAdminBankAccounts from "../../../../__test-utils__/helpers/setAdminBankAccounts";
+import { mockEmailNotificationsRepository, mockEmailVerificationRepository, MockServer, mockSMSVerificationRepository } from "../../../../__test-utils__/mocks";
 import GraphQLClient from "../../../../__test-utils__/mocks/GraphQLClient";
 
 const { adminAccountEmailAddress } = config.get("flags");
@@ -185,41 +178,7 @@ describe("createTransaction", () => {
       address: adminAccountEmailAddress,
     });
 
-    const {
-      data: {
-        user: {
-          profile: {
-            country: { id: countryID },
-          },
-        },
-      },
-    } = await GraphQLClient.user(adminToken);
-
-    const {
-      data: { getBanksByCountry },
-    } = await GraphQLClient.getBanksByCountry({ args: { countryID } });
-
-    const {
-      data: { getCurrenciesByCountry },
-    } = await GraphQLClient.getCurrenciesByCountry({ args: { countryID } });
-
-    const [, { id: bankID }] = getBanksByCountry;
-    const [{ id: currencyID }] = getCurrenciesByCountry.filter(
-      currency => currency.symbol === CurrencySymbol.GTQ,
-    );
-
-    await GraphQLClient.setBankAccount(
-      {
-        args: {
-          fullName: "Admin Full Name",
-          accountNumber: "012345612",
-          bankID,
-          currencyID,
-          bankAccountType: TGuatemalaBankAccount.Monetaria,
-        },
-      },
-      adminToken,
-    );
+    await setAdminBankAccounts(adminToken);
 
     const { token } = await authenticate({ address, password });
 
