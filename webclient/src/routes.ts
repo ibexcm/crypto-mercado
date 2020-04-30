@@ -21,7 +21,7 @@ export const routes = {
     },
     buy: {
       checkout: "/dashboard/btc/compra",
-      confirm: "/dashboard/btc/compra/confirmar",
+      confirm: "/dashboard/btc/compra/confirmar/tx/:id",
     },
     transactions: {
       index: "/dashboard/tx",

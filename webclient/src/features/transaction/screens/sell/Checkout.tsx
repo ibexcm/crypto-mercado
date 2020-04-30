@@ -14,7 +14,6 @@ import {
   withStyles,
   WithStyles,
 } from "@material-ui/core";
-import { debounce } from "lodash";
 import React from "react";
 import { generatePath, RouteComponentProps, StaticContext } from "react-router";
 import {
@@ -28,6 +27,7 @@ import {
 import DependencyContext from "../../../../common/contexts/DependencyContext";
 import { styles } from "../../../../common/theme";
 import routes from "../../../../routes";
+import { useOnDebounceTextChange } from "../../../../utils";
 import { UserRepositoryInjectionKeys } from "../../../user/InjectionKeys";
 import { MobileNavBar, OnSellTransactionBreakdown } from "../../components";
 import { TransactionRepositoryInjectionKeys } from "../../InjectionKeys";
@@ -53,10 +53,12 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
     loading: isUserQueryLoading,
     error: userQueryError,
   } = UserRepository.useUserQuery();
+
   const [
     executeGetTransactionBreakdownQuery,
     getTransactionBreakdownState,
   ] = TransactionRepository.useGetTransactionBreakdownQuery();
+
   const {
     execute: executeCreateTransactionMutation,
     state: createTransactionMutationState,
@@ -95,15 +97,7 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
     return () => clearInterval(intervalID);
   }, [input.args.amount]);
 
-  const onDebounceTextChange = React.useRef(
-    debounce(
-      (
-        query: (args: QueryGetTransactionBreakdownArgs) => void,
-        args: QueryGetTransactionBreakdownArgs,
-      ) => query(args),
-      500,
-    ),
-  );
+  const onDebounceTextChange = useOnDebounceTextChange(executeGetTransactionBreakdownQuery);
 
   if (isUserQueryLoading) {
     return <Backdrop open={isUserQueryLoading} />;
@@ -135,7 +129,7 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
       setInput({ args: { amount } });
 
       onDebounceTextChange.current.cancel();
-      onDebounceTextChange.current(executeGetTransactionBreakdownQuery, {
+      onDebounceTextChange.current({
         args: { amount, sender: { bankAccountID } },
       });
     } catch (error) {
