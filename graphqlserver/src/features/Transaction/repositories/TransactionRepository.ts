@@ -180,8 +180,8 @@ export class TransactionRepository {
 
     const subtotal = math
       .chain(amountByCurrentPrice)
-      .subtract(calculatedFee)
-      .subtract(calculatedTax)
+      .add(calculatedFee)
+      .add(calculatedTax)
       .done();
 
     const total = {
