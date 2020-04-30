@@ -21,6 +21,7 @@ import {
   QueryGetTransactionBreakdownArgs,
 } from "@ibexcm/libraries/api";
 import { GetBanksByCountryQuery } from "@ibexcm/libraries/api/bank";
+import { GetAdminBankAccountsQuery } from "@ibexcm/libraries/api/bankAccount";
 import { CreateBitcoinAccountMutation } from "@ibexcm/libraries/api/cryptoAccount";
 import { GetCurrenciesByCountryQuery } from "@ibexcm/libraries/api/currency";
 import {
@@ -251,6 +252,14 @@ const createBitcoinAccount = async (
   );
 };
 
+const getAdminBankAccounts = async (authToken: string) => {
+  return query<void, Pick<Query, "getAdminBankAccounts">>(
+    GetAdminBankAccountsQuery,
+    undefined,
+    authToken,
+  );
+};
+
 const GraphQLClient = {
   query,
   authenticate,
@@ -273,6 +282,7 @@ const GraphQLClient = {
   createBitcoinAccount,
   getTransactionBreakdown,
   getTransaction,
+  getAdminBankAccounts,
 };
 
 export default GraphQLClient;

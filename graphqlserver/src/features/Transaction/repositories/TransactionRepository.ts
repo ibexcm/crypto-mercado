@@ -20,16 +20,15 @@ import {
   TransactionBreakdown,
 } from "@ibexcm/libraries/api";
 import { CurrencySymbol } from "@ibexcm/libraries/models/currency";
-import { config } from "../../../config";
 import { IEmailNotificationsRepository } from "../../../libraries/EmailVerification/interfaces/IEmailNotificationsRepository";
 import math from "../../../libraries/math";
 import { IBitcoinRepository } from "../../Bitcoin/interfaces/IBitcoinRepository";
 import { ExchangeRateRepository } from "../../ExchangeRate/repositories/ExchangeRateRepository";
 import { TransactionFeeRepository } from "../../TransactionFee/repositories/TransactionFeeRepository";
+import { UserRepository } from "../../User/repositories/UserRepository";
 import { TransactionError } from "../errors/TransactionError";
 import { TransactionTaxRepository } from "./TransactionTaxRepository";
 
-const { adminAccountEmailAddress } = config.get("flags");
 const formatter = Intl.NumberFormat();
 
 export class TransactionRepository {
@@ -37,6 +36,7 @@ export class TransactionRepository {
   private emailNotificationsRepository: IEmailNotificationsRepository;
   private BitcoinRepository: IBitcoinRepository;
   private TransactionFeeRepository: TransactionFeeRepository;
+  private UserRepository: UserRepository;
   private TransactionTaxRepository: TransactionTaxRepository;
   private ExchangeRateRepository: ExchangeRateRepository;
 
@@ -47,6 +47,7 @@ export class TransactionRepository {
     TransactionFeeRepository: TransactionFeeRepository,
     TransactionTaxRepository: TransactionTaxRepository,
     ExchangeRateRepository: ExchangeRateRepository,
+    UserRepository: UserRepository,
   ) {
     this.db = db;
     this.emailNotificationsRepository = emailNotificationsRepository;
@@ -54,6 +55,7 @@ export class TransactionRepository {
     this.TransactionFeeRepository = TransactionFeeRepository;
     this.TransactionTaxRepository = TransactionTaxRepository;
     this.ExchangeRateRepository = ExchangeRateRepository;
+    this.UserRepository = UserRepository;
   }
 
   async getTransaction({
@@ -84,22 +86,8 @@ export class TransactionRepository {
     args: MutationCreateTransactionArgs,
     senderUser: User,
   ): Promise<Transaction> {
-    const [recipientUser] = await this.db.users({
-      where: {
-        role: {
-          type: "ADMIN",
-        },
-        contact: {
-          email_every: {
-            address: adminAccountEmailAddress, // TODO put this address in .env
-          },
-        },
-      },
-      first: 1,
-    });
-
     const sender = this.getOnCreateTransactionSender(senderUser, args);
-    const recipient = await this.getOnCreateTransactionRecipient(recipientUser, args);
+    const recipient = await this.getOnCreateTransactionRecipient(args);
     const receipt = await this.getTransactionReceipt(senderUser, args);
 
     const { args: input } = args;
@@ -302,6 +290,10 @@ export class TransactionRepository {
       .cryptoAccount({ id: sender.cryptoAccountID })
       .currency();
 
+    const fromCurrency = await this.db
+      .bankAccount({ id: recipient.bankAccountID })
+      .currency();
+
     const createCurrencies = {
       toCurrency: {
         connect: {
@@ -310,7 +302,7 @@ export class TransactionRepository {
       },
       fromCurrency: {
         connect: {
-          symbol: CurrencySymbol.USD,
+          id: fromCurrency.id,
         },
       },
     };
@@ -342,20 +334,20 @@ export class TransactionRepository {
       };
     }
 
-    const [{ id }] = await this.db.user({ id: recipientUser.id }).bankAccounts();
     return {
       bankAccount: {
         connect: {
-          id,
+          id: recipient.bankAccountID,
         },
       },
     };
   }
 
   private async getOnCreateTransactionRecipient(
-    recipientUser: User,
     args: MutationCreateTransactionArgs,
   ): Promise<RecipientCreateOneWithoutTransactionInput> {
+    const recipientUser = await this.UserRepository.getDefaultAdminUser();
+
     const recipient: RecipientCreateOneWithoutTransactionInput = {
       create: {
         user: {

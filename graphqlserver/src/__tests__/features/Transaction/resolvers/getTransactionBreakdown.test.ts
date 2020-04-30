@@ -1,5 +1,6 @@
 import { prisma as db } from "@ibexcm/database";
 import { TestDependencies } from "@ibexcm/libraries/di";
+import Faker from "faker";
 import { config } from "../../../../config";
 import {
   emailNotificationsRepositoryInjectionKey,
@@ -66,7 +67,9 @@ describe("getTransactionBreakdown", () => {
     const [{ id: bankAccountID, currency }] = user.bankAccounts;
     const amount = "0.01234";
 
-    await GraphQLClient.createTransaction(
+    const {
+      data: { getTransactionBreakdown },
+    } = await GraphQLClient.getTransactionBreakdown(
       {
         args: {
           amount,
@@ -78,6 +81,38 @@ describe("getTransactionBreakdown", () => {
       token,
     );
 
+    expect(getTransactionBreakdown.price.key).toBeDefined();
+    expect(getTransactionBreakdown.price.value).toBeDefined();
+    expect(getTransactionBreakdown.amount.key).toBeDefined();
+    expect(getTransactionBreakdown.amount.value).toBeDefined();
+    expect(getTransactionBreakdown.fee.key).toBeDefined();
+    expect(getTransactionBreakdown.fee.value).toBeDefined();
+    expect(getTransactionBreakdown.tax.key).toBeDefined();
+    expect(getTransactionBreakdown.tax.value).toBeDefined();
+    expect(getTransactionBreakdown.total.key).toBeDefined();
+    expect(getTransactionBreakdown.total.value).toBeDefined();
+    expect(getTransactionBreakdown.exchangeRate).toBeNull();
+  });
+
+  test("gets USD to BTC transaction breakdown: the user BUYS BTC with a USD bank deposit.", async () => {
+    const { user: newUser, address, password } = await onboardUser();
+
+    await adminKYCApproveUser(newUser, db, { address: adminAccountEmailAddress });
+
+    const { token } = await authenticate({ address, password });
+
+    const {
+      data: { user },
+    } = await GraphQLClient.user(token);
+
+    await GraphQLClient.createBitcoinAccount(
+      { args: { address: Faker.finance.bitcoinAddress() } },
+      token,
+    );
+
+    const [{ id: cryptoAccountID, currency }] = user.cryptoAccounts;
+    const amount = "0.01234";
+
     const {
       data: { getTransactionBreakdown },
     } = await GraphQLClient.getTransactionBreakdown(
@@ -85,7 +120,7 @@ describe("getTransactionBreakdown", () => {
         args: {
           amount,
           sender: {
-            bankAccountID,
+            cryptoAccountID,
           },
         },
       },

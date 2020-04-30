@@ -11,6 +11,8 @@ type Query {
   getTransactionBreakdown(args: GetTransactionBreakdownInput!): TransactionBreakdown!
 
   # ADMIN
+  getAdminBankAccounts: [BankAccount!]!
+
   # KYC
   adminGetUsersWithPendingKYCApproval: [User!]!
 
@@ -60,12 +62,6 @@ type Session {
 
 input CreateBitcoinAccountInput {
   address: String!
-}
-
-input CreateTransactionInput {
-  amount: String
-  sender: CreateTransactionUserInput!
-  recipient: CreateTransactionUserInput
 }
 
 input AdminKYCApproveUserInput {

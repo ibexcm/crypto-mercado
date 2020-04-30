@@ -3,6 +3,11 @@ import {
   bankAccountRepositoryInjectionKey,
   guatemalaBankAccountRepositoryInjectionKey,
 } from "../InjectionKeys";
+import { getAdminBankAccounts } from "./getAdminBankAccounts";
+
+export const queries = {
+  getAdminBankAccounts,
+};
 
 export const types = {
   BankAccount: {

@@ -9,7 +9,9 @@ export const AdminGetUsersWithPendingKYCApprovalQuery = gql`
       ...Account
       ...Contact
       ...Profile
-      ...BankAccounts
+      bankAccounts {
+        ...BankAccounts
+      }
     }
   }
   ${UserRole}

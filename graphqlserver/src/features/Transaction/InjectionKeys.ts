@@ -4,6 +4,7 @@ import { emailNotificationsRepositoryInjectionKey } from "../../libraries/EmailV
 import { BitcoinRepositoryInjectionKey } from "../Bitcoin/InjectionKeys";
 import { ExchangeRateRepositoryInjectionKey } from "../ExchangeRate/InjectionKeys";
 import { TransactionFeeRepositoryInjectionKey } from "../TransactionFee/InjectionKeys";
+import { userRepositoryInjectionKey } from "../User/InjectionKeys";
 import { TransactionRepository } from "./repositories/TransactionRepository";
 import { TransactionTaxRepository } from "./repositories/TransactionTaxRepository";
 
@@ -23,6 +24,7 @@ export const TransactionRepositoryInjectionKey: InjectionKey<TransactionReposito
       TransactionTaxRepositoryInjectionKey,
     );
     const ExchangeRateRepository = dependencies.provide(ExchangeRateRepositoryInjectionKey);
+    const UserRepository = dependencies.provide(userRepositoryInjectionKey);
 
     return new TransactionRepository(
       db,
@@ -31,6 +33,7 @@ export const TransactionRepositoryInjectionKey: InjectionKey<TransactionReposito
       TransactionFeeRepository,
       TransactionTaxRepository,
       ExchangeRateRepository,
+      UserRepository,
     );
   },
 };

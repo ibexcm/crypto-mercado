@@ -16,21 +16,21 @@ export default async ({
   const accountNumber = "01-234567-89";
   const bankAccountType = TGuatemalaBankAccount.Monetaria;
 
-  const $address = address ?? Faker.internet.email();
-  const $number = number ?? Faker.phone.phoneNumber();
-  const $password = password ?? "password";
+  address = address ?? Faker.internet.email();
+  number = number ?? Faker.phone.phoneNumber();
+  password = password ?? "password";
 
   const {
     data: {
       verifyPhoneNumber: { token },
     },
   } = await GraphQLClient.verifyPhoneNumber({
-    args: { number: $number, code },
+    args: { number, code },
   });
 
-  await GraphQLClient.verifyEmail({ args: { address: $address, code } }, token);
+  await GraphQLClient.verifyEmail({ args: { address, code } }, token);
 
-  await GraphQLClient.setPassword({ args: { password: $password } }, token);
+  await GraphQLClient.setPassword({ args: { password } }, token);
 
   await GraphQLClient.uploadGovernmentID({ args: { fileHash: "hash123" } }, token);
 
@@ -64,5 +64,5 @@ export default async ({
     data: { user },
   } = await GraphQLClient.user(token);
 
-  return { user, token, address: $address, password: $password };
+  return { user, token, address, password };
 };

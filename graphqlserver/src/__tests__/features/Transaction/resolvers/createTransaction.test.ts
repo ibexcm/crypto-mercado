@@ -1,6 +1,7 @@
 import { prisma as db } from "@ibexcm/database";
 import { TGuatemalaBankAccount } from "@ibexcm/libraries/api";
 import { TestDependencies } from "@ibexcm/libraries/di";
+import { CurrencySymbol } from "@ibexcm/libraries/models/currency";
 import Faker from "faker";
 import { config } from "../../../../config";
 import {
@@ -121,12 +122,7 @@ describe("createTransaction", () => {
 
     const bitcoinAddress = Faker.finance.bitcoinAddress();
 
-    const {
-      data: { createBitcoinAccount },
-    } = await GraphQLClient.createBitcoinAccount(
-      { args: { address: bitcoinAddress } },
-      token,
-    );
+    await GraphQLClient.createBitcoinAccount({ args: { address: bitcoinAddress } }, token);
 
     const {
       data: { user },
@@ -135,12 +131,23 @@ describe("createTransaction", () => {
     const [{ id: cryptoAccountID, currency }] = user.cryptoAccounts;
 
     const {
+      data: { getAdminBankAccounts },
+    } = await GraphQLClient.getAdminBankAccounts(token);
+
+    const [adminBankAccount] = getAdminBankAccounts.filter(
+      bankAccount => bankAccount.currency.symbol === CurrencySymbol.USD,
+    );
+
+    const {
       data: { createTransaction },
     } = await GraphQLClient.createTransaction(
       {
         args: {
           sender: {
             cryptoAccountID,
+          },
+          recipient: {
+            bankAccountID: adminBankAccount.id,
           },
         },
       },
@@ -151,12 +158,6 @@ describe("createTransaction", () => {
       .email({ address: adminAccountEmailAddress })
       .contact()
       .user();
-
-    const [adminBankAccount] = await db.user({ id: adminUser.id }).bankAccounts();
-
-    const adminBankAccountCurrency = await db
-      .bankAccount({ id: adminBankAccount.id })
-      .currency();
 
     expect(createTransaction.amount).toEqual("0.00");
     expect(createTransaction.receipt).toBeDefined();
@@ -173,7 +174,110 @@ describe("createTransaction", () => {
     expect(createTransaction.receipt.fromCurrency).toBeDefined();
     expect(createTransaction.receipt.toCurrency.symbol).toEqual(currency.symbol);
     expect(createTransaction.receipt.fromCurrency.symbol).toEqual(
-      adminBankAccountCurrency.symbol,
+      adminBankAccount.currency.symbol,
+    );
+  });
+
+  test("creates GTQ to BTC transaction: the user EXPECTS BTC and SENDS a GTQ bank deposit.", async () => {
+    const { user: newUser, address, password } = await onboardUser();
+
+    const { token: adminToken } = await adminKYCApproveUser(newUser, db, {
+      address: adminAccountEmailAddress,
+    });
+
+    const {
+      data: {
+        user: {
+          profile: {
+            country: { id: countryID },
+          },
+        },
+      },
+    } = await GraphQLClient.user(adminToken);
+
+    const {
+      data: { getBanksByCountry },
+    } = await GraphQLClient.getBanksByCountry({ args: { countryID } });
+
+    const {
+      data: { getCurrenciesByCountry },
+    } = await GraphQLClient.getCurrenciesByCountry({ args: { countryID } });
+
+    const [, { id: bankID }] = getBanksByCountry;
+    const [{ id: currencyID }] = getCurrenciesByCountry.filter(
+      currency => currency.symbol === CurrencySymbol.GTQ,
+    );
+
+    await GraphQLClient.setBankAccount(
+      {
+        args: {
+          fullName: "Admin Full Name",
+          accountNumber: "012345612",
+          bankID,
+          currencyID,
+          bankAccountType: TGuatemalaBankAccount.Monetaria,
+        },
+      },
+      adminToken,
+    );
+
+    const { token } = await authenticate({ address, password });
+
+    const bitcoinAddress = Faker.finance.bitcoinAddress();
+
+    await GraphQLClient.createBitcoinAccount({ args: { address: bitcoinAddress } }, token);
+
+    const {
+      data: { user },
+    } = await GraphQLClient.user(token);
+
+    const [{ id: cryptoAccountID, currency }] = user.cryptoAccounts;
+
+    const {
+      data: { getAdminBankAccounts },
+    } = await GraphQLClient.getAdminBankAccounts(token);
+
+    const [adminBankAccount] = getAdminBankAccounts.filter(
+      bankAccount => bankAccount.currency.symbol === CurrencySymbol.GTQ,
+    );
+
+    const {
+      data: { createTransaction },
+    } = await GraphQLClient.createTransaction(
+      {
+        args: {
+          sender: {
+            cryptoAccountID,
+          },
+          recipient: {
+            bankAccountID: adminBankAccount.id,
+          },
+        },
+      },
+      token,
+    );
+
+    const adminUser = await db
+      .email({ address: adminAccountEmailAddress })
+      .contact()
+      .user();
+
+    expect(createTransaction.amount).toEqual("0.00");
+    expect(createTransaction.receipt).toBeDefined();
+    expect(createTransaction.sender).toBeDefined();
+    expect(createTransaction.recipient).toBeDefined();
+
+    expect(createTransaction.sender.user.id).toEqual(user.id);
+    expect(createTransaction.sender.cryptoAccount.id).toEqual(cryptoAccountID);
+
+    expect(createTransaction.recipient.user.id).toEqual(adminUser.id);
+    expect(createTransaction.recipient.bankAccount.id).toEqual(adminBankAccount.id);
+
+    expect(createTransaction.receipt.toCurrency).toBeDefined();
+    expect(createTransaction.receipt.fromCurrency).toBeDefined();
+    expect(createTransaction.receipt.toCurrency.symbol).toEqual(currency.symbol);
+    expect(createTransaction.receipt.fromCurrency.symbol).toEqual(
+      adminBankAccount.currency.symbol,
     );
   });
 

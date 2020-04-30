@@ -6,6 +6,7 @@ export const permissions = shield({
     user: rules.isUser,
     getTransactionBreakdown: rules.isUser,
     getTransaction: rules.isUser,
+    getAdminBankAccounts: rules.isUser,
 
     // ADMIN
     // KYC
