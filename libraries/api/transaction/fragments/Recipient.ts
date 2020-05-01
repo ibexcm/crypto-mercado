@@ -1,4 +1,5 @@
 import gql from "graphql-tag";
+import { Account, BankAccounts } from "../../user/fragments";
 
 export const Recipient = gql`
   fragment Recipient on Transaction {
@@ -6,6 +7,9 @@ export const Recipient = gql`
       id
       user {
         id
+        account {
+          ...Account
+        }
       }
       cryptoAccount {
         id
@@ -21,24 +25,10 @@ export const Recipient = gql`
         }
       }
       bankAccount {
-        id
-        verifiedAt
-        currency {
-          id
-          name
-          symbol
-        }
-        guatemala {
-          id
-          accountNumber
-          bankAccountType
-          fullName
-          bank {
-            id
-            name
-          }
-        }
+        ...BankAccounts
       }
     }
   }
+  ${Account}
+  ${BankAccounts}
 `;
