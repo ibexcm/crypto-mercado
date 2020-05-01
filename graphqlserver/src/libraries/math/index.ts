@@ -1,4 +1,5 @@
 import {
+  addDependencies,
   chainDependencies,
   create,
   multiplyDependencies,
@@ -6,6 +7,6 @@ import {
 } from "mathjs";
 
 export default create(
-  { multiplyDependencies, subtractDependencies, chainDependencies },
+  { multiplyDependencies, subtractDependencies, chainDependencies, addDependencies },
   {},
 );
