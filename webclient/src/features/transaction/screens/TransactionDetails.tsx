@@ -70,7 +70,7 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
       query.args.sender.bankAccountID = sender.bankAccount.id;
     } else {
       query.args.sender.cryptoAccountID = sender.cryptoAccount.id;
-      query.args.recipient.cryptoAccountID = recipient.bankAccount.id;
+      query.args.recipient.bankAccountID = recipient.bankAccount.id;
     }
 
     executeGetTransactionBreakdownQuery(query);
