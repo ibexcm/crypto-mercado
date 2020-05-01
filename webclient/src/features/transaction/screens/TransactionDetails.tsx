@@ -1,14 +1,8 @@
-import { SendPhoneNumberVerificationCodeInput } from "@ibexcm/libraries/api";
 import {
-  Box,
-  Container,
-  Grid,
-  InputAdornment,
-  Paper,
-  Theme,
-  withStyles,
-  WithStyles,
-} from "@material-ui/core";
+  QueryGetTransactionBreakdownArgs,
+  SendPhoneNumberVerificationCodeInput,
+} from "@ibexcm/libraries/api";
+import { Box, Container, Grid, Theme, withStyles, WithStyles } from "@material-ui/core";
 import ScheduleIcon from "@material-ui/icons/Schedule";
 import { DateTime } from "luxon";
 import React from "react";
@@ -16,13 +10,16 @@ import { RouteComponentProps, StaticContext } from "react-router";
 import {
   Backdrop,
   StepsSidebar,
-  TextField,
   ToolbarPadding,
   Typography,
 } from "../../../common/components";
 import DependencyContext from "../../../common/contexts/DependencyContext";
 import { styles } from "../../../common/theme";
-import { MobileNavBar, OnSellTransactionBreakdown } from "../components";
+import {
+  CryptoToFiatTransaction,
+  FiatToCryptoTransaction,
+  MobileNavBar,
+} from "../components";
 import { TransactionRepositoryInjectionKeys } from "../InjectionKeys";
 
 interface Props
@@ -55,14 +52,35 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
       return;
     }
 
-    executeGetTransactionBreakdownQuery({
-      args: { amount, sender: { bankAccountID: sender.bankAccount.id } },
-    });
+    const query: QueryGetTransactionBreakdownArgs = {
+      args: {
+        amount,
+        sender: {
+          cryptoAccountID: null,
+          bankAccountID: null,
+        },
+        recipient: {
+          cryptoAccountID: null,
+          bankAccountID: null,
+        },
+      },
+    };
+
+    if (Boolean(sender?.bankAccount?.id)) {
+      query.args.sender.bankAccountID = sender.bankAccount.id;
+    } else {
+      query.args.sender.cryptoAccountID = sender.cryptoAccount.id;
+      query.args.recipient.cryptoAccountID = recipient.bankAccount.id;
+    }
+
+    executeGetTransactionBreakdownQuery(query);
   }, [isTransactionQueryLoading]);
 
   if (isTransactionQueryLoading) {
     return <Backdrop open={isTransactionQueryLoading} />;
   }
+
+  const transaction = getTransactionQueryData.getTransaction;
 
   const {
     id,
@@ -71,17 +89,25 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
     sender,
     recipient,
     receipt: { paidAt },
-  } = getTransactionQueryData.getTransaction;
+  } = transaction;
 
-  const {
-    currency: cryptoCurrency,
-    bitcoin: { address },
-  } = recipient.cryptoAccount;
+  const getTransactionComponent = () => {
+    if (Boolean(recipient?.cryptoAccount)) {
+      return (
+        <CryptoToFiatTransaction
+          transaction={transaction}
+          getTransactionBreakdownState={getTransactionBreakdownState}
+        />
+      );
+    }
 
-  const {
-    currency,
-    guatemala: { accountNumber, fullName, bankAccountType, bank },
-  } = sender.bankAccount;
+    return (
+      <FiatToCryptoTransaction
+        transaction={transaction}
+        getTransactionBreakdownState={getTransactionBreakdownState}
+      />
+    );
+  };
 
   return (
     <Box className={classes.drawerContainer} position="relative">
@@ -138,74 +164,7 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
           </Container>
         </Box>
         <Box className={classes.mainContainer}>
-          <Container style={{ minHeight: "auto" }}>
-            <Grid container justify="space-between">
-              <Grid item xs={12} lg={5}>
-                <Box mb={3}>
-                  <Paper>
-                    <TextField
-                      fullWidth
-                      disabled
-                      label="Cantidad"
-                      variant="outlined"
-                      InputProps={{
-                        endAdornment: (
-                          <InputAdornment position="end">
-                            {cryptoCurrency.symbol}
-                          </InputAdornment>
-                        ),
-                      }}
-                      value={amount}
-                      type="number"
-                    />
-                  </Paper>
-                  {!Boolean(paidAt) && (
-                    <Box mt={1}>
-                      <Typography align="justify" variant="caption">
-                        La cantidad no es definitiva y será temporal hasta que la
-                        transacción cumpla el número mínimo de confirmaciones en la red de{" "}
-                        {cryptoCurrency.name}.
-                      </Typography>
-                    </Box>
-                  )}
-                </Box>
-                <Box mb={3}>
-                  <Paper>
-                    <Box p={2}>
-                      <Typography variant="body2" mb={3}>
-                        Cuenta bancaria de destino
-                      </Typography>
-                      <Box>
-                        <Typography variant="h6">{accountNumber}</Typography>
-                        <Typography>{fullName}</Typography>
-                        <Typography>
-                          {bankAccountType}, {currency.symbol}
-                        </Typography>
-                        <Typography color="textSecondary">{bank.name}</Typography>
-                      </Box>
-                    </Box>
-                  </Paper>
-                </Box>
-                <Box mb={3}>
-                  <Paper>
-                    <Box p={2}>
-                      <Typography variant="body2" mb={3}>
-                        Dirección {cryptoCurrency.symbol} de destino
-                      </Typography>
-                      <Box overflow="scroll">
-                        <Typography variant="h6">{address}</Typography>
-                      </Box>
-                    </Box>
-                  </Paper>
-                </Box>
-              </Grid>
-              <Grid item xs={12} lg={5}>
-                <OnSellTransactionBreakdown
-                  getTransactionBreakdownState={getTransactionBreakdownState}
-                />
-              </Grid>
-            </Grid>
-          </Container>
+          <Container style={{ minHeight: "auto" }}>{getTransactionComponent()}</Container>
         </Box>
       </Container>
     </Box>
