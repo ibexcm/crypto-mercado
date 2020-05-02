@@ -14,5 +14,11 @@ export const types = {
       );
       return CryptoAccountRepository.currency(id);
     },
+    bitcoin: ({ id }, args, { dependencies }: IContext) => {
+      const CryptoAccountRepository = dependencies.provide(
+        cryptoAccountRepositoryInjectionKey,
+      );
+      return CryptoAccountRepository.bitcoin(id);
+    },
   },
 };

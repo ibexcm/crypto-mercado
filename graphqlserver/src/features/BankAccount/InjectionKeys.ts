@@ -1,5 +1,6 @@
 import { InjectionKey, InjectionKeyScope } from "@ibexcm/libraries/di";
 import { dbInjectionKey } from "../../InjectionKeys";
+import { userRepositoryInjectionKey } from "../User/InjectionKeys";
 import { BankAccountRepository } from "./repositories/BankAccountRepository";
 import { GuatemalaBankAccountRepository } from "./repositories/GuatemalaBankAccountRepository";
 
@@ -8,7 +9,8 @@ export const bankAccountRepositoryInjectionKey: InjectionKey<BankAccountReposito
   scope: InjectionKeyScope.singleton,
   closure: dependencies => {
     const db = dependencies.provide(dbInjectionKey);
-    return new BankAccountRepository(db);
+    const UserRepository = dependencies.provide(userRepositoryInjectionKey);
+    return new BankAccountRepository(db, UserRepository);
   },
 };
 

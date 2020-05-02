@@ -1,24 +1,22 @@
 import gql from "graphql-tag";
 
 export const BankAccounts = gql`
-  fragment BankAccounts on User {
-    bankAccounts {
+  fragment BankAccounts on BankAccount {
+    id
+    verifiedAt
+    currency {
       id
-      verifiedAt
-      currency {
+      name
+      symbol
+    }
+    guatemala {
+      id
+      accountNumber
+      bankAccountType
+      fullName
+      bank {
         id
         name
-        symbol
-      }
-      guatemala {
-        id
-        accountNumber
-        bankAccountType
-        fullName
-        bank {
-          id
-          name
-        }
       }
     }
   }

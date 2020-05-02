@@ -14,20 +14,22 @@ import {
 import {
   BitcoinToFiatTransactionBreakdown,
   CreateTransactionUserInput,
+  FiatToBitcoinTransactionBreakdown,
   MutationCreateTransactionArgs,
+  QueryGetTransactionArgs,
   QueryGetTransactionBreakdownArgs,
   TransactionBreakdown,
 } from "@ibexcm/libraries/api";
 import { CurrencySymbol } from "@ibexcm/libraries/models/currency";
-import { config } from "../../../config";
 import { IEmailNotificationsRepository } from "../../../libraries/EmailVerification/interfaces/IEmailNotificationsRepository";
 import math from "../../../libraries/math";
 import { IBitcoinRepository } from "../../Bitcoin/interfaces/IBitcoinRepository";
 import { ExchangeRateRepository } from "../../ExchangeRate/repositories/ExchangeRateRepository";
 import { TransactionFeeRepository } from "../../TransactionFee/repositories/TransactionFeeRepository";
+import { UserRepository } from "../../User/repositories/UserRepository";
+import { TransactionError } from "../errors/TransactionError";
 import { TransactionTaxRepository } from "./TransactionTaxRepository";
 
-const { adminAccountEmailAddress } = config.get("flags");
 const formatter = Intl.NumberFormat();
 
 export class TransactionRepository {
@@ -35,6 +37,7 @@ export class TransactionRepository {
   private emailNotificationsRepository: IEmailNotificationsRepository;
   private BitcoinRepository: IBitcoinRepository;
   private TransactionFeeRepository: TransactionFeeRepository;
+  private UserRepository: UserRepository;
   private TransactionTaxRepository: TransactionTaxRepository;
   private ExchangeRateRepository: ExchangeRateRepository;
 
@@ -45,6 +48,7 @@ export class TransactionRepository {
     TransactionFeeRepository: TransactionFeeRepository,
     TransactionTaxRepository: TransactionTaxRepository,
     ExchangeRateRepository: ExchangeRateRepository,
+    UserRepository: UserRepository,
   ) {
     this.db = db;
     this.emailNotificationsRepository = emailNotificationsRepository;
@@ -52,6 +56,18 @@ export class TransactionRepository {
     this.TransactionFeeRepository = TransactionFeeRepository;
     this.TransactionTaxRepository = TransactionTaxRepository;
     this.ExchangeRateRepository = ExchangeRateRepository;
+    this.UserRepository = UserRepository;
+  }
+
+  async getTransaction({
+    args: { transactionID },
+  }: QueryGetTransactionArgs): Promise<Transaction> {
+    const transactionExists = await this.db.$exists.transaction({ id: transactionID });
+    if (!transactionExists) {
+      throw TransactionError.transactionDoesNotExist;
+    }
+
+    return await this.db.transaction({ id: transactionID });
   }
 
   async getTransactionBreakdown(
@@ -65,28 +81,16 @@ export class TransactionRepository {
     if (Boolean(sender.bankAccountID)) {
       return this.getBitcoinToFiatTransactionBreakdown(args, senderUser);
     }
+
+    return this.getFiatToBitcoinTransactionBreakdown(args, senderUser);
   }
 
   async createTransaction(
     args: MutationCreateTransactionArgs,
     senderUser: User,
   ): Promise<Transaction> {
-    const [recipientUser] = await this.db.users({
-      where: {
-        role: {
-          type: "ADMIN",
-        },
-        contact: {
-          email_every: {
-            address: adminAccountEmailAddress, // TODO put this address in .env
-          },
-        },
-      },
-      first: 1,
-    });
-
     const sender = this.getOnCreateTransactionSender(senderUser, args);
-    const recipient = await this.getOnCreateTransactionRecipient(recipientUser, args);
+    const recipient = await this.getOnCreateTransactionRecipient(args);
     const receipt = await this.getTransactionReceipt(senderUser, args);
 
     const { args: input } = args;
@@ -128,6 +132,86 @@ export class TransactionRepository {
     return await this.db.transaction({ id }).receipt();
   }
 
+  private async getFiatToBitcoinTransactionBreakdown(
+    args: QueryGetTransactionBreakdownArgs,
+    senderUser: User,
+  ): Promise<FiatToBitcoinTransactionBreakdown> {
+    const {
+      args: { amount: inputAmount, sender, recipient },
+    } = args;
+
+    const country = await this.db
+      .user({ id: senderUser.id })
+      .profile()
+      .country();
+
+    const currency = await this.db.bankAccount({ id: recipient.bankAccountID }).currency();
+
+    const {
+      symbol: currentPriceSymbol,
+      price: currentPrice,
+    } = await this.BitcoinRepository.getCurrentPriceByCurrencySymbol();
+
+    const price = {
+      key: "Precio actual BTC",
+      value: `${currentPriceSymbol} ${formatter.format(Number(currentPrice))}`,
+    };
+
+    const amountByCurrentPrice = math.multiply(Number(currentPrice), Number(inputAmount));
+
+    const amount = {
+      key: "Cantidad",
+      value: `${currentPriceSymbol} ${formatter.format(amountByCurrentPrice)}`,
+    };
+
+    const { fee: assignedFee } = await this.TransactionFeeRepository.calculate(senderUser);
+    const calculatedFee = math.multiply(amountByCurrentPrice, Number(assignedFee));
+    const fee = {
+      key: `Comisión IBEX (${math.multiply(Number(assignedFee), 100).toFixed(1)}%)`,
+      value: `${currentPriceSymbol} ${formatter.format(calculatedFee)}`,
+    };
+
+    const assignedTaxByCountry = this.TransactionTaxRepository.getTaxByCountry(country);
+    const calculatedTax = math.multiply(calculatedFee, Number(assignedTaxByCountry));
+    const tax = {
+      key: `IVA (${math.multiply(Number(assignedTaxByCountry), 100).toFixed(1)}%)`,
+      value: `${currentPriceSymbol} ${formatter.format(calculatedTax)}`,
+    };
+
+    const subtotal = math
+      .chain(amountByCurrentPrice)
+      .add(calculatedFee)
+      .add(calculatedTax)
+      .done();
+
+    const total = {
+      key: "Total",
+      value: `${currentPriceSymbol} ${formatter.format(subtotal)}`,
+    };
+
+    let exchangeRate;
+    if (currency.symbol !== CurrencySymbol.USD) {
+      const {
+        price: exchangeRatePrice,
+      } = await this.ExchangeRateRepository.getLatestByCurrency(currency);
+      const calculatedExchangeRate = math.multiply(subtotal, Number(exchangeRatePrice));
+      exchangeRate = {
+        key: `Tipo de cambio (${exchangeRatePrice})`,
+        value: `${currency.symbol} ${formatter.format(calculatedExchangeRate)}`,
+      };
+    }
+
+    return {
+      __typename: "FiatToBitcoinTransactionBreakdown",
+      price,
+      amount,
+      fee,
+      tax,
+      total,
+      exchangeRate,
+    };
+  }
+
   private async getBitcoinToFiatTransactionBreakdown(
     args: QueryGetTransactionBreakdownArgs,
     senderUser: User,
@@ -137,9 +221,8 @@ export class TransactionRepository {
     } = args;
 
     const country = await this.db
-      .bankAccount({ id: sender.bankAccountID })
-      .guatemala()
-      .bank()
+      .user({ id: senderUser.id })
+      .profile()
       .country();
 
     const currency = await this.db.bankAccount({ id: sender.bankAccountID }).currency();
@@ -289,6 +372,10 @@ export class TransactionRepository {
       .cryptoAccount({ id: sender.cryptoAccountID })
       .currency();
 
+    const fromCurrency = await this.db
+      .bankAccount({ id: recipient.bankAccountID })
+      .currency();
+
     const createCurrencies = {
       toCurrency: {
         connect: {
@@ -297,7 +384,7 @@ export class TransactionRepository {
       },
       fromCurrency: {
         connect: {
-          symbol: CurrencySymbol.USD,
+          id: fromCurrency.id,
         },
       },
     };
@@ -329,20 +416,20 @@ export class TransactionRepository {
       };
     }
 
-    const [{ id }] = await this.db.user({ id: recipientUser.id }).bankAccounts();
     return {
       bankAccount: {
         connect: {
-          id,
+          id: recipient.bankAccountID,
         },
       },
     };
   }
 
   private async getOnCreateTransactionRecipient(
-    recipientUser: User,
     args: MutationCreateTransactionArgs,
   ): Promise<RecipientCreateOneWithoutTransactionInput> {
+    const recipientUser = await this.UserRepository.getDefaultAdminUser();
+
     const recipient: RecipientCreateOneWithoutTransactionInput = {
       create: {
         user: {

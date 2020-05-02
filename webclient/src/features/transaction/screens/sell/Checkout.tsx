@@ -14,9 +14,8 @@ import {
   withStyles,
   WithStyles,
 } from "@material-ui/core";
-import { debounce } from "lodash";
 import React from "react";
-import { RouteComponentProps, StaticContext } from "react-router";
+import { generatePath, RouteComponentProps, StaticContext } from "react-router";
 import {
   Backdrop,
   Button,
@@ -28,6 +27,7 @@ import {
 import DependencyContext from "../../../../common/contexts/DependencyContext";
 import { styles } from "../../../../common/theme";
 import routes from "../../../../routes";
+import { useOnDebounceTextChange } from "../../../../utils";
 import { UserRepositoryInjectionKeys } from "../../../user/InjectionKeys";
 import { MobileNavBar, OnSellTransactionBreakdown } from "../../components";
 import { TransactionRepositoryInjectionKeys } from "../../InjectionKeys";
@@ -53,10 +53,12 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
     loading: isUserQueryLoading,
     error: userQueryError,
   } = UserRepository.useUserQuery();
+
   const [
     executeGetTransactionBreakdownQuery,
     getTransactionBreakdownState,
   ] = TransactionRepository.useGetTransactionBreakdownQuery();
+
   const {
     execute: executeCreateTransactionMutation,
     state: createTransactionMutationState,
@@ -95,15 +97,7 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
     return () => clearInterval(intervalID);
   }, [input.args.amount]);
 
-  const onDebounceTextChange = React.useRef(
-    debounce(
-      (
-        query: (args: QueryGetTransactionBreakdownArgs) => void,
-        args: QueryGetTransactionBreakdownArgs,
-      ) => query(args),
-      500,
-    ),
-  );
+  const onDebounceTextChange = useOnDebounceTextChange(executeGetTransactionBreakdownQuery);
 
   if (isUserQueryLoading) {
     return <Backdrop open={isUserQueryLoading} />;
@@ -115,10 +109,11 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
 
   const onConfirm = async (bankAccountID: string) => {
     try {
-      await executeCreateTransactionMutation({
+      const transaction = await executeCreateTransactionMutation({
         args: { amount: input.args.amount, sender: { bankAccountID } },
       });
-      history.push(routes.dashboard.sell.confirm);
+
+      history.push(generatePath(routes.dashboard.sell.confirm, { id: transaction.id }));
     } catch (error) {
       // TODO handle error
     }
@@ -134,7 +129,7 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
       setInput({ args: { amount } });
 
       onDebounceTextChange.current.cancel();
-      onDebounceTextChange.current(executeGetTransactionBreakdownQuery, {
+      onDebounceTextChange.current({
         args: { amount, sender: { bankAccountID } },
       });
     } catch (error) {
@@ -179,7 +174,7 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
   return (
     <Box className={classes.drawerContainer} position="relative">
       <StepsSidebar variant="primary"></StepsSidebar>
-      <Container disableGutters>
+      <Container disableGutters maxWidth={false}>
         <MobileNavBar />
         <Box className={classes.topContainer}>
           <Container style={{ minHeight: "auto" }}>

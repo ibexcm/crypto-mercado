@@ -1,6 +1,7 @@
 import { IContext } from "../../../server/interfaces/IContext";
 import { TransactionRepositoryInjectionKey } from "../InjectionKeys";
 import { createTransaction } from "./createTransaction";
+import { getTransaction } from "./getTransaction";
 import { getTransactionBreakdown } from "./getTransactionBreakdown";
 
 export const mutations = {
@@ -8,6 +9,7 @@ export const mutations = {
 };
 
 export const queries = {
+  getTransaction,
   getTransactionBreakdown,
 };
 

@@ -15,7 +15,7 @@ import {
   VerifyEmail,
   VerifyPhoneNumber,
 } from "./features/onboarding/screens";
-import { TransactionsIndex } from "./features/transaction/screens";
+import { TransactionDetails, TransactionsIndex } from "./features/transaction/screens";
 import {
   Checkout as BuyCheckout,
   Confirm as BuyConfirm,
@@ -74,6 +74,11 @@ const App: React.FC = () => {
               path={routes.dashboard.transactions.index}
               exact
               component={TransactionsIndex}
+            />
+            <PrivateRoute
+              path={routes.dashboard.transactions.details}
+              exact
+              component={TransactionDetails}
             />
 
             {/* SELL */}

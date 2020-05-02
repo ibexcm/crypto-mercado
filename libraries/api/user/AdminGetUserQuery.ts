@@ -6,10 +6,14 @@ export const AdminGetUserQuery = gql`
     adminGetUser(args: $args) {
       id
       ...UserRole
-      ...Account
+      account {
+        ...Account
+      }
       ...Contact
       ...Profile
-      ...BankAccounts
+      bankAccounts {
+        ...BankAccounts
+      }
     }
   }
   ${UserRole}

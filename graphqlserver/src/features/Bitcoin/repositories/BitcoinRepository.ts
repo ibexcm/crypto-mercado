@@ -1,5 +1,5 @@
 import { CurrencySymbol } from "@ibexcm/libraries/models/currency";
-import { IBitcoinAPIRepository } from "libraries/Crypto/interfaces/IBitcoinAPIRepository";
+import { IBitcoinAPIRepository } from "../../../libraries/Crypto/interfaces/IBitcoinAPIRepository";
 import {
   IBitcoinPriceResponse,
   IBitcoinRepository,

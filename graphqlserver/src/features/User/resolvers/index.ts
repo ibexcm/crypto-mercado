@@ -10,7 +10,6 @@ export const queries = {
       {
         where: {
           ...context.request.auth.user,
-          ...args,
         },
       },
       context,
@@ -44,7 +43,7 @@ export const types = {
     },
     transactions: ({ id }, args, { dependencies }: IContext) => {
       const UserRepository = dependencies.provide(userRepositoryInjectionKey);
-      return UserRepository.transactions(id);
+      return UserRepository.transactions(id, args);
     },
   },
 };

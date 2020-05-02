@@ -1,3 +1,13 @@
+input GetTransactionInput {
+  transactionID: String!
+}
+
+input CreateTransactionInput {
+  amount: String
+  sender: CreateTransactionUserInput!
+  recipient: CreateTransactionUserInput
+}
+
 input CreateTransactionUserInput {
   cryptoAccountID: String
   bankAccountID: String
@@ -6,11 +16,23 @@ input CreateTransactionUserInput {
 input GetTransactionBreakdownInput {
   amount: String
   sender: CreateTransactionUserInput
+  recipient: CreateTransactionUserInput
 }
 
-union TransactionBreakdown = BitcoinToFiatTransactionBreakdown
+union TransactionBreakdown =
+    BitcoinToFiatTransactionBreakdown
+  | FiatToBitcoinTransactionBreakdown
 
 type BitcoinToFiatTransactionBreakdown {
+  price: TransactionBreakdownField!
+  amount: TransactionBreakdownField!
+  fee: TransactionBreakdownField!
+  tax: TransactionBreakdownField!
+  total: TransactionBreakdownField!
+  exchangeRate: TransactionBreakdownField
+}
+
+type FiatToBitcoinTransactionBreakdown {
   price: TransactionBreakdownField!
   amount: TransactionBreakdownField!
   fee: TransactionBreakdownField!

@@ -14,12 +14,16 @@ export const UserQuery = gql`
     user {
       id
       ...UserRole
-      ...Account
+      account {
+        ...Account
+      }
       ...Contact
       ...Profile
-      ...BankAccounts
+      bankAccounts {
+        ...BankAccounts
+      }
       ...CryptoAccounts
-      transactions {
+      transactions(orderBy: createdAt_DESC) {
         ...Transaction
       }
     }

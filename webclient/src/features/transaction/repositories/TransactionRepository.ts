@@ -1,16 +1,31 @@
-import { LazyQueryResult, MutationResult, useLazyQuery, useMutation } from "@apollo/client";
+import {
+  LazyQueryResult,
+  MutationResult,
+  useLazyQuery,
+  useMutation,
+  useQuery,
+} from "@apollo/client";
 import {
   Mutation,
   MutationCreateTransactionArgs,
+  QueryGetTransactionArgs,
   QueryGetTransactionBreakdownArgs,
 } from "@ibexcm/libraries/api";
 import {
   CreateTransactionMutation,
   GetTransactionBreakdownQuery,
+  GetTransactionQuery,
 } from "@ibexcm/libraries/api/transaction";
-import { Query } from "../../../libraries/api";
+import { Query, Transaction } from "../../../libraries/api";
 
 export class TransactionRepository {
+  useGetTransactionQuery(args: QueryGetTransactionArgs) {
+    return useQuery<Pick<Query, "getTransaction">>(GetTransactionQuery, {
+      variables: args,
+      fetchPolicy: "cache-and-network",
+    });
+  }
+
   useGetTransactionBreakdownQuery(): [
     (args: QueryGetTransactionBreakdownArgs) => Promise<void>,
     LazyQueryResult<
@@ -31,7 +46,7 @@ export class TransactionRepository {
   }
 
   useCreateTransactionMutation(): {
-    execute: (args: MutationCreateTransactionArgs) => Promise<void>;
+    execute: (args: MutationCreateTransactionArgs) => Promise<Transaction>;
     state: MutationResult<Pick<Mutation, "createTransaction">>;
   } {
     const [execute, state] = useMutation(CreateTransactionMutation);
@@ -50,6 +65,8 @@ export class TransactionRepository {
           if (Boolean(error) || !Boolean(data?.createTransaction)) {
             throw new Error(message);
           }
+
+          return data.createTransaction;
         } catch (error) {
           console.error(error);
           throw new Error(message);

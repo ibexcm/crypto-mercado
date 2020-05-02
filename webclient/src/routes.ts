@@ -17,14 +17,15 @@ export const routes = {
   dashboard: {
     sell: {
       checkout: "/dashboard/btc/venta",
-      confirm: "/dashboard/btc/venta/confirmar",
+      confirm: "/dashboard/btc/venta/confirmar/tx/:id",
     },
     buy: {
       checkout: "/dashboard/btc/compra",
-      confirm: "/dashboard/btc/compra/confirmar",
+      confirm: "/dashboard/btc/compra/confirmar/tx/:id",
     },
     transactions: {
       index: "/dashboard/tx",
+      details: "/dashboard/tx/:id",
     },
   },
 };

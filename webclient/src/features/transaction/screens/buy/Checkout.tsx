@@ -1,8 +1,11 @@
-import { SendPhoneNumberVerificationCodeInput } from "@ibexcm/libraries/api";
+import {
+  MutationCreateBitcoinAccountArgs,
+  QueryGetTransactionBreakdownArgs,
+  SendPhoneNumberVerificationCodeInput,
+} from "@ibexcm/libraries/api";
 import {
   Box,
   Container,
-  Divider,
   Grid,
   Hidden,
   InputAdornment,
@@ -13,9 +16,11 @@ import {
 } from "@material-ui/core";
 import SwapHorizIcon from "@material-ui/icons/SwapHoriz";
 import React from "react";
-import { RouteComponentProps, StaticContext } from "react-router";
+import { generatePath, RouteComponentProps, StaticContext } from "react-router";
 import {
+  Backdrop,
   Button,
+  InputErrorBox,
   StepsSidebar,
   TextField,
   ToolbarPadding,
@@ -24,7 +29,10 @@ import {
 import DependencyContext from "../../../../common/contexts/DependencyContext";
 import { styles } from "../../../../common/theme";
 import routes from "../../../../routes";
-import { MobileNavBar } from "../../components";
+import { useOnDebounceTextChange } from "../../../../utils";
+import { BankAccountRepositoryInjectionKeys } from "../../../bankAccount/InjectionKeys";
+import { UserRepositoryInjectionKeys } from "../../../user/InjectionKeys";
+import { MobileNavBar, OnBuyTransactionBreakdown } from "../../components";
 import { TransactionRepositoryInjectionKeys } from "../../InjectionKeys";
 
 interface Props
@@ -34,19 +42,215 @@ interface Props
 const Component: React.FC<Props> = ({ classes, history, location, match, ...props }) => {
   const dependencies = React.useContext(DependencyContext);
   const TransactionRepository = dependencies.provide(TransactionRepositoryInjectionKeys);
+  const UserRepository = dependencies.provide(UserRepositoryInjectionKeys);
+  const BankAccountRepository = dependencies.provide(BankAccountRepositoryInjectionKeys);
+
+  let intervalID;
+  const [error, setError] = React.useState<Error>();
+  const [recipientBankAccountID, setRecipientBankAccountID] = React.useState<string>();
+  const [createBitcoinAccountInput, setCreateBitcoinAccountInput] = React.useState<
+    MutationCreateBitcoinAccountArgs
+  >({
+    args: {
+      address: "",
+    },
+  });
+  const [input, setInput] = React.useState<QueryGetTransactionBreakdownArgs>({
+    args: {
+      amount: "0.00",
+    },
+  });
+
+  const {
+    data: userQueryData,
+    loading: isUserQueryLoading,
+    error: userQueryError,
+    refetch: refetchUserQuery,
+  } = UserRepository.useUserQuery();
+
+  const {
+    data: getAdminBankAccountsQueryData,
+    loading: isGetAdminBankAccountsQueryLoading,
+    error: getAdminBankAccountsQueryError,
+  } = BankAccountRepository.useGetAdminBankAccountsQuery();
+
+  const [
+    executeGetTransactionBreakdownQuery,
+    getTransactionBreakdownState,
+  ] = TransactionRepository.useGetTransactionBreakdownQuery();
+
+  const {
+    execute: executeCreateTransactionMutation,
+    state: createTransactionMutationState,
+  } = TransactionRepository.useCreateTransactionMutation();
+
+  const {
+    execute: executeCreateBitcoinAccountMutation,
+    state: { data: createBitcoinAccountData, loading: isCreatingBitcoinAccount },
+  } = UserRepository.useCreateBitcoinAccountMutation();
+
+  const execute = (cryptoAccountID: string) => {
+    executeGetTransactionBreakdownQuery({
+      args: {
+        ...input.args,
+        sender: { cryptoAccountID },
+        recipient: { bankAccountID: recipientBankAccountID },
+      },
+    });
+  };
+
+  const shouldGetTransactionBreakdown =
+    Boolean(userQueryData?.user?.cryptoAccounts) &&
+    userQueryData?.user?.cryptoAccounts.length > 0 &&
+    Boolean(getAdminBankAccountsQueryData?.getAdminBankAccounts) &&
+    getAdminBankAccountsQueryData.getAdminBankAccounts.length > 0;
+
+  React.useEffect(() => {
+    if (!shouldGetTransactionBreakdown) {
+      return;
+    }
+
+    const [{ id: cryptoAccountID }] = userQueryData.user.cryptoAccounts;
+
+    const [
+      { id: bankAccountID },
+    ] = getAdminBankAccountsQueryData.getAdminBankAccounts.filter(
+      (bankAccount) => bankAccount.currency.symbol === "USD",
+    );
+
+    setRecipientBankAccountID(bankAccountID);
+
+    execute(cryptoAccountID);
+  }, [userQueryData, getAdminBankAccountsQueryData]);
+
+  React.useEffect(() => {
+    if (!shouldGetTransactionBreakdown) {
+      return;
+    }
+
+    if (intervalID) {
+      clearInterval(intervalID);
+    }
+
+    const [{ id: cryptoAccountID }] = userQueryData.user.cryptoAccounts;
+
+    intervalID = setInterval(() => {
+      execute(cryptoAccountID);
+    }, 15000);
+
+    return () => clearInterval(intervalID);
+  }, [input.args.amount, recipientBankAccountID]);
+
+  const onDebounceTextChange = useOnDebounceTextChange(executeGetTransactionBreakdownQuery);
+
+  if (isUserQueryLoading || isGetAdminBankAccountsQueryLoading) {
+    return <Backdrop open />;
+  }
+
+  const {
+    user: { cryptoAccounts },
+  } = userQueryData;
+
+  const isCryptoAccountSet = () => Boolean(cryptoAccounts) && cryptoAccounts.length > 0;
+
+  const [
+    {
+      id: cryptoAccountID,
+      bitcoin: { address },
+      currency: cryptoCurrency,
+    },
+  ] = isCryptoAccountSet()
+    ? cryptoAccounts
+    : [{ id: undefined, bitcoin: { address: undefined }, currency: { symbol: undefined } }];
+
+  const onCreateBitcoinAccount = async () => {
+    setError(null);
+    try {
+      await executeCreateBitcoinAccountMutation(createBitcoinAccountInput);
+      refetchUserQuery();
+    } catch (error) {
+      setError(error);
+    }
+  };
+
+  const onSetCreateBitcoinAccountInput = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setCreateBitcoinAccountInput((prev) => ({
+      args: { address: event.currentTarget.value },
+    }));
+  };
+
+  const onAmountChange = async (
+    event: React.ChangeEvent<HTMLInputElement>,
+    cryptoAccountID: string,
+  ) => {
+    try {
+      const amount = event.target.value;
+
+      setInput({ args: { amount } });
+
+      onDebounceTextChange.current.cancel();
+      onDebounceTextChange.current({
+        args: { amount, sender: { cryptoAccountID } },
+      });
+    } catch (error) {
+      // TODO handle error
+      console.error(error);
+    }
+  };
 
   const onCancel = () => {
     history.push(routes.dashboard.transactions.index);
   };
 
-  const onConfirm = () => {
-    history.push(routes.dashboard.buy.confirm);
+  const onConfirm = async () => {
+    try {
+      const transaction = await executeCreateTransactionMutation({
+        args: {
+          amount: input.args.amount,
+          sender: { cryptoAccountID },
+          recipient: { bankAccountID: recipientBankAccountID },
+        },
+      });
+
+      history.push(generatePath(routes.dashboard.buy.confirm, { id: transaction.id }));
+    } catch (error) {
+      // TODO handle error
+    }
   };
+
+  const getActions = () => (
+    <Grid container spacing={2}>
+      <Grid item xs={6}>
+        <Button
+          fullWidth
+          color="default"
+          size="large"
+          variant="contained"
+          onClick={onCancel}
+        >
+          Cancelar
+        </Button>
+      </Grid>
+      <Grid item xs={6}>
+        <Button
+          fullWidth
+          variant="contained"
+          color="secondary"
+          size="large"
+          onClick={() => {
+            onConfirm();
+          }}
+        >
+          Confirmar
+        </Button>
+      </Grid>
+    </Grid>
+  );
 
   return (
     <Box className={classes.drawerContainer} position="relative">
       <StepsSidebar variant="primary"></StepsSidebar>
-      <Container disableGutters>
+      <Container disableGutters maxWidth={false}>
         <MobileNavBar />
         <Box className={classes.topContainer}>
           <Container style={{ minHeight: "auto" }}>
@@ -60,213 +264,170 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
             </Box>
           </Container>
         </Box>
-        <Box className={classes.mainContainer}>
-          <Container style={{ minHeight: "auto" }}>
-            <Grid container justify="space-between">
-              <Grid item xs={12} lg={5}>
-                <Box mb={3}>
-                  <Paper>
-                    <TextField
-                      fullWidth
-                      label="¿Cuánto deseas comprar?"
-                      variant="outlined"
-                      InputProps={{
-                        endAdornment: <InputAdornment position="end">BTC</InputAdornment>,
-                      }}
-                      // onChange={onChange}
-                      // onKeyPress={onKeyPress}
-                      // value={input.args.address}
-                      type="number"
-                    />
-                  </Paper>
-                </Box>
-                <Box mb={3}>
-                  <Paper>
-                    <Box p={2}>
-                      <Typography variant="body2" mb={2}>
-                        Forma de pago
-                      </Typography>
-                      <Grid container justify="space-between">
-                        <Grid item lg={5} xs={5}>
-                          <Button fullWidth color="primary" variant="contained">
-                            USD
-                          </Button>
-                        </Grid>
-                        <Grid item lg={1} xs={1}>
-                          <Box
-                            display="flex"
-                            flexDirection="column"
-                            justifyContent="center"
-                            alignItems="center"
-                            height={36}
-                          >
-                            <SwapHorizIcon />
-                          </Box>
-                        </Grid>
-                        <Grid item lg={5} xs={5}>
-                          <Button fullWidth color="primary" variant="outlined">
-                            GTQ
-                          </Button>
-                        </Grid>
-                      </Grid>
-                    </Box>
-                  </Paper>
-                </Box>
-                <Box mb={3}>
-                  <Paper>
-                    <Box p={2}>
-                      <Typography variant="body2" mb={3}>
-                        Dirección BTC de destino
-                      </Typography>
-                      <Button fullWidth variant="outlined" color="primary">
-                        Agregar dirección
-                      </Button>
-                    </Box>
-                  </Paper>
-                </Box>
-              </Grid>
-              <Grid item xs={12} lg={5}>
-                <Box mb={3} textAlign="right">
-                  <Box mb={1}>
-                    <Grid container justify="flex-end" spacing={1}>
-                      <Grid item>
-                        <Typography color="textSecondary">Precio actual BTC</Typography>
-                      </Grid>
-                      <Grid item xs={6}>
-                        <Typography>USD 6254.00</Typography>
-                      </Grid>
-                    </Grid>
-                  </Box>
-                  <Typography variant="overline" color="primary" mb={3}>
-                    Desglose
-                  </Typography>
-                  <Grid container justify="flex-end" spacing={1}>
-                    <Grid item>
-                      <Typography color="textSecondary">Cantidad</Typography>
-                    </Grid>
-                    <Grid item xs={6}>
-                      <Typography>USD 1000.00</Typography>
-                    </Grid>
-                  </Grid>
-                  <Grid container justify="flex-end" spacing={1}>
-                    <Grid item>
-                      <Typography color="textSecondary">Comisión IBEX (3.5%)</Typography>
-                    </Grid>
-                    <Grid item xs={6}>
-                      <Typography>USD 35.00</Typography>
-                    </Grid>
-                  </Grid>
-                  <Grid container justify="flex-end" spacing={1}>
-                    <Grid item>
-                      <Typography color="textSecondary">IVA (12%)</Typography>
-                    </Grid>
-                    <Grid item xs={6}>
-                      <Typography>USD 12.00</Typography>
-                    </Grid>
-                  </Grid>
-                  <Box my={1}>
-                    <Divider />
-                  </Box>
-                  <Grid container justify="flex-end" spacing={1}>
-                    <Grid item>
-                      <Typography color="primary">Recibes</Typography>
-                    </Grid>
-                    <Grid item xs={6}>
-                      <Typography color="secondary" fontWeight={900}>
-                        USD 955.00
-                      </Typography>
-                    </Grid>
-                  </Grid>
-                  <Grid container justify="flex-end" spacing={1}>
-                    <Grid item>
-                      <Typography color="primary">Tasa de cambio (7.65)</Typography>
-                    </Grid>
-                    <Grid item xs={6}>
-                      <Typography color="secondary" fontWeight={900}>
-                        GTQ 9000.00
-                      </Typography>
-                    </Grid>
-                  </Grid>
-                  <Grid container justify="flex-end" spacing={1}>
-                    <Grid item>
-                      <Typography color="primary">Total a enviar</Typography>
-                    </Grid>
-                    <Grid item xs={6}>
-                      <Typography color="secondary" fontWeight={900}>
-                        BTC 0.123456789
-                      </Typography>
-                    </Grid>
-                  </Grid>
-                </Box>
-                <Box mb={3}>
-                  <Typography align="justify" variant="caption">
-                    Al dar click en "Confirmar", comprendo que debido a las fluctuaciones
-                    del precio de Bitcoin, puedo recibir una cantidad mayor o menor a la
-                    especificada en el desglose anterior.
-                  </Typography>
-                </Box>
-                <Hidden smDown>
-                  <Box>
-                    <Grid container spacing={2}>
-                      <Grid item xs={6}>
-                        <Button
-                          fullWidth
-                          color="default"
-                          size="large"
-                          variant="contained"
-                          onClick={onCancel}
-                        >
-                          Cancelar
-                        </Button>
-                      </Grid>
-                      <Grid item xs={6}>
-                        <Button
-                          fullWidth
-                          variant="contained"
-                          color="secondary"
-                          size="large"
-                          onClick={onConfirm}
-                        >
-                          Confirmar
-                        </Button>
-                      </Grid>
-                    </Grid>
-                  </Box>
-                </Hidden>
-              </Grid>
-            </Grid>
-          </Container>
-        </Box>
-        <Hidden smUp>
-          <Box className={classes.fixedActionsContainer}>
+        {!isCryptoAccountSet() ? (
+          <Box className={classes.mainContainer}>
             <Container style={{ minHeight: "auto" }}>
-              <Grid container spacing={2}>
-                <Grid item xs={6}>
-                  <Button
-                    fullWidth
-                    color="default"
-                    size="large"
-                    variant="contained"
-                    onClick={onCancel}
-                  >
-                    Cancelar
-                  </Button>
-                </Grid>
-                <Grid item xs={6}>
-                  <Button
-                    fullWidth
-                    variant="contained"
-                    color="secondary"
-                    size="large"
-                    onClick={onConfirm}
-                  >
-                    Confirmar
-                  </Button>
+              <Grid container justify="space-between">
+                <Grid item xs={12} lg={5}>
+                  <Box mb={3}>
+                    <Paper>
+                      <Box p={2}>
+                        <TextField
+                          fullWidth
+                          autoFocus
+                          label="Dirección BTC de destino"
+                          variant="outlined"
+                          onChange={onSetCreateBitcoinAccountInput}
+                          disabled={isCreatingBitcoinAccount}
+                          value={createBitcoinAccountInput.args.address}
+                        />
+                        <Box pt={2} pb={3}>
+                          <Typography align="justify" variant="caption">
+                            Por cuestiones regulatorias y de AML, sólo podrás cambiar la
+                            dirección especificada 1 vez cada 3 meses.
+                          </Typography>
+                        </Box>
+                        {error && <InputErrorBox error={error} />}
+                        <Box display="flex" justifyContent="flex-end">
+                          <Button
+                            variant="contained"
+                            color="primary"
+                            disabled={isCreatingBitcoinAccount}
+                            onClick={onCreateBitcoinAccount}
+                          >
+                            {isCreatingBitcoinAccount ? "Guardando" : "Agregar dirección"}
+                          </Button>
+                        </Box>
+                      </Box>
+                    </Paper>
+                  </Box>
                 </Grid>
               </Grid>
             </Container>
           </Box>
-        </Hidden>
+        ) : (
+          <Box className={classes.mainContainer}>
+            <Container style={{ minHeight: "auto" }}>
+              <Grid container justify="space-between">
+                <Grid item xs={12} lg={5}>
+                  <Box mb={3}>
+                    <Paper>
+                      <TextField
+                        fullWidth
+                        label="¿Cuánto deseas comprar?"
+                        variant="outlined"
+                        InputProps={{
+                          endAdornment: <InputAdornment position="end">BTC</InputAdornment>,
+                        }}
+                        onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                          onAmountChange(event, cryptoAccountID);
+                        }}
+                        value={input.args.amount}
+                        type="number"
+                      />
+                    </Paper>
+                  </Box>
+                  <Box mb={3}>
+                    <Paper>
+                      <Box p={2}>
+                        <Typography variant="body2" mb={2}>
+                          Forma de pago
+                        </Typography>
+                        <Grid container justify="space-between">
+                          {getAdminBankAccountsQueryData.getAdminBankAccounts
+                            .filter((bankAccount) => bankAccount.currency.symbol === "USD")
+                            .map((bankAccount, index) => (
+                              <Grid item lg={5} xs={5} key={index}>
+                                <Button
+                                  fullWidth
+                                  color="primary"
+                                  variant={
+                                    bankAccount.id === recipientBankAccountID
+                                      ? "contained"
+                                      : "outlined"
+                                  }
+                                  onClick={() => {
+                                    setRecipientBankAccountID(bankAccount.id);
+                                  }}
+                                >
+                                  {bankAccount.currency.symbol}
+                                </Button>
+                              </Grid>
+                            ))}
+                          <Grid item lg={1} xs={1}>
+                            <Box
+                              display="flex"
+                              flexDirection="column"
+                              justifyContent="center"
+                              alignItems="center"
+                              height={36}
+                            >
+                              <SwapHorizIcon />
+                            </Box>
+                          </Grid>
+                          {getAdminBankAccountsQueryData.getAdminBankAccounts
+                            .filter((bankAccount) => bankAccount.currency.symbol === "GTQ")
+                            .map((bankAccount, index) => (
+                              <Grid item lg={5} xs={5} key={index}>
+                                <Button
+                                  fullWidth
+                                  color="primary"
+                                  variant={
+                                    bankAccount.id === recipientBankAccountID
+                                      ? "contained"
+                                      : "outlined"
+                                  }
+                                  onClick={() => {
+                                    setRecipientBankAccountID(bankAccount.id);
+                                  }}
+                                >
+                                  {bankAccount.currency.symbol}
+                                </Button>
+                              </Grid>
+                            ))}
+                        </Grid>
+                      </Box>
+                    </Paper>
+                  </Box>
+                  <Box mb={3}>
+                    <Paper>
+                      <Box p={2}>
+                        <Typography variant="body2" mb={3}>
+                          Dirección {cryptoCurrency.symbol} de destino
+                        </Typography>
+                        <Box overflow="scroll">
+                          <Typography variant="h6">{address}</Typography>
+                        </Box>
+                      </Box>
+                    </Paper>
+                  </Box>
+                </Grid>
+                <Grid item xs={12} lg={5}>
+                  <OnBuyTransactionBreakdown
+                    getTransactionBreakdownState={getTransactionBreakdownState}
+                  />
+                  <Box mb={3}>
+                    <Typography align="justify" variant="caption">
+                      Al dar click en "Confirmar", comprendo que debido a las fluctuaciones
+                      del precio de Bitcoin, puedo recibir una cantidad mayor o menor a la
+                      especificada en el desglose anterior.
+                    </Typography>
+                  </Box>
+                  <Hidden smDown>
+                    <Box>{getActions()}</Box>
+                  </Hidden>
+                </Grid>
+              </Grid>
+            </Container>
+          </Box>
+        )}
+        {isCryptoAccountSet() && (
+          <Hidden smUp>
+            <Box className={classes.fixedActionsContainer}>
+              <Container style={{ minHeight: "auto" }}>{getActions()}</Container>
+            </Box>
+          </Hidden>
+        )}
       </Container>
     </Box>
   );

@@ -1,6 +1,5 @@
 import { prisma as db } from "@ibexcm/database";
 import { TestDependencies } from "@ibexcm/libraries/di";
-import Faker from "faker";
 import { config } from "../../../../config";
 import { CryptoAccountErrorCode } from "../../../../features/CryptoAccount/errors/CryptoAccountError";
 import {
@@ -10,6 +9,7 @@ import {
 import { smsVerificationRepositoryInjectionKey } from "../../../../libraries/SMSVerification";
 import adminKYCApproveUser from "../../../../__test-utils__/helpers/adminKYCApproveUser";
 import authenticate from "../../../../__test-utils__/helpers/authenticate";
+import generateBitcoinAddress from "../../../../__test-utils__/helpers/generateBitcoinAddress";
 import onboardUser from "../../../../__test-utils__/helpers/onboardUser";
 import {
   mockEmailNotificationsRepository,
@@ -57,10 +57,12 @@ describe("createBitcoinAccount", () => {
 
     const { token } = await authenticate({ address, password });
 
+    const bitcoinAddress = await generateBitcoinAddress();
+
     const {
       data: { createBitcoinAccount },
     } = await GraphQLClient.createBitcoinAccount(
-      { args: { address: Faker.finance.bitcoinAddress() } },
+      { args: { address: bitcoinAddress } },
       token,
     );
 
@@ -74,7 +76,7 @@ describe("createBitcoinAccount", () => {
 
     const { token } = await authenticate({ address, password });
 
-    const bitcoinAddress = Faker.finance.bitcoinAddress();
+    const bitcoinAddress = await generateBitcoinAddress();
 
     await GraphQLClient.createBitcoinAccount({ args: { address: bitcoinAddress } }, token);
 
@@ -86,5 +88,31 @@ describe("createBitcoinAccount", () => {
     expect(errors[0].extensions.code).toBe(
       CryptoAccountErrorCode.bitcoinAddressAlreadyExists,
     );
+  });
+
+  test("invalid address", async () => {
+    const { user: newUser, address, password } = await onboardUser();
+
+    await adminKYCApproveUser(newUser, db, { address: adminAccountEmailAddress });
+
+    const { token } = await authenticate({ address, password });
+
+    let bitcoinAddress = "";
+
+    const { errors } = await GraphQLClient.createBitcoinAccount(
+      { args: { address: bitcoinAddress } },
+      token,
+    );
+
+    expect(errors[0].extensions.code).toBe(CryptoAccountErrorCode.invalidBitcoinAddress);
+
+    bitcoinAddress = "invalid";
+
+    const { errors: errors2 } = await GraphQLClient.createBitcoinAccount(
+      { args: { address: bitcoinAddress } },
+      token,
+    );
+
+    expect(errors2[0].extensions.code).toBe(CryptoAccountErrorCode.invalidBitcoinAddress);
   });
 });

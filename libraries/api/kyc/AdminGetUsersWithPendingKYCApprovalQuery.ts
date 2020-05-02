@@ -6,10 +6,14 @@ export const AdminGetUsersWithPendingKYCApprovalQuery = gql`
     adminGetUsersWithPendingKYCApproval {
       id
       ...UserRole
-      ...Account
+      account {
+        ...Account
+      }
       ...Contact
       ...Profile
-      ...BankAccounts
+      bankAccounts {
+        ...BankAccounts
+      }
     }
   }
   ${UserRole}

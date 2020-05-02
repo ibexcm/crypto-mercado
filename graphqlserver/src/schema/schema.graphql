@@ -1,5 +1,5 @@
 # import User, Bank, Currency, Transaction from "@ibexcm/database/generated/prisma.graphql"
-# import CreateTransactionUserInput, GetTransactionBreakdownInput, TransactionBreakdown from "./transaction.graphql"
+# import GetTransactionInput, CreateTransactionUserInput, GetTransactionBreakdownInput, TransactionBreakdown from "./transaction.graphql"
 
 type Query {
   user: User!
@@ -7,9 +7,12 @@ type Query {
   getCurrenciesByCountry(args: GetCurrenciesByCountryInput!): [Currency!]!
 
   # TRANSACTION
+  getTransaction(args: GetTransactionInput!): Transaction!
   getTransactionBreakdown(args: GetTransactionBreakdownInput!): TransactionBreakdown!
 
   # ADMIN
+  getAdminBankAccounts: [BankAccount!]!
+
   # KYC
   adminGetUsersWithPendingKYCApproval: [User!]!
 
@@ -59,12 +62,6 @@ type Session {
 
 input CreateBitcoinAccountInput {
   address: String!
-}
-
-input CreateTransactionInput {
-  amount: String
-  sender: CreateTransactionUserInput!
-  recipient: CreateTransactionUserInput
 }
 
 input AdminKYCApproveUserInput {
