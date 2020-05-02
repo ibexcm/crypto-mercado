@@ -1,14 +1,5 @@
 import { SendPhoneNumberVerificationCodeInput } from "@ibexcm/libraries/api";
-import {
-  Box,
-  Container,
-  Grid,
-  Hidden,
-  Theme,
-  withStyles,
-  WithStyles,
-} from "@material-ui/core";
-import CheckCircleOutlineIcon from "@material-ui/icons/CheckCircleOutline";
+import { Box, Container, Hidden, Theme, withStyles, WithStyles } from "@material-ui/core";
 import React from "react";
 import { RouteComponentProps, StaticContext } from "react-router";
 import { Button, ToolbarPadding, Typography } from "../../../common/components";
@@ -16,7 +7,8 @@ import DependencyContext from "../../../common/contexts/DependencyContext";
 import { styles } from "../../../common/theme";
 import routes from "../../../routes";
 import { OnboardingRepositoryInjectionKeys } from "../../onboarding/InjectionKeys";
-import { MobileNavBar, NavBar } from "../components";
+import { Footer, MobileNavBar, NavBar } from "../components";
+import { ReactComponent as ScrollDownIcon } from "../components/scroll-down-icon.svg";
 
 interface Props
   extends WithStyles,
@@ -42,58 +34,40 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
   };
 
   return (
-    <Box className={classes.homeContainer}>
-      <Container maxWidth="lg">
-        <MobileNavBar />
-        <NavBar />
-        <Box
-          minHeight="100vh"
-          flexDirection="column"
-          display="flex"
-          justifyContent="center"
-        >
-          <ToolbarPadding />
-          <Grid container>
-            <Grid item lg={7}>
+    <Box>
+      <Box className={classes.homeContainer}>
+        <Container maxWidth="lg" className={classes.introContainer}>
+          <MobileNavBar />
+          <NavBar />
+          <Box
+            minHeight="100vh"
+            flexDirection="column"
+            display="flex"
+            justifyContent="center"
+          >
+            <Hidden smUp>
+              <ToolbarPadding />
+            </Hidden>
+            <Box className={classes.introHeader} mb={3}>
+              <Typography variant="h1">
+                ACTIVOS DIGITALES <Typography component="span">EN QUETZALES</Typography>
+              </Typography>
+            </Box>
+            <Container maxWidth="md" style={{ minHeight: "auto" }}>
               <Box className={classes.introText}>
-                <Typography variant="h5" fontWeight={500}>
-                  <em>ACTIVOS DIGITALES EN QUETZALES</em>
+                <Typography variant="h2" mb={3}>
+                  IBEX Mercado es una empresa reconocida en Guatemala por la calidad y
+                  rapidez de su servicio de intercambio de activos digitales y activos FIAT.
+                </Typography>
+                <Typography variant="h2">
+                  Crea una cuenta y obtén las mejores tasas del país
+                  <br />
+                  sin custodia de tus llaves privadas.
                 </Typography>
               </Box>
-              <Box mb={6} mt={3}>
-                <Grid container spacing={1} wrap="nowrap">
-                  <Grid item>
-                    <CheckCircleOutlineIcon fontSize="small" color="primary" />
-                  </Grid>
-                  <Grid item>
-                    <Typography fontWeight={500} gutterBottom>
-                      La mejor tarifa del mercado guatemalteco.
-                    </Typography>
-                  </Grid>
-                </Grid>
-                <Grid container spacing={1} wrap="nowrap">
-                  <Grid item>
-                    <CheckCircleOutlineIcon fontSize="small" color="primary" />
-                  </Grid>
-                  <Grid item>
-                    <Typography fontWeight={500} gutterBottom>
-                      Transferencias directas a tu wallet / cuenta bancaria en menos de 24
-                      hrs
-                    </Typography>
-                  </Grid>
-                </Grid>
-                <Grid container spacing={1} wrap="nowrap">
-                  <Grid item>
-                    <CheckCircleOutlineIcon fontSize="small" color="primary" />
-                  </Grid>
-                  <Grid item>
-                    <Typography fontWeight={500}>
-                      Deposita / transfiere tus Q's o USD's a nuestras cuentas en el BAC
-                    </Typography>
-                  </Grid>
-                </Grid>
-              </Box>
-              <Hidden only={["xs", "sm", "lg", "md", "xl"]}>
+            </Container>
+            <Hidden only={["xs", "sm", "lg", "md", "xl"]}>
+              <Box>
                 <Button
                   color="primary"
                   variant="contained"
@@ -104,11 +78,17 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
                 >
                   Crea una cuenta
                 </Button>
-              </Hidden>
-            </Grid>
-          </Grid>
-        </Box>
-      </Container>
+              </Box>
+            </Hidden>
+          </Box>
+        </Container>
+        <Hidden mdDown>
+          <Box py={3} className={classes.scrollDownIcon}>
+            <ScrollDownIcon />
+          </Box>
+        </Hidden>
+      </Box>
+      <Footer />
     </Box>
   );
 };
@@ -116,14 +96,54 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
 export const Home = withStyles((theme: Theme) => ({
   ...styles(theme),
   homeContainer: {
-    backgroundColor: "white",
+    backgroundColor: theme.palette.primary.main,
+    position: "relative",
   },
-  introText: {
-    "& h5": {
+  introContainer: {},
+  scrollDownIcon: {
+    position: "absolute",
+    display: "flex",
+    justifyContent: "center",
+    width: "100%",
+    bottom: 0,
+  },
+  introHeader: {
+    textAlign: "center",
+    color: "white",
+    "& h1": {
+      fontSize: theme.typography.h4.fontSize,
+      [theme.breakpoints.up("sm")]: {
+        fontSize: theme.typography.h4.fontSize,
+      },
+    },
+    "& span": {
+      display: "block",
+      fontSize: theme.typography.h4.fontSize,
       fontWeight: 900,
       [theme.breakpoints.up("sm")]: {
-        fontSize: theme.typography.h3.fontSize,
-        fontWeight: 900,
+        fontSize: theme.typography.h2.fontSize,
+      },
+    },
+  },
+  introText: {
+    textAlign: "center",
+    color: "white",
+    "& h2": {
+      fontSize: theme.typography.h6.fontSize,
+      [theme.breakpoints.up("sm")]: {
+        fontSize: theme.typography.h5.fontSize,
+      },
+    },
+  },
+  listItem: {
+    color: "white",
+    "& svg": {
+      color: "white",
+    },
+    "& p": {
+      fontSize: theme.typography.h6.fontSize,
+      [theme.breakpoints.up("sm")]: {
+        fontSize: theme.typography.h5.fontSize,
       },
     },
   },
