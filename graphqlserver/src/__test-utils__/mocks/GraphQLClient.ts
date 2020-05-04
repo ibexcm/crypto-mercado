@@ -10,6 +10,7 @@ import {
   MutationSendPhoneNumberVerificationCodeArgs,
   MutationSetBankAccountArgs,
   MutationSetPasswordArgs,
+  MutationSetTransactionReceiptEvidenceArgs,
   MutationUploadGovernmentIdArgs,
   MutationVerifyEmailArgs,
   MutationVerifyPhoneNumberArgs,
@@ -34,6 +35,7 @@ import {
   GetTransactionBreakdownQuery,
   GetTransactionQuery,
 } from "@ibexcm/libraries/api/transaction";
+import { SetTransactionReceiptEvidenceMutation } from "@ibexcm/libraries/api/transactionReceipt";
 import {
   AdminAuthenticateMutation,
   AdminGetUserQuery,
@@ -252,6 +254,16 @@ const createBitcoinAccount = async (
   );
 };
 
+const setTransactionReceiptEvidence = async (
+  args: MutationSetTransactionReceiptEvidenceArgs,
+  authToken: string,
+) => {
+  return query<
+    MutationSetTransactionReceiptEvidenceArgs,
+    Pick<Mutation, "setTransactionReceiptEvidence">
+  >(SetTransactionReceiptEvidenceMutation, args, authToken);
+};
+
 const getAdminBankAccounts = async (authToken: string) => {
   return query<void, Pick<Query, "getAdminBankAccounts">>(
     GetAdminBankAccountsQuery,
@@ -283,6 +295,7 @@ const GraphQLClient = {
   getTransactionBreakdown,
   getTransaction,
   getAdminBankAccounts,
+  setTransactionReceiptEvidence,
 };
 
 export default GraphQLClient;

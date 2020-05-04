@@ -31,6 +31,7 @@ export const permissions = shield({
 
     // TRANSACTION
     createTransaction: and(rules.isUser, rules.isKYCApproved),
+    setTransactionReceiptEvidence: and(rules.isUser, rules.isTransactionUser),
 
     // CRYPTO ACCOUNTS
     createBitcoinAccount: and(rules.isUser, rules.isKYCApproved),

@@ -5,6 +5,7 @@ import {
   MutationCreateBitcoinAccountArgs,
   MutationSendEmailVerificationCodeArgs,
   MutationSendPhoneNumberVerificationCodeArgs,
+  MutationSetTransactionReceiptEvidenceArgs,
   MutationVerifyEmailArgs,
   MutationVerifyPhoneNumberArgs,
   TUserRole,
@@ -13,6 +14,7 @@ import { compare } from "bcryptjs";
 import { rule } from "graphql-shield";
 import { AuthenticationError } from "../../features/Authentication/errors/AuthenticationError";
 import { OnboardingError } from "../../features/Onboarding/errors/OnboardingError";
+import { TransactionError } from "../../features/Transaction/errors/TransactionError";
 import { dbInjectionKey } from "../../InjectionKeys";
 import { IContext } from "../../server/interfaces/IContext";
 
@@ -38,6 +40,32 @@ export const isAdmin = rule({ cache: true })(
     }
 
     return true;
+  },
+);
+
+export const isTransactionUser = rule({ cache: true })(
+  async (
+    parent,
+    { args }: MutationSetTransactionReceiptEvidenceArgs,
+    { dependencies, request: { auth } }: IContext,
+    info,
+  ) => {
+    const db = dependencies.provide(dbInjectionKey);
+
+    const senderUser = await db
+      .transaction({ id: args.transactionID })
+      .sender()
+      .user();
+    const recipientUser = await db
+      .transaction({ id: args.transactionID })
+      .recipient()
+      .user();
+
+    if (senderUser.id === auth.user.id || recipientUser.id === auth.user.id) {
+      return true;
+    }
+
+    return TransactionError.invalidTransactionUser;
   },
 );
 

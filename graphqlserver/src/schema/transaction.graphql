@@ -1,3 +1,21 @@
+input AdminMarkTransactionAsPaidInput {
+  transactionID: String!
+}
+
+input SetBitcoinTransactionReceiptEvidenceInput {
+  transactionHash: String!
+}
+
+input SetFiatTransactionReceiptEvidenceInput {
+  fileHash: String!
+}
+
+input SetTransactionReceiptEvidenceInput {
+  transactionID: String!
+  bitcoin: SetBitcoinTransactionReceiptEvidenceInput
+  fiat: SetFiatTransactionReceiptEvidenceInput
+}
+
 input GetTransactionInput {
   transactionID: String!
 }
