@@ -60,7 +60,7 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
                   rapidez de su servicio de intercambio de activos digitales y activos FIAT.
                 </Typography>
                 <Typography variant="h2">
-                  Crea una cuenta y obtén las mejores tasas del país
+                  Obtén las mejores tasas del país
                   <br />
                   sin custodia de tus llaves privadas.
                 </Typography>
