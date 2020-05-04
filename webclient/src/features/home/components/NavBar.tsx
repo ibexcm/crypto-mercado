@@ -18,12 +18,12 @@ interface IMobileAppBarProps extends WithStyles {}
 const Component: React.FC<IMobileAppBarProps> = ({ classes }) => {
   return (
     <Hidden smDown>
-      <AppBar position="fixed" color="default" elevation={0}>
+      <AppBar position="fixed" color="primary" elevation={0}>
         <Container maxWidth="lg" disableGutters style={{ minHeight: "auto" }}>
           <Toolbar className={classes.toolbar}>
             <Box className={classes.logoBox}>
               <Link to={routes.root}>
-                <img src="/svg/ibex-logo.svg" width="100%" height="auto" />
+                <img src="/svg/ibex-logo-white.svg" width="100%" height="auto" />
               </Link>
             </Box>
             <Box className={classes.some}>
