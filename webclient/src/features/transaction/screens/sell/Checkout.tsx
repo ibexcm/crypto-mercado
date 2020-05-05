@@ -29,7 +29,7 @@ import { styles } from "../../../../common/theme";
 import routes from "../../../../routes";
 import { useOnDebounceTextChange } from "../../../../utils";
 import { UserRepositoryInjectionKeys } from "../../../user/InjectionKeys";
-import { MobileNavBar, OnSellTransactionBreakdown } from "../../components";
+import { CryptoToFiatTransactionBreakdown, MobileNavBar } from "../../components";
 import { TransactionRepositoryInjectionKeys } from "../../InjectionKeys";
 
 interface Props
@@ -233,7 +233,7 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
                 </Box>
               </Grid>
               <Grid item xs={12} lg={5}>
-                <OnSellTransactionBreakdown
+                <CryptoToFiatTransactionBreakdown
                   getTransactionBreakdownState={getTransactionBreakdownState}
                 />
                 <Box mb={3}>

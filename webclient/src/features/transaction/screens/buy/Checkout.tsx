@@ -32,7 +32,7 @@ import routes from "../../../../routes";
 import { useOnDebounceTextChange } from "../../../../utils";
 import { BankAccountRepositoryInjectionKeys } from "../../../bankAccount/InjectionKeys";
 import { UserRepositoryInjectionKeys } from "../../../user/InjectionKeys";
-import { MobileNavBar, OnBuyTransactionBreakdown } from "../../components";
+import { FiatToCryptoTransactionBreakdown, MobileNavBar } from "../../components";
 import { TransactionRepositoryInjectionKeys } from "../../InjectionKeys";
 
 interface Props
@@ -403,7 +403,7 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
                   </Box>
                 </Grid>
                 <Grid item xs={12} lg={5}>
-                  <OnBuyTransactionBreakdown
+                  <FiatToCryptoTransactionBreakdown
                     getTransactionBreakdownState={getTransactionBreakdownState}
                   />
                   <Box mb={3}>

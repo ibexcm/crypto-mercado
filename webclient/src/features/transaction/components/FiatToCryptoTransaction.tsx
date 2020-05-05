@@ -13,7 +13,7 @@ import React from "react";
 import { TextField, Typography } from "../../../common/components";
 import { styles } from "../../../common/theme";
 import { Query, Transaction } from "../../../libraries/api";
-import { OnBuyTransactionBreakdown } from "./OnBuyTransactionBreakdown";
+import { FiatToCryptoTransactionBreakdown } from "./FiatToCryptoTransactionBreakdown";
 
 interface Props extends WithStyles {
   transaction: Transaction;
@@ -130,7 +130,7 @@ const Component: React.FC<Props> = ({
         </Box>
       </Grid>
       <Grid item xs={12} lg={5}>
-        <OnBuyTransactionBreakdown
+        <FiatToCryptoTransactionBreakdown
           getTransactionBreakdownState={getTransactionBreakdownState}
         />
       </Grid>

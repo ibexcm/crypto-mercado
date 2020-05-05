@@ -10,7 +10,7 @@ import {
   WithStyles,
 } from "@material-ui/core";
 import React from "react";
-import { OnSellTransactionBreakdown } from ".";
+import { CryptoToFiatTransactionBreakdown } from ".";
 import { TextField, Typography } from "../../../common/components";
 import { styles } from "../../../common/theme";
 import { Query, Transaction } from "../../../libraries/api";
@@ -107,7 +107,7 @@ const Component: React.FC<Props> = ({
         </Box>
       </Grid>
       <Grid item xs={12} lg={5}>
-        <OnSellTransactionBreakdown
+        <CryptoToFiatTransactionBreakdown
           getTransactionBreakdownState={getTransactionBreakdownState}
         />
       </Grid>
