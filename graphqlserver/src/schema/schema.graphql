@@ -1,5 +1,5 @@
 # import User, Bank, Currency, Transaction from "@ibexcm/database/generated/prisma.graphql"
-# import SetTransactionReceiptEvidenceInput, AdminMarkTransactionAsPaidInput, GetTransactionInput, CreateTransactionUserInput, GetTransactionBreakdownInput, TransactionBreakdown from "./transaction.graphql"
+# import AdminGetTransactionsInput, SetTransactionReceiptEvidenceInput, AdminMarkTransactionAsPaidInput, GetTransactionInput, CreateTransactionUserInput, GetTransactionBreakdownInput, TransactionBreakdown from "./transaction.graphql"
 
 type Query {
   user: User!
@@ -20,7 +20,7 @@ type Query {
   adminGetUser(args: AdminGetUserInput!): User!
 
   # TRANSACTIONS
-  adminGetTransactions: [Transaction]
+  adminGetTransactions(args: AdminGetTransactionsInput): [Transaction]
 }
 
 type Mutation {

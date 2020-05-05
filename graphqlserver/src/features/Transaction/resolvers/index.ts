@@ -1,5 +1,6 @@
 import { IContext } from "../../../server/interfaces/IContext";
 import { TransactionRepositoryInjectionKey } from "../InjectionKeys";
+import { adminGetTransactions } from "./adminGetTransactions";
 import { createTransaction } from "./createTransaction";
 import { getTransaction } from "./getTransaction";
 import { getTransactionBreakdown } from "./getTransactionBreakdown";
@@ -11,6 +12,7 @@ export const mutations = {
 export const queries = {
   getTransaction,
   getTransactionBreakdown,
+  adminGetTransactions
 };
 
 export const types = {

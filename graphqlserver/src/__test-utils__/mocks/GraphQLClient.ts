@@ -15,6 +15,7 @@ import {
   MutationVerifyEmailArgs,
   MutationVerifyPhoneNumberArgs,
   Query,
+  QueryAdminGetTransactionsArgs,
   QueryAdminGetUserArgs,
   QueryGetBanksByCountryArgs,
   QueryGetCurrenciesByCountryArgs,
@@ -31,6 +32,7 @@ import {
   AdminKYCRejectUserMutation,
 } from "@ibexcm/libraries/api/kyc";
 import {
+  AdminGetTransactionsQuery,
   CreateTransactionMutation,
   GetTransactionBreakdownQuery,
   GetTransactionQuery,
@@ -272,6 +274,17 @@ const getAdminBankAccounts = async (authToken: string) => {
   );
 };
 
+const adminGetTransactions = async (
+  args: QueryAdminGetTransactionsArgs,
+  authToken: string,
+) => {
+  return query<QueryAdminGetTransactionsArgs, Pick<Query, "adminGetTransactions">>(
+    AdminGetTransactionsQuery,
+    args,
+    authToken,
+  );
+};
+
 const GraphQLClient = {
   query,
   authenticate,
@@ -296,6 +309,7 @@ const GraphQLClient = {
   getTransaction,
   getAdminBankAccounts,
   setTransactionReceiptEvidence,
+  adminGetTransactions,
 };
 
 export default GraphQLClient;
