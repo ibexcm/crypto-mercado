@@ -7,6 +7,7 @@ import { Approval, Evaluate } from "./features/kyc/screens";
 import {
   CryptoToFiatTransactionsIndex,
   FiatToCryptoTransactionsIndex,
+  TransactionDetails,
 } from "./features/transaction/screens";
 import { routes } from "./routes";
 
@@ -32,6 +33,7 @@ const App: React.FC = () => {
             exact
             component={FiatToCryptoTransactionsIndex}
           />
+          <Route path={routes.transaction.details} exact component={TransactionDetails} />
         </Router>
       </GraphQL>
     </DependencyContext.Provider>

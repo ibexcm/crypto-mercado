@@ -69,7 +69,7 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
   return (
     <Box className={classes.drawerContainer}>
       <Sidebar history={history}></Sidebar>
-      <Container maxWidth="lg" className={classes.mainContainer}>
+      <Container maxWidth={false} className={classes.mainContainer}>
         <ToolbarPadding />
         <Box mb={3}>
           <Typography variant="h5">Transacciones de Venta</Typography>

@@ -59,6 +59,6 @@ export const styles = (theme: Theme) => ({
     display: "flex" as "flex",
     justifyContent: "center" as "center",
     flexDirection: "column" as "column",
-    minHeight: 48,
+    minHeight: 24,
   },
 });
