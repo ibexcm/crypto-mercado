@@ -38,12 +38,12 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
     args: {
       where: {
         sender: {
-          bankAccount: {
+          cryptoAccount: {
             id_not: null,
           },
         },
         recipient: {
-          cryptoAccount: {
+          bankAccount: {
             id_not: null,
           },
         },
@@ -72,8 +72,8 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
       <Container maxWidth="lg" className={classes.mainContainer}>
         <ToolbarPadding />
         <Box mb={3}>
-          <Typography variant="h5">Transacciones de Venta</Typography>
-          <Typography>Crypto a Fiat</Typography>
+          <Typography variant="h5">Transacciones de Compra</Typography>
+          <Typography>Fiat a Crypto</Typography>
         </Box>
         <Paper>
           <TableContainer className={classes.tableContainer}>
@@ -147,6 +147,6 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
   );
 };
 
-export const CryptoToFiatTransactionsIndex = withStyles((theme: Theme) => ({
+export const FiatToCryptoTransactionsIndex = withStyles((theme: Theme) => ({
   ...styles(theme),
 }))(Component);
