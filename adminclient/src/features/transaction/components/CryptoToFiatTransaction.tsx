@@ -76,6 +76,9 @@ const Component: React.FC<Props> = ({
             </Box>
           )}
         </Box>
+        <CryptoToFiatTransactionBreakdown
+          getTransactionBreakdownState={getTransactionBreakdownState}
+        />
         <Box mb={3}>
           <Paper>
             <Box p={2}>
@@ -107,9 +110,27 @@ const Component: React.FC<Props> = ({
         </Box>
       </Grid>
       <Grid item xs={12} lg={5}>
-        <CryptoToFiatTransactionBreakdown
-          getTransactionBreakdownState={getTransactionBreakdownState}
-        />
+        <Box mb={3}>
+          <Paper>
+            <Box p={2}>
+              <Typography variant="body2">Evidencia</Typography>
+              <Typography variant="body2" mb={3} color="textSecondary">
+                Nota: Al subir un documento de evidencia de depósito bancario al emisor, la
+                transacción se marcará como "pagada" en la fecha y hora de la carga del
+                documento si existe evidencia por parte del emisor, en este caso, el ID de
+                la transacción.
+              </Typography>
+              <Box mb={2}>
+                <Typography>ID de la transacción</Typography>
+                <Typography variant="h6">PENDIENTE</Typography>
+              </Box>
+              <Box>
+                <Typography>Recibo de depósito bancario</Typography>
+                <Typography variant="h6">PENDIENTE</Typography>
+              </Box>
+            </Box>
+          </Paper>
+        </Box>
       </Grid>
     </Grid>
   );

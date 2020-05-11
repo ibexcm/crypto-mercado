@@ -81,6 +81,9 @@ const Component: React.FC<Props> = ({
             </Box>
           )}
         </Box>
+        <FiatToCryptoTransactionBreakdown
+          getTransactionBreakdownState={getTransactionBreakdownState}
+        />
         <Box mb={3}>
           <Paper>
             <Box p={2}>
@@ -102,10 +105,6 @@ const Component: React.FC<Props> = ({
               <Box>
                 <Typography variant="h6" mb={2}>
                   {clientID}
-                </Typography>
-                <Typography color="textSecondary">
-                  IMPORTANTE: Especifique su número de cliente en la boleta de la
-                  transacción.
                 </Typography>
               </Box>
             </Box>
@@ -130,9 +129,25 @@ const Component: React.FC<Props> = ({
         </Box>
       </Grid>
       <Grid item xs={12} lg={5}>
-        <FiatToCryptoTransactionBreakdown
-          getTransactionBreakdownState={getTransactionBreakdownState}
-        />
+        <Box mb={3}>
+          <Paper>
+            <Box p={2}>
+              <Typography variant="body2">Evidencia</Typography>
+              <Typography variant="body2" mb={3} color="textSecondary">
+                Nota: La transacción se marcará como "pagada" en la fecha y hora si IBEX
+                ingresa el ID de la transacción.
+              </Typography>
+              <Box mb={2}>
+                <Typography>ID de la transacción</Typography>
+                <Typography variant="h6">PENDIENTE</Typography>
+              </Box>
+              <Box>
+                <Typography>Recibo de depósito bancario</Typography>
+                <Typography variant="h6">PENDIENTE</Typography>
+              </Box>
+            </Box>
+          </Paper>
+        </Box>
       </Grid>
     </Grid>
   );
