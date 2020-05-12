@@ -1,5 +1,16 @@
 import { SendPhoneNumberVerificationCodeInput } from "@ibexcm/libraries/api";
-import { Box, Container, Hidden, Theme, withStyles, WithStyles } from "@material-ui/core";
+import {
+  Box,
+  Card,
+  CardActions,
+  CardContent,
+  Container,
+  Grid,
+  Hidden,
+  Theme,
+  withStyles,
+  WithStyles,
+} from "@material-ui/core";
 import React from "react";
 import { RouteComponentProps, StaticContext } from "react-router";
 import { Button, ToolbarPadding, Typography } from "../../../common/components";
@@ -24,6 +35,15 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
       script.src =
         "https://static.zdassets.com/ekr/snippet.js?key=52b88740-ebcc-4f1c-81e1-4fd827f40adf";
       script.id = "ze-snippet";
+      script.onload = () => {
+        const zendesk = (window as any)?.zE;
+        if (!Boolean(zendesk?.setLocale)) {
+          return;
+        }
+
+        zendesk.setLocale("es");
+      };
+
       document.querySelector("body").appendChild(script);
     })();
   }, []);
@@ -31,6 +51,13 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
   const onCreateAccount = () => {
     OnboardingRepository.reset();
     history.push(routes.onboarding.sendPhoneNumberVerificationCode);
+  };
+
+  const onContactSupport = () => {
+    if (Boolean((window as any)?.zE)) {
+      (window as any).zE.setLocale("es");
+      (window as any).zE.activate();
+    }
   };
 
   return (
@@ -88,6 +115,64 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
           </Box>
         </Hidden>
       </Box>
+      <Box className={classes.featuresSectionBox} py={5}>
+        <Container style={{ minHeight: "auto" }} maxWidth="md">
+          <Box mb={4}>
+            <Grid container spacing={2} justify="space-between">
+              <Grid item lg={5} xs={12}>
+                <Card>
+                  <CardContent className={classes.cardContent}>
+                    <Typography variant="h5">
+                      La mejor tarifa
+                      <br />
+                      del mercado guatemalteco
+                    </Typography>
+                  </CardContent>
+                </Card>
+              </Grid>
+              <Grid item lg={5} xs={12}>
+                <Card>
+                  <CardContent className={classes.cardContent}>
+                    <Typography variant="h5">
+                      Transferencias directas a tu wallet / cuenta bancaria en menos de 24
+                      hrs
+                    </Typography>
+                  </CardContent>
+                </Card>
+              </Grid>
+            </Grid>
+          </Box>
+          <Box>
+            <Grid container spacing={2} justify="space-between">
+              <Grid item lg={5} xs={12}>
+                <Card>
+                  <CardContent className={classes.cardContent}>
+                    <Typography variant="h5">
+                      Deposita / transfiere tus Q's o USD's a nuestras cuentas en el BAC
+                    </Typography>
+                  </CardContent>
+                </Card>
+              </Grid>
+              <Grid item lg={5} xs={12}>
+                <Card>
+                  <CardContent className={classes.cardContent}>
+                    <Typography variant="h5">
+                      Contacta a nuestro
+                      <br />
+                      OTC-Desk aquí
+                    </Typography>
+                  </CardContent>
+                  <CardActions style={{ justifyContent: "flex-end" }}>
+                    <Button onClick={onContactSupport} variant="contained" color="primary">
+                      OTC Desk
+                    </Button>
+                  </CardActions>
+                </Card>
+              </Grid>
+            </Grid>
+          </Box>
+        </Container>
+      </Box>
       <Footer />
     </Box>
   );
@@ -98,6 +183,23 @@ export const Home = withStyles((theme: Theme) => ({
   homeContainer: {
     backgroundColor: theme.palette.primary.main,
     position: "relative",
+  },
+  featuresSectionBox: {
+    backgroundColor: theme.palette.grey[100],
+    minHeight: "50vh",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+  },
+  cardContent: {
+    minHeight: 180,
+    textAlign: "center",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    "& h5": {
+      fontWeight: theme.typography.body1.fontWeight,
+    },
   },
   introContainer: {},
   scrollDownIcon: {
