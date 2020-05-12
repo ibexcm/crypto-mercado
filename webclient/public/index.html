@@ -37,12 +37,48 @@
       property="og:description"
       content="Transferencias directas a tu wallet / cuenta bancaria en menos de 24 hrs."
     />
-    <meta property="og:image" content="%PUBLIC_URL%/images/ibex-og.png" />
+    <meta property="og:image" content="https://ibexcm.com/images/ibex-og.png" />
     <meta property="og:url" content="https://ibexcm.com/" />
     <meta property="og:type" content="website" />
     <meta property="og:locale" content="es_ES" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-JPZ77XLPW5"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
+
+      gtag("config", "G-JPZ77XLPW5");
+    </script>
+
+    <!-- The core Firebase JS SDK is always required and must be listed first -->
+    <script src="https://www.gstatic.com/firebasejs/7.14.3/firebase-app.js"></script>
+
+    <!-- TODO: Add SDKs for Firebase products that you want to use
+     https://firebase.google.com/docs/web/setup#available-libraries -->
+    <script src="https://www.gstatic.com/firebasejs/7.14.3/firebase-analytics.js"></script>
+
+    <script>
+      // Your web app's Firebase configuration
+      var firebaseConfig = {
+        apiKey: "AIzaSyBEeCyuat-N3rfxfjKP7a3hsn1hKRfEDXE",
+        authDomain: "ibexwebclient.firebaseapp.com",
+        databaseURL: "https://ibexwebclient.firebaseio.com",
+        projectId: "ibexwebclient",
+        storageBucket: "ibexwebclient.appspot.com",
+        messagingSenderId: "6103246025",
+        appId: "1:6103246025:web:71bb6ce5aac75cd77a5918",
+        measurementId: "G-XXBE7TRQJK",
+      };
+      // Initialize Firebase
+      firebase.initializeApp(firebaseConfig);
+      firebase.analytics();
+    </script>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
