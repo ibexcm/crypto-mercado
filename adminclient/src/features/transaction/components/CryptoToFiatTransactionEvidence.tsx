@@ -25,11 +25,21 @@ const Component: React.FC<Props> = ({
     receipt: { evidence },
   } = transaction;
 
-  const bankReceiptEvidence = evidence.map((type) => {
-    if (Boolean(type?.bankReceipt)) {
-      return type.bankReceipt;
-    }
-  });
+  const bitcoinReceiptEvidence = evidence
+    .map((type) => {
+      if (Boolean(type?.bitcoinReceipt)) {
+        return type.bitcoinReceipt;
+      }
+    })
+    .filter(Boolean);
+
+  const bankReceiptEvidence = evidence
+    .map((type) => {
+      if (Boolean(type?.bankReceipt)) {
+        return type.bankReceipt;
+      }
+    })
+    .filter(Boolean);
 
   return (
     <Box mb={3}>
@@ -44,7 +54,29 @@ const Component: React.FC<Props> = ({
           </Typography>
           <Box mb={2}>
             <Typography>ID de la transacción</Typography>
-            <Typography variant="h6">PENDIENTE</Typography>
+            {bitcoinReceiptEvidence.length > 0 ? (
+              <Box mt={2}>
+                <Grid container spacing={2}>
+                  {bitcoinReceiptEvidence.map((bitcoin, index) => (
+                    <Grid item key={index}>
+                      <a
+                        href={`https://blockchair.com/bitcoin/transaction/${bitcoin.transactionHash}`}
+                        target="_blank"
+                        className={classes.anchorButton}
+                      >
+                        <Button variant="outlined">
+                          <Typography noWrap style={{ width: 140 }}>
+                            {bitcoin.transactionHash}
+                          </Typography>
+                        </Button>
+                      </a>
+                    </Grid>
+                  ))}
+                </Grid>
+              </Box>
+            ) : (
+              <Typography variant="h6">PENDIENTE</Typography>
+            )}
           </Box>
           <Box>
             <Typography gutterBottom>Recibo de depósito bancario</Typography>

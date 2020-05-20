@@ -31,17 +31,21 @@ const Component: React.FC<Props> = ({
     receipt: { evidence },
   } = transaction;
 
-  const bankReceiptEvidence = evidence.map((type) => {
-    if (Boolean(type?.bankReceipt)) {
-      return type.bankReceipt;
-    }
-  });
+  const bankReceiptEvidence = evidence
+    .map((type) => {
+      if (Boolean(type?.bankReceipt)) {
+        return type.bankReceipt;
+      }
+    })
+    .filter(Boolean);
 
-  const bitcoinReceiptEvidence = evidence.map((type) => {
-    if (Boolean(type?.bitcoinReceipt)) {
-      return type.bitcoinReceipt;
-    }
-  });
+  const bitcoinReceiptEvidence = evidence
+    .map((type) => {
+      if (Boolean(type?.bitcoinReceipt)) {
+        return type.bitcoinReceipt;
+      }
+    })
+    .filter(Boolean);
 
   const onChangeTransactionHash = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.currentTarget.value;
@@ -105,7 +109,25 @@ const Component: React.FC<Props> = ({
           </Box>
           <Box>
             <Typography>Recibo de depósito bancario</Typography>
-            <Typography variant="h6">PENDIENTE</Typography>
+            {bankReceiptEvidence.length > 0 ? (
+              <Box mt={2}>
+                <Grid container spacing={2}>
+                  {bankReceiptEvidence.map((file, index) => (
+                    <Grid item key={index}>
+                      <a
+                        href={`https://ipfs.infura.io/ipfs/${file?.fileHash}`}
+                        target="_blank"
+                        className={classes.anchorButton}
+                      >
+                        <Button variant="outlined">Evidencia ({index + 1})</Button>
+                      </a>
+                    </Grid>
+                  ))}
+                </Grid>
+              </Box>
+            ) : (
+              <Typography variant="h6">PENDIENTE</Typography>
+            )}
           </Box>
         </Box>
       </Paper>
