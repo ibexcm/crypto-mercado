@@ -1,4 +1,7 @@
-import { QueryGetTransactionBreakdownArgs } from "@ibexcm/libraries/api";
+import {
+  QueryGetTransactionBreakdownArgs,
+  SetBitcoinTransactionReceiptEvidenceInput,
+} from "@ibexcm/libraries/api";
 import {
   Backdrop,
   Box,
@@ -68,6 +71,22 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
     }
   };
 
+  const onSetCryptoTransactionEvidence = async ({
+    transactionHash,
+  }: SetBitcoinTransactionReceiptEvidenceInput) => {
+    try {
+      await onTransactionReceiptEvidenceUploadEnd({
+        args: { transactionID: transaction.id, bitcoin: { transactionHash } },
+      });
+
+      refetchGetTransactionQuery({
+        args: { transactionID: match.params.id },
+      });
+    } catch (error) {
+      setError(error);
+    }
+  };
+
   const transaction = data?.getTransaction;
   const receipt = transaction?.receipt;
   const sender = transaction?.sender;
@@ -126,6 +145,7 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
       <FiatToCryptoTransaction
         transaction={transaction}
         getTransactionBreakdownState={getTransactionBreakdownState}
+        onSetCryptoTransactionEvidence={onSetCryptoTransactionEvidence}
       />
     );
   };

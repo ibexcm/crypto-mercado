@@ -13,9 +13,11 @@ import React from "react";
 import { TextField, Typography } from "../../../common/components";
 import { styles } from "../../../common/theme";
 import { Query, Transaction } from "../../../libraries/api";
+import { ICryptoTransactionEvidenceCallback } from "../interfaces/ICryptoTransactionEvidenceCallback";
 import { FiatToCryptoTransactionBreakdown } from "./FiatToCryptoTransactionBreakdown";
+import { FiatToCryptoTransactionEvidence } from "./FiatToCryptoTransactionEvidence";
 
-interface Props extends WithStyles {
+interface Props extends WithStyles, ICryptoTransactionEvidenceCallback {
   transaction: Transaction;
   getTransactionBreakdownState: LazyQueryResult<
     Pick<Query, "getTransactionBreakdown">,
@@ -27,6 +29,7 @@ const Component: React.FC<Props> = ({
   classes,
   transaction,
   getTransactionBreakdownState,
+  onSetCryptoTransactionEvidence,
   ...props
 }) => {
   const {
@@ -129,25 +132,10 @@ const Component: React.FC<Props> = ({
         </Box>
       </Grid>
       <Grid item xs={12} lg={5}>
-        <Box mb={3}>
-          <Paper>
-            <Box p={2}>
-              <Typography variant="body2">Evidencia</Typography>
-              <Typography variant="body2" mb={3} color="textSecondary">
-                Nota: La transacción se marcará como "pagada" en la fecha y hora si IBEX
-                ingresa el ID de la transacción.
-              </Typography>
-              <Box mb={2}>
-                <Typography>ID de la transacción</Typography>
-                <Typography variant="h6">PENDIENTE</Typography>
-              </Box>
-              <Box>
-                <Typography>Recibo de depósito bancario</Typography>
-                <Typography variant="h6">PENDIENTE</Typography>
-              </Box>
-            </Box>
-          </Paper>
-        </Box>
+        <FiatToCryptoTransactionEvidence
+          transaction={transaction}
+          onSetCryptoTransactionEvidence={onSetCryptoTransactionEvidence}
+        />
       </Grid>
     </Grid>
   );

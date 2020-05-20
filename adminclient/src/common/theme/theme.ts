@@ -50,7 +50,7 @@ export const theme = createMuiTheme({
     },
     MuiButton: {
       sizeLarge: {
-        padding: "12px 22px",
+        padding: "14px 22px",
       },
     },
     MuiInput: {
