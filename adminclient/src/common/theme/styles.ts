@@ -61,4 +61,10 @@ export const styles = (theme: Theme) => ({
     flexDirection: "column" as "column",
     minHeight: 24,
   },
+  anchorButton: {
+    textDecoration: "none" as "none",
+    "&:hover": {
+      textDecoration: "none" as "none",
+    },
+  },
 });

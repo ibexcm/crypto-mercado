@@ -11,11 +11,12 @@ import {
 } from "@material-ui/core";
 import React from "react";
 import { CryptoToFiatTransactionBreakdown } from ".";
-import { TextField, Typography } from "../../../common/components";
+import { IDropzoneProps, TextField, Typography } from "../../../common/components";
 import { styles } from "../../../common/theme";
 import { Query, Transaction } from "../../../libraries/api";
+import { CryptoToFiatTransactionEvidence } from "./CryptoToFiatTransactionEvidence";
 
-interface Props extends WithStyles {
+interface Props extends WithStyles, IDropzoneProps {
   transaction: Transaction;
   getTransactionBreakdownState: LazyQueryResult<
     Pick<Query, "getTransactionBreakdown">,
@@ -27,6 +28,8 @@ const Component: React.FC<Props> = ({
   classes,
   transaction,
   getTransactionBreakdownState,
+  onAddFile,
+  onUploadEnd,
   ...props
 }) => {
   const {
@@ -110,27 +113,11 @@ const Component: React.FC<Props> = ({
         </Box>
       </Grid>
       <Grid item xs={12} lg={5}>
-        <Box mb={3}>
-          <Paper>
-            <Box p={2}>
-              <Typography variant="body2">Evidencia</Typography>
-              <Typography variant="body2" mb={3} color="textSecondary">
-                Nota: Al subir un documento de evidencia de depósito bancario al emisor, la
-                transacción se marcará como "pagada" en la fecha y hora de la carga del
-                documento si existe evidencia por parte del emisor, en este caso, el ID de
-                la transacción.
-              </Typography>
-              <Box mb={2}>
-                <Typography>ID de la transacción</Typography>
-                <Typography variant="h6">PENDIENTE</Typography>
-              </Box>
-              <Box>
-                <Typography>Recibo de depósito bancario</Typography>
-                <Typography variant="h6">PENDIENTE</Typography>
-              </Box>
-            </Box>
-          </Paper>
-        </Box>
+        <CryptoToFiatTransactionEvidence
+          transaction={transaction}
+          onAddFile={onAddFile}
+          onUploadEnd={onUploadEnd}
+        />
       </Grid>
     </Grid>
   );
