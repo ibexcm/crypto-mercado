@@ -1,9 +1,11 @@
 import {
   QueryGetTransactionBreakdownArgs,
   SendPhoneNumberVerificationCodeInput,
+  SetBitcoinTransactionReceiptEvidenceInput,
 } from "@ibexcm/libraries/api";
 import { Box, Container, Grid, Theme, withStyles, WithStyles } from "@material-ui/core";
 import ScheduleIcon from "@material-ui/icons/Schedule";
+import { DropzoneFile } from "dropzone";
 import { DateTime } from "luxon";
 import React from "react";
 import { RouteComponentProps, StaticContext } from "react-router";
@@ -15,6 +17,7 @@ import {
 } from "../../../common/components";
 import DependencyContext from "../../../common/contexts/DependencyContext";
 import { styles } from "../../../common/theme";
+import { IPFSAddFileResponse } from "../../../libraries/ipfs";
 import {
   CryptoToFiatTransaction,
   FiatToCryptoTransaction,
@@ -34,10 +37,13 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
   const dependencies = React.useContext(DependencyContext);
   const TransactionRepository = dependencies.provide(TransactionRepositoryInjectionKeys);
 
+  const [error, setError] = React.useState<Error | null>(null);
+
   const {
     data: getTransactionQueryData,
     loading: isTransactionQueryLoading,
     error: getTransactionQueryError,
+    refetch: refetchGetTransactionQuery,
   } = TransactionRepository.useGetTransactionQuery({
     args: { transactionID: match.params.id },
   });
@@ -46,6 +52,12 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
     executeGetTransactionBreakdownQuery,
     getTransactionBreakdownState,
   ] = TransactionRepository.useGetTransactionBreakdownQuery();
+
+  const {
+    state: { loading: isSetTransactionReceiptEvidenceLoading },
+    onAddFile: onAddTransactionReceiptEvidence,
+    onUploadEnd: onTransactionReceiptEvidenceUploadEnd,
+  } = TransactionRepository.useSetTransactionReceiptEvidenceMutation();
 
   React.useEffect(() => {
     if (isTransactionQueryLoading) {
@@ -75,6 +87,42 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
 
     executeGetTransactionBreakdownQuery(query);
   }, [isTransactionQueryLoading]);
+
+  const onAddFile = (file: DropzoneFile) => {
+    onAddTransactionReceiptEvidence(file);
+  };
+
+  const onUploadEnd = async (response: IPFSAddFileResponse[]) => {
+    console.log(response);
+    const [{ hash: fileHash }] = response;
+    try {
+      await onTransactionReceiptEvidenceUploadEnd({
+        args: { transactionID: transaction.id, fiat: { fileHash } },
+      });
+
+      refetchGetTransactionQuery({
+        args: { transactionID: match.params.id },
+      });
+    } catch (error) {
+      setError(error);
+    }
+  };
+
+  const onSetCryptoTransactionEvidence = async ({
+    transactionHash,
+  }: SetBitcoinTransactionReceiptEvidenceInput) => {
+    try {
+      await onTransactionReceiptEvidenceUploadEnd({
+        args: { transactionID: transaction.id, bitcoin: { transactionHash } },
+      });
+
+      refetchGetTransactionQuery({
+        args: { transactionID: match.params.id },
+      });
+    } catch (error) {
+      setError(error);
+    }
+  };
 
   if (isTransactionQueryLoading) {
     return <Backdrop open={isTransactionQueryLoading} />;
