@@ -152,6 +152,7 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
     return (
       <FiatToCryptoTransaction
         transaction={transaction}
+        onSetCryptoTransactionEvidence={onSetCryptoTransactionEvidence}
         getTransactionBreakdownState={getTransactionBreakdownState}
       />
     );
