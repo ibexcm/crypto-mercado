@@ -11,6 +11,13 @@
 # production
 /build
 
+# shared libraries
+/src/libraries/api
+/src/libraries/di
+/src/libraries/interfaces
+/src/libraries/models
+/src/libraries/utilities
+
 # misc
 .DS_Store
 .env.local

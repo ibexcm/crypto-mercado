@@ -4,25 +4,28 @@
   "version": "1.0.0",
   "description": "IBEX Crypto Mercado",
   "scripts": {
+    "clone:libraries:webclient": "cp -r libraries/interfaces libraries/models libraries/api libraries/di libraries/utilities webclient/src/libraries",
+    "clone:libraries:adminclient": "cp -r libraries/interfaces libraries/models libraries/api libraries/di libraries/utilities adminclient/src/libraries",
     "global:dependencies": "npm i -g prettier@1.19.1 rimraf@3.0.2 ts-node@8.6.2 typescript@3.7.5 prisma@^1.34.10",
     "clean": "lerna clean -y",
     "bootstrap": "lerna bootstrap --ci",
     "build": "lerna run build && npm run bootstrap",
-    "api:schema:generate": "lerna run api:schema:generate && lerna run api:schema:compile && npm run bootstrap"
+    "api:schema:generate": "lerna run api:schema:generate && lerna run api:schema:compile && npm run clone:libraries:webclient && npm run clone:libraries:adminclient && npm run bootstrap"
   },
   "peerDependencies": {
-    "prettier": "^1.16.4",
-    "ts-node": "^8.1.0",
-    "rimraf": "^2.6.3",
-    "typescript": "^3.7.5",
     "convict": "^5.1.0",
     "graphql": "14.6.0",
-    "prisma": "^1.34.10"
+    "prettier": "^1.16.4",
+    "prisma": "^1.34.10",
+    "rimraf": "^2.6.3",
+    "ts-node": "^8.1.0",
+    "typescript": "^3.7.5"
   },
   "keywords": [],
   "author": "netpoe",
   "license": "ISC",
   "devDependencies": {
+    "copyfiles": "^2.3.0",
     "lerna": "^3.13.0"
   },
   "prettier": {
