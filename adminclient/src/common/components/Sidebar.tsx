@@ -55,26 +55,26 @@ const Component: React.FC<Props> = ({ classes, history, footer }) => {
             </Box>
             <Box mb={2}>
               <Link
-                to={routes.transactions.purchases}
+                to={routes.transaction.fiatToCryptoTransactions}
                 className={
-                  isSelected(routes.transactions.purchases)
+                  isSelected(routes.transaction.fiatToCryptoTransactions)
                     ? `${classes.sidebarNavigationSelectedLink} ${classes.sidebarNavigationLink}`
                     : classes.sidebarNavigationLink
                 }
               >
-                <Typography variant="body1">Depósitos</Typography>
+                <Typography variant="body1">Compra</Typography>
               </Link>
             </Box>
             <Box mb={2}>
               <Link
-                to={routes.transactions.sales}
+                to={routes.transaction.cryptoToFiatTransactions}
                 className={
-                  isSelected(routes.transactions.sales)
+                  isSelected(routes.transaction.cryptoToFiatTransactions)
                     ? `${classes.sidebarNavigationSelectedLink} ${classes.sidebarNavigationLink}`
                     : classes.sidebarNavigationLink
                 }
               >
-                <Typography variant="body1">Retiros</Typography>
+                <Typography variant="body1">Venta</Typography>
               </Link>
             </Box>
           </Box>

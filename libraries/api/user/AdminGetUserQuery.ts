@@ -9,7 +9,9 @@ export const AdminGetUserQuery = gql`
       account {
         ...Account
       }
-      ...Contact
+      contact {
+        ...Contact
+      }
       ...Profile
       bankAccounts {
         ...BankAccounts

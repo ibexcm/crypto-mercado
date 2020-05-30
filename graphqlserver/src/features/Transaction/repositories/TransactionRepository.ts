@@ -16,6 +16,7 @@ import {
   CreateTransactionUserInput,
   FiatToBitcoinTransactionBreakdown,
   MutationCreateTransactionArgs,
+  QueryAdminGetTransactionsArgs,
   QueryGetTransactionArgs,
   QueryGetTransactionBreakdownArgs,
   TransactionBreakdown,
@@ -57,6 +58,12 @@ export class TransactionRepository {
     this.TransactionTaxRepository = TransactionTaxRepository;
     this.ExchangeRateRepository = ExchangeRateRepository;
     this.UserRepository = UserRepository;
+  }
+
+  async adminGetTransactions({
+    args,
+  }: QueryAdminGetTransactionsArgs): Promise<Transaction[]> {
+    return await this.db.transactions(args);
   }
 
   async getTransaction({

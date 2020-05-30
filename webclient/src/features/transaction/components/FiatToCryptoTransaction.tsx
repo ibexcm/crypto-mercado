@@ -10,12 +10,13 @@ import {
   WithStyles,
 } from "@material-ui/core";
 import React from "react";
-import { TextField, Typography } from "../../../common/components";
+import { IDropzoneProps, TextField, Typography } from "../../../common/components";
 import { styles } from "../../../common/theme";
 import { Query, Transaction } from "../../../libraries/api";
-import { OnBuyTransactionBreakdown } from "./OnBuyTransactionBreakdown";
+import { FiatToCryptoTransactionBreakdown } from "./FiatToCryptoTransactionBreakdown";
+import { FiatToCryptoTransactionEvidence } from "./FiatToCryptoTransactionEvidence";
 
-interface Props extends WithStyles {
+interface Props extends WithStyles, IDropzoneProps {
   transaction: Transaction;
   getTransactionBreakdownState: LazyQueryResult<
     Pick<Query, "getTransactionBreakdown">,
@@ -27,6 +28,8 @@ const Component: React.FC<Props> = ({
   classes,
   transaction,
   getTransactionBreakdownState,
+  onAddFile,
+  onUploadEnd,
   ...props
 }) => {
   const {
@@ -130,8 +133,13 @@ const Component: React.FC<Props> = ({
         </Box>
       </Grid>
       <Grid item xs={12} lg={5}>
-        <OnBuyTransactionBreakdown
+        <FiatToCryptoTransactionBreakdown
           getTransactionBreakdownState={getTransactionBreakdownState}
+        />
+        <FiatToCryptoTransactionEvidence
+          transaction={transaction}
+          onAddFile={onAddFile}
+          onUploadEnd={onUploadEnd}
         />
       </Grid>
     </Grid>

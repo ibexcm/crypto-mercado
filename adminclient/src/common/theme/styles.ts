@@ -55,4 +55,16 @@ export const styles = (theme: Theme) => ({
     color: theme.palette.text.primary,
     textDecoration: "none",
   },
+  rowItemBox: {
+    display: "flex" as "flex",
+    justifyContent: "center" as "center",
+    flexDirection: "column" as "column",
+    minHeight: 24,
+  },
+  anchorButton: {
+    textDecoration: "none" as "none",
+    "&:hover": {
+      textDecoration: "none" as "none",
+    },
+  },
 });

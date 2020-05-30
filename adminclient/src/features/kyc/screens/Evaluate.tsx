@@ -70,7 +70,7 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
     key: keyof AdminKycApproveUserGovernmentIdInput,
   ) => {
     const value = event.target.value;
-    setGovernmentIDInput(prev => {
+    setGovernmentIDInput((prev) => {
       governmentIDInput[key] = value;
       return {
         ...prev,
@@ -111,7 +111,7 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
   return (
     <Box className={classes.drawerContainer}>
       <Sidebar history={history}></Sidebar>
-      <Container maxWidth="lg" className={classes.mainContainer}>
+      <Container maxWidth={false} className={classes.mainContainer}>
         <ToolbarPadding />
         <Box mb={3}>
           <Typography variant="h5">Evaluando solicitud de ingreso</Typography>

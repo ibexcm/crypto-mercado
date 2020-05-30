@@ -1,17 +1,15 @@
 import gql from "graphql-tag";
 
 export const Contact = gql`
-  fragment Contact on User {
-    contact {
+  fragment Contact on Contact {
+    id
+    phoneNumber {
       id
-      phoneNumber {
-        id
-        number
-      }
-      email {
-        id
-        address
-      }
+      number
+    }
+    email {
+      id
+      address
     }
   }
 `;

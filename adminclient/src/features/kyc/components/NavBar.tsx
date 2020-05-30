@@ -19,7 +19,7 @@ const Component: React.FC<IMobileAppBarProps> = ({ classes }) => {
   return (
     <Hidden smDown>
       <AppBar position="fixed" color="default" elevation={0}>
-        <Container maxWidth="lg" disableGutters style={{ minHeight: "auto" }}>
+        <Container maxWidth={false} disableGutters style={{ minHeight: "auto" }}>
           <Toolbar className={classes.toolbar}>
             <Box className={classes.logoBox}>
               <Link to={routes.root}>

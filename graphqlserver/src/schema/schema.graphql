@@ -1,5 +1,5 @@
 # import User, Bank, Currency, Transaction from "@ibexcm/database/generated/prisma.graphql"
-# import GetTransactionInput, CreateTransactionUserInput, GetTransactionBreakdownInput, TransactionBreakdown from "./transaction.graphql"
+# import AdminGetTransactionsInput, SetTransactionReceiptEvidenceInput, AdminMarkTransactionAsPaidInput, GetTransactionInput, CreateTransactionUserInput, GetTransactionBreakdownInput, TransactionBreakdown from "./transaction.graphql"
 
 type Query {
   user: User!
@@ -18,6 +18,9 @@ type Query {
 
   # USER
   adminGetUser(args: AdminGetUserInput!): User!
+
+  # TRANSACTIONS
+  adminGetTransactions(args: AdminGetTransactionsInput): [Transaction]
 }
 
 type Mutation {
@@ -35,6 +38,7 @@ type Mutation {
 
   # TRANSACTIONS
   createTransaction(args: CreateTransactionInput!): Transaction!
+  setTransactionReceiptEvidence(args: SetTransactionReceiptEvidenceInput!): Transaction!
 
   # CRYPTO ACCOUNTS
   createBitcoinAccount(args: CreateBitcoinAccountInput!): Boolean!
@@ -53,6 +57,9 @@ type Mutation {
     userArgs: AdminKYCRejectUserInput!
     rejectArgs: AdminKYCRejectUserInput!
   ): Boolean!
+
+  # TRANSACTIONS
+  adminMarkTransactionAsPaid(args: AdminMarkTransactionAsPaidInput!): Transaction!
 }
 
 type Session {

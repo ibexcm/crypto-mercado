@@ -27,7 +27,13 @@ const Component: React.FC<IMobileAppBarProps> = ({ classes }) => {
                 <br />
                 Edificio Maritima Oficina 7-3
               </Typography>
-              <Typography>+502 229 663 50</Typography>
+              <a
+                href="https://api.whatsapp.com/send?phone=50245118238"
+                target="_blank"
+                rel="nofollow"
+              >
+                <Typography>+502 4511 82 38</Typography>
+              </a>
             </Box>
           </Grid>
         </Grid>

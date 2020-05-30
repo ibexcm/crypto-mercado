@@ -55,6 +55,6 @@ const Component: React.FC<Props> = ({ classes, getTransactionBreakdownState }) =
   );
 };
 
-export const OnBuyTransactionBreakdown = withStyles((theme: Theme) => ({
+export const FiatToCryptoTransactionBreakdown = withStyles((theme: Theme) => ({
   ...styles(theme),
 }))(Component);

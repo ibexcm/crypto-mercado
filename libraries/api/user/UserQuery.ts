@@ -17,7 +17,9 @@ export const UserQuery = gql`
       account {
         ...Account
       }
-      ...Contact
+      contact {
+        ...Contact
+      }
       ...Profile
       bankAccounts {
         ...BankAccounts

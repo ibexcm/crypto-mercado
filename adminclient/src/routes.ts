@@ -8,9 +8,10 @@ export const routes = {
     approval: "/kyc/approval",
     evaluate: "/kyc/evaluate/user/:id",
   },
-  transactions: {
-    purchases: "/transactions/purchases",
-    sales: "/transactions/sales",
+  transaction: {
+    fiatToCryptoTransactions: "/transactions/fiat-to-crypto",
+    cryptoToFiatTransactions: "/transactions/crypto-to-fiat",
+    details: "/tx/:id",
   },
 };
 

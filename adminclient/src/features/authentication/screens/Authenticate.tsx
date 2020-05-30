@@ -66,7 +66,7 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
 
   return (
     <Box>
-      <Container maxWidth="lg">
+      <Container maxWidth={false}>
         <NavBar />
         <Box
           minHeight="100vh"

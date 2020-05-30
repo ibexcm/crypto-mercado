@@ -10,10 +10,12 @@ import {
   MutationSendPhoneNumberVerificationCodeArgs,
   MutationSetBankAccountArgs,
   MutationSetPasswordArgs,
+  MutationSetTransactionReceiptEvidenceArgs,
   MutationUploadGovernmentIdArgs,
   MutationVerifyEmailArgs,
   MutationVerifyPhoneNumberArgs,
   Query,
+  QueryAdminGetTransactionsArgs,
   QueryAdminGetUserArgs,
   QueryGetBanksByCountryArgs,
   QueryGetCurrenciesByCountryArgs,
@@ -30,10 +32,12 @@ import {
   AdminKYCRejectUserMutation,
 } from "@ibexcm/libraries/api/kyc";
 import {
+  AdminGetTransactionsQuery,
   CreateTransactionMutation,
   GetTransactionBreakdownQuery,
   GetTransactionQuery,
 } from "@ibexcm/libraries/api/transaction";
+import { SetTransactionReceiptEvidenceMutation } from "@ibexcm/libraries/api/transactionReceipt";
 import {
   AdminAuthenticateMutation,
   AdminGetUserQuery,
@@ -252,10 +256,31 @@ const createBitcoinAccount = async (
   );
 };
 
+const setTransactionReceiptEvidence = async (
+  args: MutationSetTransactionReceiptEvidenceArgs,
+  authToken: string,
+) => {
+  return query<
+    MutationSetTransactionReceiptEvidenceArgs,
+    Pick<Mutation, "setTransactionReceiptEvidence">
+  >(SetTransactionReceiptEvidenceMutation, args, authToken);
+};
+
 const getAdminBankAccounts = async (authToken: string) => {
   return query<void, Pick<Query, "getAdminBankAccounts">>(
     GetAdminBankAccountsQuery,
     undefined,
+    authToken,
+  );
+};
+
+const adminGetTransactions = async (
+  args: QueryAdminGetTransactionsArgs,
+  authToken: string,
+) => {
+  return query<QueryAdminGetTransactionsArgs, Pick<Query, "adminGetTransactions">>(
+    AdminGetTransactionsQuery,
+    args,
     authToken,
   );
 };
@@ -283,6 +308,8 @@ const GraphQLClient = {
   getTransactionBreakdown,
   getTransaction,
   getAdminBankAccounts,
+  setTransactionReceiptEvidence,
+  adminGetTransactions,
 };
 
 export default GraphQLClient;
