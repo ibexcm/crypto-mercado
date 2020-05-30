@@ -1,5 +1,6 @@
 import { LazyQueryResult } from "@apollo/client";
 import { QueryGetTransactionBreakdownArgs } from "@ibexcm/libraries/api";
+import { ICryptoTransactionEvidenceCallback } from "@ibexcm/libraries/interfaces";
 import {
   Box,
   Grid,
@@ -14,8 +15,9 @@ import { CryptoToFiatTransactionBreakdown } from ".";
 import { TextField, Typography } from "../../../common/components";
 import { styles } from "../../../common/theme";
 import { Query, Transaction } from "../../../libraries/api";
+import { CryptoToFiatTransactionEvidence } from "./CryptoToFiatTransactionEvidence";
 
-interface Props extends WithStyles {
+interface Props extends WithStyles, ICryptoTransactionEvidenceCallback {
   transaction: Transaction;
   getTransactionBreakdownState: LazyQueryResult<
     Pick<Query, "getTransactionBreakdown">,
@@ -27,6 +29,7 @@ const Component: React.FC<Props> = ({
   classes,
   transaction,
   getTransactionBreakdownState,
+  onSetCryptoTransactionEvidence,
   ...props
 }) => {
   const {
@@ -109,6 +112,10 @@ const Component: React.FC<Props> = ({
       <Grid item xs={12} lg={5}>
         <CryptoToFiatTransactionBreakdown
           getTransactionBreakdownState={getTransactionBreakdownState}
+        />
+        <CryptoToFiatTransactionEvidence
+          transaction={transaction}
+          onSetCryptoTransactionEvidence={onSetCryptoTransactionEvidence}
         />
       </Grid>
     </Grid>

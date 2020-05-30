@@ -1,6 +1,5 @@
 import { LazyQueryResult } from "@apollo/client";
 import { QueryGetTransactionBreakdownArgs } from "@ibexcm/libraries/api";
-import { ICryptoTransactionEvidenceCallback } from "@ibexcm/libraries/interfaces";
 import {
   Box,
   Grid,
@@ -11,13 +10,13 @@ import {
   WithStyles,
 } from "@material-ui/core";
 import React from "react";
-import { TextField, Typography } from "../../../common/components";
+import { IDropzoneProps, TextField, Typography } from "../../../common/components";
 import { styles } from "../../../common/theme";
 import { Query, Transaction } from "../../../libraries/api";
 import { FiatToCryptoTransactionBreakdown } from "./FiatToCryptoTransactionBreakdown";
 import { FiatToCryptoTransactionEvidence } from "./FiatToCryptoTransactionEvidence";
 
-interface Props extends WithStyles, ICryptoTransactionEvidenceCallback {
+interface Props extends WithStyles, IDropzoneProps {
   transaction: Transaction;
   getTransactionBreakdownState: LazyQueryResult<
     Pick<Query, "getTransactionBreakdown">,
@@ -29,7 +28,8 @@ const Component: React.FC<Props> = ({
   classes,
   transaction,
   getTransactionBreakdownState,
-  onSetCryptoTransactionEvidence,
+  onAddFile,
+  onUploadEnd,
   ...props
 }) => {
   const {
@@ -138,7 +138,8 @@ const Component: React.FC<Props> = ({
         />
         <FiatToCryptoTransactionEvidence
           transaction={transaction}
-          onSetCryptoTransactionEvidence={onSetCryptoTransactionEvidence}
+          onAddFile={onAddFile}
+          onUploadEnd={onUploadEnd}
         />
       </Grid>
     </Grid>

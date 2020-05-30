@@ -1,12 +1,7 @@
+import { ICryptoTransactionEvidenceCallback } from "@ibexcm/libraries/interfaces";
 import { Box, Grid, Paper, Theme, withStyles, WithStyles } from "@material-ui/core";
 import React from "react";
-import {
-  Button,
-  Dropzone,
-  DropzonePreview,
-  IDropzoneProps,
-  Typography,
-} from "../../../common/components";
+import { Button, TextField, Typography } from "../../../common/components";
 import { styles } from "../../../common/theme";
 import { Transaction } from "../../../libraries/api";
 import {
@@ -14,17 +9,20 @@ import {
   getBitcoinReceiptEvidence,
 } from "../../../libraries/utilities/transaction";
 
-interface Props extends WithStyles, IDropzoneProps {
+interface Props extends WithStyles, ICryptoTransactionEvidenceCallback {
   transaction: Transaction;
 }
 
 const Component: React.FC<Props> = ({
   classes,
-  onAddFile,
-  onUploadEnd,
+  onSetCryptoTransactionEvidence,
   transaction,
   ...props
 }) => {
+  const [transactionHash, setTransactionHash] = React.useState<string | undefined>(
+    undefined,
+  );
+
   const {
     receipt: { evidence },
   } = transaction;
@@ -32,14 +30,41 @@ const Component: React.FC<Props> = ({
   const bankReceiptEvidence = getBankReceiptEvidence(evidence);
   const bitcoinReceiptEvidence = getBitcoinReceiptEvidence(evidence);
 
+  const onChangeTransactionHash = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = event.currentTarget.value;
+    setTransactionHash(value);
+  };
+
   return (
     <Box mb={3}>
       <Paper>
         <Box p={2}>
           <Typography variant="body2">Evidencia</Typography>
           <Box mb={2}>
-            <Typography>ID de la transacción</Typography>
-            {bitcoinReceiptEvidence.length > 0 ? (
+            <Typography gutterBottom>ID de la transacción</Typography>
+            <Grid container spacing={2}>
+              <Grid item lg={8}>
+                <TextField
+                  fullWidth
+                  label="ID de la transacción"
+                  variant="outlined"
+                  onChange={onChangeTransactionHash}
+                  value={transactionHash}
+                />
+              </Grid>
+              <Grid item lg={4}>
+                <Button
+                  variant="outlined"
+                  size="large"
+                  onClick={() => {
+                    onSetCryptoTransactionEvidence({ transactionHash });
+                  }}
+                >
+                  Guardar
+                </Button>
+              </Grid>
+            </Grid>
+            {bitcoinReceiptEvidence.length > 0 && (
               <Box mt={2}>
                 <Grid container spacing={2}>
                   {bitcoinReceiptEvidence.map((bitcoin, index) => (
@@ -59,26 +84,11 @@ const Component: React.FC<Props> = ({
                   ))}
                 </Grid>
               </Box>
-            ) : (
-              <Typography variant="h6">PENDIENTE</Typography>
             )}
           </Box>
           <Box>
-            <Typography gutterBottom>Recibo de depósito bancario</Typography>
-            <Box>
-              <Dropzone
-                onAddFile={onAddFile}
-                onUploadEnd={onUploadEnd}
-                message={
-                  <Typography>
-                    Arrastra o selecciona
-                    <br />
-                    PDF, PNG ó JPG
-                  </Typography>
-                }
-              />
-            </Box>
-            {bankReceiptEvidence.length > 0 && (
+            <Typography>Recibo de depósito bancario</Typography>
+            {bankReceiptEvidence.length > 0 ? (
               <Box mt={2}>
                 <Grid container spacing={2}>
                   {bankReceiptEvidence.map((file, index) => (
@@ -94,10 +104,9 @@ const Component: React.FC<Props> = ({
                   ))}
                 </Grid>
               </Box>
+            ) : (
+              <Typography variant="h6">PENDIENTE</Typography>
             )}
-            <Box mt={2}>
-              <DropzonePreview />
-            </Box>
           </Box>
         </Box>
       </Paper>
@@ -105,6 +114,6 @@ const Component: React.FC<Props> = ({
   );
 };
 
-export const FiatToCryptoTransactionEvidence = withStyles((theme: Theme) => ({
+export const CryptoToFiatTransactionEvidence = withStyles((theme: Theme) => ({
   ...styles(theme),
 }))(Component);

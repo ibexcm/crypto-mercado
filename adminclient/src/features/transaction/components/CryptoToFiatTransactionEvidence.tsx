@@ -9,6 +9,10 @@ import {
 } from "../../../common/components";
 import { styles } from "../../../common/theme";
 import { Transaction } from "../../../libraries/api";
+import {
+  getBankReceiptEvidence,
+  getBitcoinReceiptEvidence,
+} from "../../../libraries/utilities/transaction";
 
 interface Props extends WithStyles, IDropzoneProps {
   transaction: Transaction;
@@ -25,21 +29,8 @@ const Component: React.FC<Props> = ({
     receipt: { evidence },
   } = transaction;
 
-  const bitcoinReceiptEvidence = evidence
-    .map((type) => {
-      if (Boolean(type?.bitcoinReceipt)) {
-        return type.bitcoinReceipt;
-      }
-    })
-    .filter(Boolean);
-
-  const bankReceiptEvidence = evidence
-    .map((type) => {
-      if (Boolean(type?.bankReceipt)) {
-        return type.bankReceipt;
-      }
-    })
-    .filter(Boolean);
+  const bankReceiptEvidence = getBankReceiptEvidence(evidence);
+  const bitcoinReceiptEvidence = getBitcoinReceiptEvidence(evidence);
 
   return (
     <Box mb={3}>

@@ -9,7 +9,7 @@ import { IPFSAddFileResponse, uploadFiles } from "../../libraries/ipfs";
 export interface IDropzoneProps extends WithStyles, React.HTMLAttributes<HTMLDivElement> {
   onAddFile: (file: DropzoneFile) => void;
   onUploadEnd: (response: IPFSAddFileResponse[]) => void;
-  message: any;
+  message?: any;
 }
 
 export const Dropzone = withStyles((theme: Theme) => ({

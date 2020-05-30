@@ -145,6 +145,7 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
         <CryptoToFiatTransaction
           transaction={transaction}
           getTransactionBreakdownState={getTransactionBreakdownState}
+          onSetCryptoTransactionEvidence={onSetCryptoTransactionEvidence}
         />
       );
     }
@@ -152,8 +153,9 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
     return (
       <FiatToCryptoTransaction
         transaction={transaction}
-        onSetCryptoTransactionEvidence={onSetCryptoTransactionEvidence}
         getTransactionBreakdownState={getTransactionBreakdownState}
+        onAddFile={onAddFile}
+        onUploadEnd={onUploadEnd}
       />
     );
   };
