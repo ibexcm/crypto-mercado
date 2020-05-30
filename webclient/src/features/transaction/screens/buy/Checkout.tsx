@@ -14,7 +14,6 @@ import {
   withStyles,
   WithStyles,
 } from "@material-ui/core";
-import SwapHorizIcon from "@material-ui/icons/SwapHoriz";
 import React from "react";
 import { generatePath, RouteComponentProps, StaticContext } from "react-router";
 import {
@@ -115,7 +114,7 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
     const [
       { id: bankAccountID },
     ] = getAdminBankAccountsQueryData.getAdminBankAccounts.filter(
-      (bankAccount) => bankAccount.currency.symbol === "USD",
+      (bankAccount) => bankAccount.currency.symbol === "GTQ",
     );
 
     setRecipientBankAccountID(bankAccountID);
@@ -317,7 +316,7 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
                         label="¿Cuánto deseas comprar?"
                         variant="outlined"
                         InputProps={{
-                          endAdornment: <InputAdornment position="end">BTC</InputAdornment>,
+                          endAdornment: <InputAdornment position="end">GTQ</InputAdornment>,
                         }}
                         onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                           onAmountChange(event, cryptoAccountID);
@@ -325,68 +324,6 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
                         value={input.args.amount}
                         type="number"
                       />
-                    </Paper>
-                  </Box>
-                  <Box mb={3}>
-                    <Paper>
-                      <Box p={2}>
-                        <Typography variant="body2" mb={2}>
-                          Forma de pago
-                        </Typography>
-                        <Grid container justify="space-between">
-                          {getAdminBankAccountsQueryData.getAdminBankAccounts
-                            .filter((bankAccount) => bankAccount.currency.symbol === "USD")
-                            .map((bankAccount, index) => (
-                              <Grid item lg={5} xs={5} key={index}>
-                                <Button
-                                  fullWidth
-                                  color="primary"
-                                  variant={
-                                    bankAccount.id === recipientBankAccountID
-                                      ? "contained"
-                                      : "outlined"
-                                  }
-                                  onClick={() => {
-                                    setRecipientBankAccountID(bankAccount.id);
-                                  }}
-                                >
-                                  {bankAccount.currency.symbol}
-                                </Button>
-                              </Grid>
-                            ))}
-                          <Grid item lg={1} xs={1}>
-                            <Box
-                              display="flex"
-                              flexDirection="column"
-                              justifyContent="center"
-                              alignItems="center"
-                              height={36}
-                            >
-                              <SwapHorizIcon />
-                            </Box>
-                          </Grid>
-                          {getAdminBankAccountsQueryData.getAdminBankAccounts
-                            .filter((bankAccount) => bankAccount.currency.symbol === "GTQ")
-                            .map((bankAccount, index) => (
-                              <Grid item lg={5} xs={5} key={index}>
-                                <Button
-                                  fullWidth
-                                  color="primary"
-                                  variant={
-                                    bankAccount.id === recipientBankAccountID
-                                      ? "contained"
-                                      : "outlined"
-                                  }
-                                  onClick={() => {
-                                    setRecipientBankAccountID(bankAccount.id);
-                                  }}
-                                >
-                                  {bankAccount.currency.symbol}
-                                </Button>
-                              </Grid>
-                            ))}
-                        </Grid>
-                      </Box>
                     </Paper>
                   </Box>
                   <Box mb={3}>
