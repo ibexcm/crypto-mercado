@@ -38,5 +38,25 @@ export const types = {
       );
       return TransactionReceiptRepository.exchangeRate(id);
     },
+    evidence: ({ id }, args, { dependencies }: IContext) => {
+      const TransactionReceiptRepository = dependencies.provide(
+        TransactionReceiptRepositoryInjectionKey,
+      );
+      return TransactionReceiptRepository.evidence(id);
+    },
+  },
+  TransactionReceiptEvidence: {
+    bankReceipt: ({ id }, args, { dependencies }: IContext) => {
+      const TransactionReceiptRepository = dependencies.provide(
+        TransactionReceiptRepositoryInjectionKey,
+      );
+      return TransactionReceiptRepository.bankReceipt(id);
+    },
+    bitcoinReceipt: ({ id }, args, { dependencies }: IContext) => {
+      const TransactionReceiptRepository = dependencies.provide(
+        TransactionReceiptRepositoryInjectionKey,
+      );
+      return TransactionReceiptRepository.bitcoinReceipt(id);
+    },
   },
 };
