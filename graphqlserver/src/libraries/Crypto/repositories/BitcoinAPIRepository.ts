@@ -1,9 +1,10 @@
 import { CurrencySymbol } from "@ibexcm/libraries/models/currency";
 import axios, { AxiosResponse } from "axios";
 import { config } from "../../../config";
+import { BitcoinError } from "../../../features/Bitcoin/errors/BitcoinError";
 import { IBitcoinAPIRepository } from "../interfaces/IBitcoinAPIRepository";
 import { IShiftMarketsAuthenticationResponse } from "../interfaces/IShiftMarketsAuthenticationResponse";
-import { IShiftMarketsHistoricalBarsResponse } from "../interfaces/IShiftMarketsHistoricalBarsResponse";
+import { IShiftMarketsSecuritiesResponse } from "../interfaces/IShiftMarketsSecuritiesResponse";
 
 const { username, password, exchangeName } = config.get("shiftMarkets");
 
@@ -33,32 +34,29 @@ export class BitcoinAPIRepository implements IBitcoinAPIRepository {
   async getCurrentPriceByCurrencySymbol(
     symbol: CurrencySymbol = CurrencySymbol.USD,
   ): Promise<string> {
-    const startTime = new Date().getTime() - BitcoinAPIRepository.periodicity;
-    const endTime = new Date().getTime();
-
-    const response: AxiosResponse<IShiftMarketsHistoricalBarsResponse[]> = await axios.request(
-      {
-        method: "GET",
-        url: `${BitcoinAPIRepository.baseUrl}/historical-bars/BTCUSD?periodicity=day&startTime=${startTime}&endTime=${endTime}`,
-        headers: {
-          Authorization: `Bearer ${this.clientAccessToken}`,
-          Accept: "application/json",
-          "x-deltix-nonce": new Date().getTime(),
-        },
+    const response: AxiosResponse<IShiftMarketsSecuritiesResponse[]> = await axios.request({
+      method: "GET",
+      url: `${BitcoinAPIRepository.baseUrl}/securities/statistics`,
+      headers: {
+        Authorization: `Bearer ${this.clientAccessToken}`,
+        Accept: "application/json",
+        "x-deltix-nonce": new Date().getTime(),
       },
-    );
+    });
 
-    const historicalBars = response.data;
+    const securities = response.data;
 
-    // if (historicalBars.length === 0) {
-    //   throw BitcoinError.emptyHistoricalPrices;
-    // }
+    if (securities.length === 0) {
+      throw BitcoinError.emptyHistoricalPrices;
+    }
+
+    const [{ ask }] = securities.filter(security => security.security_id === "BTCUSD");
 
     switch (symbol) {
       case CurrencySymbol.GTQ:
-        return (7200 * 7.5).toString();
+        return (Number(ask) * 7.5).toString();
       default:
-        return "7200";
+        return ask;
     }
   }
 
