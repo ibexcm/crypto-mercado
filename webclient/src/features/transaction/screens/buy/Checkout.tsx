@@ -88,7 +88,8 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
     state: { data: createBitcoinAccountData, loading: isCreatingBitcoinAccount },
   } = UserRepository.useCreateBitcoinAccountMutation();
 
-  const execute = (cryptoAccountID: string) => {
+  const getTransactionBreakdown = () => {
+    const [{ id: cryptoAccountID }] = userQueryData.user.cryptoAccounts;
     executeGetTransactionBreakdownQuery({
       args: {
         ...input.args,
@@ -109,8 +110,6 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
       return;
     }
 
-    const [{ id: cryptoAccountID }] = userQueryData.user.cryptoAccounts;
-
     const [
       { id: bankAccountID },
     ] = getAdminBankAccountsQueryData.getAdminBankAccounts.filter(
@@ -118,8 +117,6 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
     );
 
     setRecipientBankAccountID(bankAccountID);
-
-    execute(cryptoAccountID);
   }, [userQueryData, getAdminBankAccountsQueryData]);
 
   React.useEffect(() => {
@@ -127,15 +124,13 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
       return;
     }
 
-    if (intervalID) {
+    getTransactionBreakdown();
+
+    if (Boolean(intervalID)) {
       clearInterval(intervalID);
     }
 
-    const [{ id: cryptoAccountID }] = userQueryData.user.cryptoAccounts;
-
-    intervalID = setInterval(() => {
-      execute(cryptoAccountID);
-    }, 15000);
+    intervalID = setInterval(getTransactionBreakdown, 15000);
 
     return () => clearInterval(intervalID);
   }, [input.args.amount, recipientBankAccountID]);
@@ -189,7 +184,11 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
 
       onDebounceTextChange.current.cancel();
       onDebounceTextChange.current({
-        args: { amount, sender: { cryptoAccountID } },
+        args: {
+          amount,
+          sender: { cryptoAccountID },
+          recipient: { bankAccountID: recipientBankAccountID },
+        },
       });
     } catch (error) {
       // TODO handle error
