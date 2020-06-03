@@ -32,7 +32,6 @@ const Component: React.FC<Props> = ({ classes, getTransactionBreakdownState }) =
     fee: { key: "Comisión IBEX (...)", value: <CircularProgress size={20} /> },
     tax: { key: "IVA (...)", value: <CircularProgress size={20} /> },
     total: { key: "Total", value: <CircularProgress size={20} /> },
-    exchangeRate: { key: "Tipo de cambio (...)", value: <CircularProgress size={20} /> },
   };
 
   return (

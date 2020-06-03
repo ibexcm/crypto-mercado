@@ -85,4 +85,16 @@ export class TransactionReceiptRepository {
   async exchangeRate(id: string): Promise<ExchangeRate> {
     return await this.db.transactionReceipt({ id }).exchangeRate();
   }
+
+  async evidence(id: string): Promise<ExchangeRate> {
+    return await this.db.transactionReceipt({ id }).evidence();
+  }
+
+  async bankReceipt(id: string): Promise<ExchangeRate> {
+    return await this.db.transactionReceiptEvidence({ id }).bankReceipt();
+  }
+
+  async bitcoinReceipt(id: string): Promise<ExchangeRate> {
+    return await this.db.transactionReceiptEvidence({ id }).bitcoinReceipt();
+  }
 }

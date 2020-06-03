@@ -66,7 +66,7 @@ const Component: React.FC<Props> = ({
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">
-                    {senderCryptoAccountCurrency.symbol}
+                    {recipientBankAccountCurrency.symbol}
                   </InputAdornment>
                 ),
               }}
