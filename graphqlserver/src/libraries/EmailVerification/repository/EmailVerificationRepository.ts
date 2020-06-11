@@ -15,7 +15,7 @@ const sendVerificationCode = async (address: string) => {
         from: "soporte@ibexcm.com",
         from_name: "IBEX Mercado",
         substitutions: {
-          url: `${host}/verifica-tu-correo?a=${address}`,
+          url: `${host}/kyc/verifica-tu-correo?a=${address}`,
         },
       },
       to: address,
