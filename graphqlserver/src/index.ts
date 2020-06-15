@@ -7,8 +7,10 @@ const { port, address, protocol, endpoint } = config.get("express");
 const dependencies = new Dependencies();
 const server = createServer(dependencies);
 
-server.createHttpServer({
-  ...server.options,
-}).listen(port, address, () => {
-  console.log(`Server is running on ${protocol}://${address}:${port}`);
-});
+server
+  .createHttpServer({
+    ...server.options,
+  })
+  .listen(port, address, () => {
+    console.log(`Server is running on ${protocol}://${address}:${port}`);
+  });

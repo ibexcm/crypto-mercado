@@ -169,6 +169,30 @@ const configuration = convict({
       arg: "twilio-token",
     },
   },
+
+  shiftMarkets: {
+    username: {
+      doc: "Shift Markets credentials:username",
+      format: "email",
+      default: null,
+      env: "SHIFTM_USERNAME",
+      arg: "shiftm-username",
+    },
+    password: {
+      doc: "Shift Markets credentials:password",
+      format: "*",
+      default: null,
+      env: "SHIFTM_PASSWORD",
+      arg: "shiftm-password",
+    },
+    exchangeName: {
+      doc: "Shift Markets Exchange Name",
+      format: "*",
+      default: "NEXUS",
+      env: "SHIFTM_EXCHANGE_NAME",
+      arg: "shiftm-exchange-name",
+    },
+  },
 });
 
 // Load environment dependent configuration
