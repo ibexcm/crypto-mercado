@@ -20,7 +20,3 @@ phases:
        - cd build
        - aws s3 sync --delete . "s3://ibexcm-staging-webclient"
        - aws cloudfront create-invalidation --distribution-id E1H1BLTX841JEC --paths '/*'
-artifacts:
-  files:
-     - '**/*'
-  base-directory: 'webclient/build'
