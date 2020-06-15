@@ -1,0 +1,22 @@
+version: 0.2
+
+phases:
+  install:
+    commands:
+       - yarn
+       - yarn bootstrap
+       - npm i -g prisma
+       - npm i -g typescript
+       - npm i -g ts-node
+  pre_build:
+    commands:
+       - yarn api:schema:generate
+  build:
+    commands:
+       - cd adminclient
+       - yarn build
+  post_build:
+    commands:
+       - cd build
+       - aws s3 sync --delete . "s3://ibexcm-staging-adminclient"
+       - aws cloudfront create-invalidation --distribution-id EXI6F83H81T3B --paths '/*'

@@ -20,14 +20,3 @@ services:
             port: ${DB_PORT}
             migrations: ${DB_MIGRATIONS}
             database: ${DB_DATABASE}
-  postgres:
-    container_name: ${DATABASE_CONTAINER_NAME}
-    image: postgres
-    restart: always
-    environment:
-      POSTGRES_USER: ${DB_USER}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-    volumes:
-      - postgres:/var/lib/postgresql/data
-volumes:
-  postgres: ~

@@ -4,7 +4,7 @@ import DependencyContext from "../../../common/contexts/DependencyContext";
 import { AuthTokenRepositoryInjectionKeys } from "../../authentication/InjectionKeys";
 
 const getApiClientUrl = (): string => {
-  return "https://apitest.ibexcm.com";
+  return "https://api.ibexcm.com";
 };
 
 const getClient = (authToken: string | undefined) => {
