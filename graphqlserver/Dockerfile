@@ -61,6 +61,4 @@ RUN yarn && \
 
 WORKDIR /app/src/crypto-mercado/graphqlserver
 
-RUN yarn test
-
 CMD ["yarn", "start"]
