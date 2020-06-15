@@ -13,14 +13,10 @@ phases:
        - yarn api:schema:generate
   build:
     commands:
-       - cd webclient
+       - cd adminclient
        - yarn build
   post_build:
     commands:
        - cd build
-       - aws s3 sync --delete . "s3://ibexcm-staging-webclient"
-       - aws cloudfront create-invalidation --distribution-id E1H1BLTX841JEC --paths '/*'
-artifacts:
-  files:
-     - '**/*'
-  base-directory: 'webclient/build'
+       - aws s3 sync --delete . "s3://ibexcm-staging-adminclient"
+       - aws cloudfront create-invalidation --distribution-id EXI6F83H81T3B --paths '/*'
