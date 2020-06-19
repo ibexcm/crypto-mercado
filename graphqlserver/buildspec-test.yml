@@ -1,0 +1,46 @@
+version: 0.2
+
+env:
+  parameter-store:
+    ADMIN_ACCOUNT_EMAIL_ADDRESS: "ADMIN_ACCOUNT_EMAIL_ADDRESS"
+    IP_ADDRESS: "IP_ADDRESS"
+    URL_PROTOCOL: "URL_PROTOCOL"
+    EMAIL_FROM: "EMAIL_FROM"
+    SENDGRID_API_KEY: "SENDGRID_API_KEY"
+    SENDGRID_API_URL: "SENDGRID_API_URL"
+    SENDGRID_TEMPLATE_HOST: "SENDGRID_TEMPLATE_HOST"
+    TWILIO_SID: "TWILIO_SID"
+    TWILIO_AID: "TWILIO_AID"
+    TWILIO_TOKEN: "TWILIO_TOKEN"
+    JWT_PRIVATE_KEY: "JWT_PRIVATE_KEY"
+    JWT_PUBLIC_KEY: "JWT_PUBLIC_KEY"
+    GRAPHQL_PORT: "GRAPHQL_PORT"
+    GRAPHQL_ENDPOINT: "GRAPHQL_ENDPOINT"
+    PRISMA_PORT: "PRISMA_PORT"
+    PRISMA_MANAGEMENT_API_SECRET: "PRISMA_MANAGEMENT_API_SECRET"
+    PRISMA_SECRET: "PRISMA_SECRET"
+    SHIFTM_USERNAME: "SHIFTM_USERNAME"
+    SHIFTM_PASSWORD: "SHIFTM_PASSWORD"
+    SHIFTM_EXCHANGE_NAME: "SHIFTM_EXCHANGE_NAME"
+  variables:
+    PRISMA_ENDPOINT: "http://prisma-test.staging.ibexcm.internal"
+    NODE_PATH: "/usr/local/lib/node_modules"
+phases:
+  install:
+    commands:
+      - npm i -g prisma
+      - npm i -g ts-node
+      - npm i -g typescript
+      - yarn
+      - yarn bootstrap
+  pre_build:
+    commands:
+      - aws ecs update-service --cluster test-ibex --service service-prisma --desired-count 1 >> out.txt
+      - yarn api:schema:generate
+  build:
+    commands:
+      - cd graphqlserver
+      - yarn test
+  post_build:
+    commands:
+      - aws ecs update-service --cluster test-ibex --service service-prisma --desired-count 0 >> out.txt
