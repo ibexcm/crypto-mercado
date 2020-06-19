@@ -25,6 +25,7 @@ env:
   variables:
     PRISMA_ENDPOINT: "http://prisma-test.staging.ibexcm.internal"
     NODE_PATH: "/usr/local/lib/node_modules"
+    NODE_ENV: "test"
 phases:
   install:
     commands:
@@ -37,7 +38,7 @@ phases:
     commands:
       - aws ecs update-service --cluster test-ibex --service service-prisma --desired-count 1 >> out.txt
       - yarn api:schema:generate
-  build:
+  test:
     commands:
       - cd graphqlserver
       - yarn test
