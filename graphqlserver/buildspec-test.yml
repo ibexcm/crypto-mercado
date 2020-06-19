@@ -38,7 +38,7 @@ phases:
     commands:
       - aws ecs update-service --cluster test-ibex --service service-prisma --desired-count 1 >> out.txt
       - yarn api:schema:generate
-  test:
+  build:
     commands:
       - cd graphqlserver
       - yarn test
