@@ -25,6 +25,7 @@ env:
   variables:
     PRISMA_ENDPOINT: "http://prisma-test.staging.ibexcm.internal:8000"
     NODE_PATH: "/usr/local/lib/node_modules"
+    NODE_ENV: "test"
 phases:
   install:
     commands:
