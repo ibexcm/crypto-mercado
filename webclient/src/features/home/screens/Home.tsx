@@ -1,9 +1,6 @@
 import { SendPhoneNumberVerificationCodeInput } from "@ibexcm/libraries/api";
 import {
   Box,
-  Card,
-  CardActions,
-  CardContent,
   Container,
   Grid,
   Hidden,
@@ -19,7 +16,6 @@ import { styles } from "../../../common/theme";
 import routes from "../../../routes";
 import { OnboardingRepositoryInjectionKeys } from "../../onboarding/InjectionKeys";
 import { Footer, MobileNavBar, NavBar } from "../components";
-import { ReactComponent as ScrollDownIcon } from "../components/scroll-down-icon.svg";
 
 interface Props
   extends WithStyles,
@@ -67,30 +63,29 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
           <MobileNavBar />
           <NavBar />
           <Box
-            minHeight="100vh"
+            minHeight="70vh"
             flexDirection="column"
             display="flex"
             justifyContent="center"
+            py={7}
           >
             <Hidden smUp>
               <ToolbarPadding />
             </Hidden>
-            <Box className={classes.introHeader} mb={3}>
+            <Box className={classes.introHeader}>
               <Typography variant="h1">
                 ACTIVOS DIGITALES <Typography component="span">EN QUETZALES</Typography>
               </Typography>
             </Box>
+            <Box className={classes.chevronDown} my={4}>
+              <img src="/svg/chevron-down.svg" width={24} height="auto" />
+            </Box>
             <Container maxWidth="md" style={{ minHeight: "auto" }}>
               <Box className={classes.introText}>
                 <Typography variant="h2" mb={3}>
-                  IBEX Mercado es una empresa reconocida en Guatemala por la calidad y
-                  rapidez de su servicio de intercambio de activos digitales y activos FIAT.
+                  LA COMISIÓN MÁS BAJA
                 </Typography>
-                <Typography variant="h2">
-                  Obtén las mejores tasas del país
-                  <br />
-                  sin custodia de tus llaves privadas.
-                </Typography>
+                <Typography variant="h2">DEL MERCADO</Typography>
               </Box>
             </Container>
             <Hidden only={["xs", "sm", "lg", "md", "xl"]}>
@@ -109,68 +104,66 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
             </Hidden>
           </Box>
         </Container>
-        <Hidden mdDown>
-          <Box py={3} className={classes.scrollDownIcon}>
-            <ScrollDownIcon />
-          </Box>
-        </Hidden>
+        <Box className={classes.cryptoIconsBox}>
+          <Container maxWidth="md" style={{ minHeight: "auto" }}>
+            <Grid container justify="center" wrap="nowrap">
+              <Grid item xs={4} lg={2}>
+                <Box className={classes.iconBox}>
+                  <img src="/svg/bitcoin-circle.svg" width={70} height="auto" />
+                </Box>
+              </Grid>
+              <Grid item xs={4} lg={2}>
+                <Box className={classes.iconBox}>
+                  <img src="/svg/ether-circle.svg" width={70} height="auto" />
+                </Box>
+              </Grid>
+              <Grid item xs={4} lg={2}>
+                <Box className={classes.iconBox}>
+                  <img src="/svg/tether-circle.svg" width={70} height="auto" />
+                </Box>
+              </Grid>
+            </Grid>
+          </Container>
+        </Box>
       </Box>
-      <Box className={classes.featuresSectionBox} py={5}>
+      <Box className={classes.descriptionSectionBox} py={8}>
+        <Container style={{ minHeight: "auto" }} maxWidth="lg">
+          <Typography variant="h5" mb={3}>
+            Transferencias directas a tu wallet / cuenta bancaria en menos de 24 hrs
+          </Typography>
+          <Typography variant="h5" mb={3}>
+            Deposita en nuestra cuenta de “servicios” en BAC Credomatic
+          </Typography>
+          <Typography variant="h5">
+            Te proveemos liquidez constante a través de shiftmarkets.com en N.Y. - EE.UU.
+          </Typography>
+        </Container>
+      </Box>
+      <Box className={classes.otcSectionBox} py={8}>
+        <Container style={{ minHeight: "auto" }} maxWidth="lg">
+          <Typography variant="h4" color="primary" align="center" mb={4}>
+            Contáctanos para una atención personalizada
+          </Typography>
+          <Grid container justify="center" spacing={4}>
+            <Grid item>
+              <Typography variant="h4" color="primary" align="center">
+                OTC Desk
+              </Typography>
+            </Grid>
+            <Grid item>
+              <Button onClick={onContactSupport} variant="contained" color="primary">
+                <img src="/svg/whatsapp-icon.svg" width={21} />
+                <Typography variant="span" ml={2}>
+                  45118238
+                </Typography>
+              </Button>
+            </Grid>
+          </Grid>
+        </Container>
+      </Box>
+      <Box className={classes.connectionSectionBox} py={8}>
         <Container style={{ minHeight: "auto" }} maxWidth="md">
-          <Box mb={4}>
-            <Grid container spacing={2} justify="space-between">
-              <Grid item lg={5} xs={12}>
-                <Card>
-                  <CardContent className={classes.cardContent}>
-                    <Typography variant="h5">
-                      La mejor tarifa
-                      <br />
-                      del mercado guatemalteco
-                    </Typography>
-                  </CardContent>
-                </Card>
-              </Grid>
-              <Grid item lg={5} xs={12}>
-                <Card>
-                  <CardContent className={classes.cardContent}>
-                    <Typography variant="h5">
-                      Transferencias directas a tu wallet / cuenta bancaria en menos de 24
-                      hrs
-                    </Typography>
-                  </CardContent>
-                </Card>
-              </Grid>
-            </Grid>
-          </Box>
-          <Box>
-            <Grid container spacing={2} justify="space-between">
-              <Grid item lg={5} xs={12}>
-                <Card>
-                  <CardContent className={classes.cardContent}>
-                    <Typography variant="h5">
-                      Deposita / transfiere tus Q's o USD's a nuestras cuentas en el BAC
-                    </Typography>
-                  </CardContent>
-                </Card>
-              </Grid>
-              <Grid item lg={5} xs={12}>
-                <Card>
-                  <CardContent className={classes.cardContent}>
-                    <Typography variant="h5">
-                      Contacta a nuestro
-                      <br />
-                      OTC-Desk aquí
-                    </Typography>
-                  </CardContent>
-                  <CardActions style={{ justifyContent: "flex-end" }}>
-                    <Button onClick={onContactSupport} variant="contained" color="primary">
-                      OTC Desk
-                    </Button>
-                  </CardActions>
-                </Card>
-              </Grid>
-            </Grid>
-          </Box>
+          <img src="/svg/conexion-divider.svg" width="100%" />
         </Container>
       </Box>
       <Footer />
@@ -191,6 +184,9 @@ export const Home = withStyles((theme: Theme) => ({
     flexDirection: "column",
     justifyContent: "center",
   },
+  otcSectionBox: {
+    backgroundColor: theme.palette.grey[100],
+  },
   cardContent: {
     minHeight: 180,
     textAlign: "center",
@@ -201,7 +197,9 @@ export const Home = withStyles((theme: Theme) => ({
       fontWeight: theme.typography.body1.fontWeight,
     },
   },
-  introContainer: {},
+  introContainer: {
+    minHeight: "auto",
+  },
   scrollDownIcon: {
     position: "absolute",
     display: "flex",
@@ -221,11 +219,16 @@ export const Home = withStyles((theme: Theme) => ({
     "& span": {
       display: "block",
       fontSize: theme.typography.h4.fontSize,
-      fontWeight: 900,
+      marginTop: theme.spacing(2),
       [theme.breakpoints.up("sm")]: {
-        fontSize: theme.typography.h2.fontSize,
+        fontSize: theme.typography.h3.fontSize,
       },
     },
+  },
+  chevronDown: {
+    display: "flex",
+    justifyContent: "center",
+    flexDirection: "row",
   },
   introText: {
     textAlign: "center",
@@ -236,6 +239,27 @@ export const Home = withStyles((theme: Theme) => ({
         fontSize: theme.typography.h5.fontSize,
       },
     },
+  },
+  cryptoIconsBox: {
+    position: "absolute",
+    width: "100%",
+    bottom: -32,
+    left: 0,
+    "& img": {},
+  },
+  iconBox: {
+    display: "flex",
+    justifyContent: "center",
+  },
+  descriptionSectionBox: {
+    background: "white",
+    textAlign: "center",
+    "& h5": {
+      fontWeight: theme.typography.body1.fontWeight,
+    },
+  },
+  connectionSectionBox: {
+    background: "white",
   },
   listItem: {
     color: "white",
