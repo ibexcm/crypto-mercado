@@ -35,8 +35,8 @@ const Component: React.FC<Props> = ({ classes, history, match, ...props }) => {
             Revisaremos tu documentación y te notificaremos en caso de aprobación.
           </Typography>
           <Typography mb={4}>
-            Una vez aprobada, podrás realizar transacciones en la plataforma hasta por
-            US$10,000.00 al mes.
+            Una vez aprobada, podrás realizar transacciones en la plataforma hasta por GTQ
+            70,000.00 al mes.
           </Typography>
           <Button
             color="primary"
