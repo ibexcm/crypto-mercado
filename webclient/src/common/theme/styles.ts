@@ -1,8 +1,8 @@
 import { Theme } from "@material-ui/core";
 
-export const toolbarHeightDesktop = 98;
+export const toolbarHeightDesktop = 120;
 export const toolbarHeightMobile = 56;
-export const logoWidthDesktop = 161;
+export const logoWidthDesktop = 120;
 export const logoWidthMobile = 49;
 
 export const styles = (theme: Theme) => ({
