@@ -2,6 +2,7 @@ import { prisma as db } from "@ibexcm/database";
 import { TestDependencies } from "@ibexcm/libraries/di";
 import { CurrencySymbol } from "@ibexcm/libraries/models/currency";
 import { config } from "../../../../config";
+import { BitcoinAPIRepositoryInjectionKey } from "../../../../libraries/Crypto/InjectionKeys";
 import {
   emailNotificationsRepositoryInjectionKey,
   emailVerificationRepositoryInjectionKey,
@@ -19,6 +20,7 @@ import {
   mockSMSVerificationRepository,
 } from "../../../../__test-utils__/mocks";
 import GraphQLClient from "../../../../__test-utils__/mocks/GraphQLClient";
+import MockBitcoinAPIRepository from "../../../../__test-utils__/mocks/MockBitcoinAPIRepository";
 
 const { adminAccountEmailAddress } = config.get("flags");
 
@@ -27,6 +29,7 @@ describe("getTransactionBreakdown", () => {
   const smsVerificationRepository = mockSMSVerificationRepository();
   const emailVerificationRepository = mockEmailVerificationRepository();
   const emailNotificationsRepository = mockEmailNotificationsRepository();
+  const bitcoinApiRepository = new MockBitcoinAPIRepository();
   dependencies.override(
     smsVerificationRepositoryInjectionKey,
     _ => smsVerificationRepository,
@@ -39,6 +42,7 @@ describe("getTransactionBreakdown", () => {
     emailNotificationsRepositoryInjectionKey,
     _ => emailNotificationsRepository,
   );
+  dependencies.override(BitcoinAPIRepositoryInjectionKey, _ => bitcoinApiRepository);
 
   const server = new MockServer(dependencies);
 
@@ -82,6 +86,8 @@ describe("getTransactionBreakdown", () => {
       },
       token,
     );
+
+    expect(bitcoinApiRepository.getCurrentPriceByCurrencySymbol).toHaveBeenCalledTimes(1);
 
     expect(getTransactionBreakdown.price.key).toBeDefined();
     expect(getTransactionBreakdown.price.value).toBeDefined();
@@ -143,6 +149,8 @@ describe("getTransactionBreakdown", () => {
       },
       token,
     );
+
+    expect(bitcoinApiRepository.getCurrentPriceByCurrencySymbol).toHaveBeenCalledTimes(2);
 
     expect(getTransactionBreakdown.price.key).toBeDefined();
     expect(getTransactionBreakdown.price.value).toBeDefined();
