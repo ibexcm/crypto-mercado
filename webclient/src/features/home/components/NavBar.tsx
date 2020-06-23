@@ -18,20 +18,18 @@ interface IMobileAppBarProps extends WithStyles {}
 const Component: React.FC<IMobileAppBarProps> = ({ classes }) => {
   return (
     <Hidden smDown>
-      <AppBar position="fixed" color="primary" elevation={0}>
+      <AppBar position="absolute" color="transparent" elevation={0}>
         <Container maxWidth="lg" disableGutters style={{ minHeight: "auto" }}>
           <Toolbar className={classes.toolbar}>
             <Box className={classes.logoBox}>
               <Link to={routes.root}>
-                <img src="/svg/ibex-logo-white.svg" width="100%" height="auto" />
+                <img src="/svg/ibex-logo-no-icon-white.svg" width="100%" height="auto" />
               </Link>
             </Box>
-            <Box className={classes.some}>
-              <Hidden only={["xs", "sm", "lg", "md", "xl"]}>
-                <Link to={routes.root} className={classes.navBarLink}>
-                  INICIAR SESIÓN
-                </Link>
-              </Hidden>
+            <Box className={classes.iconBox}>
+              <Link to={routes.root}>
+                <img src="/svg/ibex-icon-white.svg" width="100%" height="auto" />
+              </Link>
             </Box>
           </Toolbar>
         </Container>
@@ -44,6 +42,11 @@ export const NavBar = withStyles((theme: Theme) => ({
   ...styles(theme),
   logoBox: {
     width: logoWidthDesktop,
+    flexDirection: "column",
+    justifyContent: "center",
+  },
+  iconBox: {
+    width: logoWidthDesktop * 0.55,
     flexDirection: "column",
     justifyContent: "center",
   },
