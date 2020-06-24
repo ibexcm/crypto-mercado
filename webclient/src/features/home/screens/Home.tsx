@@ -134,9 +134,6 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
           <Typography variant="h5" mb={3}>
             Deposita en nuestra cuenta de “servicios” en BAC Credomatic
           </Typography>
-          <Typography variant="h5">
-            Te proveemos liquidez constante a través de shiftmarkets.com en N.Y. - EE.UU.
-          </Typography>
         </Container>
       </Box>
       <Box className={classes.otcSectionBox} py={8}>
