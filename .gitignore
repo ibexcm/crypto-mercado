@@ -26,3 +26,4 @@ yarn-error.log
 lerna-debug.log
 .vscode
 tmp/
+infra/packed-nested-stacks.yml

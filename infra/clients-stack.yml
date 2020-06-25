@@ -1,1 +1,165 @@
-#TODO
+AWSTemplateFormatVersion: 2010-09-09
+Description: Plantilla Base para Web Clients
+
+# Definicion de Parametros
+Parameters: 
+  EnvTag:
+    Type: String
+  CertificadoARN:
+    Type: String
+  KMSKeyARN:
+    Type: String
+
+# Definicion de recursos
+Resources:
+  # Bucket de S3 para WebClient
+  myBucketWeb:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Join [ "-", [ !Ref EnvTag, "ibexcm-webclient" ] ]
+      BucketEncryption: 
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              KMSMasterKeyID: !Ref KMSKeyARN
+              SSEAlgorithm: aws:kms
+      Tags:
+        - Key: Env
+          Value: !Ref EnvTag
+  # Configuracion de acceso a CloudFront
+  myCfOriginAccessIdentityWeb:
+    Type: 'AWS::CloudFront::CloudFrontOriginAccessIdentity'
+    Properties:
+      CloudFrontOriginAccessIdentityConfig:
+        Comment: !Ref myBucketWeb
+  # Politica de S3. Permite a cloudfront acceder a S3 de bucket
+  myPolicyWeb:
+    Type: 'AWS::S3::BucketPolicy'
+    Properties:
+      Bucket: !Ref myBucketWeb
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Action: 's3:GetObject'
+            Effect: Allow
+            Resource: !Sub 'arn:aws:s3:::${myBucketWeb}/*'
+            Principal: 
+              CanonicalUser: !GetAtt myCfOriginAccessIdentityWeb.S3CanonicalUserId
+  # Distribucion de cloudfront
+  myCfWeb:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        Aliases:
+          - web.ibexcm.com
+        CustomErrorResponses:
+          - ErrorCode: 403 
+            ResponseCode: 200
+            ResponsePagePath: '/index.html'
+        DefaultCacheBehavior:
+          AllowedMethods:
+            - GET
+            - HEAD
+            - OPTIONS
+            - PUT 
+            - POST 
+            - PATCH
+            - DELETE
+          ForwardedValues: 
+            Cookies:
+              Forward: none
+            QueryString: false
+          TargetOriginId: s3origin
+          ViewerProtocolPolicy: redirect-to-https
+        DefaultRootObject: '/index.html'
+        Enabled: true
+        HttpVersion: http2
+        IPV6Enabled: true
+        PriceClass: PriceClass_100
+        Origins:
+          - DomainName: !GetAtt 'myBucketWeb.DomainName'
+            Id: s3origin
+            S3OriginConfig: 
+              OriginAccessIdentity: !Sub 'origin-access-identity/cloudfront/${myCfOriginAccessIdentityWeb}'
+        ViewerCertificate:
+          AcmCertificateArn: !Ref CertificadoARN
+          MinimumProtocolVersion: TLSv1.2_2018
+          SslSupportMethod: sni-only
+      Tags:
+        - Key: Env
+          Value: !Ref EnvTag
+
+  # Bucket de S3 para AdminClient
+  myBucketAdmin:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Join [ "-", [ !Ref EnvTag, "ibexcm-adminclient" ] ]
+      BucketEncryption: 
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              KMSMasterKeyID: !Ref KMSKeyARN
+              SSEAlgorithm: aws:kms
+      Tags:
+        - Key: Env
+          Value: !Ref EnvTag
+  # Configuracion de acceso a CloudFront
+  myCfOriginAccessIdentityAdmin:
+    Type: 'AWS::CloudFront::CloudFrontOriginAccessIdentity'
+    Properties:
+      CloudFrontOriginAccessIdentityConfig:
+        Comment: !Ref myBucketAdmin
+  # Politica de S3. Permite a cloudfront acceder a S3 de bucket
+  myPolicyAdmin:
+    Type: 'AWS::S3::BucketPolicy'
+    Properties:
+      Bucket: !Ref myBucketAdmin
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Action: 's3:GetObject'
+            Effect: Allow
+            Resource: !Sub 'arn:aws:s3:::${myBucketAdmin}/*'
+            Principal: 
+              CanonicalUser: !GetAtt myCfOriginAccessIdentityAdmin.S3CanonicalUserId
+  # Distribucion de cloudfront
+  myCfAdmin:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        Aliases:
+          - adminweb.ibexcm.com
+        CustomErrorResponses:
+          - ErrorCode: 403 
+            ResponseCode: 200
+            ResponsePagePath: '/index.html'
+        DefaultCacheBehavior:
+          AllowedMethods:
+            - GET
+            - HEAD
+            - OPTIONS
+            - PUT 
+            - POST 
+            - PATCH
+            - DELETE
+          ForwardedValues: 
+            Cookies:
+              Forward: none
+            QueryString: false
+          TargetOriginId: s3origin
+          ViewerProtocolPolicy: redirect-to-https
+        DefaultRootObject: '/index.html'
+        Enabled: true
+        HttpVersion: http2
+        IPV6Enabled: true
+        PriceClass: PriceClass_100
+        Origins:
+          - DomainName: !GetAtt 'myBucketAdmin.DomainName'
+            Id: s3origin
+            S3OriginConfig: 
+              OriginAccessIdentity: !Sub 'origin-access-identity/cloudfront/${myCfOriginAccessIdentityAdmin}'
+        ViewerCertificate:
+          AcmCertificateArn: !Ref CertificadoARN
+          MinimumProtocolVersion: TLSv1.2_2018
+          SslSupportMethod: sni-only
+      Tags:
+        - Key: Env
+          Value: !Ref EnvTag

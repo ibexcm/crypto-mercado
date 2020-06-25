@@ -122,11 +122,14 @@ Parameters:
   CertificadoARN:
     Type: String
     Description: ARN del certificado para ALB Front
+  KMSKeyARN:
+    Type: String
+    Description: ARN de llave de KMS
 Resources:
   VPCStack:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: https://s3.us-east-1.amazonaws.com/ibexcm-templates/a678eadb403e336a4eaea45e6f84d5c6.template
+      TemplateURL: https://s3.amazonaws.com/ibexcm-templates/a678eadb403e336a4eaea45e6f84d5c6.template
       Parameters:
         TipoAmbiente:
           Ref: TipoAmbiente
@@ -155,7 +158,7 @@ Resources:
   SGStack:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: https://s3.us-east-1.amazonaws.com/ibexcm-templates/0ae4405755befe94be2d13764b0298c7.template
+      TemplateURL: https://s3.amazonaws.com/ibexcm-templates/0ae4405755befe94be2d13764b0298c7.template
       Parameters:
         EnvTag:
           Ref: EnvTag
@@ -166,7 +169,7 @@ Resources:
   ComputeStack:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: https://s3.us-east-1.amazonaws.com/ibexcm-templates/269bd1c6f50fea69e52c6c530cf69467.template
+      TemplateURL: https://s3.amazonaws.com/ibexcm-templates/269bd1c6f50fea69e52c6c530cf69467.template
       Parameters:
         EnvTag:
           Ref: EnvTag
@@ -206,3 +209,14 @@ Resources:
           Fn::GetAtt:
           - SGStack
           - Outputs.albPrivSg
+  ClientsStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: https://s3.amazonaws.com/ibexcm-templates/9d70e295c9428f4f722d5528ec60e98d.template
+      Parameters:
+        EnvTag:
+          Ref: EnvTag
+        CertificadoARN:
+          Ref: CertificadoARN
+        KMSKeyARN:
+          Ref: KMSKeyARN

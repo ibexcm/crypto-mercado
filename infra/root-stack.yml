@@ -122,6 +122,9 @@ Parameters:
   CertificadoARN:
     Type: String
     Description: ARN del certificado para ALB Front
+  KMSKeyARN:
+    Type: String
+    Description: ARN de llave de KMS
 
 # Nested stacks
 Resources:
@@ -165,3 +168,11 @@ Resources:
         bastionLinuxSg: !GetAtt SGStack.Outputs.bastionLinuxSg
         albFrontSg: !GetAtt SGStack.Outputs.albFrontSg
         albPrivSg: !GetAtt SGStack.Outputs.albPrivSg
+  ClientsStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: clients-stack.yml
+      Parameters:
+        EnvTag: !Ref EnvTag
+        CertificadoARN: !Ref CertificadoARN
+        KMSKeyARN: !Ref KMSKeyARN
