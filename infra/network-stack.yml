@@ -1,0 +1,313 @@
+# igarcia 2019-10
+# version: 15
+# Para ambiente PROD, crea: 1 VPC, 2 subnets publicas, 2 subnets privadas, Opcional: 2 subnets privadas para RDS, IG, 2 NG, y sus route tables, 3 sg (windows, linux y db)
+# Para ambiente TEST, crea: 1 VPC, 2 subnets publicas, 2 subnets privadas, Opcional: 2 subnets privadas para RDS, IG, 1 NG, y sus route tables, 3 sg (windows, linux y db)
+AWSTemplateFormatVersion: 2010-09-09
+Description: Plantilla Base para VPC
+
+# Definicion de Parametros
+Parameters: 
+  TipoAmbiente:
+    Type: String
+    Description: "Tipo de Ambiente para VPC: PROD, TEST"
+  AmbienteDBseparado:
+    Type: String
+    Description: "Arquitectura de 3 capas contempla subnet privada adicional para DB"
+  VPCcidr:
+    Type: String
+    Description: Rango CIDR para VPC
+  SubnetPublicAcidr:
+    Type: String
+    Description: Rango CIDR para Subnet Publica A
+  SubnetPublicBcidr:
+    Type: String
+    Description: Rango CIDR para Subnet Publica B
+  SubnetPrivateAcidr:
+    Type: String
+    Description: Rango CIDR para Subnet Privada A
+  SubnetPrivateBcidr:
+    Type: String
+    Description: Rango CIDR para Subnet Privada B
+  SubnetDBPrivateAcidr:
+    Type: String
+    Description: Rango CIDR para Subnet DB Privada A
+  SubnetDBPrivateBcidr:
+    Type: String
+    Description: Rango CIDR para Subnet DB Privada B
+  EnvTag:
+    Type: String
+  AvailabilityZoneA:
+    Type: AWS::EC2::AvailabilityZone::Name
+    Description: AZ para lado A
+  AvailabilityZoneB:
+    Type: AWS::EC2::AvailabilityZone::Name
+    Description: AZ para lado B
+
+# Determina si el recurso sera para Produccion o para Test
+Conditions:
+  condAmbientePRO: !Or [ !Equals [ !Ref TipoAmbiente, PROD ], !Equals [ !Ref TipoAmbiente, prod ] ]
+  condAmbienteTEST: !Or [ !Equals [ !Ref TipoAmbiente, TEST ], !Equals [ !Ref TipoAmbiente, test ] ]
+  condAmbienteDBsi: !Equals [ !Ref AmbienteDBseparado, "SI" ]
+  condAmbienteDBno: !Equals [ !Ref AmbienteDBseparado, "NO" ]
+  conditionTestandDB: !And [ !Condition condAmbienteTEST, !Condition condAmbienteDBsi ]
+  conditionProdandDB: !And [ !Condition condAmbientePRO, !Condition condAmbienteDBsi ]
+
+# Definicion de los Recursos a Crear
+Resources: 
+  myVPC: #Creacion de VPC
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: !Ref VPCcidr
+      EnableDnsSupport: 'true'
+      EnableDnsHostnames: 'true'
+      InstanceTenancy: default
+      Tags:
+        - Key: Name
+          Value: !Join [ "-", [ "VPC", !Ref EnvTag ] ]
+        - Key: Env
+          Value: !Ref EnvTag
+  myIG: #Creacion de Internet Gateway
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: Name
+          Value: !Join [ "-", [ "IGW", !Ref EnvTag ] ]
+        - Key: Env
+          Value: !Ref EnvTag
+  AttachGateway: #Se atacha el Internet Gateway a la VPC
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId: !Ref myVPC
+      InternetGatewayId: !Ref myIG
+  mySubnetPublicA: #Creacion de Subnet Publica A
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: !Ref AvailabilityZoneA
+      VpcId: !Ref myVPC
+      CidrBlock: !Ref SubnetPublicAcidr
+      MapPublicIpOnLaunch: 'true'
+      Tags:
+        - Key: Name
+          Value: !Join [ "-", [ "SubnetPublicA", !Ref EnvTag ] ]
+        - Key: Env
+          Value: !Ref EnvTag
+  mySubnetPublicB: #Creacion de Subnet Publica B
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: !Ref AvailabilityZoneB    
+      VpcId: !Ref myVPC
+      CidrBlock: !Ref SubnetPublicBcidr
+      MapPublicIpOnLaunch: 'true'
+      Tags:
+        - Key: Name
+          Value: !Join [ "-", [ "SubnetPublicB", !Ref EnvTag ] ]
+        - Key: Env
+          Value: !Ref EnvTag
+  mySubnetPrivateA: #Creacion de Subnet Privada A en la misma AZ que la Publica A
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: !GetAtt mySubnetPublicA.AvailabilityZone #AZ correspondiente a SubnetPublicaA
+      VpcId: !Ref myVPC
+      CidrBlock: !Ref SubnetPrivateAcidr
+      Tags:
+        - Key: Name
+          Value: !Join [ "-", [ "SubnetPrivateA", !Ref EnvTag ] ]
+        - Key: Env
+          Value: !Ref EnvTag
+  mySubnetPrivateB: #Creacion de Subnet Privada B en la misma AZ que la Publica B
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: !GetAtt mySubnetPublicB.AvailabilityZone #AZ correspondiente a SubnetPublicaB
+      VpcId: !Ref myVPC
+      CidrBlock: !Ref SubnetPrivateBcidr
+      Tags:
+        - Key: Name
+          Value: !Join [ "-", [ "SubnetPrivateB", !Ref EnvTag ] ]
+        - Key: Env
+          Value: !Ref EnvTag
+  mySubnetDBPrivateA: #Creacion de Subnet DB Privada A en la misma AZ que la Publica A
+    Type: AWS::EC2::Subnet
+    Condition: condAmbienteDBsi
+    Properties:
+      AvailabilityZone: !GetAtt mySubnetPublicA.AvailabilityZone #AZ correspondiente a SubnetPublicaA
+      VpcId: !Ref myVPC
+      CidrBlock: !Ref SubnetDBPrivateAcidr
+      Tags:
+        - Key: Name
+          Value: !Join [ "-", [ "SubnetDBPrivateA", !Ref EnvTag ] ]
+        - Key: Env
+          Value: !Ref EnvTag
+  mySubnetDBPrivateB: #Creacion de Subnet DB Privada B en la misma AZ que la Publica A
+    Type: AWS::EC2::Subnet
+    Condition: condAmbienteDBsi
+    Properties:
+      AvailabilityZone: !GetAtt mySubnetPublicB.AvailabilityZone #AZ correspondiente a SubnetPublicaB
+      VpcId: !Ref myVPC
+      CidrBlock: !Ref SubnetDBPrivateBcidr
+      Tags:
+        - Key: Name
+          Value: !Join [ "-", [ "SubnetDBPrivateB", !Ref EnvTag ] ]
+        - Key: Env
+          Value: !Ref EnvTag
+  myEPI4myNGA: #Creacion de EIPA para NAT GatewayA
+    Type: AWS::EC2::EIP
+    DependsOn: myIG
+    Properties:
+      Domain: vpc
+  myNGA: #Creacion de NAT GatewayA sobre Subnet PublicaA
+    Type: AWS::EC2::NatGateway
+    DependsOn: myEPI4myNGA
+    Properties:
+      AllocationId: !GetAtt myEPI4myNGA.AllocationId
+      SubnetId: !Ref mySubnetPublicA
+      Tags:
+        - Key: Name
+          Value: !Join [ "-", [ "NGWA", !Ref EnvTag ] ]
+        - Key: Env
+          Value: !Ref EnvTag
+  myEPI4myNGB: #Creacion de EIPB para NAT GatewayB
+    Type: AWS::EC2::EIP
+    Condition: condAmbientePRO
+    DependsOn: myIG
+    Properties:
+      Domain: vpc
+  myNGB: #Creacion de NAT GatewayB sobre Subnet PublicaB
+    Type: AWS::EC2::NatGateway
+    Condition: condAmbientePRO
+    DependsOn: myEPI4myNGB
+    Properties:
+      AllocationId: !GetAtt myEPI4myNGB.AllocationId
+      SubnetId: !Ref mySubnetPublicB
+      Tags:
+        - Key: Name
+          Value: !Join [ "-", [ "NGWB", !Ref EnvTag ] ]
+        - Key: Env
+          Value: !Ref EnvTag
+  myPublicRT: #Creacion de Route Table Publica
+    Type: AWS::EC2::RouteTable
+    DependsOn: myIG
+    Properties:
+      VpcId: !Ref myVPC
+      Tags:
+        - Key: Name
+          Value: !Join [ "-", [ "PublicRT", !Ref EnvTag ] ]
+        - Key: Env
+          Value: !Ref EnvTag
+  routeToIG: #Creacion de Ruta hacia Internet Gateway
+    Type: AWS::EC2::Route
+    DependsOn: myPublicRT
+    Properties:
+      RouteTableId: !Ref myPublicRT
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref myIG
+  routeTableAssocNamePublicA: #Asocia la Route Table Publica con la Subnet PublicaA 
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    DependsOn: myPublicRT
+    Properties:
+      SubnetId: !Ref mySubnetPublicA
+      RouteTableId: !Ref myPublicRT
+  routeTableAssocNamePublicB: #Asocia la Route Table Publica con la Subnet PublicaB
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    DependsOn: myPublicRT
+    Properties:
+      SubnetId: !Ref mySubnetPublicB
+      RouteTableId: !Ref myPublicRT
+  myPrivateART: #Creacion de Route Table PrivadaA
+    Type: AWS::EC2::RouteTable
+    DependsOn: myNGA
+    Properties:
+      VpcId: !Ref myVPC
+      Tags:
+        - Key: Name
+          Value: !Join [ "-", [ "PrivateART", !Ref EnvTag ] ]
+        - Key: Env
+          Value: !Ref EnvTag
+  routeToNGA: #Creacion de Ruta hacia NAT GatewayA
+    Type: AWS::EC2::Route
+    DependsOn: myPrivateART
+    Properties:
+      RouteTableId: !Ref myPrivateART
+      DestinationCidrBlock: 0.0.0.0/0
+      NatGatewayId: !Ref myNGA
+  routeTableAssocNamePrivateA: #Asocia la Route Table PrivadaA con la Subnet PrivadaA
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    DependsOn: myPrivateART
+    Properties:
+      SubnetId: !Ref mySubnetPrivateA
+      RouteTableId: !Ref myPrivateART
+  routeTableAssocNameDBPrivateA: #Asocia la Route Table PrivadaA con la Subnet DBPrivadaA si es ambiente DB = SI
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Condition: condAmbienteDBsi
+    DependsOn: myPrivateART
+    Properties:
+      SubnetId: !Ref mySubnetDBPrivateA
+      RouteTableId: !Ref myPrivateART
+  routeTableAssocNamePrivateBTest: #Asocia la Route Table PrivadaA con la Subnet PrivadaB si es ambiente TEST
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Condition: condAmbienteTEST
+    DependsOn: myPrivateART
+    Properties:
+      SubnetId: !Ref mySubnetPrivateB
+      RouteTableId: !Ref myPrivateART
+  routeTableAssocNameDBPrivateBTest: #Asocia la Route Table PrivadaA con la Subnet DB PrivadaB si es ambiente TEST y DB = SI
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Condition: conditionTestandDB
+    DependsOn: myPrivateART
+    Properties:
+      SubnetId: !Ref mySubnetDBPrivateB
+      RouteTableId: !Ref myPrivateART
+  myPrivateBRT: #Creacion de Route Table PrivadaB
+    Type: AWS::EC2::RouteTable
+    Condition: condAmbientePRO
+    DependsOn: myNGB
+    Properties:
+      VpcId: !Ref myVPC
+      Tags:
+        - Key: Name
+          Value: !Join [ "-", [ "PrivateBRT", !Ref EnvTag ] ]
+        - Key: Env
+          Value: !Ref EnvTag
+  routeToNGB: #Creacion de Ruta hacia NAT GatewayB
+    Type: AWS::EC2::Route
+    Condition: condAmbientePRO
+    DependsOn: myPrivateBRT
+    Properties:
+      RouteTableId: !Ref myPrivateBRT
+      DestinationCidrBlock: 0.0.0.0/0
+      NatGatewayId: !Ref myNGB
+  routeTableAssocNamePrivateB: #Asocia la Route Table PrivadaB con la Subnet PrivadaB si es PRO
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Condition: condAmbientePRO
+    DependsOn: myPrivateBRT
+    Properties:
+      SubnetId: !Ref mySubnetPrivateB
+      RouteTableId: !Ref myPrivateBRT
+  routeTableAssocNameDBPrivateB: #Asocia la Route Table PrivadaB con la Subnet DB PrivadaB si es PRO y DB = SI
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Condition: conditionProdandDB
+    Properties:
+      SubnetId: !Ref mySubnetDBPrivateB
+      RouteTableId: !Ref myPrivateBRT
+
+Outputs: #Salida a mostrarse en la pantalla
+  RegionRecursos:
+    Description: Region donde se crearon los Recursos
+    Value: !Ref "AWS::Region" #Pseudo Parameter
+  CIDRblockVPC:
+    Description: Bloque de IPs para la VPC
+    Value: !Ref VPCcidr
+  VPCID:
+    Description: VPC ID
+    Value: !Ref myVPC
+  subnetPublicA:
+    Description: Subnet public A ID
+    Value: !Ref mySubnetPublicA
+  subnetPublicB:
+    Description: Subnet public B ID
+    Value: !Ref mySubnetPublicB
+  subnetPrivateA:
+    Description: Subnet private A ID
+    Value: !Ref mySubnetPrivateA
+  subnetPrivateB:
+    Description: Subnet private B ID
+    Value: !Ref mySubnetPrivateB

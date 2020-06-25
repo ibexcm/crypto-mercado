@@ -1,0 +1,154 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: Plantilla Base para grupos de seguridad
+
+# Definicion de Parametros
+Parameters: 
+  EnvTag:
+    Type: String
+  VPCID:
+    Type: String
+  Keyparam:
+    Type: String
+  CertificadoARN:
+    Type: String
+  bastionLinuxSg:
+    Type: String
+  albFrontSg:
+    Type: String
+  albPrivSg:
+    Type: String
+  subnetPublicA:
+    Type: String
+  subnetPublicB:
+    Type: String
+  subnetPrivateA:
+    Type: String
+  subnetPrivateB:
+    Type: String
+
+# Definicion de Parametros
+Resources:
+  myBastionLinuxEC2:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: ami-09d95fab7fff3776c
+      KeyName: !Ref Keyparam
+      InstanceType: t3a.nano
+      SecurityGroupIds: 
+        - !Ref bastionLinuxSg
+      SubnetId: !Ref subnetPublicA
+      Tags:
+        - Key: Env
+          Value: !Ref EnvTag
+        - Key: Name
+          Value: !Join [ "-", [ !Ref EnvTag, "bastion-linux" ] ]
+  myEIPBastionLinux:
+    Type: AWS::EC2::EIP
+    Properties:
+      InstanceId: !Ref myBastionLinuxEC2
+      Tags:
+        - Key: Env
+          Value: !Ref EnvTag
+  
+  myTargetGraphql:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      Name: !Join [ "-", [ !Ref EnvTag, "ecs-service-graphql" ] ]
+      HealthCheckIntervalSeconds: 10
+      HealthCheckPath: /
+      HealthCheckProtocol: HTTP
+      HealthCheckTimeoutSeconds: 5
+      HealthyThresholdCount: 3
+      UnhealthyThresholdCount: 5
+      Matcher:
+        HttpCode: 200
+      Port: 80
+      Protocol: HTTP
+      TargetGroupAttributes:
+        - Key: deregistration_delay.timeout_seconds
+          Value: 60
+      TargetType: ip
+      Tags:
+        - Key: Env
+          Value: !Ref EnvTag
+      VpcId: !Ref VPCID
+  myTargetPrisma:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      Name: !Join [ "-", [ !Ref EnvTag, "ecs-service-prismaserver" ] ]
+      HealthCheckIntervalSeconds: 10
+      HealthCheckPath: /status
+      HealthCheckProtocol: HTTP
+      HealthCheckTimeoutSeconds: 5
+      HealthyThresholdCount: 3
+      UnhealthyThresholdCount: 5
+      Matcher:
+        HttpCode: 200
+      Port: 80
+      Protocol: HTTP
+      TargetGroupAttributes:
+        - Key: deregistration_delay.timeout_seconds
+          Value: 60
+      TargetType: ip
+      Tags:
+        - Key: Env
+          Value: !Ref EnvTag
+      VpcId: !Ref VPCID        
+  myALBFront:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Properties:
+      Name: !Join [ "-", [ !Ref EnvTag, "alb-frot" ] ]
+      Scheme: internet-facing
+      Subnets:
+        - !Ref subnetPublicA
+        - !Ref subnetPublicB
+      SecurityGroups:
+        - !Ref albFrontSg
+      Tags:
+        - Key: Env
+          Value: !Ref EnvTag
+  myALBPriv:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Properties:
+      Name: !Join [ "-", [ !Ref EnvTag, "alb-priv" ] ]
+      Scheme: internal
+      Subnets:
+        - !Ref subnetPrivateA
+        - !Ref subnetPrivateB
+      SecurityGroups:
+        - !Ref albPrivSg
+      Tags:
+        - Key: Env
+          Value: !Ref EnvTag
+  myListenerFront80:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties: 
+      LoadBalancerArn: !Ref myALBFront
+      Port: 80
+      Protocol: HTTP
+      DefaultActions:
+        - Type: redirect
+          RedirectConfig:
+            Protocol: HTTPS
+            StatusCode: HTTP_301
+  myListenerFront443:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      Certificates:
+        - CertificateArn: !Ref CertificadoARN
+      SslPolicy: ELBSecurityPolicy-2016-08
+      LoadBalancerArn: !Ref myALBFront
+      Port: 443
+      Protocol: HTTPS
+      DefaultActions:
+        - Type: forward
+          TargetGroupArn: !Ref myTargetGraphql
+  myListenerPriv80:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties: 
+      LoadBalancerArn: !Ref myALBPriv
+      Port: 80
+      Protocol: HTTP
+      DefaultActions:
+        - Type: forward
+          TargetGroupArn: !Ref myTargetPrisma

@@ -1,0 +1,134 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: Plantilla Base para grupos de seguridad
+
+# Definicion de Parametros
+Parameters: 
+  EnvTag:
+    Type: String
+  VPCID:
+    Type: String
+
+# Definicion de los Recursos a Crear
+Resources:
+  bastionWinSg:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: !Join [ "-", [ !Ref EnvTag, "bastion-win" ] ]
+      GroupDescription: Security Group for Bastion Windows Instances
+      VpcId: !Ref VPCID
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 3389
+          ToPort: 3389
+          CidrIp: 0.0.0.0/0
+      Tags:
+        - Key: Env
+          Value: !Ref EnvTag
+  bastionLinuxSg:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: !Join [ "-", [ !Ref EnvTag, "bastion-linux" ] ]
+      GroupDescription: Security Group for Bastion Linux Instances
+      VpcId: !Ref VPCID
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+      Tags:
+        - Key: Env
+          Value: !Ref EnvTag
+  albFrontSg:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: !Join [ "-", [ !Ref EnvTag, "alb-front" ] ]
+      GroupDescription: Security Group for Front ALB
+      VpcId: !Ref VPCID
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          CidrIp: 0.0.0.0/0
+      Tags:
+        - Key: Env
+          Value: !Ref EnvTag
+  graphqlSg:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: !Join [ "-", [ !Ref EnvTag, "graphql" ] ]
+      GroupDescription: Security Group for Graphql
+      VpcId: !Ref VPCID
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          SourceSecurityGroupId: !Ref albFrontSg
+      Tags:
+        - Key: Env
+          Value: !Ref EnvTag
+  albPrivSg:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: !Join [ "-", [ !Ref EnvTag, "alb-priv" ] ]
+      GroupDescription: Security Group for Private ALB
+      VpcId: !Ref VPCID
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          SourceSecurityGroupId: !Ref graphqlSg
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          SourceSecurityGroupId: !Ref bastionLinuxSg
+      Tags:
+        - Key: Env
+          Value: !Ref EnvTag
+  prismaSg:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: !Join [ "-", [ !Ref EnvTag, "prisma" ] ]
+      GroupDescription: Security Group for Prisma Server
+      VpcId: !Ref VPCID
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          SourceSecurityGroupId: !Ref albPrivSg
+      Tags:
+        - Key: Env
+          Value: !Ref EnvTag
+  postgresSg:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: !Join [ "-", [ !Ref EnvTag, "postgres" ] ]
+      GroupDescription: Security Group for DB Postgres
+      VpcId: !Ref VPCID
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 5432
+          ToPort: 5432
+          SourceSecurityGroupId: !Ref prismaSg
+        - IpProtocol: tcp
+          FromPort: 5432
+          ToPort: 5432
+          SourceSecurityGroupId: !Ref bastionLinuxSg
+      Tags:
+        - Key: Env
+          Value: !Ref EnvTag
+
+#Salida a mostrarse en la pantalla
+Outputs: 
+  bastionLinuxSg:
+    Description: Bastion Linux SG ID
+    Value: !GetAtt bastionLinuxSg.GroupId
+  albFrontSg:
+    Description: Front ALB SG ID
+    Value: !GetAtt albFrontSg.GroupId
+  albPrivSg:
+    Description: Priv ALB SG ID
+    Value: !GetAtt albPrivSg.GroupId
