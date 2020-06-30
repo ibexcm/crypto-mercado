@@ -1,7 +1,3 @@
-# igarcia 2019-10
-# version: 15
-# Para ambiente PROD, crea: 1 VPC, 2 subnets publicas, 2 subnets privadas, Opcional: 2 subnets privadas para RDS, IG, 2 NG, y sus route tables, 3 sg (windows, linux y db)
-# Para ambiente TEST, crea: 1 VPC, 2 subnets publicas, 2 subnets privadas, Opcional: 2 subnets privadas para RDS, IG, 1 NG, y sus route tables, 3 sg (windows, linux y db)
 AWSTemplateFormatVersion: 2010-09-09
 Description: Plantilla Base para VPC
 

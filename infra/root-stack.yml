@@ -122,6 +122,10 @@ Parameters:
   CertificadoARN:
     Type: String
     Description: ARN del certificado para ALB Front
+  DockerRegistry:
+    Type: String
+    Description: Repositorio de imagenes de docker
+    Default: docker.io/
   KMSKeyARN:
     Type: String
     Description: ARN de llave de KMS
@@ -160,6 +164,7 @@ Resources:
         EnvTag: !Ref EnvTag
         Keyparam: !Ref Keyparam
         CertificadoARN: !Ref CertificadoARN
+        DockerRegistry: !Ref DockerRegistry
         VPCID: !GetAtt VPCStack.Outputs.VPCID
         subnetPublicA: !GetAtt VPCStack.Outputs.subnetPublicA
         subnetPublicB: !GetAtt VPCStack.Outputs.subnetPublicB
@@ -168,6 +173,8 @@ Resources:
         bastionLinuxSg: !GetAtt SGStack.Outputs.bastionLinuxSg
         albFrontSg: !GetAtt SGStack.Outputs.albFrontSg
         albPrivSg: !GetAtt SGStack.Outputs.albPrivSg
+        graphqlSg: !GetAtt SGStack.Outputs.graphqlSg
+        prismaSg: !GetAtt SGStack.Outputs.prismaSg
   ClientsStack:
     Type: AWS::CloudFormation::Stack
     Properties:
@@ -176,3 +183,12 @@ Resources:
         EnvTag: !Ref EnvTag
         CertificadoARN: !Ref CertificadoARN
         KMSKeyARN: !Ref KMSKeyARN
+  DNSStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: dns-stack.yml
+      Parameters:
+        EnvTag: !Ref EnvTag
+        VPCID: !GetAtt VPCStack.Outputs.VPCID
+        CanonicalALBPriv: !GetAtt ComputeStack.Outputs.CanonicalALBPriv
+        DNSALBPriv: !GetAtt ComputeStack.Outputs.DNSALBPriv

@@ -132,3 +132,9 @@ Outputs:
   albPrivSg:
     Description: Priv ALB SG ID
     Value: !GetAtt albPrivSg.GroupId
+  graphqlSg:
+    Description: Graphql SG ID
+    Value: !GetAtt graphqlSg.GroupId
+  prismaSg:
+    Description: Prisma SG ID
+    Value: !GetAtt prismaSg.GroupId
