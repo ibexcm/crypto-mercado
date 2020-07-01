@@ -119,13 +119,12 @@ Parameters:
   Keyparam:
     Type: AWS::EC2::KeyPair::KeyName
     Description: KeyPair para EC2
+  PublicDomain:
+    Type: String
+    Default: ibexcm.com
   CertificadoARN:
     Type: String
     Description: ARN del certificado para ALB Front
-  DockerRegistry:
-    Type: String
-    Description: Repositorio de imagenes de docker
-    Default: docker.io/
   KMSKeyARN:
     Type: String
     Description: ARN de llave de KMS
@@ -161,10 +160,10 @@ Resources:
     Properties:
       TemplateURL: compute-stack.yml
       Parameters:
+        TipoAmbiente: !Ref TipoAmbiente
         EnvTag: !Ref EnvTag
         Keyparam: !Ref Keyparam
         CertificadoARN: !Ref CertificadoARN
-        DockerRegistry: !Ref DockerRegistry
         VPCID: !GetAtt VPCStack.Outputs.VPCID
         subnetPublicA: !GetAtt VPCStack.Outputs.subnetPublicA
         subnetPublicB: !GetAtt VPCStack.Outputs.subnetPublicB
@@ -183,6 +182,7 @@ Resources:
         EnvTag: !Ref EnvTag
         CertificadoARN: !Ref CertificadoARN
         KMSKeyARN: !Ref KMSKeyARN
+        PublicDomain: !Ref PublicDomain
   DNSStack:
     Type: AWS::CloudFormation::Stack
     Properties:
@@ -192,3 +192,14 @@ Resources:
         VPCID: !GetAtt VPCStack.Outputs.VPCID
         CanonicalALBPriv: !GetAtt ComputeStack.Outputs.CanonicalALBPriv
         DNSALBPriv: !GetAtt ComputeStack.Outputs.DNSALBPriv
+  CICDtack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: cicd-stack.yml
+      Parameters:
+        EnvTag: !Ref EnvTag
+        KMSKeyARN: !Ref KMSKeyARN
+        VPCID: !GetAtt VPCStack.Outputs.VPCID
+        subnetPrivateA: !GetAtt VPCStack.Outputs.subnetPrivateA
+        subnetPrivateB: !GetAtt VPCStack.Outputs.subnetPrivateB
+        graphqlSg: !GetAtt SGStack.Outputs.graphqlSg

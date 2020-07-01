@@ -1,1 +1,329 @@
-#TODO
+AWSTemplateFormatVersion: 2010-09-09
+Description: Plantilla Base para procesos de CICD
+
+# Definicion de Parametros
+Parameters:
+  EnvTag:
+    Type: String
+  KMSKeyARN:
+    Type: String
+  VPCID:
+    Type: String
+  subnetPrivateA:
+    Type: String
+  subnetPrivateB:
+    Type: String
+  graphqlSg:
+    Type: String
+
+# Definicion de Recursos
+Resources:
+  myBucketCICD:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Join [ "-", [ !Ref EnvTag, "ibexcm-cicd" ] ]
+      BucketEncryption: 
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              KMSMasterKeyID: !Ref KMSKeyARN
+              SSEAlgorithm: aws:kms
+      Tags:
+        - Key: Env
+          Value: !Ref EnvTag
+
+  myIAMRoleWebClient:
+    Type: 'AWS::IAM::Role'
+    Properties: 
+      RoleName: !Join [ "-", [ !Ref EnvTag, "webclient" ] ]
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - codebuild.amazonaws.com
+            Action:
+              - 'sts:AssumeRole'
+      Policies: 
+        - PolicyName: pol1
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Resource: 
+                  - !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/codebuild/${EnvTag}-webclient"
+                  - !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/codebuild/${EnvTag}-webclient:*"
+                Action: 
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvent
+              - Effect: Allow
+                Resource: 
+                  - !Sub "arn:aws:codebuild:${AWS::Region}:${AWS::AccountId}:report-group/${EnvTag}-webclient-*"
+                Action: 
+                  - codebuild:CreateReportGroup
+                  - codebuild:CreateReport
+                  - codebuild:UpdateReport
+                  - codebuild:BatchPutTestCases
+              - Effect: Allow
+                Resource: 
+                  - !Sub "arn:aws:s3:::${myBucketCICD}/*"
+                Action: 
+                  - s3:PutObject
+                  - s3:GetObject
+                  - s3:GetObjectVersion
+                  - s3:GetBucketAcl
+                  - s3:GetBucketLocation
+      Path: /cicd/
+      Tags: 
+        - Key: Env
+          Value: !Ref EnvTag
+
+  myIAMRoleAdminClient:
+    Type: 'AWS::IAM::Role'
+    Properties: 
+      RoleName: !Join [ "-", [ !Ref EnvTag, "adminclient" ] ]
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - codebuild.amazonaws.com
+            Action:
+              - 'sts:AssumeRole'
+      Policies: 
+        - PolicyName: pol1
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Resource: 
+                  - !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/codebuild/${EnvTag}-adminclient"
+                  - !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/codebuild/${EnvTag}-adminclient:*"
+                Action: 
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvent
+              - Effect: Allow
+                Resource: 
+                  - !Sub "arn:aws:codebuild:${AWS::Region}:${AWS::AccountId}:report-group/${EnvTag}-adminclient-*"
+                Action: 
+                  - codebuild:CreateReportGroup
+                  - codebuild:CreateReport
+                  - codebuild:UpdateReport
+                  - codebuild:BatchPutTestCases
+              - Effect: Allow
+                Resource: 
+                  - !Sub "arn:aws:s3:::${myBucketCICD}/*"
+                Action: 
+                  - s3:PutObject
+                  - s3:GetObject
+                  - s3:GetObjectVersion
+                  - s3:GetBucketAcl
+                  - s3:GetBucketLocation
+      Path: /cicd/
+      Tags: 
+        - Key: Env
+          Value: !Ref EnvTag
+
+  myIAMRoleGraphql:
+    Type: 'AWS::IAM::Role'
+    Properties: 
+      RoleName: !Join [ "-", [ !Ref EnvTag, "graphql" ] ]
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - codebuild.amazonaws.com
+            Action:
+              - 'sts:AssumeRole'
+      Policies: 
+        - PolicyName: pol1
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Resource: 
+                  - !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/codebuild/${EnvTag}-graphql"
+                  - !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/codebuild/${EnvTag}-graphql:*"
+                Action: 
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvent
+              - Effect: Allow
+                Resource: 
+                  - !Sub "arn:aws:codebuild:${AWS::Region}:${AWS::AccountId}:report-group/${EnvTag}-graphql-*"
+                Action: 
+                  - codebuild:CreateReportGroup
+                  - codebuild:CreateReport
+                  - codebuild:UpdateReport
+                  - codebuild:BatchPutTestCases
+              - Effect: Allow
+                Resource: 
+                  - !Sub "arn:aws:s3:::${myBucketCICD}/*"
+                Action: 
+                  - s3:PutObject
+                  - s3:GetObject
+                  - s3:GetObjectVersion
+                  - s3:GetBucketAcl
+                  - s3:GetBucketLocation
+              - Effect: Allow
+                Resource: 
+                  - "*"
+                Action: 
+                  - ec2:CreateNetworkInterface
+                  - ec2:DescribeDhcpOptions
+                  - ec2:DescribeNetworkInterfaces
+                  - ec2:DeleteNetworkInterface
+                  - ec2:DescribeSubnets
+                  - ec2:DescribeSecurityGroups
+                  - ec2:DescribeVpcs
+              - Effect: Allow
+                Resource: 
+                  - !Sub "arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:network-interface/*"
+                Action: 
+                  - ec2:CreateNetworkInterfacePermission
+                Condition:
+                  StringEquals:
+                    ec2:Subnet: 
+                      - !Sub "arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:subnet/${subnetPrivateA}"
+                      - !Sub "arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:subnet/${subnetPrivateB}"
+                    ec2:AuthorizedService: codebuild.amazonaws.com
+      Path: /cicd/
+      Tags: 
+        - Key: Env
+          Value: !Ref EnvTag
+
+  myBuildAdmin: 
+    Type: AWS::CodeBuild::Project
+    Properties: 
+      Name: !Join [ "-", [ !Ref EnvTag, "adminclient" ] ]
+      ServiceRole: !GetAtt myIAMRoleAdminClient.Arn
+      Artifacts:
+        Type: NO_ARTIFACTS
+      Environment: 
+        ComputeType: BUILD_GENERAL1_SMALL
+        Image: aws/codebuild/standard:4.0
+        Type: LINUX_CONTAINER
+      Source:
+        Auth: 
+          Type: OAUTH
+        GitCloneDepth: 1
+        BuildSpec: adminclient/buildspec.yml
+        Location: https://github.com/ibexmercado/crypto-mercado.git
+        ReportBuildStatus: true
+        Type: GITHUB
+      LogsConfig: 
+        CloudWatchLogs:
+          Status: ENABLED
+      Tags:
+        - Key: Env
+          Value: !Ref EnvTag
+      Triggers:
+        Webhook: true
+        FilterGroups:
+          - - Type: EVENT
+              Pattern: PULL_REQUEST_MERGED
+            - Type: BASE_REF
+              Pattern: ^refs/heads/staging$
+              ExcludeMatchedPattern: false
+            - Type: FILE_PATH
+              Pattern: adminclient/*
+              ExcludeMatchedPattern: false
+
+  myBuildWeb: 
+    Type: AWS::CodeBuild::Project
+    Properties: 
+      Name: !Join [ "-", [ !Ref EnvTag, "webclient" ] ]
+      ServiceRole: !GetAtt myIAMRoleWebClient.Arn
+      Artifacts:
+        Type: NO_ARTIFACTS
+      Environment: 
+        ComputeType: BUILD_GENERAL1_SMALL
+        Image: aws/codebuild/standard:4.0
+        Type: LINUX_CONTAINER
+      Source:
+        Auth: 
+          Type: OAUTH
+        GitCloneDepth: 1
+        BuildSpec: webclient/buildspec.yml
+        Location: https://github.com/ibexmercado/crypto-mercado.git
+        ReportBuildStatus: true
+        Type: GITHUB
+      LogsConfig: 
+        CloudWatchLogs:
+          Status: ENABLED
+      Tags:
+        - Key: Env
+          Value: !Ref EnvTag
+      Triggers:
+        Webhook: true
+        FilterGroups:
+          - - Type: EVENT
+              Pattern: PULL_REQUEST_MERGED
+            - Type: BASE_REF
+              Pattern: ^refs/heads/staging$
+              ExcludeMatchedPattern: false
+            - Type: FILE_PATH
+              Pattern: webclient/*
+              ExcludeMatchedPattern: false
+
+  myBuildGraph: 
+    Type: AWS::CodeBuild::Project
+    Properties: 
+      Name: !Join [ "-", [ !Ref EnvTag, "graphql" ] ]
+      ServiceRole: !GetAtt myIAMRoleGraphql.Arn
+      Artifacts:
+        Type: NO_ARTIFACTS
+      Environment: 
+        ComputeType: BUILD_GENERAL1_SMALL
+        Image: aws/codebuild/standard:4.0
+        Type: LINUX_CONTAINER
+        EnvironmentVariables: 
+          - Name: AWS_DEFAULT_REGION
+            Type: PLAINTEXT 
+            Value: !Ref AWS::Region
+          - Name: AWS_ACCOUNT_ID
+            Type: PLAINTEXT 
+            Value: !Ref AWS::AccountId
+          - Name: IMAGE_REPO_NAME
+            Type: PLAINTEXT 
+            Value: !Join [ "/", [ !Ref EnvTag, "ibex", "graphql" ] ]
+          - Name: IMAGE_TAG
+            Type: PLAINTEXT 
+            Value: 1.0
+      VpcConfig:
+        VpcId: !Ref VPCID
+        Subnets:
+          - !Ref subnetPrivateA
+          - !Ref subnetPrivateB
+        SecurityGroupIds: 
+          - !Ref graphqlSg
+      Source:
+        Auth: 
+          Type: OAUTH
+        GitCloneDepth: 1
+        BuildSpec: graphqlserver/buildspec-docker.yml
+        Location: https://github.com/ibexmercado/crypto-mercado.git
+        ReportBuildStatus: true
+        Type: GITHUB
+      LogsConfig: 
+        CloudWatchLogs:
+          Status: ENABLED
+      Tags:
+        - Key: Env
+          Value: !Ref EnvTag
+      Triggers:
+        Webhook: true
+        FilterGroups:
+          - - Type: EVENT
+              Pattern: PULL_REQUEST_MERGED
+            - Type: BASE_REF
+              Pattern: ^refs/heads/staging$
+              ExcludeMatchedPattern: false
+            - Type: FILE_PATH
+              Pattern: graphqlserver/*
+              ExcludeMatchedPattern: false

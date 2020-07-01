@@ -9,6 +9,8 @@ Parameters:
     Type: String
   KMSKeyARN:
     Type: String
+  PublicDomain:
+    Type: String
 
 # Definicion de recursos
 Resources:
@@ -50,7 +52,7 @@ Resources:
     Properties:
       DistributionConfig:
         Aliases:
-          - web.ibexcm.com
+          - !Join [ ".", [ web, !Ref PublicDomain ] ]
         CustomErrorResponses:
           - ErrorCode: 403 
             ResponseCode: 200
@@ -126,7 +128,7 @@ Resources:
     Properties:
       DistributionConfig:
         Aliases:
-          - adminweb.ibexcm.com
+          - !Join [ ".", [ adminweb, !Ref PublicDomain ] ]
         CustomErrorResponses:
           - ErrorCode: 403 
             ResponseCode: 200

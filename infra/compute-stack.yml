@@ -1,8 +1,10 @@
 AWSTemplateFormatVersion: 2010-09-09
-Description: Plantilla Base para grupos de seguridad
+Description: Plantilla Base para recursos de computo
 
 # Definicion de Parametros
 Parameters: 
+  TipoAmbiente:
+    Type: String
   EnvTag:
     Type: String
   VPCID:
@@ -10,8 +12,6 @@ Parameters:
   Keyparam:
     Type: String
   CertificadoARN:
-    Type: String
-  DockerRegistry:
     Type: String
   bastionLinuxSg:
     Type: String
@@ -31,6 +31,10 @@ Parameters:
     Type: String
   subnetPrivateB:
     Type: String
+
+# Determina si el recurso sera para Produccion o para Test
+Conditions:
+  condAmbientePRO: !Or [ !Equals [ !Ref TipoAmbiente, PROD ], !Equals [ !Ref TipoAmbiente, prod ] ]
 
 # Definicion de Parametros
 Resources:
@@ -171,6 +175,14 @@ Resources:
         - Key: Env
           Value: !Ref EnvTag
 
+  myECR:
+    Type: AWS::ECR::Repository
+    Properties: 
+      RepositoryName: !Join [ "/", [ !Ref EnvTag, "ibex", "graphql" ] ]
+      Tags: 
+        - Key: Env
+          Value: !Ref EnvTag
+
   myTaskPrisma:
     Type: AWS::ECS::TaskDefinition
     Properties:
@@ -180,8 +192,8 @@ Resources:
         - FARGATE
       Family: !Join [ "-", [ !Ref EnvTag, "prisma" ] ]
       NetworkMode: awsvpc
-      ExecutionRoleArn: arn:aws:iam::342433597948:role/ecsTaskExecutionRole
-      TaskRoleArn: arn:aws:iam::342433597948:role/ecsTaskExecutionRole
+      ExecutionRoleArn: !Sub "arn:aws:iam::${AWS::AccountId}:role/ecsTaskExecutionRole"
+      TaskRoleArn: !Sub "arn:aws:iam::${AWS::AccountId}:role/ecsTaskExecutionRole"
       ContainerDefinitions:
         - Name: prisma-container
           Essential: true
@@ -195,18 +207,21 @@ Resources:
               Value: !Sub 
                 - |
                   port: 80
-                  managementApiSecret: c59mXFCEaimP7$mhuW9O#ZWg
+                  managementApiSecret: ${API}
                   databases:
                     default:
                       connector: postgres
-                      host: db.staging.ibexcm.internal
+                      host: ${Host}
                       port: 5432
                       user: postgres
-                      password: pstTRvggoNbozlTEWkep
-                      database: IBEXCM_TEST
+                      password: ${Pass}
+                      database: ${Database}
                       rawAccess: false
                       migrations: true
-                - {}
+                - Host: !Sub "db.${EnvTag}.ibexcm.internal"
+                  Pass: "#####"
+                  Database: !If [condAmbientePRO, "IBEXCM", "IBEXCM_TEST"] 
+                  API: "#####"
             - Name: JAVA_OPTS
               Value: -Xmx750m
           Ulimits:
@@ -229,12 +244,12 @@ Resources:
         - FARGATE
       Family: !Join [ "-", [ !Ref EnvTag, "graphql" ] ]
       NetworkMode: awsvpc
-      ExecutionRoleArn: arn:aws:iam::342433597948:role/ecsTaskExecutionRole
-      TaskRoleArn: arn:aws:iam::342433597948:role/ecsTaskExecutionRole
+      ExecutionRoleArn: !Sub "arn:aws:iam::${AWS::AccountId}:role/ecsTaskExecutionRole"
+      TaskRoleArn: !Sub "arn:aws:iam::${AWS::AccountId}:role/ecsTaskExecutionRole"
       ContainerDefinitions:
         - Name: graphql-container
           Essential: true
-          Image:  !Join [ "", [ !Ref DockerRegistry, "ibex/graphql:latest" ] ]
+          Image:  !Sub "${AWS::AccountId}.dkr.ecr.us-east-1.amazonaws.com/${EnvTag}/ibex/graphql:latest"
           Cpu: 512
           MemoryReservation: 1024
           PortMappings:
@@ -248,6 +263,7 @@ Resources:
   
   myServiceGraphql:
     Type: AWS::ECS::Service
+    DependsOn: myALBFront
     Properties: 
       Cluster: !Ref myECSCluster
       DesiredCount: 0
@@ -270,9 +286,10 @@ Resources:
       Tags: 
         - Key: Env
           Value: !Ref EnvTag
-
+  
   myServicePrisma:
     Type: AWS::ECS::Service
+    DependsOn: myALBPriv
     Properties: 
       Cluster: !Ref myECSCluster
       DesiredCount: 0
