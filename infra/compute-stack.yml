@@ -267,7 +267,7 @@ Resources:
   
   myServiceGraphql:
     Type: AWS::ECS::Service
-    DependsOn: myALBFront
+    DependsOn: myListenerFront443
     Properties: 
       Cluster: !Ref myECSCluster
       DesiredCount: 0
@@ -293,7 +293,7 @@ Resources:
   
   myServicePrisma:
     Type: AWS::ECS::Service
-    DependsOn: myALBPriv
+    DependsOn: myListenerPriv80
     Properties: 
       Cluster: !Ref myECSCluster
       DesiredCount: 0

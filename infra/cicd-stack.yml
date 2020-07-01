@@ -448,7 +448,7 @@ Resources:
           Type: OAUTH
         GitCloneDepth: 1
         BuildSpec: adminclient/buildspec.yml
-        Location: https://github.com/ibexmercado/crypto-mercado.git
+        Location: https://github.com/susguzman/crypto-mercado.git
         ReportBuildStatus: true
         Type: GITHUB
       LogsConfig: 
@@ -495,7 +495,7 @@ Resources:
           Type: OAUTH
         GitCloneDepth: 1
         BuildSpec: webclient/buildspec.yml
-        Location: https://github.com/ibexmercado/crypto-mercado.git
+        Location: https://github.com/susguzman/crypto-mercado.git
         ReportBuildStatus: true
         Type: GITHUB
       LogsConfig: 
@@ -564,7 +564,7 @@ Resources:
           Type: OAUTH
         GitCloneDepth: 1
         BuildSpec: graphqlserver/buildspec-docker.yml
-        Location: https://github.com/ibexmercado/crypto-mercado.git
+        Location: https://github.com/susguzman/crypto-mercado.git
         ReportBuildStatus: true
         Type: GITHUB
       LogsConfig: 
