@@ -3,6 +3,8 @@ Description: Plantilla Base para procesos de CICD
 
 # Definicion de Parametros
 Parameters:
+  TipoAmbiente:
+    Type: String
   EnvTag:
     Type: String
   KMSKeyARN:
@@ -15,6 +17,10 @@ Parameters:
     Type: String
   graphqlSg:
     Type: String
+
+# Determina si el recurso sera para Produccion o para Test
+Conditions:
+  condAmbientePRO: !Or [ !Equals [ !Ref TipoAmbiente, PROD ], !Equals [ !Ref TipoAmbiente, prod ] ]
 
 # Definicion de Recursos
 Resources:
@@ -228,7 +234,7 @@ Resources:
           - - Type: EVENT
               Pattern: PULL_REQUEST_MERGED
             - Type: BASE_REF
-              Pattern: ^refs/heads/staging$
+              Pattern: !If [condAmbientePRO, "^refs/heads/production$", "^refs/heads/staging$"]
               ExcludeMatchedPattern: false
             - Type: FILE_PATH
               Pattern: adminclient/*
@@ -265,7 +271,7 @@ Resources:
           - - Type: EVENT
               Pattern: PULL_REQUEST_MERGED
             - Type: BASE_REF
-              Pattern: ^refs/heads/staging$
+              Pattern: !If [condAmbientePRO, "^refs/heads/production$", "^refs/heads/staging$"]
               ExcludeMatchedPattern: false
             - Type: FILE_PATH
               Pattern: webclient/*
@@ -295,6 +301,18 @@ Resources:
           - Name: IMAGE_TAG
             Type: PLAINTEXT 
             Value: 1.0
+          - Name: JWT_PRIVATE_KEY
+            Type: PARAMETER_STORE 
+            Value: !If [condAmbientePRO, "PROD_JWT_PRIVATE_KEY", "JWT_PRIVATE_KEY"] 
+          - Name: JWT_PUBLIC_KEY
+            Type: PARAMETER_STORE 
+            Value: !If [condAmbientePRO, "PROD_JWT_PUBLIC_KEY", "JWT_PUBLIC_KEY"] 
+          - Name: PRISMA_SECRET
+            Type: PARAMETER_STORE 
+            Value: !If [condAmbientePRO, "PROD_PRISMA_SECRET", "PRISMA_SECRET"] 
+          - Name: PRISMA_ENDPOINT
+            Type: PLAINTEXT 
+            Value: !Sub "http://prisma.${EnvTag}.ibexcm.internal"
       VpcConfig:
         VpcId: !Ref VPCID
         Subnets:
@@ -322,7 +340,7 @@ Resources:
           - - Type: EVENT
               Pattern: PULL_REQUEST_MERGED
             - Type: BASE_REF
-              Pattern: ^refs/heads/staging$
+              Pattern: !If [condAmbientePRO, "^refs/heads/production$", "^refs/heads/staging$"]
               ExcludeMatchedPattern: false
             - Type: FILE_PATH
               Pattern: graphqlserver/*

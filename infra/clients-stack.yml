@@ -9,7 +9,9 @@ Parameters:
     Type: String
   KMSKeyARN:
     Type: String
-  PublicDomain:
+  WebClientDomain:
+    Type: String
+  AdminClientDomain:
     Type: String
 
 # Definicion de recursos
@@ -52,7 +54,7 @@ Resources:
     Properties:
       DistributionConfig:
         Aliases:
-          - !Join [ ".", [ web, !Ref PublicDomain ] ]
+          - !Ref WebClientDomain
         CustomErrorResponses:
           - ErrorCode: 403 
             ResponseCode: 200
@@ -128,7 +130,7 @@ Resources:
     Properties:
       DistributionConfig:
         Aliases:
-          - !Join [ ".", [ adminweb, !Ref PublicDomain ] ]
+          - !Ref AdminClientDomain
         CustomErrorResponses:
           - ErrorCode: 403 
             ResponseCode: 200

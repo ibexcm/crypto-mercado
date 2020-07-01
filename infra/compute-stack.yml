@@ -23,6 +23,10 @@ Parameters:
     Type: String
   prismaSg:
     Type: String
+  DatabasePassword:
+    Type: String
+  PrismaAPISecret:
+    Type: String
   subnetPublicA:
     Type: String
   subnetPublicB:
@@ -219,9 +223,9 @@ Resources:
                       rawAccess: false
                       migrations: true
                 - Host: !Sub "db.${EnvTag}.ibexcm.internal"
-                  Pass: "#####"
+                  Pass: !Ref DatabasePassword
                   Database: !If [condAmbientePRO, "IBEXCM", "IBEXCM_TEST"] 
-                  API: "#####"
+                  API: !Ref PrismaAPISecret
             - Name: JAVA_OPTS
               Value: -Xmx750m
           Ulimits:

@@ -7,4 +7,3 @@ aws cloudformation deploy --template-file <RESULT PREVIOUS COMMAND> --stack-name
 ## TODO
 - Build. Cambio de endpoint clientes
 - Build. Variables de entorno Graph y prisma
-- Cloudformation. Get variables al momento de crear prisma

@@ -307,3 +307,9 @@ Outputs: #Salida a mostrarse en la pantalla
   subnetPrivateB:
     Description: Subnet private B ID
     Value: !Ref mySubnetPrivateB
+  subnetDBPrivateA:
+    Description: Subnet ID PrivateDBA
+    Value: !Ref mySubnetDBPrivateA
+  subnetDBPrivateB:
+    Description: Subnet ID PrivateDBB 
+    Value: !Ref mySubnetDBPrivateB

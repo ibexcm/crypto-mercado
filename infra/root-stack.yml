@@ -119,15 +119,25 @@ Parameters:
   Keyparam:
     Type: AWS::EC2::KeyPair::KeyName
     Description: KeyPair para EC2
-  PublicDomain:
-    Type: String
-    Default: ibexcm.com
   CertificadoARN:
     Type: String
     Description: ARN del certificado para ALB Front
   KMSKeyARN:
     Type: String
     Description: ARN de llave de KMS
+  DatabasePassword:
+    #Type : 'AWS::SSM::Parameter::Value<String>'
+    Type: String
+    Default: DB_PASSWORD
+  PrismaAPISecret:
+    Type: String
+    Default: PRISMA_MANAGEMENT_API_SECRET
+  WebClientDomain:
+    Type: String
+    Default: ibexcm.com
+  AdminClientDomain:
+    Type: String
+    Default: admin.ibexcm.com
 
 # Nested stacks
 Resources:
@@ -164,6 +174,8 @@ Resources:
         EnvTag: !Ref EnvTag
         Keyparam: !Ref Keyparam
         CertificadoARN: !Ref CertificadoARN
+        DatabasePassword: !Ref DatabasePassword
+        PrismaAPISecret: !Ref PrismaAPISecret
         VPCID: !GetAtt VPCStack.Outputs.VPCID
         subnetPublicA: !GetAtt VPCStack.Outputs.subnetPublicA
         subnetPublicB: !GetAtt VPCStack.Outputs.subnetPublicB
@@ -182,7 +194,8 @@ Resources:
         EnvTag: !Ref EnvTag
         CertificadoARN: !Ref CertificadoARN
         KMSKeyARN: !Ref KMSKeyARN
-        PublicDomain: !Ref PublicDomain
+        WebClientDomain: !Ref WebClientDomain
+        AdminClientDomain: !Ref AdminClientDomain
   DNSStack:
     Type: AWS::CloudFormation::Stack
     Properties:
@@ -197,9 +210,18 @@ Resources:
     Properties:
       TemplateURL: cicd-stack.yml
       Parameters:
+        TipoAmbiente: !Ref TipoAmbiente
         EnvTag: !Ref EnvTag
         KMSKeyARN: !Ref KMSKeyARN
         VPCID: !GetAtt VPCStack.Outputs.VPCID
         subnetPrivateA: !GetAtt VPCStack.Outputs.subnetPrivateA
         subnetPrivateB: !GetAtt VPCStack.Outputs.subnetPrivateB
         graphqlSg: !GetAtt SGStack.Outputs.graphqlSg
+  DatabaseStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: database-stack.yml
+      Parameters:
+        EnvTag: !Ref EnvTag
+        subnetDBPrivateA: !GetAtt VPCStack.Outputs.subnetDBPrivateA
+        subnetDBPrivateB: !GetAtt VPCStack.Outputs.subnetDBPrivateB
