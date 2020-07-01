@@ -138,6 +138,9 @@ Parameters:
   AdminClientDomain:
     Type: String
     Default: admin.ibexcm.com
+  APIDomain:
+    Type: String
+    Default: api.ibexcm.com
 
 # Nested stacks
 Resources:
@@ -213,10 +216,15 @@ Resources:
         TipoAmbiente: !Ref TipoAmbiente
         EnvTag: !Ref EnvTag
         KMSKeyARN: !Ref KMSKeyARN
+        APIDomain: !Ref APIDomain
         VPCID: !GetAtt VPCStack.Outputs.VPCID
         subnetPrivateA: !GetAtt VPCStack.Outputs.subnetPrivateA
         subnetPrivateB: !GetAtt VPCStack.Outputs.subnetPrivateB
         graphqlSg: !GetAtt SGStack.Outputs.graphqlSg
+        bucketAdmin: !GetAtt ClientsStack.Outputs.bucketAdmin
+        distributionAdmin: !GetAtt ClientsStack.Outputs.distributionAdmin
+        bucketWeb: !GetAtt ClientsStack.Outputs.bucketWeb
+        distributionWeb: !GetAtt ClientsStack.Outputs.distributionWeb
   DatabaseStack:
     Type: AWS::CloudFormation::Stack
     Properties:

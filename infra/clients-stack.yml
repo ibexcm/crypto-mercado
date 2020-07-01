@@ -167,3 +167,13 @@ Resources:
       Tags:
         - Key: Env
           Value: !Ref EnvTag
+
+Outputs: 
+  bucketAdmin:
+    Value: !Ref myBucketAdmin
+  distributionAdmin:
+    Value: !Ref myCfAdmin
+  bucketWeb:
+    Value: !Ref myBucketWeb
+  distributionWeb:
+    Value: !Ref myCfWeb

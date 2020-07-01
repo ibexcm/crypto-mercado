@@ -5,5 +5,3 @@ aws cloudformation package --template-file root-stack.yml --output-template pack
 aws cloudformation deploy --template-file <RESULT PREVIOUS COMMAND> --stack-name <YOUR STACK NAME>
 
 ## TODO
-- Build. Cambio de endpoint clientes
-- Build. Variables de entorno Graph y prisma
