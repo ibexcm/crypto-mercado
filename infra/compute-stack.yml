@@ -13,6 +13,10 @@ Parameters:
     Type: String
   CertificadoARN:
     Type: String
+  KMSKeyARN:
+    Type: String
+  LatestAmiId:
+    Type: String
   bastionLinuxSg:
     Type: String
   albFrontSg:
@@ -41,9 +45,17 @@ Resources:
   myBastionLinuxEC2:
     Type: AWS::EC2::Instance
     Properties:
-      ImageId: ami-09d95fab7fff3776c
+      ImageId: !Ref LatestAmiId
       KeyName: !Ref Keyparam
       InstanceType: t3a.nano
+      BlockDeviceMappings:
+        - DeviceName: /dev/xvda
+          Ebs:
+            VolumeType: gp2
+            VolumeSize: '8'
+            DeleteOnTermination: 'true'
+            Encrypted: 'true'
+            KmsKeyId: !Ref KMSKeyARN
       SecurityGroupIds: 
         - !Ref bastionLinuxSg
       SubnetId: !Ref subnetPublicA

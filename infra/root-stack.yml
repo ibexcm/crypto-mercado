@@ -134,6 +134,9 @@ Parameters:
   APIDomain:
     Type: String
     Default: api.ibexcm.com
+  LatestAmiId:
+    Type: 'AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>'
+    Default: '/aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2'
 
 # Nested stacks
 Resources:
@@ -170,6 +173,8 @@ Resources:
         EnvTag: !Ref EnvTag
         Keyparam: !Ref Keyparam
         CertificadoARN: !Ref CertificadoARN
+        KMSKeyARN: !Ref KMSKeyARN
+        LatestAmiId: !Ref LatestAmiId
         VPCID: !GetAtt VPCStack.Outputs.VPCID
         subnetPublicA: !GetAtt VPCStack.Outputs.subnetPublicA
         subnetPublicB: !GetAtt VPCStack.Outputs.subnetPublicB

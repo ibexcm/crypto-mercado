@@ -43,9 +43,9 @@ aws cloudformation deploy --template-file <RESULT PREVIOUS COMMAND> --stack-name
     Restart prisma service
 
 - Run CICD Pipelines (Create a PR)
+- Enable Graphservice
 
 ## TODO
 - Pruebas Graphql
-- Cifrar bastion
 - Ultima AMI
 - Creacion DB
