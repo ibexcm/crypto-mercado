@@ -72,7 +72,7 @@ Resources:
                 Action: 
                   - logs:CreateLogGroup
                   - logs:CreateLogStream
-                  - logs:PutLogEvent
+                  - logs:PutLogEvents
               - Effect: Allow
                 Resource: 
                   - !Sub "arn:aws:codebuild:${AWS::Region}:${AWS::AccountId}:report-group/${EnvTag}-webclient-*"
@@ -126,7 +126,7 @@ Resources:
                 Action: 
                   - logs:CreateLogGroup
                   - logs:CreateLogStream
-                  - logs:PutLogEvent
+                  - logs:PutLogEvents
               - Effect: Allow
                 Resource: 
                   - !Sub "arn:aws:codebuild:${AWS::Region}:${AWS::AccountId}:report-group/${EnvTag}-adminclient-*"
@@ -180,7 +180,7 @@ Resources:
                 Action: 
                   - logs:CreateLogGroup
                   - logs:CreateLogStream
-                  - logs:PutLogEvent
+                  - logs:PutLogEvents
               - Effect: Allow
                 Resource: 
                   - !Sub "arn:aws:codebuild:${AWS::Region}:${AWS::AccountId}:report-group/${EnvTag}-graphql-*"
@@ -265,7 +265,7 @@ Resources:
                 Action: 
                   - logs:CreateLogGroup
                   - logs:CreateLogStream
-                  - logs:PutLogEvent
+                  - logs:PutLogEvents
               - Effect: Allow
                 Resource: 
                   - !Sub "arn:aws:codebuild:${AWS::Region}:${AWS::AccountId}:report-group/${EnvTag}-graphql-deploy-*"
@@ -479,7 +479,6 @@ Resources:
         CloudWatchLogs:
           Status: ENABLED
           GroupName: !Join [ "/", [ "/codebuild", !Ref EnvTag, "adminclient" ] ]
-          StreamName: adminclient
       Tags:
         - Key: Env
           Value: !Ref EnvTag
@@ -528,7 +527,6 @@ Resources:
         CloudWatchLogs:
           Status: ENABLED
           GroupName: !Join [ "/", [ "/codebuild", !Ref EnvTag, "webclient" ] ]
-          StreamName: webclient
       Tags:
         - Key: Env
           Value: !Ref EnvTag
@@ -599,7 +597,6 @@ Resources:
         CloudWatchLogs:
           Status: ENABLED
           GroupName: !Join [ "/", [ "/codebuild", !Ref EnvTag, "graphql" ] ]
-          StreamName: graphql
       Tags:
         - Key: Env
           Value: !Ref EnvTag
@@ -646,7 +643,6 @@ Resources:
         CloudWatchLogs:
           Status: ENABLED
           GroupName: !Join [ "/", [ "/codebuild", !Ref EnvTag, "graphql-deploy" ] ]
-          StreamName: graphql-deploy
       Tags:
         - Key: Env
           Value: !Ref EnvTag
