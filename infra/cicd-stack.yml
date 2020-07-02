@@ -67,8 +67,8 @@ Resources:
             Statement:
               - Effect: Allow
                 Resource: 
-                  - !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/codebuild/${EnvTag}-webclient"
-                  - !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/codebuild/${EnvTag}-webclient:*"
+                  - !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/codebuild/${EnvTag}/webclient"
+                  - !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/codebuild/${EnvTag}/webclient:*"
                 Action: 
                   - logs:CreateLogGroup
                   - logs:CreateLogStream
@@ -121,8 +121,8 @@ Resources:
             Statement:
               - Effect: Allow
                 Resource: 
-                  - !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/codebuild/${EnvTag}-adminclient"
-                  - !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/codebuild/${EnvTag}-adminclient:*"
+                  - !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/codebuild/${EnvTag}/adminclient"
+                  - !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/codebuild/${EnvTag}/adminclient:*"
                 Action: 
                   - logs:CreateLogGroup
                   - logs:CreateLogStream
@@ -175,8 +175,8 @@ Resources:
             Statement:
               - Effect: Allow
                 Resource: 
-                  - !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/codebuild/${EnvTag}-graphql"
-                  - !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/codebuild/${EnvTag}-graphql:*"
+                  - !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/codebuild/${EnvTag}/graphql"
+                  - !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/codebuild/${EnvTag}/graphql:*"
                 Action: 
                   - logs:CreateLogGroup
                   - logs:CreateLogStream
@@ -260,8 +260,8 @@ Resources:
             Statement:
               - Effect: Allow
                 Resource: 
-                  - !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/codebuild/${EnvTag}-graphql-deploy"
-                  - !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/codebuild/${EnvTag}-graphql-deploy:*"
+                  - !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/codebuild/${EnvTag}/graphql-deploy"
+                  - !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/codebuild/${EnvTag}/graphql-deploy:*"
                 Action: 
                   - logs:CreateLogGroup
                   - logs:CreateLogStream
@@ -422,6 +422,30 @@ Resources:
         - Key: Env
           Value: !Ref EnvTag
 
+  myLogGroupBuildWeb:
+    Type: AWS::Logs::LogGroup
+    Properties: 
+      LogGroupName: !Join [ "/", [ "/codebuild", !Ref EnvTag, "webclient" ] ]
+      RetentionInDays: 30
+
+  myLogGroupBuildAdmin:
+    Type: AWS::Logs::LogGroup
+    Properties: 
+      LogGroupName: !Join [ "/", [ "/codebuild", !Ref EnvTag, "adminclient" ] ]
+      RetentionInDays: 30
+
+  myLogGroupBuildGraphql:
+    Type: AWS::Logs::LogGroup
+    Properties: 
+      LogGroupName: !Join [ "/", [ "/codebuild", !Ref EnvTag, "graphql" ] ]
+      RetentionInDays: 30
+
+  myLogGroupBuildGraphqlDeploy:
+    Type: AWS::Logs::LogGroup
+    Properties: 
+      LogGroupName: !Join [ "/", [ "/codebuild", !Ref EnvTag, "graphql-deploy" ] ]
+      RetentionInDays: 30
+
   myBuildAdmin: 
     Type: AWS::CodeBuild::Project
     Properties: 
@@ -454,6 +478,8 @@ Resources:
       LogsConfig: 
         CloudWatchLogs:
           Status: ENABLED
+          GroupName: !Join [ "/", [ "/codebuild", !Ref EnvTag, "adminclient" ] ]
+          StreamName: adminclient
       Tags:
         - Key: Env
           Value: !Ref EnvTag
@@ -501,6 +527,8 @@ Resources:
       LogsConfig: 
         CloudWatchLogs:
           Status: ENABLED
+          GroupName: !Join [ "/", [ "/codebuild", !Ref EnvTag, "webclient" ] ]
+          StreamName: webclient
       Tags:
         - Key: Env
           Value: !Ref EnvTag
@@ -570,6 +598,8 @@ Resources:
       LogsConfig: 
         CloudWatchLogs:
           Status: ENABLED
+          GroupName: !Join [ "/", [ "/codebuild", !Ref EnvTag, "graphql" ] ]
+          StreamName: graphql
       Tags:
         - Key: Env
           Value: !Ref EnvTag
@@ -615,6 +645,8 @@ Resources:
       LogsConfig: 
         CloudWatchLogs:
           Status: ENABLED
+          GroupName: !Join [ "/", [ "/codebuild", !Ref EnvTag, "graphql-deploy" ] ]
+          StreamName: graphql-deploy
       Tags:
         - Key: Env
           Value: !Ref EnvTag

@@ -18,4 +18,25 @@ aws cloudformation deploy --template-file <RESULT PREVIOUS COMMAND> --stack-name
 - KMS
     - test-prisma-taskrole
 - Run prisma deploy and seed. 
+    - Create SSH Tunnel
+    - Install yarn and node
+    - Start Prisma ECS Service
+    - Exec
+
+    yarn
+    yarn bootstrap
+
+    npm i -g prisma
+    npm i -g ts-node
+    npm i -g typescript
+    cd database/
+    export NODE_PATH=$(npm root --quiet -g)
+    export PRISMA_ENDPOINT="http://prisma.test.ibexcm.internal"
+    export PRISMA_SECRET='###'
+    export PRISMA_MANAGEMENT_API_SECRET='###'
+
+    prisma deploy
+
+    Restart prisma service
+
 - Run CICD Pipelines (Create a PR)
