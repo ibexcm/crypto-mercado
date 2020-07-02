@@ -1,5 +1,11 @@
 # docker build -t ibex/prisma:1.34 -f Dockerfile .
 # docker run -it --entrypoint="" ibex/prisma:1.34 /bin/bash
+
+# PUSH IMAGE to ECR
+# aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 797409686075.dkr.ecr.us-east-1.amazonaws.com
+# docker tag ibex/prisma:1.34 797409686075.dkr.ecr.us-east-1.amazonaws.com/test/ibex/prisma:1.34
+# docker push 797409686075.dkr.ecr.us-east-1.amazonaws.com/test/ibex/prisma:1.34
+
 FROM prismagraphql/prisma:1.34
 LABEL maintainer="jguzman <jguzman@datum.com.gt>"
 

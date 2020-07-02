@@ -191,6 +191,46 @@ Resources:
         - Key: Env
           Value: !Ref EnvTag
 
+  myTaskRolePrisma:
+    Type: 'AWS::IAM::Role'
+    Properties: 
+      RoleName: !Join [ "-", [ !Ref EnvTag, "prisma-taskrole" ] ]
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - ecs-tasks.amazonaws.com
+            Action:
+              - 'sts:AssumeRole'
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
+      Policies: 
+        - PolicyName: pol1
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Resource: 
+                  - !Sub "arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/PRISMA_MANAGEMENT_API_SECRET"
+                  - !Sub "arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/PROD_PRISMA_MANAGEMENT_API_SECRET"
+                  - !Sub "arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/PROD_DB_PASSWORD"
+                  - !Sub "arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/DB_PASSWORD"
+                Action: 
+                  - ssm:GetParameters
+                  - ssm:GetParameter
+      Path: /container/
+      Tags: 
+        - Key: Env
+          Value: !Ref EnvTag
+
+  myLogGroupPrisma:
+    Type: AWS::Logs::LogGroup
+    Properties: 
+      LogGroupName: !Join [ "/", [ "/ecs", !Ref EnvTag, "prisma" ] ]
+      RetentionInDays: 30
+
   myTaskPrisma:
     Type: AWS::ECS::TaskDefinition
     Properties:
@@ -200,8 +240,8 @@ Resources:
         - FARGATE
       Family: !Join [ "-", [ !Ref EnvTag, "prisma" ] ]
       NetworkMode: awsvpc
-      ExecutionRoleArn: !Sub "arn:aws:iam::${AWS::AccountId}:role/ecsTaskExecutionRole"
-      TaskRoleArn: !Sub "arn:aws:iam::${AWS::AccountId}:role/ecsTaskExecutionRole"
+      ExecutionRoleArn: !GetAtt myTaskRolePrisma.Arn
+      TaskRoleArn: !GetAtt myTaskRolePrisma.Arn
       ContainerDefinitions:
         - Name: prisma-container
           Essential: true
@@ -229,9 +269,9 @@ Resources:
           LogConfiguration:
             LogDriver: awslogs
             Options:
-              awslogs-group: !Join [ "/", [ "/ecs", !Join [ "-", [ !Ref EnvTag, "prisma" ] ] ] ]
+              awslogs-group: !Join [ "/", [ "/ecs", !Ref EnvTag, "prisma" ] ]
               awslogs-region: !Ref AWS::Region
-              awslogs-stream-prefix: ecs
+              awslogs-stream-prefix: prisma
 
   myTaskGraphql:
     Type: AWS::ECS::TaskDefinition
