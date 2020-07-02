@@ -19,6 +19,7 @@ aws cloudformation deploy --template-file <RESULT PREVIOUS COMMAND> --stack-name
     - test-prisma-taskrole
     - test-webclient
     - test-adminclient
+    - test-graphql
 - Run prisma deploy and seed. 
     - Create SSH Tunnel
     - Install yarn and node
@@ -42,3 +43,9 @@ aws cloudformation deploy --template-file <RESULT PREVIOUS COMMAND> --stack-name
     Restart prisma service
 
 - Run CICD Pipelines (Create a PR)
+
+## TODO
+- Pruebas Graphql
+- Cifrar bastion
+- Ultima AMI
+- Creacion DB
