@@ -17,6 +17,8 @@ aws cloudformation deploy --template-file <RESULT PREVIOUS COMMAND> --stack-name
 - Create a RDS database and modify ENDPOINT in Route 53. Select the correct Security Group.
 - KMS
     - test-prisma-taskrole
+    - test-webclient
+    - test-adminclient
 - Run prisma deploy and seed. 
     - Create SSH Tunnel
     - Install yarn and node
