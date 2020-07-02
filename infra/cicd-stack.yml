@@ -85,12 +85,16 @@ Resources:
                 Resource: 
                   - !Sub "arn:aws:s3:::${myBucketCICD}/*"
                   - !Sub "arn:aws:s3:::${bucketWeb}/*"
+                  - !Sub "arn:aws:s3:::${bucketWeb}"
                 Action: 
                   - s3:PutObject
+                  - s3:PutObjectAcl
                   - s3:GetObject
                   - s3:GetObjectVersion
                   - s3:GetBucketAcl
                   - s3:GetBucketLocation
+                  - s3:ListBucket
+                  - s3:DeleteObject
               - Effect: Allow
                 Resource:
                   - !Sub "arn:aws:cloudfront::${AWS::AccountId}:distribution/${distributionWeb}"
@@ -139,12 +143,16 @@ Resources:
                 Resource: 
                   - !Sub "arn:aws:s3:::${myBucketCICD}/*"
                   - !Sub "arn:aws:s3:::${bucketAdmin}/*"
+                  - !Sub "arn:aws:s3:::${bucketAdmin}"
                 Action: 
                   - s3:PutObject
+                  - s3:PutObjectAcl
                   - s3:GetObject
                   - s3:GetObjectVersion
                   - s3:GetBucketAcl
                   - s3:GetBucketLocation
+                  - s3:ListBucket
+                  - s3:DeleteObject
               - Effect: Allow
                 Resource:
                   - !Sub "arn:aws:cloudfront::${AWS::AccountId}:distribution/${distributionAdmin}"
