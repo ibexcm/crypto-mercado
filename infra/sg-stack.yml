@@ -102,6 +102,17 @@ Resources:
       Tags:
         - Key: Env
           Value: !Ref EnvTag
+
+  SecretRotationLambdaSg:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: !Join [ "-", [ !Ref EnvTag, "lambda-secretDBRotation" ] ]
+      GroupDescription: Security Group for Lambda to rotate security password
+      VpcId: !Ref VPCID
+      Tags:
+        - Key: Env
+          Value: !Ref EnvTag
+
   postgresSg:
     Type: AWS::EC2::SecurityGroup
     Properties:
@@ -117,6 +128,10 @@ Resources:
           FromPort: 5432
           ToPort: 5432
           SourceSecurityGroupId: !Ref bastionLinuxSg
+        - IpProtocol: tcp
+          FromPort: 5432
+          ToPort: 5432
+          SourceSecurityGroupId: !Ref SecretRotationLambdaSg
       Tags:
         - Key: Env
           Value: !Ref EnvTag
@@ -138,3 +153,9 @@ Outputs:
   prismaSg:
     Description: Prisma SG ID
     Value: !GetAtt prismaSg.GroupId
+  SecretRotationLambdaSg:
+    Description: SecretRotationLambda SG ID
+    Value: !GetAtt SecretRotationLambdaSg.GroupId
+  BastionLinuxSg:
+    Description: SecretRotationLambda SG ID
+    Value: !GetAtt bastionLinuxSg.GroupId

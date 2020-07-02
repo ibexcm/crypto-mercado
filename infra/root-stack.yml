@@ -221,11 +221,40 @@ Resources:
         distributionAdmin: !GetAtt ClientsStack.Outputs.distributionAdmin
         bucketWeb: !GetAtt ClientsStack.Outputs.bucketWeb
         distributionWeb: !GetAtt ClientsStack.Outputs.distributionWeb
-  DatabaseStack:
-    Type: AWS::CloudFormation::Stack
-    Properties:
-      TemplateURL: database-stack.yml
-      Parameters:
-        EnvTag: !Ref EnvTag
-        subnetDBPrivateA: !GetAtt VPCStack.Outputs.subnetDBPrivateA
-        subnetDBPrivateB: !GetAtt VPCStack.Outputs.subnetDBPrivateB
+
+Outputs:
+  Envtag:
+    Description: 'Env Tag'
+    Value: !Ref EnvTag
+    Export:
+      Name: !Sub '${AWS::StackName}-EnvTag'
+
+  VPC:
+    Description: 'VPC'
+    Value: !GetAtt VPCStack.Outputs.VPCID
+    Export:
+      Name: !Sub '${AWS::StackName}-VPC'
+
+  SubnetsPrivate:
+    Description: 'Subnets private'
+    Value: !Join [',', [!GetAtt VPCStack.Outputs.subnetDBPrivateA, !GetAtt VPCStack.Outputs.subnetDBPrivateB]]
+    Export:
+      Name: !Sub '${AWS::StackName}-SubnetsPrivate'
+
+  BastionLinuxSg:
+    Description: Secret Rotation Lambda SecurityGroup for Bastion
+    Value: !GetAtt SGStack.Outputs.BastionLinuxSg
+    Export:
+      Name: !Sub '${AWS::StackName}-BastionLinuxSg' 
+
+  SecretRotationLambdaSg:
+    Description: Secret Rotation Lambda SecurityGroup for AWS Secrets Manager
+    Value: !GetAtt SGStack.Outputs.SecretRotationLambdaSg
+    Export:
+      Name: !Sub '${AWS::StackName}-SecretRotationLambdaSg'
+    
+  PrismaSg:
+    Description: Secret Rotation Lambda SecurityGroup for Prisma Server
+    Value: !GetAtt SGStack.Outputs.prismaSg
+    Export:
+      Name: !Sub '${AWS::StackName}-PrismaSg'

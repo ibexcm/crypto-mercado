@@ -46,6 +46,4 @@ aws cloudformation deploy --template-file <RESULT PREVIOUS COMMAND> --stack-name
 - Enable Graphservice
 
 ## TODO
-- Pruebas Graphql
-- Ultima AMI
 - Creacion DB
