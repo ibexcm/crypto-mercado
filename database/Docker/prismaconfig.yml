@@ -1,0 +1,11 @@
+managementApiSecret: __MANAGEMENT_API_SECRET__
+port: __PORT__
+databases:
+  default:
+    connector: __DATABASE_CONNECTOR__
+    migrations: __ENABLE_DB_MIGRATIONS__
+    host: __DATABASE_HOST__
+    port: __DATABASE_PORT__
+    user: __DATABASE_USER__
+    password: __DATABASE_PASSWORD__
+    database: __DATABASE_NAME__

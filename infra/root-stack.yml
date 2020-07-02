@@ -125,13 +125,6 @@ Parameters:
   KMSKeyARN:
     Type: String
     Description: ARN de llave de KMS
-  DatabasePassword:
-    #Type : 'AWS::SSM::Parameter::Value<String>'
-    Type: String
-    Default: DB_PASSWORD
-  PrismaAPISecret:
-    Type: String
-    Default: PRISMA_MANAGEMENT_API_SECRET
   WebClientDomain:
     Type: String
     Default: ibexcm.com
@@ -177,8 +170,6 @@ Resources:
         EnvTag: !Ref EnvTag
         Keyparam: !Ref Keyparam
         CertificadoARN: !Ref CertificadoARN
-        DatabasePassword: !Ref DatabasePassword
-        PrismaAPISecret: !Ref PrismaAPISecret
         VPCID: !GetAtt VPCStack.Outputs.VPCID
         subnetPublicA: !GetAtt VPCStack.Outputs.subnetPublicA
         subnetPublicB: !GetAtt VPCStack.Outputs.subnetPublicB

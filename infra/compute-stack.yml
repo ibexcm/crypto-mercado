@@ -23,10 +23,6 @@ Parameters:
     Type: String
   prismaSg:
     Type: String
-  DatabasePassword:
-    Type: String
-  PrismaAPISecret:
-    Type: String
   subnetPublicA:
     Type: String
   subnetPublicB:
@@ -187,6 +183,14 @@ Resources:
         - Key: Env
           Value: !Ref EnvTag
 
+  myECRPrisma:
+    Type: AWS::ECR::Repository
+    Properties: 
+      RepositoryName: !Join [ "/", [ !Ref EnvTag, "ibex", "prisma" ] ]
+      Tags: 
+        - Key: Env
+          Value: !Ref EnvTag
+
   myTaskPrisma:
     Type: AWS::ECS::TaskDefinition
     Properties:
@@ -201,33 +205,23 @@ Resources:
       ContainerDefinitions:
         - Name: prisma-container
           Essential: true
-          Image: prismagraphql/prisma:1.34
+          Image: !Sub "${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/${EnvTag}/ibex/prisma:1.34"
           Cpu: 512
           MemoryReservation: 1024
           PortMappings:
             - ContainerPort: 80
           Environment:
-            - Name: PRISMA_CONFIG
-              Value: !Sub 
-                - |
-                  port: 80
-                  managementApiSecret: ${API}
-                  databases:
-                    default:
-                      connector: postgres
-                      host: ${Host}
-                      port: 5432
-                      user: postgres
-                      password: ${Pass}
-                      database: ${Database}
-                      rawAccess: false
-                      migrations: true
-                - Host: !Sub "db.${EnvTag}.ibexcm.internal"
-                  Pass: !Ref DatabasePassword
-                  Database: !If [condAmbientePRO, "IBEXCM", "IBEXCM_TEST"] 
-                  API: !Ref PrismaAPISecret
             - Name: JAVA_OPTS
               Value: -Xmx750m
+            - Name: DATABASE_NAME
+              Value: !If [condAmbientePRO, "IBEXCM", "IBEXCM_TEST"] 
+            - Name: DATABASE_HOST
+              Value: !Sub "db.${EnvTag}.ibexcm.internal"
+          Secrets:
+            - Name: MANAGEMENT_API_SECRET
+              ValueFrom: !If [condAmbientePRO, "PROD_PRISMA_MANAGEMENT_API_SECRET", "PRISMA_MANAGEMENT_API_SECRET"] 
+            - Name: DATABASE_PASSWORD
+              ValueFrom: !If [condAmbientePRO, "PROD_DB_PASSWORD", "DB_PASSWORD"] 
           Ulimits:
             - Name: nofile
               HardLimit: 1000000
