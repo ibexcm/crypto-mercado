@@ -519,7 +519,7 @@ Resources:
             Value: !Ref APIDomain
           - Name: S3_BUCKET
             Type: PLAINTEXT 
-            Value: !Ref bucketAdmin
+            Value: !Ref bucketWeb
           - Name: CF_DISTRIBUTION
             Type: PLAINTEXT 
             Value: !Ref distributionAdmin
