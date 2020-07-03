@@ -8,42 +8,35 @@
 
 ## Deploy
 
-aws cloudformation package --template-file root-stack.yml --output-template packed-nested-stacks.yml --s3-bucket ibexcm-templates --profile <PROFILE NAME>
-
-aws cloudformation deploy --template-file <RESULT PREVIOUS COMMAND> --stack-name <YOUR STACK NAME> --profile <PROFILE NAME>
+aws cloudformation package --template-file root-stack.yml --output-template packed-nested-stacks.yml --s3-bucket ibexcm-templates
 
 ## After Deploy
 - Build and upload your prisma image to ECR
-- Create a RDS database and modify ENDPOINT in Route 53. Select the correct Security Group.
-- KMS
+- Create Database using aurora-database-stack.yml
+- Modify KMS Key and add the following roles.
     - test-prisma-taskrole
     - test-webclient
     - test-adminclient
     - test-graphql
-- Run prisma deploy and seed. 
-    - Create SSH Tunnel
-    - Install yarn and node
+- Run prisma deploy. 
     - Start Prisma ECS Service
-    - Exec
+    - Execute prisma deploy.
+    - Restart prisma ECS service
 
-    yarn
-    yarn bootstrap
-
-    npm i -g prisma
-    npm i -g ts-node
-    npm i -g typescript
-    cd database/
-    export NODE_PATH=$(npm root --quiet -g)
-    export PRISMA_ENDPOINT="http://prisma.test.ibexcm.internal"
-    export PRISMA_SECRET='###'
-    export PRISMA_MANAGEMENT_API_SECRET='###'
-
-    prisma deploy
-
-    Restart prisma service
+```
+yarn
+yarn bootstrap
+npm i -g prisma
+npm i -g ts-node
+npm i -g typescript
+cd database/
+export NODE_PATH=$(npm root --quiet -g)
+export PRISMA_ENDPOINT="http://prisma.test.ibexcm.internal"
+export PRISMA_SECRET='###'
+export PRISMA_MANAGEMENT_API_SECRET='###'
+prisma deploy
+```
 
 - Run CICD Pipelines (Create a PR)
 - Enable Graphservice
-
-## TODO
-- Creacion DB
+- Update DNS Records for API, webclient y adminclient
