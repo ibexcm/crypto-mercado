@@ -15,7 +15,8 @@ COPY start.sh /app/
 
 WORKDIR /app/
 
-ENV MANAGEMENT_API_SECRET="" \
+ENV SECRET="" \
+    MANAGEMENT_API_SECRET="" \
     PRISMA_PORT=80 \
     CONNECTOR="postgres" \
     MIGRATION="true" \
@@ -26,4 +27,7 @@ ENV MANAGEMENT_API_SECRET="" \
     DATABASE_NAME="postgres" \
     JAVA_OPTS="-Xmx750m"
 
-RUN chmod 775 *.sh
+RUN wget https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64 && \
+    mv jq-linux64 jq && \
+    chmod +x jq && \
+    chmod +x *.sh

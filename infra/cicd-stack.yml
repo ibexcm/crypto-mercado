@@ -9,6 +9,8 @@ Parameters:
     Type: String
   KMSKeyARN:
     Type: String
+  SecretARN:
+    Type: String
   VPCID:
     Type: String
   subnetPrivateA:
@@ -230,9 +232,9 @@ Resources:
                     ec2:AuthorizedService: codebuild.amazonaws.com
               - Effect: Allow
                 Resource: 
-                  - !Sub "arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/*"
+                  - !Sub "${SecretARN}*"
                 Action: 
-                  - ssm:GetParameters
+                  - secretsmanager:GetSecretValue
               - Effect: Allow
                 Resource:
                   - !Sub "arn:aws:ecr:${AWS::Region}:${AWS::AccountId}:repository/*"
@@ -514,18 +516,12 @@ Resources:
           - Name: IMAGE_TAG
             Type: PLAINTEXT 
             Value: 1.0
-          - Name: JWT_PRIVATE_KEY
-            Type: PARAMETER_STORE 
-            Value: !If [condAmbientePRO, "PROD_JWT_PRIVATE_KEY", "JWT_PRIVATE_KEY"] 
-          - Name: JWT_PUBLIC_KEY
-            Type: PARAMETER_STORE 
-            Value: !If [condAmbientePRO, "PROD_JWT_PUBLIC_KEY", "JWT_PUBLIC_KEY"] 
-          - Name: PRISMA_SECRET
-            Type: PARAMETER_STORE 
-            Value: !If [condAmbientePRO, "PROD_PRISMA_SECRET", "PRISMA_SECRET"] 
           - Name: PRISMA_ENDPOINT
             Type: PLAINTEXT 
             Value: !Sub "http://prisma.${EnvTag}.ibexcm.internal"
+          - Name: SECRETS
+            Type: SECRETS_MANAGER 
+            Value: !Sub "${SecretARN}"
       VpcConfig:
         VpcId: !Ref VPCID
         Subnets:

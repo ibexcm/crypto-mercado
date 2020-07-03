@@ -61,49 +61,49 @@ Parameters:
   AmbienteDBseparado:
     Type: String
     Description: "Arquitectura de 3 capas contempla subnet privada adicional para DB"
-    Default: "NO"
+    Default: "SI"
     AllowedValues: ["SI", "NO"]
     ConstraintDescription: "Por favor indique SI o NO"
   VPCcidr:
     Type: String
     Description: Rango CIDR para VPC
-    Default: 192.168.0.0/16
+    Default: 172.16.0.0/16
     AllowedPattern: "^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\\/(1[6-9]|2[0-8]))$"
     ConstraintDescription: "CIDR block usa la sintaxis x.x.x.x/16-28"
   SubnetPublicAcidr:
     Type: String
     Description: Rango CIDR para Subnet Publica A
-    Default: 192.168.10.0/24
+    Default: 172.16.10.0/24
     AllowedPattern: "^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\\/(1[6-9]|2[0-8]))$"
     ConstraintDescription: "CIDR block usa la sintaxis x.x.x.x/16-28"
   SubnetPublicBcidr:
     Type: String
     Description: Rango CIDR para Subnet Publica B
-    Default: 192.168.30.0/24
+    Default: 172.16.30.0/24
     AllowedPattern: "^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\\/(1[6-9]|2[0-8]))$"
     ConstraintDescription: "CIDR block usa la sintaxis x.x.x.x/16-28"
   SubnetPrivateAcidr:
     Type: String
     Description: Rango CIDR para Subnet Privada A
-    Default: 192.168.20.0/24
+    Default: 172.16.20.0/24
     AllowedPattern: "^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\\/(1[6-9]|2[0-8]))$"
     ConstraintDescription: "CIDR block usa la sintaxis x.x.x.x/16-28"
   SubnetPrivateBcidr:
     Type: String
     Description: Rango CIDR para Subnet Privada B
-    Default: 192.168.40.0/24
+    Default: 172.16.40.0/24
     AllowedPattern: "^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\\/(1[6-9]|2[0-8]))$"
     ConstraintDescription: "CIDR block usa la sintaxis x.x.x.x/16-28"
   SubnetDBPrivateAcidr:
     Type: String
     Description: Rango CIDR para Subnet DB Privada A
-    Default: 192.168.55.0/24
+    Default: 172.16.55.0/24
     AllowedPattern: "^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\\/(1[6-9]|2[0-8]))$"
     ConstraintDescription: "CIDR block usa la sintaxis x.x.x.x/16-28"
   SubnetDBPrivateBcidr:
     Type: String
     Description: Rango CIDR para Subnet DB Privada B
-    Default: 192.168.65.0/24
+    Default: 172.16.65.0/24
     AllowedPattern: "^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\\/(1[6-9]|2[0-8]))$"
     ConstraintDescription: "CIDR block usa la sintaxis x.x.x.x/16-28"
   EnvTag:
@@ -125,6 +125,9 @@ Parameters:
   KMSKeyARN:
     Type: String
     Description: ARN de llave de KMS
+  SecretARN:
+    Type: String
+    Description: AWS Secret Manager ARN 
   WebClientDomain:
     Type: String
     Default: ibexcm.com
@@ -135,8 +138,10 @@ Parameters:
     Type: String
     Default: api.ibexcm.com
   LatestAmiId:
-    Type: 'AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>'
-    Default: '/aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2'
+    #Type: 'AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>'
+    #Default: '/aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2'
+    Type: String
+    Default: ami-09d95fab7fff3776c
 
 # Nested stacks
 Resources:
@@ -174,6 +179,7 @@ Resources:
         Keyparam: !Ref Keyparam
         CertificadoARN: !Ref CertificadoARN
         KMSKeyARN: !Ref KMSKeyARN
+        SecretARN: !Ref SecretARN
         LatestAmiId: !Ref LatestAmiId
         VPCID: !GetAtt VPCStack.Outputs.VPCID
         subnetPublicA: !GetAtt VPCStack.Outputs.subnetPublicA
@@ -211,6 +217,7 @@ Resources:
       Parameters:
         TipoAmbiente: !Ref TipoAmbiente
         EnvTag: !Ref EnvTag
+        SecretARN: !Ref SecretARN
         KMSKeyARN: !Ref KMSKeyARN
         APIDomain: !Ref APIDomain
         VPCID: !GetAtt VPCStack.Outputs.VPCID
