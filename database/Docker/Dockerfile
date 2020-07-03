@@ -16,10 +16,10 @@ COPY start.sh /app/
 WORKDIR /app/
 
 ENV SECRET="" \
-    MANAGEMENT_API_SECRET="" \
+    PRISMA_MANAGEMENT_API_SECRET="" \
     PRISMA_PORT=80 \
-    CONNECTOR="postgres" \
-    MIGRATION="true" \
+    DATABASE_CONNECTOR="postgres" \
+    DATABASE_MIGRATION="true" \
     DATABASE_HOST="localhost" \
     DATABASE_PORT=5432 \
     DATABASE_USER="postgres" \
