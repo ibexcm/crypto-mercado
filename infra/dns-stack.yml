@@ -24,16 +24,6 @@ Resources:
       HostedZoneTags: 
       - Key: Env
         Value: !Ref EnvTag
-  
-  myDNSRecordDB:
-    Type: AWS::Route53::RecordSet
-    Properties: 
-      HostedZoneId: !Ref myPrivateZone
-      Name: !Join [ ".", [ "db", !Ref EnvTag, "ibexcm.internal" ] ]
-      TTL: '60'
-      Type: CNAME
-      ResourceRecords: 
-        - test.db
 
   myDNSRecordPrisma:
     Type: AWS::Route53::RecordSetGroup
@@ -45,3 +35,8 @@ Resources:
           AliasTarget:
             HostedZoneId: !Ref CanonicalALBPriv
             DNSName: !Ref DNSALBPriv
+
+Outputs: 
+  HostedZoneId:
+    Description: HostedZoneId
+    Value: !Ref myPrivateZone

@@ -342,7 +342,7 @@ Resources:
       DatabaseName: !If [IsUseDBSnapshot, !Ref "AWS::NoValue", !Ref DBName]
       Port: !Ref DBPort
       MasterUsername: !Ref DBUsername
-      MasterUserPassword: !If [IsUseDBSnapshot, !Ref "AWS::NoValue", !If [IsProd, '{{resolve:ssm-secure:PROD_DB_PASSWORD:1}}' , '{{resolve:ssm-secure:DB_PASSWORD:1}}'] ]        
+      MasterUserPassword: !If [IsUseDBSnapshot, !Ref "AWS::NoValue", !Join [ '', [ '{{resolve:secretsmanager:', {'Fn::ImportValue': !Sub '${ParentStack}-SecretARN'}, ':SecretString:DATABASE_PASSWORD}}' ] ] ]        
       DBSubnetGroupName: !Ref DBSubnetGroup
       VpcSecurityGroupIds:
       - !Ref ClusterSecurityGroup  
@@ -601,6 +601,16 @@ Resources:
       SnsTopicArn: !Ref DBSNSTopic
       SourceIds: [!Ref DBParamGroup]
       SourceType: 'db-parameter-group'
+
+  myDNSRecordDB:
+    Type: AWS::Route53::RecordSet
+    Properties: 
+      HostedZoneId: {'Fn::ImportValue': !Sub '${ParentStack}-HostedZoneId'}
+      Name: !Join [ ".", [ "db", {'Fn::ImportValue': !Sub '${ParentStack}-EnvTag'}, "ibexcm.internal" ] ]
+      TTL: '60'
+      Type: CNAME
+      ResourceRecords: 
+        - !GetAtt 'AuroraDBCluster.Endpoint.Address'
 
 ###############################################################################
 # Outputs 

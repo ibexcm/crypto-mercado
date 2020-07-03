@@ -265,3 +265,15 @@ Outputs:
     Value: !GetAtt SGStack.Outputs.prismaSg
     Export:
       Name: !Sub '${AWS::StackName}-PrismaSg'
+
+  HostedZoneId:
+    Description: Route53 Hosted Zone
+    Value: !GetAtt DNSStack.Outputs.HostedZoneId
+    Export:
+      Name: !Sub '${AWS::StackName}-HostedZoneId'
+
+  SecretARN:
+    Description: Secret Manager ARN
+    Value: !Ref SecretARN
+    Export:
+      Name: !Sub '${AWS::StackName}-SecretARN'

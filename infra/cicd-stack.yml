@@ -649,3 +649,52 @@ Resources:
       Tags: 
         - Key: Env
           Value: !Ref EnvTag
+
+  myEventRoleGraphql:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          -
+            Effect: Allow
+            Principal:
+              Service:
+                - events.amazonaws.com
+            Action: sts:AssumeRole
+      Path: /cicd/
+      Policies:
+        -
+          PolicyName: cwe-pipeline-execution
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action: codepipeline:StartPipelineExecution
+                Resource: !Join [ '', [ 'arn:aws:codepipeline:', !Ref 'AWS::Region', ':', !Ref 'AWS::AccountId', ':', !Ref myPipelineGraph ] ] 
+      Tags: 
+        - Key: Env
+          Value: !Ref EnvTag
+
+  myEventRuleGraphql:
+    Type: 'AWS::Events::Rule'
+    Properties:
+      EventPattern:
+        detail:
+          action-type: [PUSH]
+          image-tag: [1.0-latest]
+          repository-name: [ !Sub "${EnvTag}/ibex/graphql" ]
+          result: [SUCCESS]
+        detail-type: [ECR Image Action]
+        source: [aws.ecr]
+      Targets:
+        - Arn: !Join
+            - ''
+            - - 'arn:aws:codepipeline:'
+              - !Ref 'AWS::Region'
+              - ':'
+              - !Ref 'AWS::AccountId'
+              - ':'
+              - !Ref myPipelineGraph
+          RoleArn: !GetAtt myEventRoleGraphql.Arn
+          Id: !Sub "codepipeline-${myPipelineGraph}"
