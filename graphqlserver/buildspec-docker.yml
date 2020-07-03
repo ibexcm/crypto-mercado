@@ -1,6 +1,5 @@
 version: 0.2
-
-env:
+#env:
 #  parameter-store:
 #    ADMIN_ACCOUNT_EMAIL_ADDRESS: "ADMIN_ACCOUNT_EMAIL_ADDRESS"
 #    IP_ADDRESS: "IP_ADDRESS"
