@@ -1,0 +1,369 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: Plantilla Base para recursos de computo
+
+# Definicion de Parametros
+Parameters: 
+  TipoAmbiente:
+    Type: String
+  EnvTag:
+    Type: String
+  VPCID:
+    Type: String
+  Keyparam:
+    Type: String
+  CertificadoARN:
+    Type: String
+  KMSKeyARN:
+    Type: String
+  SecretARN:
+    Type: String
+  LatestAmiId:
+    Type: String
+  bastionLinuxSg:
+    Type: String
+  albFrontSg:
+    Type: String
+  albPrivSg:
+    Type: String
+  graphqlSg:
+    Type: String
+  prismaSg:
+    Type: String
+  subnetPublicA:
+    Type: String
+  subnetPublicB:
+    Type: String
+  subnetPrivateA:
+    Type: String
+  subnetPrivateB:
+    Type: String
+
+# Determina si el recurso sera para Produccion o para Test
+Conditions:
+  condAmbientePRO: !Or [ !Equals [ !Ref TipoAmbiente, PROD ], !Equals [ !Ref TipoAmbiente, prod ] ]
+
+# Definicion de Parametros
+Resources:
+  myBastionLinuxEC2:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: !Ref LatestAmiId
+      KeyName: !Ref Keyparam
+      InstanceType: t3a.nano
+      BlockDeviceMappings:
+        - DeviceName: /dev/xvda
+          Ebs:
+            VolumeType: gp2
+            VolumeSize: '8'
+            DeleteOnTermination: 'true'
+            Encrypted: 'true'
+            KmsKeyId: !Ref KMSKeyARN
+      SecurityGroupIds: 
+        - !Ref bastionLinuxSg
+      SubnetId: !Ref subnetPublicA
+      Tags:
+        - Key: Env
+          Value: !Ref EnvTag
+        - Key: Name
+          Value: !Join [ "-", [ !Ref EnvTag, "bastion-linux" ] ]
+  myEIPBastionLinux:
+    Type: AWS::EC2::EIP
+    Properties:
+      InstanceId: !Ref myBastionLinuxEC2
+      Tags:
+        - Key: Env
+          Value: !Ref EnvTag
+  
+  myTargetGraphql:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      Name: !Join [ "-", [ !Ref EnvTag, "ecs-service-graphql" ] ]
+      HealthCheckIntervalSeconds: 10
+      HealthCheckPath: /
+      HealthCheckProtocol: HTTP
+      HealthCheckTimeoutSeconds: 5
+      HealthyThresholdCount: 3
+      UnhealthyThresholdCount: 5
+      Matcher:
+        HttpCode: 200
+      Port: 80
+      Protocol: HTTP
+      TargetGroupAttributes:
+        - Key: deregistration_delay.timeout_seconds
+          Value: 60
+      TargetType: ip
+      Tags:
+        - Key: Env
+          Value: !Ref EnvTag
+      VpcId: !Ref VPCID
+  myTargetPrisma:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      Name: !Join [ "-", [ !Ref EnvTag, "ecs-service-prismaserver" ] ]
+      HealthCheckIntervalSeconds: 10
+      HealthCheckPath: /status
+      HealthCheckProtocol: HTTP
+      HealthCheckTimeoutSeconds: 5
+      HealthyThresholdCount: 3
+      UnhealthyThresholdCount: 5
+      Matcher:
+        HttpCode: 200
+      Port: 80
+      Protocol: HTTP
+      TargetGroupAttributes:
+        - Key: deregistration_delay.timeout_seconds
+          Value: 60
+      TargetType: ip
+      Tags:
+        - Key: Env
+          Value: !Ref EnvTag
+      VpcId: !Ref VPCID        
+  myALBFront:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Properties:
+      Name: !Join [ "-", [ !Ref EnvTag, "alb-frot" ] ]
+      Scheme: internet-facing
+      Subnets:
+        - !Ref subnetPublicA
+        - !Ref subnetPublicB
+      SecurityGroups:
+        - !Ref albFrontSg
+      Tags:
+        - Key: Env
+          Value: !Ref EnvTag
+  myALBPriv:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Properties:
+      Name: !Join [ "-", [ !Ref EnvTag, "alb-priv" ] ]
+      Scheme: internal
+      Subnets:
+        - !Ref subnetPrivateA
+        - !Ref subnetPrivateB
+      SecurityGroups:
+        - !Ref albPrivSg
+      Tags:
+        - Key: Env
+          Value: !Ref EnvTag
+  myListenerFront80:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties: 
+      LoadBalancerArn: !Ref myALBFront
+      Port: 80
+      Protocol: HTTP
+      DefaultActions:
+        - Type: redirect
+          RedirectConfig:
+            Protocol: HTTPS
+            StatusCode: HTTP_301
+  myListenerFront443:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      Certificates:
+        - CertificateArn: !Ref CertificadoARN
+      SslPolicy: ELBSecurityPolicy-2016-08
+      LoadBalancerArn: !Ref myALBFront
+      Port: 443
+      Protocol: HTTPS
+      DefaultActions:
+        - Type: forward
+          TargetGroupArn: !Ref myTargetGraphql
+  myListenerPriv80:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties: 
+      LoadBalancerArn: !Ref myALBPriv
+      Port: 80
+      Protocol: HTTP
+      DefaultActions:
+        - Type: forward
+          TargetGroupArn: !Ref myTargetPrisma
+
+############ ECS
+  myECSCluster:
+    Type: AWS::ECS::Cluster
+    Properties: 
+      ClusterName: !Join [ "-", [ !Ref EnvTag, "ibexcm" ] ]
+      ClusterSettings: 
+        - Name: containerInsights
+          Value: enabled
+      Tags:
+        - Key: Env
+          Value: !Ref EnvTag
+
+  myECR:
+    Type: AWS::ECR::Repository
+    Properties: 
+      RepositoryName: !Join [ "/", [ !Ref EnvTag, "ibex", "graphql" ] ]
+      Tags: 
+        - Key: Env
+          Value: !Ref EnvTag
+
+  myECRPrisma:
+    Type: AWS::ECR::Repository
+    Properties: 
+      RepositoryName: !Join [ "/", [ !Ref EnvTag, "ibex", "prisma" ] ]
+      Tags: 
+        - Key: Env
+          Value: !Ref EnvTag
+
+  myTaskRolePrisma:
+    Type: 'AWS::IAM::Role'
+    Properties: 
+      RoleName: !Join [ "-", [ !Ref EnvTag, "prisma-taskrole" ] ]
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - ecs-tasks.amazonaws.com
+            Action:
+              - 'sts:AssumeRole'
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
+      Policies: 
+        - PolicyName: pol1
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Resource: 
+                  - !Sub "${SecretARN}*"
+                Action: 
+                  - secretsmanager:GetSecretValue
+      Path: /container/
+      Tags: 
+        - Key: Env
+          Value: !Ref EnvTag
+
+  myLogGroupPrisma:
+    Type: AWS::Logs::LogGroup
+    Properties: 
+      LogGroupName: !Join [ "/", [ "/ecs", !Ref EnvTag, "prisma" ] ]
+      RetentionInDays: 30
+
+  myTaskPrisma:
+    Type: AWS::ECS::TaskDefinition
+    Properties:
+      Cpu: 512
+      Memory: 1024
+      RequiresCompatibilities: 
+        - FARGATE
+      Family: !Join [ "-", [ !Ref EnvTag, "prisma" ] ]
+      NetworkMode: awsvpc
+      ExecutionRoleArn: !GetAtt myTaskRolePrisma.Arn
+      TaskRoleArn: !GetAtt myTaskRolePrisma.Arn
+      ContainerDefinitions:
+        - Name: prisma-container
+          Essential: true
+          Image: !Sub "${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/${EnvTag}/ibex/prisma:1.34"
+          Cpu: 512
+          MemoryReservation: 1024
+          PortMappings:
+            - ContainerPort: 80
+          Environment:
+            - Name: JAVA_OPTS
+              Value: -Xmx750m
+            - Name: DATABASE_NAME
+              Value: !If [condAmbientePRO, "IBEXCM", "IBEXCM_TEST"] 
+            - Name: DATABASE_HOST
+              Value: !Sub "db.${EnvTag}.ibexcm.internal"
+          Secrets:
+            - Name: SECRET
+              ValueFrom: !Sub "${SecretARN}"
+          Ulimits:
+            - Name: nofile
+              HardLimit: 1000000
+              SoftLimit: 1000000
+          LogConfiguration:
+            LogDriver: awslogs
+            Options:
+              awslogs-group: !Join [ "/", [ "/ecs", !Ref EnvTag, "prisma" ] ]
+              awslogs-region: !Ref AWS::Region
+              awslogs-stream-prefix: prisma
+
+  myTaskGraphql:
+    Type: AWS::ECS::TaskDefinition
+    Properties:
+      Cpu: 512
+      Memory: 1024
+      RequiresCompatibilities: 
+        - FARGATE
+      Family: !Join [ "-", [ !Ref EnvTag, "graphql" ] ]
+      NetworkMode: awsvpc
+      ExecutionRoleArn: !Sub "arn:aws:iam::${AWS::AccountId}:role/ecsTaskExecutionRole"
+      TaskRoleArn: !Sub "arn:aws:iam::${AWS::AccountId}:role/ecsTaskExecutionRole"
+      ContainerDefinitions:
+        - Name: graphql-container
+          Essential: true
+          Image:  !Sub "${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/${EnvTag}/ibex/graphql:latest"
+          Cpu: 512
+          MemoryReservation: 1024
+          PortMappings:
+            - ContainerPort: 80
+          LogConfiguration:
+            LogDriver: awslogs
+            Options:
+              awslogs-group: !Join [ "/", [ "/ecs", !Join [ "-", [ !Ref EnvTag, "prisma" ] ] ] ]
+              awslogs-region: !Ref AWS::Region
+              awslogs-stream-prefix: ecs
+  
+  myServiceGraphql:
+    Type: AWS::ECS::Service
+    DependsOn: myListenerFront443
+    Properties: 
+      Cluster: !Ref myECSCluster
+      DesiredCount: 0
+      EnableECSManagedTags: true
+      LaunchType: FARGATE
+      LoadBalancers:
+        - ContainerName: graphql-container
+          ContainerPort: 80
+          TargetGroupArn: !Ref myTargetGraphql
+      NetworkConfiguration: 
+        AwsvpcConfiguration:
+          AssignPublicIp: DISABLED
+          SecurityGroups: 
+            - !Ref graphqlSg
+          Subnets: 
+            - !Ref subnetPrivateA
+            - !Ref subnetPrivateB
+      ServiceName: service-graphql
+      TaskDefinition: !Ref myTaskGraphql
+      Tags: 
+        - Key: Env
+          Value: !Ref EnvTag
+  
+  myServicePrisma:
+    Type: AWS::ECS::Service
+    DependsOn: myListenerPriv80
+    Properties: 
+      Cluster: !Ref myECSCluster
+      DesiredCount: 0
+      EnableECSManagedTags: true
+      LaunchType: FARGATE
+      LoadBalancers:
+        - ContainerName: prisma-container
+          ContainerPort: 80
+          TargetGroupArn: !Ref myTargetPrisma
+      NetworkConfiguration: 
+        AwsvpcConfiguration:
+          AssignPublicIp: DISABLED
+          SecurityGroups: 
+            - !Ref prismaSg
+          Subnets: 
+            - !Ref subnetPrivateA
+            - !Ref subnetPrivateB
+      ServiceName: service-prisma
+      TaskDefinition: !Ref myTaskPrisma
+      Tags: 
+        - Key: Env
+          Value: !Ref EnvTag
+
+# Salida a mostrarse en la pantalla
+Outputs:
+  DNSALBPriv:
+    Description: DNS ALB Priv
+    Value: !GetAtt myALBPriv.DNSName
+  CanonicalALBPriv:
+    Description: DNS ALB Priv
+    Value: !GetAtt myALBPriv.CanonicalHostedZoneID
