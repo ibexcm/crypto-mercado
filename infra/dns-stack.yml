@@ -1,0 +1,42 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: Plantilla Base para DNS
+
+# Definicion de Parametros
+Parameters:
+  EnvTag:
+    Type: String
+  DNSALBPriv:
+    Type: String
+  CanonicalALBPriv:
+    Type: String
+  VPCID:
+    Type: String
+
+# Definicion de Recursos
+Resources:
+  myPrivateZone:
+    Type: AWS::Route53::HostedZone
+    Properties: 
+      Name: !Join [ ".", [ !Ref EnvTag, "ibexcm.internal" ] ]
+      VPCs: 
+        - VPCId: !Ref VPCID
+          VPCRegion: us-east-1
+      HostedZoneTags: 
+      - Key: Env
+        Value: !Ref EnvTag
+
+  myDNSRecordPrisma:
+    Type: AWS::Route53::RecordSetGroup
+    Properties: 
+      HostedZoneId: !Ref myPrivateZone
+      RecordSets:
+        - Name: !Join [ ".", [ "prisma", !Ref EnvTag, "ibexcm.internal" ] ]
+          Type: A
+          AliasTarget:
+            HostedZoneId: !Ref CanonicalALBPriv
+            DNSName: !Ref DNSALBPriv
+
+Outputs: 
+  HostedZoneId:
+    Description: HostedZoneId
+    Value: !Ref myPrivateZone

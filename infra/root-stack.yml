@@ -1,0 +1,279 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: Plantilla Base para Ibexcm
+
+Metadata: #Seccion Opcional
+  AWS::CloudFormation::Interface: #Permite la personalizacion de los Parametros
+    ParameterGroups: #Define Secciones y orden de los Parametros
+      -
+        Label:
+          default: "Stack Environment"
+        Parameters:
+          - EnvTag
+          - TipoAmbiente
+          - AmbienteDBseparado
+      -
+        Label:
+          default: "Network Configuration"
+        Parameters:
+          - VPCcidr
+          - AvailabilityZoneA
+          - AvailabilityZoneB
+          - SubnetPublicAcidr
+          - SubnetPublicBcidr
+          - SubnetPrivateAcidr
+          - SubnetPrivateBcidr
+          - SubnetDBPrivateAcidr
+          - SubnetDBPrivateBcidr
+    ParameterLabels: #Define Friendly Names para los Parametros mostrados en la pantalla
+      EnvTag:
+        default: "Valor para tag Env"
+      TipoAmbiente:
+        default: "Seleccione el Tipo de Ambiente"
+      AmbienteDBseparado:
+        default: "Indique SI para Arquitectura de 3 capas o NO para Arquitectura de 2 capas"
+      VPCcidr:
+        default: "Define CIDR for VPC"
+      SubnetPublicAcidr:
+        default: "Define CIDR for Public Subnet A"
+      SubnetPublicBcidr:
+        default: "Define CIDR for Public Subnet B"
+      SubnetPrivateAcidr:
+        default: "Define CIDR for Private Subnet A"
+      SubnetPrivateBcidr:
+        default: "Define CIDR for Private Subnet B"
+      SubnetDBPrivateAcidr:
+        default: "Define CIDR for DB Private Subnet A"
+      SubnetDBPrivateBcidr:
+        default: "Define CIDR for DB Private Subnet B"
+      AvailabilityZoneA:
+        default: "Availability zone for resources in side A"
+      AvailabilityZoneB:
+        default: "Availability zone for resources in side B"
+
+# Definicion de Parametros con Valores Default
+Parameters: 
+  TipoAmbiente:
+    Type: String
+    Description: "Tipo de Ambiente para VPC: PROD, TEST"
+    Default: TEST
+    AllowedValues: [PROD, TEST]
+    ConstraintDescription: "Por favor indique el tipo de ambiente: PROD o TEST"
+  AmbienteDBseparado:
+    Type: String
+    Description: "Arquitectura de 3 capas contempla subnet privada adicional para DB"
+    Default: "SI"
+    AllowedValues: ["SI", "NO"]
+    ConstraintDescription: "Por favor indique SI o NO"
+  VPCcidr:
+    Type: String
+    Description: Rango CIDR para VPC
+    Default: 172.16.0.0/16
+    AllowedPattern: "^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\\/(1[6-9]|2[0-8]))$"
+    ConstraintDescription: "CIDR block usa la sintaxis x.x.x.x/16-28"
+  SubnetPublicAcidr:
+    Type: String
+    Description: Rango CIDR para Subnet Publica A
+    Default: 172.16.10.0/24
+    AllowedPattern: "^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\\/(1[6-9]|2[0-8]))$"
+    ConstraintDescription: "CIDR block usa la sintaxis x.x.x.x/16-28"
+  SubnetPublicBcidr:
+    Type: String
+    Description: Rango CIDR para Subnet Publica B
+    Default: 172.16.30.0/24
+    AllowedPattern: "^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\\/(1[6-9]|2[0-8]))$"
+    ConstraintDescription: "CIDR block usa la sintaxis x.x.x.x/16-28"
+  SubnetPrivateAcidr:
+    Type: String
+    Description: Rango CIDR para Subnet Privada A
+    Default: 172.16.20.0/24
+    AllowedPattern: "^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\\/(1[6-9]|2[0-8]))$"
+    ConstraintDescription: "CIDR block usa la sintaxis x.x.x.x/16-28"
+  SubnetPrivateBcidr:
+    Type: String
+    Description: Rango CIDR para Subnet Privada B
+    Default: 172.16.40.0/24
+    AllowedPattern: "^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\\/(1[6-9]|2[0-8]))$"
+    ConstraintDescription: "CIDR block usa la sintaxis x.x.x.x/16-28"
+  SubnetDBPrivateAcidr:
+    Type: String
+    Description: Rango CIDR para Subnet DB Privada A
+    Default: 172.16.55.0/24
+    AllowedPattern: "^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\\/(1[6-9]|2[0-8]))$"
+    ConstraintDescription: "CIDR block usa la sintaxis x.x.x.x/16-28"
+  SubnetDBPrivateBcidr:
+    Type: String
+    Description: Rango CIDR para Subnet DB Privada B
+    Default: 172.16.65.0/24
+    AllowedPattern: "^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\\/(1[6-9]|2[0-8]))$"
+    ConstraintDescription: "CIDR block usa la sintaxis x.x.x.x/16-28"
+  EnvTag:
+    Type: String
+    Description: Tag de Ambiente para los Recursos
+    Default: test
+  AvailabilityZoneA:
+    Type: AWS::EC2::AvailabilityZone::Name
+    Description: AZ para lado A
+  AvailabilityZoneB:
+    Type: AWS::EC2::AvailabilityZone::Name
+    Description: AZ para lado B
+  Keyparam:
+    Type: AWS::EC2::KeyPair::KeyName
+    Description: KeyPair para EC2
+  CertificadoARN:
+    Type: String
+    Description: ARN del certificado para ALB Front
+  KMSKeyARN:
+    Type: String
+    Description: ARN de llave de KMS
+  SecretARN:
+    Type: String
+    Description: AWS Secret Manager ARN 
+  WebClientDomain:
+    Type: String
+    Default: ibexcm.com
+  AdminClientDomain:
+    Type: String
+    Default: admin.ibexcm.com
+  APIDomain:
+    Type: String
+    Default: api.ibexcm.com
+  LatestAmiId:
+    #Type: 'AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>'
+    #Default: '/aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2'
+    Type: String
+    Default: ami-09d95fab7fff3776c
+
+# Nested stacks
+Resources:
+  VPCStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: network-stack.yml
+      Parameters:
+        TipoAmbiente: !Ref TipoAmbiente
+        AmbienteDBseparado: !Ref  AmbienteDBseparado
+        VPCcidr: !Ref VPCcidr
+        SubnetPublicAcidr: !Ref SubnetPublicAcidr
+        SubnetPublicBcidr: !Ref SubnetPublicBcidr
+        SubnetPrivateAcidr: !Ref SubnetPrivateAcidr
+        SubnetPrivateBcidr: !Ref SubnetPrivateBcidr
+        SubnetDBPrivateAcidr: !Ref SubnetDBPrivateAcidr
+        SubnetDBPrivateBcidr: !Ref SubnetDBPrivateBcidr
+        EnvTag: !Ref EnvTag
+        AvailabilityZoneA: !Ref AvailabilityZoneA
+        AvailabilityZoneB: !Ref AvailabilityZoneB
+  SGStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: sg-stack.yml
+      Parameters:
+        EnvTag: !Ref EnvTag
+        VPCID: !GetAtt VPCStack.Outputs.VPCID
+  ComputeStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: compute-stack.yml
+      Parameters:
+        TipoAmbiente: !Ref TipoAmbiente
+        EnvTag: !Ref EnvTag
+        Keyparam: !Ref Keyparam
+        CertificadoARN: !Ref CertificadoARN
+        KMSKeyARN: !Ref KMSKeyARN
+        SecretARN: !Ref SecretARN
+        LatestAmiId: !Ref LatestAmiId
+        VPCID: !GetAtt VPCStack.Outputs.VPCID
+        subnetPublicA: !GetAtt VPCStack.Outputs.subnetPublicA
+        subnetPublicB: !GetAtt VPCStack.Outputs.subnetPublicB
+        subnetPrivateA: !GetAtt VPCStack.Outputs.subnetPrivateA
+        subnetPrivateB: !GetAtt VPCStack.Outputs.subnetPrivateB
+        bastionLinuxSg: !GetAtt SGStack.Outputs.bastionLinuxSg
+        albFrontSg: !GetAtt SGStack.Outputs.albFrontSg
+        albPrivSg: !GetAtt SGStack.Outputs.albPrivSg
+        graphqlSg: !GetAtt SGStack.Outputs.graphqlSg
+        prismaSg: !GetAtt SGStack.Outputs.prismaSg
+  ClientsStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: clients-stack.yml
+      Parameters:
+        EnvTag: !Ref EnvTag
+        CertificadoARN: !Ref CertificadoARN
+        KMSKeyARN: !Ref KMSKeyARN
+        WebClientDomain: !Ref WebClientDomain
+        AdminClientDomain: !Ref AdminClientDomain
+  DNSStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: dns-stack.yml
+      Parameters:
+        EnvTag: !Ref EnvTag
+        VPCID: !GetAtt VPCStack.Outputs.VPCID
+        CanonicalALBPriv: !GetAtt ComputeStack.Outputs.CanonicalALBPriv
+        DNSALBPriv: !GetAtt ComputeStack.Outputs.DNSALBPriv
+  CICDtack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: cicd-stack.yml
+      Parameters:
+        TipoAmbiente: !Ref TipoAmbiente
+        EnvTag: !Ref EnvTag
+        SecretARN: !Ref SecretARN
+        KMSKeyARN: !Ref KMSKeyARN
+        APIDomain: !Ref APIDomain
+        VPCID: !GetAtt VPCStack.Outputs.VPCID
+        subnetPrivateA: !GetAtt VPCStack.Outputs.subnetPrivateA
+        subnetPrivateB: !GetAtt VPCStack.Outputs.subnetPrivateB
+        graphqlSg: !GetAtt SGStack.Outputs.graphqlSg
+        bucketAdmin: !GetAtt ClientsStack.Outputs.bucketAdmin
+        distributionAdmin: !GetAtt ClientsStack.Outputs.distributionAdmin
+        bucketWeb: !GetAtt ClientsStack.Outputs.bucketWeb
+        distributionWeb: !GetAtt ClientsStack.Outputs.distributionWeb
+
+Outputs:
+  Envtag:
+    Description: 'Env Tag'
+    Value: !Ref EnvTag
+    Export:
+      Name: !Sub '${AWS::StackName}-EnvTag'
+
+  VPC:
+    Description: 'VPC'
+    Value: !GetAtt VPCStack.Outputs.VPCID
+    Export:
+      Name: !Sub '${AWS::StackName}-VPC'
+
+  SubnetsPrivate:
+    Description: 'Subnets private'
+    Value: !Join [',', [!GetAtt VPCStack.Outputs.subnetDBPrivateA, !GetAtt VPCStack.Outputs.subnetDBPrivateB]]
+    Export:
+      Name: !Sub '${AWS::StackName}-SubnetsPrivate'
+
+  BastionLinuxSg:
+    Description: Secret Rotation Lambda SecurityGroup for Bastion
+    Value: !GetAtt SGStack.Outputs.BastionLinuxSg
+    Export:
+      Name: !Sub '${AWS::StackName}-BastionLinuxSg' 
+
+  SecretRotationLambdaSg:
+    Description: Secret Rotation Lambda SecurityGroup for AWS Secrets Manager
+    Value: !GetAtt SGStack.Outputs.SecretRotationLambdaSg
+    Export:
+      Name: !Sub '${AWS::StackName}-SecretRotationLambdaSg'
+    
+  PrismaSg:
+    Description: Secret Rotation Lambda SecurityGroup for Prisma Server
+    Value: !GetAtt SGStack.Outputs.prismaSg
+    Export:
+      Name: !Sub '${AWS::StackName}-PrismaSg'
+
+  HostedZoneId:
+    Description: Route53 Hosted Zone
+    Value: !GetAtt DNSStack.Outputs.HostedZoneId
+    Export:
+      Name: !Sub '${AWS::StackName}-HostedZoneId'
+
+  SecretARN:
+    Description: Secret Manager ARN
+    Value: !Ref SecretARN
+    Export:
+      Name: !Sub '${AWS::StackName}-SecretARN'
