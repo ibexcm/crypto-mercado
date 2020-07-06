@@ -5,6 +5,8 @@
 - Create an AWS KMS Key
 - Create a Certificate in AWS Certificate Manager
 - Create a EC2 KeyPair
+- Configure Github personal access token. 
+    https://docs.aws.amazon.com/codepipeline/latest/userguide/GitHub-create-personal-token-CLI.html
 
 ## Deploy
 
