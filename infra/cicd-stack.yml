@@ -463,7 +463,7 @@ Resources:
             Value: !Ref bucketWeb
           - Name: CF_DISTRIBUTION
             Type: PLAINTEXT 
-            Value: !Ref distributionAdmin
+            Value: !Ref distributionWeb
       Source:
         Auth: 
           Type: OAUTH

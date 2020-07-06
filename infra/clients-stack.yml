@@ -21,11 +21,6 @@ Resources:
     Type: AWS::S3::Bucket
     Properties:
       BucketName: !Join [ "-", [ !Ref EnvTag, "ibexcm-webclient" ] ]
-      BucketEncryption: 
-        ServerSideEncryptionConfiguration:
-          - ServerSideEncryptionByDefault:
-              KMSMasterKeyID: !Ref KMSKeyARN
-              SSEAlgorithm: aws:kms
       Tags:
         - Key: Env
           Value: !Ref EnvTag
@@ -97,11 +92,6 @@ Resources:
     Type: AWS::S3::Bucket
     Properties:
       BucketName: !Join [ "-", [ !Ref EnvTag, "ibexcm-adminclient" ] ]
-      BucketEncryption: 
-        ServerSideEncryptionConfiguration:
-          - ServerSideEncryptionByDefault:
-              KMSMasterKeyID: !Ref KMSKeyARN
-              SSEAlgorithm: aws:kms
       Tags:
         - Key: Env
           Value: !Ref EnvTag
