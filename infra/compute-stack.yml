@@ -263,8 +263,6 @@ Resources:
           Environment:
             - Name: JAVA_OPTS
               Value: -Xmx750m
-            - Name: DATABASE_NAME
-              Value: !If [condAmbientePRO, "IBEXCM", "IBEXCM_TEST"] 
             - Name: DATABASE_HOST
               Value: !Sub "db.${EnvTag}.ibexcm.internal"
           Secrets:
@@ -280,6 +278,12 @@ Resources:
               awslogs-group: !Join [ "/", [ "/ecs", !Ref EnvTag, "prisma" ] ]
               awslogs-region: !Ref AWS::Region
               awslogs-stream-prefix: prisma
+
+  myLogGroupGraphql:
+  Type: AWS::Logs::LogGroup
+  Properties: 
+    LogGroupName: !Join [ "/", [ "/ecs", !Ref EnvTag, "graphql" ] ]
+    RetentionInDays: 30
 
   myTaskGraphql:
     Type: AWS::ECS::TaskDefinition
@@ -303,9 +307,9 @@ Resources:
           LogConfiguration:
             LogDriver: awslogs
             Options:
-              awslogs-group: !Join [ "/", [ "/ecs", !Join [ "-", [ !Ref EnvTag, "prisma" ] ] ] ]
+              awslogs-group: !Join [ "/", [ "/ecs", !Join [ "-", [ !Ref EnvTag, "graphql" ] ] ] ]
               awslogs-region: !Ref AWS::Region
-              awslogs-stream-prefix: ecs
+              awslogs-stream-prefix: graphql
   
   myServiceGraphql:
     Type: AWS::ECS::Service
