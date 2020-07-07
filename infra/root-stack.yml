@@ -4,15 +4,13 @@ Description: Plantilla Base para Ibexcm
 Metadata: #Seccion Opcional
   AWS::CloudFormation::Interface: #Permite la personalizacion de los Parametros
     ParameterGroups: #Define Secciones y orden de los Parametros
-      -
-        Label:
+      - Label:
           default: "Stack Environment"
         Parameters:
           - EnvTag
           - TipoAmbiente
           - AmbienteDBseparado
-      -
-        Label:
+      - Label:
           default: "Network Configuration"
         Parameters:
           - VPCcidr
@@ -51,7 +49,7 @@ Metadata: #Seccion Opcional
         default: "Availability zone for resources in side B"
 
 # Definicion de Parametros con Valores Default
-Parameters: 
+Parameters:
   TipoAmbiente:
     Type: String
     Description: "Tipo de Ambiente para VPC: PROD, TEST"
@@ -127,7 +125,7 @@ Parameters:
     Description: ARN de llave de KMS
   SecretARN:
     Type: String
-    Description: AWS Secret Manager ARN 
+    Description: AWS Secret Manager ARN
   WebClientDomain:
     Type: String
     Default: ibexcm.com
@@ -151,7 +149,7 @@ Resources:
       TemplateURL: network-stack.yml
       Parameters:
         TipoAmbiente: !Ref TipoAmbiente
-        AmbienteDBseparado: !Ref  AmbienteDBseparado
+        AmbienteDBseparado: !Ref AmbienteDBseparado
         VPCcidr: !Ref VPCcidr
         SubnetPublicAcidr: !Ref SubnetPublicAcidr
         SubnetPublicBcidr: !Ref SubnetPublicBcidr
@@ -231,49 +229,56 @@ Resources:
 
 Outputs:
   Envtag:
-    Description: 'Env Tag'
+    Description: "Env Tag"
     Value: !Ref EnvTag
     Export:
-      Name: !Sub '${AWS::StackName}-EnvTag'
+      Name: !Sub "${AWS::StackName}-EnvTag"
 
   VPC:
-    Description: 'VPC'
+    Description: "VPC"
     Value: !GetAtt VPCStack.Outputs.VPCID
     Export:
-      Name: !Sub '${AWS::StackName}-VPC'
+      Name: !Sub "${AWS::StackName}-VPC"
 
   SubnetsPrivate:
-    Description: 'Subnets private'
-    Value: !Join [',', [!GetAtt VPCStack.Outputs.subnetDBPrivateA, !GetAtt VPCStack.Outputs.subnetDBPrivateB]]
+    Description: "Subnets private"
+    Value:
+      !Join [
+        ",",
+        [
+          !GetAtt VPCStack.Outputs.subnetDBPrivateA,
+          !GetAtt VPCStack.Outputs.subnetDBPrivateB,
+        ],
+      ]
     Export:
-      Name: !Sub '${AWS::StackName}-SubnetsPrivate'
+      Name: !Sub "${AWS::StackName}-SubnetsPrivate"
 
   BastionLinuxSg:
     Description: Secret Rotation Lambda SecurityGroup for Bastion
     Value: !GetAtt SGStack.Outputs.BastionLinuxSg
     Export:
-      Name: !Sub '${AWS::StackName}-BastionLinuxSg' 
+      Name: !Sub "${AWS::StackName}-BastionLinuxSg"
 
   SecretRotationLambdaSg:
     Description: Secret Rotation Lambda SecurityGroup for AWS Secrets Manager
     Value: !GetAtt SGStack.Outputs.SecretRotationLambdaSg
     Export:
-      Name: !Sub '${AWS::StackName}-SecretRotationLambdaSg'
-    
+      Name: !Sub "${AWS::StackName}-SecretRotationLambdaSg"
+
   PrismaSg:
     Description: Secret Rotation Lambda SecurityGroup for Prisma Server
     Value: !GetAtt SGStack.Outputs.prismaSg
     Export:
-      Name: !Sub '${AWS::StackName}-PrismaSg'
+      Name: !Sub "${AWS::StackName}-PrismaSg"
 
   HostedZoneId:
     Description: Route53 Hosted Zone
     Value: !GetAtt DNSStack.Outputs.HostedZoneId
     Export:
-      Name: !Sub '${AWS::StackName}-HostedZoneId'
+      Name: !Sub "${AWS::StackName}-HostedZoneId"
 
   SecretARN:
     Description: Secret Manager ARN
     Value: !Ref SecretARN
     Export:
-      Name: !Sub '${AWS::StackName}-SecretARN'
+      Name: !Sub "${AWS::StackName}-SecretARN"

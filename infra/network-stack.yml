@@ -2,7 +2,7 @@ AWSTemplateFormatVersion: 2010-09-09
 Description: Plantilla Base para VPC
 
 # Definicion de Parametros
-Parameters: 
+Parameters:
   TipoAmbiente:
     Type: String
     Description: "Tipo de Ambiente para VPC: PROD, TEST"
@@ -41,25 +41,27 @@ Parameters:
 
 # Determina si el recurso sera para Produccion o para Test
 Conditions:
-  condAmbientePRO: !Or [ !Equals [ !Ref TipoAmbiente, PROD ], !Equals [ !Ref TipoAmbiente, prod ] ]
-  condAmbienteTEST: !Or [ !Equals [ !Ref TipoAmbiente, TEST ], !Equals [ !Ref TipoAmbiente, test ] ]
-  condAmbienteDBsi: !Equals [ !Ref AmbienteDBseparado, "SI" ]
-  condAmbienteDBno: !Equals [ !Ref AmbienteDBseparado, "NO" ]
-  conditionTestandDB: !And [ !Condition condAmbienteTEST, !Condition condAmbienteDBsi ]
-  conditionProdandDB: !And [ !Condition condAmbientePRO, !Condition condAmbienteDBsi ]
+  condAmbientePRO:
+    !Or [!Equals [!Ref TipoAmbiente, PROD], !Equals [!Ref TipoAmbiente, prod]]
+  condAmbienteTEST:
+    !Or [!Equals [!Ref TipoAmbiente, TEST], !Equals [!Ref TipoAmbiente, test]]
+  condAmbienteDBsi: !Equals [!Ref AmbienteDBseparado, "SI"]
+  condAmbienteDBno: !Equals [!Ref AmbienteDBseparado, "NO"]
+  conditionTestandDB: !And [!Condition condAmbienteTEST, !Condition condAmbienteDBsi]
+  conditionProdandDB: !And [!Condition condAmbientePRO, !Condition condAmbienteDBsi]
 
 # Definicion de los Recursos a Crear
-Resources: 
+Resources:
   myVPC: #Creacion de VPC
     Type: AWS::EC2::VPC
     Properties:
       CidrBlock: !Ref VPCcidr
-      EnableDnsSupport: 'true'
-      EnableDnsHostnames: 'true'
+      EnableDnsSupport: "true"
+      EnableDnsHostnames: "true"
       InstanceTenancy: default
       Tags:
         - Key: Name
-          Value: !Join [ "-", [ "VPC", !Ref EnvTag ] ]
+          Value: !Join ["-", ["VPC", !Ref EnvTag]]
         - Key: Env
           Value: !Ref EnvTag
   myIG: #Creacion de Internet Gateway
@@ -67,7 +69,7 @@ Resources:
     Properties:
       Tags:
         - Key: Name
-          Value: !Join [ "-", [ "IGW", !Ref EnvTag ] ]
+          Value: !Join ["-", ["IGW", !Ref EnvTag]]
         - Key: Env
           Value: !Ref EnvTag
   AttachGateway: #Se atacha el Internet Gateway a la VPC
@@ -81,22 +83,22 @@ Resources:
       AvailabilityZone: !Ref AvailabilityZoneA
       VpcId: !Ref myVPC
       CidrBlock: !Ref SubnetPublicAcidr
-      MapPublicIpOnLaunch: 'true'
+      MapPublicIpOnLaunch: "true"
       Tags:
         - Key: Name
-          Value: !Join [ "-", [ "SubnetPublicA", !Ref EnvTag ] ]
+          Value: !Join ["-", ["SubnetPublicA", !Ref EnvTag]]
         - Key: Env
           Value: !Ref EnvTag
   mySubnetPublicB: #Creacion de Subnet Publica B
     Type: AWS::EC2::Subnet
     Properties:
-      AvailabilityZone: !Ref AvailabilityZoneB    
+      AvailabilityZone: !Ref AvailabilityZoneB
       VpcId: !Ref myVPC
       CidrBlock: !Ref SubnetPublicBcidr
-      MapPublicIpOnLaunch: 'true'
+      MapPublicIpOnLaunch: "true"
       Tags:
         - Key: Name
-          Value: !Join [ "-", [ "SubnetPublicB", !Ref EnvTag ] ]
+          Value: !Join ["-", ["SubnetPublicB", !Ref EnvTag]]
         - Key: Env
           Value: !Ref EnvTag
   mySubnetPrivateA: #Creacion de Subnet Privada A en la misma AZ que la Publica A
@@ -107,7 +109,7 @@ Resources:
       CidrBlock: !Ref SubnetPrivateAcidr
       Tags:
         - Key: Name
-          Value: !Join [ "-", [ "SubnetPrivateA", !Ref EnvTag ] ]
+          Value: !Join ["-", ["SubnetPrivateA", !Ref EnvTag]]
         - Key: Env
           Value: !Ref EnvTag
   mySubnetPrivateB: #Creacion de Subnet Privada B en la misma AZ que la Publica B
@@ -118,7 +120,7 @@ Resources:
       CidrBlock: !Ref SubnetPrivateBcidr
       Tags:
         - Key: Name
-          Value: !Join [ "-", [ "SubnetPrivateB", !Ref EnvTag ] ]
+          Value: !Join ["-", ["SubnetPrivateB", !Ref EnvTag]]
         - Key: Env
           Value: !Ref EnvTag
   mySubnetDBPrivateA: #Creacion de Subnet DB Privada A en la misma AZ que la Publica A
@@ -130,7 +132,7 @@ Resources:
       CidrBlock: !Ref SubnetDBPrivateAcidr
       Tags:
         - Key: Name
-          Value: !Join [ "-", [ "SubnetDBPrivateA", !Ref EnvTag ] ]
+          Value: !Join ["-", ["SubnetDBPrivateA", !Ref EnvTag]]
         - Key: Env
           Value: !Ref EnvTag
   mySubnetDBPrivateB: #Creacion de Subnet DB Privada B en la misma AZ que la Publica A
@@ -142,7 +144,7 @@ Resources:
       CidrBlock: !Ref SubnetDBPrivateBcidr
       Tags:
         - Key: Name
-          Value: !Join [ "-", [ "SubnetDBPrivateB", !Ref EnvTag ] ]
+          Value: !Join ["-", ["SubnetDBPrivateB", !Ref EnvTag]]
         - Key: Env
           Value: !Ref EnvTag
   myEPI4myNGA: #Creacion de EIPA para NAT GatewayA
@@ -158,7 +160,7 @@ Resources:
       SubnetId: !Ref mySubnetPublicA
       Tags:
         - Key: Name
-          Value: !Join [ "-", [ "NGWA", !Ref EnvTag ] ]
+          Value: !Join ["-", ["NGWA", !Ref EnvTag]]
         - Key: Env
           Value: !Ref EnvTag
   myEPI4myNGB: #Creacion de EIPB para NAT GatewayB
@@ -176,7 +178,7 @@ Resources:
       SubnetId: !Ref mySubnetPublicB
       Tags:
         - Key: Name
-          Value: !Join [ "-", [ "NGWB", !Ref EnvTag ] ]
+          Value: !Join ["-", ["NGWB", !Ref EnvTag]]
         - Key: Env
           Value: !Ref EnvTag
   myPublicRT: #Creacion de Route Table Publica
@@ -186,7 +188,7 @@ Resources:
       VpcId: !Ref myVPC
       Tags:
         - Key: Name
-          Value: !Join [ "-", [ "PublicRT", !Ref EnvTag ] ]
+          Value: !Join ["-", ["PublicRT", !Ref EnvTag]]
         - Key: Env
           Value: !Ref EnvTag
   routeToIG: #Creacion de Ruta hacia Internet Gateway
@@ -196,7 +198,7 @@ Resources:
       RouteTableId: !Ref myPublicRT
       DestinationCidrBlock: 0.0.0.0/0
       GatewayId: !Ref myIG
-  routeTableAssocNamePublicA: #Asocia la Route Table Publica con la Subnet PublicaA 
+  routeTableAssocNamePublicA: #Asocia la Route Table Publica con la Subnet PublicaA
     Type: AWS::EC2::SubnetRouteTableAssociation
     DependsOn: myPublicRT
     Properties:
@@ -215,7 +217,7 @@ Resources:
       VpcId: !Ref myVPC
       Tags:
         - Key: Name
-          Value: !Join [ "-", [ "PrivateART", !Ref EnvTag ] ]
+          Value: !Join ["-", ["PrivateART", !Ref EnvTag]]
         - Key: Env
           Value: !Ref EnvTag
   routeToNGA: #Creacion de Ruta hacia NAT GatewayA
@@ -260,7 +262,7 @@ Resources:
       VpcId: !Ref myVPC
       Tags:
         - Key: Name
-          Value: !Join [ "-", [ "PrivateBRT", !Ref EnvTag ] ]
+          Value: !Join ["-", ["PrivateBRT", !Ref EnvTag]]
         - Key: Env
           Value: !Ref EnvTag
   routeToNGB: #Creacion de Ruta hacia NAT GatewayB
@@ -311,5 +313,5 @@ Outputs: #Salida a mostrarse en la pantalla
     Description: Subnet ID PrivateDBA
     Value: !Ref mySubnetDBPrivateA
   subnetDBPrivateB:
-    Description: Subnet ID PrivateDBB 
+    Description: Subnet ID PrivateDBB
     Value: !Ref mySubnetDBPrivateB
