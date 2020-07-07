@@ -2,7 +2,7 @@ AWSTemplateFormatVersion: 2010-09-09
 Description: Plantilla Base para Web Clients
 
 # Definicion de Parametros
-Parameters: 
+Parameters:
   EnvTag:
     Type: String
   CertificadoARN:
@@ -20,28 +20,28 @@ Resources:
   myBucketWeb:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: !Join [ "-", [ !Ref EnvTag, "ibexcm-webclient" ] ]
+      BucketName: !Join ["-", [!Ref EnvTag, "ibexcm-webclient"]]
       Tags:
         - Key: Env
           Value: !Ref EnvTag
   # Configuracion de acceso a CloudFront
   myCfOriginAccessIdentityWeb:
-    Type: 'AWS::CloudFront::CloudFrontOriginAccessIdentity'
+    Type: "AWS::CloudFront::CloudFrontOriginAccessIdentity"
     Properties:
       CloudFrontOriginAccessIdentityConfig:
         Comment: !Ref myBucketWeb
   # Politica de S3. Permite a cloudfront acceder a S3 de bucket
   myPolicyWeb:
-    Type: 'AWS::S3::BucketPolicy'
+    Type: "AWS::S3::BucketPolicy"
     Properties:
       Bucket: !Ref myBucketWeb
       PolicyDocument:
-        Version: '2012-10-17'
+        Version: "2012-10-17"
         Statement:
-          - Action: 's3:GetObject'
+          - Action: "s3:GetObject"
             Effect: Allow
-            Resource: !Sub 'arn:aws:s3:::${myBucketWeb}/*'
-            Principal: 
+            Resource: !Sub "arn:aws:s3:::${myBucketWeb}/*"
+            Principal:
               CanonicalUser: !GetAtt myCfOriginAccessIdentityWeb.S3CanonicalUserId
   # Distribucion de cloudfront
   myCfWeb:
@@ -50,35 +50,36 @@ Resources:
       DistributionConfig:
         Aliases:
           - !Ref WebClientDomain
+          - !Sub "www.${WebClientDomain}"
         CustomErrorResponses:
-          - ErrorCode: 403 
+          - ErrorCode: 403
             ResponseCode: 200
-            ResponsePagePath: '/index.html'
+            ResponsePagePath: "/index.html"
         DefaultCacheBehavior:
           AllowedMethods:
             - GET
             - HEAD
             - OPTIONS
-            - PUT 
-            - POST 
+            - PUT
+            - POST
             - PATCH
             - DELETE
-          ForwardedValues: 
+          ForwardedValues:
             Cookies:
               Forward: none
             QueryString: false
           TargetOriginId: s3origin
           ViewerProtocolPolicy: redirect-to-https
-        DefaultRootObject: '/index.html'
+        DefaultRootObject: "/index.html"
         Enabled: true
         HttpVersion: http2
         IPV6Enabled: true
         PriceClass: PriceClass_100
         Origins:
-          - DomainName: !GetAtt 'myBucketWeb.DomainName'
+          - DomainName: !GetAtt "myBucketWeb.DomainName"
             Id: s3origin
-            S3OriginConfig: 
-              OriginAccessIdentity: !Sub 'origin-access-identity/cloudfront/${myCfOriginAccessIdentityWeb}'
+            S3OriginConfig:
+              OriginAccessIdentity: !Sub "origin-access-identity/cloudfront/${myCfOriginAccessIdentityWeb}"
         ViewerCertificate:
           AcmCertificateArn: !Ref CertificadoARN
           MinimumProtocolVersion: TLSv1.2_2018
@@ -91,28 +92,28 @@ Resources:
   myBucketAdmin:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: !Join [ "-", [ !Ref EnvTag, "ibexcm-adminclient" ] ]
+      BucketName: !Join ["-", [!Ref EnvTag, "ibexcm-adminclient"]]
       Tags:
         - Key: Env
           Value: !Ref EnvTag
   # Configuracion de acceso a CloudFront
   myCfOriginAccessIdentityAdmin:
-    Type: 'AWS::CloudFront::CloudFrontOriginAccessIdentity'
+    Type: "AWS::CloudFront::CloudFrontOriginAccessIdentity"
     Properties:
       CloudFrontOriginAccessIdentityConfig:
         Comment: !Ref myBucketAdmin
   # Politica de S3. Permite a cloudfront acceder a S3 de bucket
   myPolicyAdmin:
-    Type: 'AWS::S3::BucketPolicy'
+    Type: "AWS::S3::BucketPolicy"
     Properties:
       Bucket: !Ref myBucketAdmin
       PolicyDocument:
-        Version: '2012-10-17'
+        Version: "2012-10-17"
         Statement:
-          - Action: 's3:GetObject'
+          - Action: "s3:GetObject"
             Effect: Allow
-            Resource: !Sub 'arn:aws:s3:::${myBucketAdmin}/*'
-            Principal: 
+            Resource: !Sub "arn:aws:s3:::${myBucketAdmin}/*"
+            Principal:
               CanonicalUser: !GetAtt myCfOriginAccessIdentityAdmin.S3CanonicalUserId
   # Distribucion de cloudfront
   myCfAdmin:
@@ -122,34 +123,34 @@ Resources:
         Aliases:
           - !Ref AdminClientDomain
         CustomErrorResponses:
-          - ErrorCode: 403 
+          - ErrorCode: 403
             ResponseCode: 200
-            ResponsePagePath: '/index.html'
+            ResponsePagePath: "/index.html"
         DefaultCacheBehavior:
           AllowedMethods:
             - GET
             - HEAD
             - OPTIONS
-            - PUT 
-            - POST 
+            - PUT
+            - POST
             - PATCH
             - DELETE
-          ForwardedValues: 
+          ForwardedValues:
             Cookies:
               Forward: none
             QueryString: false
           TargetOriginId: s3origin
           ViewerProtocolPolicy: redirect-to-https
-        DefaultRootObject: '/index.html'
+        DefaultRootObject: "/index.html"
         Enabled: true
         HttpVersion: http2
         IPV6Enabled: true
         PriceClass: PriceClass_100
         Origins:
-          - DomainName: !GetAtt 'myBucketAdmin.DomainName'
+          - DomainName: !GetAtt "myBucketAdmin.DomainName"
             Id: s3origin
-            S3OriginConfig: 
-              OriginAccessIdentity: !Sub 'origin-access-identity/cloudfront/${myCfOriginAccessIdentityAdmin}'
+            S3OriginConfig:
+              OriginAccessIdentity: !Sub "origin-access-identity/cloudfront/${myCfOriginAccessIdentityAdmin}"
         ViewerCertificate:
           AcmCertificateArn: !Ref CertificadoARN
           MinimumProtocolVersion: TLSv1.2_2018
@@ -158,7 +159,7 @@ Resources:
         - Key: Env
           Value: !Ref EnvTag
 
-Outputs: 
+Outputs:
   bucketAdmin:
     Value: !Ref myBucketAdmin
   distributionAdmin:
