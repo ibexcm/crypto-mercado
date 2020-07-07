@@ -16,27 +16,27 @@ Parameters:
 Resources:
   myPrivateZone:
     Type: AWS::Route53::HostedZone
-    Properties: 
-      Name: !Join [ ".", [ !Ref EnvTag, "ibexcm.internal" ] ]
-      VPCs: 
+    Properties:
+      Name: !Join [".", [!Ref EnvTag, "ibexcm.internal"]]
+      VPCs:
         - VPCId: !Ref VPCID
           VPCRegion: us-east-1
-      HostedZoneTags: 
-      - Key: Env
-        Value: !Ref EnvTag
+      HostedZoneTags:
+        - Key: Env
+          Value: !Ref EnvTag
 
   myDNSRecordPrisma:
     Type: AWS::Route53::RecordSetGroup
-    Properties: 
+    Properties:
       HostedZoneId: !Ref myPrivateZone
       RecordSets:
-        - Name: !Join [ ".", [ "prisma", !Ref EnvTag, "ibexcm.internal" ] ]
+        - Name: !Join [".", ["prisma", !Ref EnvTag, "ibexcm.internal"]]
           Type: A
           AliasTarget:
             HostedZoneId: !Ref CanonicalALBPriv
             DNSName: !Ref DNSALBPriv
 
-Outputs: 
+Outputs:
   HostedZoneId:
     Description: HostedZoneId
     Value: !Ref myPrivateZone
