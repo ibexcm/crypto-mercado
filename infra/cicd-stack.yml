@@ -522,8 +522,8 @@ Resources:
           - Name: PRISMA_ENDPOINT
             Type: PLAINTEXT
             Value: !Sub "http://prisma.${EnvTag}.ibexcm.internal"
-          - Name: SECRETS
-            Type: SECRETS_MANAGER
+          - Name: SECRET
+            Type: SECRETS_MANAGER 
             Value: !Sub "${SecretARN}"
       VpcConfig:
         VpcId: !Ref VPCID

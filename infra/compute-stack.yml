@@ -308,7 +308,7 @@ Resources:
           LogConfiguration:
             LogDriver: awslogs
             Options:
-              awslogs-group: !Join ["/", ["/ecs", !Join ["-", [!Ref EnvTag, "graphql"]]]]
+              awslogs-group: !Join [ "/", [ "/ecs", !Ref EnvTag, "graphql" ] ]
               awslogs-region: !Ref AWS::Region
               awslogs-stream-prefix: graphql
 
