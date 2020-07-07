@@ -316,7 +316,7 @@ Resources:
     DependsOn: myListenerFront443
     Properties: 
       Cluster: !Ref myECSCluster
-      DesiredCount: 0
+      DesiredCount: 1
       EnableECSManagedTags: true
       LaunchType: FARGATE
       LoadBalancers:
@@ -342,7 +342,7 @@ Resources:
     DependsOn: myListenerPriv80
     Properties: 
       Cluster: !Ref myECSCluster
-      DesiredCount: 0
+      DesiredCount: 1
       EnableECSManagedTags: true
       LaunchType: FARGATE
       LoadBalancers:
