@@ -280,10 +280,10 @@ Resources:
               awslogs-stream-prefix: prisma
 
   myLogGroupGraphql:
-  Type: AWS::Logs::LogGroup
-  Properties: 
-    LogGroupName: !Join [ "/", [ "/ecs", !Ref EnvTag, "graphql" ] ]
-    RetentionInDays: 30
+    Type: AWS::Logs::LogGroup
+    Properties: 
+      LogGroupName: !Join [ "/", [ "/ecs", !Ref EnvTag, "graphql" ] ]
+      RetentionInDays: 30
 
   myTaskGraphql:
     Type: AWS::ECS::TaskDefinition
