@@ -300,7 +300,7 @@ Resources:
       ContainerDefinitions:
         - Name: graphql-container
           Essential: true
-          Image: !Sub "${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/${EnvTag}/ibex/graphql:latest"
+          Image: !Sub "${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/${EnvTag}/ibex/graphql:1.0-latest"
           Cpu: 512
           MemoryReservation: 1024
           PortMappings:
@@ -317,7 +317,7 @@ Resources:
     DependsOn: myListenerFront443
     Properties:
       Cluster: !Ref myECSCluster
-      DesiredCount: 0
+      DesiredCount: 1
       EnableECSManagedTags: true
       LaunchType: FARGATE
       LoadBalancers:
@@ -343,7 +343,7 @@ Resources:
     DependsOn: myListenerPriv80
     Properties:
       Cluster: !Ref myECSCluster
-      DesiredCount: 0
+      DesiredCount: 1
       EnableECSManagedTags: true
       LaunchType: FARGATE
       LoadBalancers:
