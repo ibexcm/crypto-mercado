@@ -2,7 +2,7 @@ AWSTemplateFormatVersion: 2010-09-09
 Description: Plantilla Base para recursos de computo
 
 # Definicion de Parametros
-Parameters: 
+Parameters:
   TipoAmbiente:
     Type: String
   EnvTag:
@@ -40,7 +40,8 @@ Parameters:
 
 # Determina si el recurso sera para Produccion o para Test
 Conditions:
-  condAmbientePRO: !Or [ !Equals [ !Ref TipoAmbiente, PROD ], !Equals [ !Ref TipoAmbiente, prod ] ]
+  condAmbientePRO:
+    !Or [!Equals [!Ref TipoAmbiente, PROD], !Equals [!Ref TipoAmbiente, prod]]
 
 # Definicion de Parametros
 Resources:
@@ -54,18 +55,18 @@ Resources:
         - DeviceName: /dev/xvda
           Ebs:
             VolumeType: gp2
-            VolumeSize: '8'
-            DeleteOnTermination: 'true'
-            Encrypted: 'true'
+            VolumeSize: "8"
+            DeleteOnTermination: "true"
+            Encrypted: "true"
             KmsKeyId: !Ref KMSKeyARN
-      SecurityGroupIds: 
+      SecurityGroupIds:
         - !Ref bastionLinuxSg
       SubnetId: !Ref subnetPublicA
       Tags:
         - Key: Env
           Value: !Ref EnvTag
         - Key: Name
-          Value: !Join [ "-", [ !Ref EnvTag, "bastion-linux" ] ]
+          Value: !Join ["-", [!Ref EnvTag, "bastion-linux"]]
   myEIPBastionLinux:
     Type: AWS::EC2::EIP
     Properties:
@@ -73,11 +74,11 @@ Resources:
       Tags:
         - Key: Env
           Value: !Ref EnvTag
-  
+
   myTargetGraphql:
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
     Properties:
-      Name: !Join [ "-", [ !Ref EnvTag, "ecs-service-graphql" ] ]
+      Name: !Join ["-", [!Ref EnvTag, "ecs-service-graphql"]]
       HealthCheckIntervalSeconds: 10
       HealthCheckPath: /
       HealthCheckProtocol: HTTP
@@ -99,7 +100,7 @@ Resources:
   myTargetPrisma:
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
     Properties:
-      Name: !Join [ "-", [ !Ref EnvTag, "ecs-service-prismaserver" ] ]
+      Name: !Join ["-", [!Ref EnvTag, "ecs-service-prismaserver"]]
       HealthCheckIntervalSeconds: 10
       HealthCheckPath: /status
       HealthCheckProtocol: HTTP
@@ -117,11 +118,11 @@ Resources:
       Tags:
         - Key: Env
           Value: !Ref EnvTag
-      VpcId: !Ref VPCID        
+      VpcId: !Ref VPCID
   myALBFront:
     Type: AWS::ElasticLoadBalancingV2::LoadBalancer
     Properties:
-      Name: !Join [ "-", [ !Ref EnvTag, "alb-frot" ] ]
+      Name: !Join ["-", [!Ref EnvTag, "alb-frot"]]
       Scheme: internet-facing
       Subnets:
         - !Ref subnetPublicA
@@ -134,7 +135,7 @@ Resources:
   myALBPriv:
     Type: AWS::ElasticLoadBalancingV2::LoadBalancer
     Properties:
-      Name: !Join [ "-", [ !Ref EnvTag, "alb-priv" ] ]
+      Name: !Join ["-", [!Ref EnvTag, "alb-priv"]]
       Scheme: internal
       Subnets:
         - !Ref subnetPrivateA
@@ -146,7 +147,7 @@ Resources:
           Value: !Ref EnvTag
   myListenerFront80:
     Type: AWS::ElasticLoadBalancingV2::Listener
-    Properties: 
+    Properties:
       LoadBalancerArn: !Ref myALBFront
       Port: 80
       Protocol: HTTP
@@ -169,7 +170,7 @@ Resources:
           TargetGroupArn: !Ref myTargetGraphql
   myListenerPriv80:
     Type: AWS::ElasticLoadBalancingV2::Listener
-    Properties: 
+    Properties:
       LoadBalancerArn: !Ref myALBPriv
       Port: 80
       Protocol: HTTP
@@ -177,12 +178,12 @@ Resources:
         - Type: forward
           TargetGroupArn: !Ref myTargetPrisma
 
-############ ECS
+  ############ ECS
   myECSCluster:
     Type: AWS::ECS::Cluster
-    Properties: 
-      ClusterName: !Join [ "-", [ !Ref EnvTag, "ibexcm" ] ]
-      ClusterSettings: 
+    Properties:
+      ClusterName: !Join ["-", [!Ref EnvTag, "ibexcm"]]
+      ClusterSettings:
         - Name: containerInsights
           Value: enabled
       Tags:
@@ -191,54 +192,54 @@ Resources:
 
   myECR:
     Type: AWS::ECR::Repository
-    Properties: 
-      RepositoryName: !Join [ "/", [ !Ref EnvTag, "ibex", "graphql" ] ]
-      Tags: 
+    Properties:
+      RepositoryName: !Join ["/", [!Ref EnvTag, "ibex", "graphql"]]
+      Tags:
         - Key: Env
           Value: !Ref EnvTag
 
   myECRPrisma:
     Type: AWS::ECR::Repository
-    Properties: 
-      RepositoryName: !Join [ "/", [ !Ref EnvTag, "ibex", "prisma" ] ]
-      Tags: 
+    Properties:
+      RepositoryName: !Join ["/", [!Ref EnvTag, "ibex", "prisma"]]
+      Tags:
         - Key: Env
           Value: !Ref EnvTag
 
   myTaskRolePrisma:
-    Type: 'AWS::IAM::Role'
-    Properties: 
-      RoleName: !Join [ "-", [ !Ref EnvTag, "prisma-taskrole" ] ]
+    Type: "AWS::IAM::Role"
+    Properties:
+      RoleName: !Join ["-", [!Ref EnvTag, "prisma-taskrole"]]
       AssumeRolePolicyDocument:
-        Version: '2012-10-17'
+        Version: "2012-10-17"
         Statement:
           - Effect: Allow
             Principal:
               Service:
                 - ecs-tasks.amazonaws.com
             Action:
-              - 'sts:AssumeRole'
+              - "sts:AssumeRole"
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
-      Policies: 
+      Policies:
         - PolicyName: pol1
           PolicyDocument:
-            Version: '2012-10-17'
+            Version: "2012-10-17"
             Statement:
               - Effect: Allow
-                Resource: 
+                Resource:
                   - !Sub "${SecretARN}*"
-                Action: 
+                Action:
                   - secretsmanager:GetSecretValue
       Path: /container/
-      Tags: 
+      Tags:
         - Key: Env
           Value: !Ref EnvTag
 
   myLogGroupPrisma:
     Type: AWS::Logs::LogGroup
-    Properties: 
-      LogGroupName: !Join [ "/", [ "/ecs", !Ref EnvTag, "prisma" ] ]
+    Properties:
+      LogGroupName: !Join ["/", ["/ecs", !Ref EnvTag, "prisma"]]
       RetentionInDays: 30
 
   myTaskPrisma:
@@ -246,9 +247,9 @@ Resources:
     Properties:
       Cpu: 512
       Memory: 1024
-      RequiresCompatibilities: 
+      RequiresCompatibilities:
         - FARGATE
-      Family: !Join [ "-", [ !Ref EnvTag, "prisma" ] ]
+      Family: !Join ["-", [!Ref EnvTag, "prisma"]]
       NetworkMode: awsvpc
       ExecutionRoleArn: !GetAtt myTaskRolePrisma.Arn
       TaskRoleArn: !GetAtt myTaskRolePrisma.Arn
@@ -263,8 +264,6 @@ Resources:
           Environment:
             - Name: JAVA_OPTS
               Value: -Xmx750m
-            - Name: DATABASE_NAME
-              Value: !If [condAmbientePRO, "IBEXCM", "IBEXCM_TEST"] 
             - Name: DATABASE_HOST
               Value: !Sub "db.${EnvTag}.ibexcm.internal"
           Secrets:
@@ -277,25 +276,31 @@ Resources:
           LogConfiguration:
             LogDriver: awslogs
             Options:
-              awslogs-group: !Join [ "/", [ "/ecs", !Ref EnvTag, "prisma" ] ]
+              awslogs-group: !Join ["/", ["/ecs", !Ref EnvTag, "prisma"]]
               awslogs-region: !Ref AWS::Region
               awslogs-stream-prefix: prisma
+
+  myLogGroupGraphql:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Join ["/", ["/ecs", !Ref EnvTag, "graphql"]]
+      RetentionInDays: 30
 
   myTaskGraphql:
     Type: AWS::ECS::TaskDefinition
     Properties:
       Cpu: 512
       Memory: 1024
-      RequiresCompatibilities: 
+      RequiresCompatibilities:
         - FARGATE
-      Family: !Join [ "-", [ !Ref EnvTag, "graphql" ] ]
+      Family: !Join ["-", [!Ref EnvTag, "graphql"]]
       NetworkMode: awsvpc
       ExecutionRoleArn: !Sub "arn:aws:iam::${AWS::AccountId}:role/ecsTaskExecutionRole"
       TaskRoleArn: !Sub "arn:aws:iam::${AWS::AccountId}:role/ecsTaskExecutionRole"
       ContainerDefinitions:
         - Name: graphql-container
           Essential: true
-          Image:  !Sub "${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/${EnvTag}/ibex/graphql:latest"
+          Image: !Sub "${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/${EnvTag}/ibex/graphql:1.0-latest"
           Cpu: 512
           MemoryReservation: 1024
           PortMappings:
@@ -303,59 +308,59 @@ Resources:
           LogConfiguration:
             LogDriver: awslogs
             Options:
-              awslogs-group: !Join [ "/", [ "/ecs", !Join [ "-", [ !Ref EnvTag, "prisma" ] ] ] ]
+              awslogs-group: !Join [ "/", [ "/ecs", !Ref EnvTag, "graphql" ] ]
               awslogs-region: !Ref AWS::Region
-              awslogs-stream-prefix: ecs
-  
+              awslogs-stream-prefix: graphql
+
   myServiceGraphql:
     Type: AWS::ECS::Service
     DependsOn: myListenerFront443
-    Properties: 
+    Properties:
       Cluster: !Ref myECSCluster
-      DesiredCount: 0
+      DesiredCount: 1
       EnableECSManagedTags: true
       LaunchType: FARGATE
       LoadBalancers:
         - ContainerName: graphql-container
           ContainerPort: 80
           TargetGroupArn: !Ref myTargetGraphql
-      NetworkConfiguration: 
+      NetworkConfiguration:
         AwsvpcConfiguration:
           AssignPublicIp: DISABLED
-          SecurityGroups: 
+          SecurityGroups:
             - !Ref graphqlSg
-          Subnets: 
+          Subnets:
             - !Ref subnetPrivateA
             - !Ref subnetPrivateB
       ServiceName: service-graphql
       TaskDefinition: !Ref myTaskGraphql
-      Tags: 
+      Tags:
         - Key: Env
           Value: !Ref EnvTag
-  
+
   myServicePrisma:
     Type: AWS::ECS::Service
     DependsOn: myListenerPriv80
-    Properties: 
+    Properties:
       Cluster: !Ref myECSCluster
-      DesiredCount: 0
+      DesiredCount: 1
       EnableECSManagedTags: true
       LaunchType: FARGATE
       LoadBalancers:
         - ContainerName: prisma-container
           ContainerPort: 80
           TargetGroupArn: !Ref myTargetPrisma
-      NetworkConfiguration: 
+      NetworkConfiguration:
         AwsvpcConfiguration:
           AssignPublicIp: DISABLED
-          SecurityGroups: 
+          SecurityGroups:
             - !Ref prismaSg
-          Subnets: 
+          Subnets:
             - !Ref subnetPrivateA
             - !Ref subnetPrivateB
       ServiceName: service-prisma
       TaskDefinition: !Ref myTaskPrisma
-      Tags: 
+      Tags:
         - Key: Env
           Value: !Ref EnvTag
 

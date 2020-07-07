@@ -32,15 +32,16 @@ Parameters:
 
 # Determina si el recurso sera para Produccion o para Test
 Conditions:
-  condAmbientePRO: !Or [ !Equals [ !Ref TipoAmbiente, PROD ], !Equals [ !Ref TipoAmbiente, prod ] ]
+  condAmbientePRO:
+    !Or [!Equals [!Ref TipoAmbiente, PROD], !Equals [!Ref TipoAmbiente, prod]]
 
 # Definicion de Recursos
 Resources:
   myBucketCICD:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: !Join [ "-", [ !Ref EnvTag, "ibexcm-cicd" ] ]
-      BucketEncryption: 
+      BucketName: !Join ["-", [!Ref EnvTag, "ibexcm-cicd"]]
+      BucketEncryption:
         ServerSideEncryptionConfiguration:
           - ServerSideEncryptionByDefault:
               KMSMasterKeyID: !Ref KMSKeyARN
@@ -50,45 +51,45 @@ Resources:
           Value: !Ref EnvTag
 
   myIAMRoleWebClient:
-    Type: 'AWS::IAM::Role'
-    Properties: 
-      RoleName: !Join [ "-", [ !Ref EnvTag, "webclient" ] ]
+    Type: "AWS::IAM::Role"
+    Properties:
+      RoleName: !Join ["-", [!Ref EnvTag, "webclient"]]
       AssumeRolePolicyDocument:
-        Version: '2012-10-17'
+        Version: "2012-10-17"
         Statement:
           - Effect: Allow
             Principal:
               Service:
                 - codebuild.amazonaws.com
             Action:
-              - 'sts:AssumeRole'
-      Policies: 
+              - "sts:AssumeRole"
+      Policies:
         - PolicyName: pol1
           PolicyDocument:
-            Version: '2012-10-17'
+            Version: "2012-10-17"
             Statement:
               - Effect: Allow
-                Resource: 
+                Resource:
                   - !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/codebuild/${EnvTag}/webclient"
                   - !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/codebuild/${EnvTag}/webclient:*"
-                Action: 
+                Action:
                   - logs:CreateLogGroup
                   - logs:CreateLogStream
                   - logs:PutLogEvents
               - Effect: Allow
-                Resource: 
+                Resource:
                   - !Sub "arn:aws:codebuild:${AWS::Region}:${AWS::AccountId}:report-group/${EnvTag}-webclient-*"
-                Action: 
+                Action:
                   - codebuild:CreateReportGroup
                   - codebuild:CreateReport
                   - codebuild:UpdateReport
                   - codebuild:BatchPutTestCases
               - Effect: Allow
-                Resource: 
+                Resource:
                   - !Sub "arn:aws:s3:::${myBucketCICD}/*"
                   - !Sub "arn:aws:s3:::${bucketWeb}/*"
                   - !Sub "arn:aws:s3:::${bucketWeb}"
-                Action: 
+                Action:
                   - s3:PutObject
                   - s3:PutObjectAcl
                   - s3:GetObject
@@ -100,53 +101,53 @@ Resources:
               - Effect: Allow
                 Resource:
                   - !Sub "arn:aws:cloudfront::${AWS::AccountId}:distribution/${distributionWeb}"
-                Action: 
+                Action:
                   - cloudfront:CreateInvalidation
       Path: /cicd/
-      Tags: 
+      Tags:
         - Key: Env
           Value: !Ref EnvTag
 
   myIAMRoleAdminClient:
-    Type: 'AWS::IAM::Role'
-    Properties: 
-      RoleName: !Join [ "-", [ !Ref EnvTag, "adminclient" ] ]
+    Type: "AWS::IAM::Role"
+    Properties:
+      RoleName: !Join ["-", [!Ref EnvTag, "adminclient"]]
       AssumeRolePolicyDocument:
-        Version: '2012-10-17'
+        Version: "2012-10-17"
         Statement:
           - Effect: Allow
             Principal:
               Service:
                 - codebuild.amazonaws.com
             Action:
-              - 'sts:AssumeRole'
-      Policies: 
+              - "sts:AssumeRole"
+      Policies:
         - PolicyName: pol1
           PolicyDocument:
-            Version: '2012-10-17'
+            Version: "2012-10-17"
             Statement:
               - Effect: Allow
-                Resource: 
+                Resource:
                   - !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/codebuild/${EnvTag}/adminclient"
                   - !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/codebuild/${EnvTag}/adminclient:*"
-                Action: 
+                Action:
                   - logs:CreateLogGroup
                   - logs:CreateLogStream
                   - logs:PutLogEvents
               - Effect: Allow
-                Resource: 
+                Resource:
                   - !Sub "arn:aws:codebuild:${AWS::Region}:${AWS::AccountId}:report-group/${EnvTag}-adminclient-*"
-                Action: 
+                Action:
                   - codebuild:CreateReportGroup
                   - codebuild:CreateReport
                   - codebuild:UpdateReport
                   - codebuild:BatchPutTestCases
               - Effect: Allow
-                Resource: 
+                Resource:
                   - !Sub "arn:aws:s3:::${myBucketCICD}/*"
                   - !Sub "arn:aws:s3:::${bucketAdmin}/*"
                   - !Sub "arn:aws:s3:::${bucketAdmin}"
-                Action: 
+                Action:
                   - s3:PutObject
                   - s3:PutObjectAcl
                   - s3:GetObject
@@ -158,60 +159,60 @@ Resources:
               - Effect: Allow
                 Resource:
                   - !Sub "arn:aws:cloudfront::${AWS::AccountId}:distribution/${distributionAdmin}"
-                Action: 
+                Action:
                   - cloudfront:CreateInvalidation
       Path: /cicd/
-      Tags: 
+      Tags:
         - Key: Env
           Value: !Ref EnvTag
 
   myIAMRoleGraphql:
-    Type: 'AWS::IAM::Role'
-    Properties: 
-      RoleName: !Join [ "-", [ !Ref EnvTag, "graphql" ] ]
+    Type: "AWS::IAM::Role"
+    Properties:
+      RoleName: !Join ["-", [!Ref EnvTag, "graphql"]]
       AssumeRolePolicyDocument:
-        Version: '2012-10-17'
+        Version: "2012-10-17"
         Statement:
           - Effect: Allow
             Principal:
               Service:
                 - codebuild.amazonaws.com
             Action:
-              - 'sts:AssumeRole'
-      Policies: 
+              - "sts:AssumeRole"
+      Policies:
         - PolicyName: pol1
           PolicyDocument:
-            Version: '2012-10-17'
+            Version: "2012-10-17"
             Statement:
               - Effect: Allow
-                Resource: 
+                Resource:
                   - !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/codebuild/${EnvTag}/graphql"
                   - !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/codebuild/${EnvTag}/graphql:*"
-                Action: 
+                Action:
                   - logs:CreateLogGroup
                   - logs:CreateLogStream
                   - logs:PutLogEvents
               - Effect: Allow
-                Resource: 
+                Resource:
                   - !Sub "arn:aws:codebuild:${AWS::Region}:${AWS::AccountId}:report-group/${EnvTag}-graphql-*"
-                Action: 
+                Action:
                   - codebuild:CreateReportGroup
                   - codebuild:CreateReport
                   - codebuild:UpdateReport
                   - codebuild:BatchPutTestCases
               - Effect: Allow
-                Resource: 
+                Resource:
                   - !Sub "arn:aws:s3:::${myBucketCICD}/*"
-                Action: 
+                Action:
                   - s3:PutObject
                   - s3:GetObject
                   - s3:GetObjectVersion
                   - s3:GetBucketAcl
                   - s3:GetBucketLocation
               - Effect: Allow
-                Resource: 
+                Resource:
                   - "*"
-                Action: 
+                Action:
                   - ec2:CreateNetworkInterface
                   - ec2:DescribeDhcpOptions
                   - ec2:DescribeNetworkInterfaces
@@ -220,25 +221,25 @@ Resources:
                   - ec2:DescribeSecurityGroups
                   - ec2:DescribeVpcs
               - Effect: Allow
-                Resource: 
+                Resource:
                   - !Sub "arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:network-interface/*"
-                Action: 
+                Action:
                   - ec2:CreateNetworkInterfacePermission
                 Condition:
                   StringEquals:
-                    ec2:Subnet: 
+                    ec2:Subnet:
                       - !Sub "arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:subnet/${subnetPrivateA}"
                       - !Sub "arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:subnet/${subnetPrivateB}"
                     ec2:AuthorizedService: codebuild.amazonaws.com
               - Effect: Allow
-                Resource: 
+                Resource:
                   - !Sub "${SecretARN}*"
-                Action: 
+                Action:
                   - secretsmanager:GetSecretValue
               - Effect: Allow
                 Resource:
                   - !Sub "arn:aws:ecr:${AWS::Region}:${AWS::AccountId}:repository/*"
-                Action: 
+                Action:
                   - ecr:BatchCheckLayerAvailability
                   - ecr:CompleteLayerUpload
                   - ecr:InitiateLayerUpload
@@ -247,87 +248,87 @@ Resources:
               - Effect: Allow
                 Resource:
                   - "*"
-                Action: 
+                Action:
                   - ecr:GetAuthorizationToken
       Path: /cicd/
-      Tags: 
+      Tags:
         - Key: Env
           Value: !Ref EnvTag
 
   myIAMRoleGraphqlDeploy:
-    Type: 'AWS::IAM::Role'
-    Properties: 
-      RoleName: !Join [ "-", [ !Ref EnvTag, "graphql-deploy" ] ]
+    Type: "AWS::IAM::Role"
+    Properties:
+      RoleName: !Join ["-", [!Ref EnvTag, "graphql-deploy"]]
       AssumeRolePolicyDocument:
-        Version: '2012-10-17'
+        Version: "2012-10-17"
         Statement:
           - Effect: Allow
             Principal:
               Service:
                 - codebuild.amazonaws.com
             Action:
-              - 'sts:AssumeRole'
-      Policies: 
+              - "sts:AssumeRole"
+      Policies:
         - PolicyName: pol1
           PolicyDocument:
-            Version: '2012-10-17'
+            Version: "2012-10-17"
             Statement:
               - Effect: Allow
-                Resource: 
+                Resource:
                   - !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/codebuild/${EnvTag}/graphql-deploy"
                   - !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/codebuild/${EnvTag}/graphql-deploy:*"
-                Action: 
+                Action:
                   - logs:CreateLogGroup
                   - logs:CreateLogStream
                   - logs:PutLogEvents
               - Effect: Allow
-                Resource: 
+                Resource:
                   - !Sub "arn:aws:codebuild:${AWS::Region}:${AWS::AccountId}:report-group/${EnvTag}-graphql-deploy-*"
-                Action: 
+                Action:
                   - codebuild:CreateReportGroup
                   - codebuild:CreateReport
                   - codebuild:UpdateReport
                   - codebuild:BatchPutTestCases
               - Effect: Allow
-                Resource: 
+                Resource:
                   - !Sub "arn:aws:s3:::${myBucketCICD}/*"
-                Action: 
+                Action:
                   - s3:PutObject
                   - s3:GetObject
                   - s3:GetObjectVersion
                   - s3:GetBucketAcl
                   - s3:GetBucketLocation
       Path: /cicd/
-      Tags: 
+      Tags:
         - Key: Env
           Value: !Ref EnvTag
 
   myIAMRoleGraphqlPipeline:
-    Type: 'AWS::IAM::Role'
-    Properties: 
-      RoleName: !Join [ "-", [ !Ref EnvTag, "graphql-pipeline" ] ]
+    Type: "AWS::IAM::Role"
+    Properties:
+      RoleName: !Join ["-", [!Ref EnvTag, "graphql-pipeline"]]
       AssumeRolePolicyDocument:
-        Version: '2012-10-17'
+        Version: "2012-10-17"
         Statement:
           - Effect: Allow
             Principal:
               Service:
                 - codepipeline.amazonaws.com
             Action:
-              - 'sts:AssumeRole'
-      Policies: 
+              - "sts:AssumeRole"
+      Policies:
         - PolicyName: pol1
           PolicyDocument:
-            Version: '2012-10-17'
+            Version: "2012-10-17"
             Statement:
               - Action:
-                - iam:PassRole
+                  - iam:PassRole
                 Resource: "*"
                 Effect: Allow
                 Condition:
                   StringEqualsIfExists:
                     iam:PassedToService:
-                    - ecs-tasks.amazonaws.com
+                      - ecs-tasks.amazonaws.com
               - Action:
                   - codedeploy:CreateDeployment
                   - codedeploy:GetApplication
@@ -367,67 +368,67 @@ Resources:
                   - states:StartExecution
                 Resource: "*"
       Path: /cicd/
-      Tags: 
+      Tags:
         - Key: Env
           Value: !Ref EnvTag
 
   myLogGroupBuildWeb:
     Type: AWS::Logs::LogGroup
-    Properties: 
-      LogGroupName: !Join [ "/", [ "/codebuild", !Ref EnvTag, "webclient" ] ]
+    Properties:
+      LogGroupName: !Join ["/", ["/codebuild", !Ref EnvTag, "webclient"]]
       RetentionInDays: 30
 
   myLogGroupBuildAdmin:
     Type: AWS::Logs::LogGroup
-    Properties: 
-      LogGroupName: !Join [ "/", [ "/codebuild", !Ref EnvTag, "adminclient" ] ]
+    Properties:
+      LogGroupName: !Join ["/", ["/codebuild", !Ref EnvTag, "adminclient"]]
       RetentionInDays: 30
 
   myLogGroupBuildGraphql:
     Type: AWS::Logs::LogGroup
-    Properties: 
-      LogGroupName: !Join [ "/", [ "/codebuild", !Ref EnvTag, "graphql" ] ]
+    Properties:
+      LogGroupName: !Join ["/", ["/codebuild", !Ref EnvTag, "graphql"]]
       RetentionInDays: 30
 
   myLogGroupBuildGraphqlDeploy:
     Type: AWS::Logs::LogGroup
-    Properties: 
-      LogGroupName: !Join [ "/", [ "/codebuild", !Ref EnvTag, "graphql-deploy" ] ]
+    Properties:
+      LogGroupName: !Join ["/", ["/codebuild", !Ref EnvTag, "graphql-deploy"]]
       RetentionInDays: 30
 
-  myBuildAdmin: 
+  myBuildAdmin:
     Type: AWS::CodeBuild::Project
-    Properties: 
-      Name: !Join [ "-", [ !Ref EnvTag, "adminclient" ] ]
+    Properties:
+      Name: !Join ["-", [!Ref EnvTag, "adminclient"]]
       ServiceRole: !GetAtt myIAMRoleAdminClient.Arn
       Artifacts:
         Type: NO_ARTIFACTS
-      Environment: 
+      Environment:
         ComputeType: BUILD_GENERAL1_SMALL
         Image: aws/codebuild/standard:4.0
         Type: LINUX_CONTAINER
-        EnvironmentVariables: 
+        EnvironmentVariables:
           - Name: API_DOMAIN
-            Type: PLAINTEXT 
+            Type: PLAINTEXT
             Value: !Ref APIDomain
           - Name: S3_BUCKET
-            Type: PLAINTEXT 
+            Type: PLAINTEXT
             Value: !Ref bucketAdmin
           - Name: CF_DISTRIBUTION
-            Type: PLAINTEXT 
+            Type: PLAINTEXT
             Value: !Ref distributionAdmin
       Source:
-        Auth: 
+        Auth:
           Type: OAUTH
         GitCloneDepth: 1
         BuildSpec: adminclient/buildspec.yml
         Location: https://github.com/ibexmercado/crypto-mercado.git
         ReportBuildStatus: true
         Type: GITHUB
-      LogsConfig: 
+      LogsConfig:
         CloudWatchLogs:
           Status: ENABLED
-          GroupName: !Join [ "/", [ "/codebuild", !Ref EnvTag, "adminclient" ] ]
+          GroupName: !Join ["/", ["/codebuild", !Ref EnvTag, "adminclient"]]
       Tags:
         - Key: Env
           Value: !Ref EnvTag
@@ -437,45 +438,46 @@ Resources:
           - - Type: EVENT
               Pattern: PULL_REQUEST_MERGED
             - Type: BASE_REF
-              Pattern: !If [condAmbientePRO, "^refs/heads/production$", "^refs/heads/staging$"]
+              Pattern:
+                !If [condAmbientePRO, "^refs/heads/production$", "^refs/heads/staging$"]
               ExcludeMatchedPattern: false
             - Type: FILE_PATH
               Pattern: adminclient/*
               ExcludeMatchedPattern: false
 
-  myBuildWeb: 
+  myBuildWeb:
     Type: AWS::CodeBuild::Project
-    Properties: 
-      Name: !Join [ "-", [ !Ref EnvTag, "webclient" ] ]
+    Properties:
+      Name: !Join ["-", [!Ref EnvTag, "webclient"]]
       ServiceRole: !GetAtt myIAMRoleWebClient.Arn
       Artifacts:
         Type: NO_ARTIFACTS
-      Environment: 
+      Environment:
         ComputeType: BUILD_GENERAL1_SMALL
         Image: aws/codebuild/standard:4.0
         Type: LINUX_CONTAINER
-        EnvironmentVariables: 
+        EnvironmentVariables:
           - Name: API_DOMAIN
-            Type: PLAINTEXT 
+            Type: PLAINTEXT
             Value: !Ref APIDomain
           - Name: S3_BUCKET
-            Type: PLAINTEXT 
+            Type: PLAINTEXT
             Value: !Ref bucketWeb
           - Name: CF_DISTRIBUTION
-            Type: PLAINTEXT 
+            Type: PLAINTEXT
             Value: !Ref distributionWeb
       Source:
-        Auth: 
+        Auth:
           Type: OAUTH
         GitCloneDepth: 1
         BuildSpec: webclient/buildspec.yml
         Location: https://github.com/ibexmercado/crypto-mercado.git
         ReportBuildStatus: true
         Type: GITHUB
-      LogsConfig: 
+      LogsConfig:
         CloudWatchLogs:
           Status: ENABLED
-          GroupName: !Join [ "/", [ "/codebuild", !Ref EnvTag, "webclient" ] ]
+          GroupName: !Join ["/", ["/codebuild", !Ref EnvTag, "webclient"]]
       Tags:
         - Key: Env
           Value: !Ref EnvTag
@@ -485,41 +487,42 @@ Resources:
           - - Type: EVENT
               Pattern: PULL_REQUEST_MERGED
             - Type: BASE_REF
-              Pattern: !If [condAmbientePRO, "^refs/heads/production$", "^refs/heads/staging$"]
+              Pattern:
+                !If [condAmbientePRO, "^refs/heads/production$", "^refs/heads/staging$"]
               ExcludeMatchedPattern: false
             - Type: FILE_PATH
               Pattern: webclient/*
               ExcludeMatchedPattern: false
 
-  myBuildGraph: 
+  myBuildGraph:
     Type: AWS::CodeBuild::Project
-    Properties: 
-      Name: !Join [ "-", [ !Ref EnvTag, "graphql" ] ]
+    Properties:
+      Name: !Join ["-", [!Ref EnvTag, "graphql"]]
       ServiceRole: !GetAtt myIAMRoleGraphql.Arn
       Artifacts:
         Type: NO_ARTIFACTS
-      Environment: 
+      Environment:
         ComputeType: BUILD_GENERAL1_SMALL
         Image: aws/codebuild/standard:4.0
         Type: LINUX_CONTAINER
         PrivilegedMode: true
-        EnvironmentVariables: 
+        EnvironmentVariables:
           - Name: AWS_DEFAULT_REGION
-            Type: PLAINTEXT 
+            Type: PLAINTEXT
             Value: !Ref AWS::Region
           - Name: AWS_ACCOUNT_ID
-            Type: PLAINTEXT 
+            Type: PLAINTEXT
             Value: !Ref AWS::AccountId
           - Name: IMAGE_REPO_NAME
-            Type: PLAINTEXT 
-            Value: !Join [ "/", [ !Ref EnvTag, "ibex", "graphql" ] ]
+            Type: PLAINTEXT
+            Value: !Join ["/", [!Ref EnvTag, "ibex", "graphql"]]
           - Name: IMAGE_TAG
-            Type: PLAINTEXT 
+            Type: PLAINTEXT
             Value: 1.0
           - Name: PRISMA_ENDPOINT
-            Type: PLAINTEXT 
+            Type: PLAINTEXT
             Value: !Sub "http://prisma.${EnvTag}.ibexcm.internal"
-          - Name: SECRETS
+          - Name: SECRET
             Type: SECRETS_MANAGER 
             Value: !Sub "${SecretARN}"
       VpcConfig:
@@ -527,20 +530,20 @@ Resources:
         Subnets:
           - !Ref subnetPrivateA
           - !Ref subnetPrivateB
-        SecurityGroupIds: 
+        SecurityGroupIds:
           - !Ref graphqlSg
       Source:
-        Auth: 
+        Auth:
           Type: OAUTH
         GitCloneDepth: 1
         BuildSpec: graphqlserver/buildspec-docker.yml
         Location: https://github.com/ibexmercado/crypto-mercado.git
         ReportBuildStatus: true
         Type: GITHUB
-      LogsConfig: 
+      LogsConfig:
         CloudWatchLogs:
           Status: ENABLED
-          GroupName: !Join [ "/", [ "/codebuild", !Ref EnvTag, "graphql" ] ]
+          GroupName: !Join ["/", ["/codebuild", !Ref EnvTag, "graphql"]]
       Tags:
         - Key: Env
           Value: !Ref EnvTag
@@ -550,60 +553,61 @@ Resources:
           - - Type: EVENT
               Pattern: PULL_REQUEST_MERGED
             - Type: BASE_REF
-              Pattern: !If [condAmbientePRO, "^refs/heads/production$", "^refs/heads/staging$"]
+              Pattern:
+                !If [condAmbientePRO, "^refs/heads/production$", "^refs/heads/staging$"]
               ExcludeMatchedPattern: false
             - Type: FILE_PATH
               Pattern: graphqlserver/*
               ExcludeMatchedPattern: false
 
-  myBuildGraphDeploy: 
+  myBuildGraphDeploy:
     Type: AWS::CodeBuild::Project
-    Properties: 
-      Name: !Join [ "-", [ !Ref EnvTag, "graphql-deploy" ] ]
+    Properties:
+      Name: !Join ["-", [!Ref EnvTag, "graphql-deploy"]]
       ServiceRole: !GetAtt myIAMRoleGraphqlDeploy.Arn
       Artifacts:
         Type: CODEPIPELINE
-      Environment: 
+      Environment:
         ComputeType: BUILD_GENERAL1_SMALL
         Image: aws/codebuild/standard:4.0
         Type: LINUX_CONTAINER
       Source:
-        BuildSpec: !Sub 
-                - |
-                  version: 0.2
-                  phases:
-                    build:
-                      commands:
-                        - printf '[{"name":"graphql-container","imageUri":"%s"}]' ${ID}.dkr.ecr.${Region}.amazonaws.com/${Env}/ibex/graphql:1.0-latest > imagedefinitions.json
-                  artifacts:
-                    files:
-                      - ./imagedefinitions.json
-                - ID: !Ref AWS::AccountId
-                  Region: !Ref AWS::Region
-                  Env: !Ref EnvTag
+        BuildSpec: !Sub
+          - |
+            version: 0.2
+            phases:
+              build:
+                commands:
+                  - printf '[{"name":"graphql-container","imageUri":"%s"}]' ${ID}.dkr.ecr.${Region}.amazonaws.com/${Env}/ibex/graphql:1.0-latest > imagedefinitions.json
+            artifacts:
+              files:
+                - ./imagedefinitions.json
+          - ID: !Ref AWS::AccountId
+            Region: !Ref AWS::Region
+            Env: !Ref EnvTag
         Type: CODEPIPELINE
-      LogsConfig: 
+      LogsConfig:
         CloudWatchLogs:
           Status: ENABLED
-          GroupName: !Join [ "/", [ "/codebuild", !Ref EnvTag, "graphql-deploy" ] ]
+          GroupName: !Join ["/", ["/codebuild", !Ref EnvTag, "graphql-deploy"]]
       Tags:
         - Key: Env
           Value: !Ref EnvTag
 
   myPipelineGraph:
     Type: AWS::CodePipeline::Pipeline
-    Properties: 
-      ArtifactStore: 
+    Properties:
+      ArtifactStore:
         Location: !Ref myBucketCICD
         Type: S3
-      Name: !Join [ "-", [ !Ref EnvTag, "graphql" ] ]
+      Name: !Join ["-", [!Ref EnvTag, "graphql"]]
       RestartExecutionOnUpdate: false
       RoleArn: !GetAtt myIAMRoleGraphqlPipeline.Arn
-      Stages: 
+      Stages:
         - Name: Source
-          Actions: 
+          Actions:
             - Name: ECR
-              ActionTypeId: 
+              ActionTypeId:
                 Category: Source
                 Owner: AWS
                 Provider: ECR
@@ -612,13 +616,13 @@ Resources:
                 RepositoryName: !Sub "${EnvTag}/ibex/graphql"
                 ImageTag: "1.0-latest"
               Namespace: SourceVariables
-              OutputArtifacts: 
+              OutputArtifacts:
                 - Name: SourceArtifact
               Region: !Ref AWS::Region
         - Name: Build
-          Actions: 
+          Actions:
             - Name: CodeBuild
-              ActionTypeId: 
+              ActionTypeId:
                 Category: Build
                 Owner: AWS
                 Provider: CodeBuild
@@ -628,25 +632,25 @@ Resources:
               Namespace: BuildVariables
               InputArtifacts:
                 - Name: SourceArtifact
-              OutputArtifacts: 
+              OutputArtifacts:
                 - Name: BuildArtifact
               Region: !Ref AWS::Region
         - Name: Deploy
-          Actions: 
+          Actions:
             - Name: ECS
-              ActionTypeId: 
+              ActionTypeId:
                 Category: Deploy
                 Owner: AWS
                 Provider: ECS
                 Version: "1"
               Configuration:
-                ClusterName: !Join [ "-", [ !Ref EnvTag, "ibexcm" ] ]
+                ClusterName: !Join ["-", [!Ref EnvTag, "ibexcm"]]
                 FileName: imagedefinitions.json
                 ServiceName: service-graphql
               InputArtifacts:
                 - Name: BuildArtifact
               Region: !Ref AWS::Region
-      Tags: 
+      Tags:
         - Key: Env
           Value: !Ref EnvTag
 
@@ -656,45 +660,54 @@ Resources:
       AssumeRolePolicyDocument:
         Version: 2012-10-17
         Statement:
-          -
-            Effect: Allow
+          - Effect: Allow
             Principal:
               Service:
                 - events.amazonaws.com
             Action: sts:AssumeRole
       Path: /cicd/
       Policies:
-        -
-          PolicyName: cwe-pipeline-execution
+        - PolicyName: cwe-pipeline-execution
           PolicyDocument:
             Version: 2012-10-17
             Statement:
               - Effect: Allow
                 Action: codepipeline:StartPipelineExecution
-                Resource: !Join [ '', [ 'arn:aws:codepipeline:', !Ref 'AWS::Region', ':', !Ref 'AWS::AccountId', ':', !Ref myPipelineGraph ] ] 
-      Tags: 
+                Resource:
+                  !Join [
+                    "",
+                    [
+                      "arn:aws:codepipeline:",
+                      !Ref "AWS::Region",
+                      ":",
+                      !Ref "AWS::AccountId",
+                      ":",
+                      !Ref myPipelineGraph,
+                    ],
+                  ]
+      Tags:
         - Key: Env
           Value: !Ref EnvTag
 
   myEventRuleGraphql:
-    Type: 'AWS::Events::Rule'
+    Type: "AWS::Events::Rule"
     Properties:
       EventPattern:
         detail:
           action-type: [PUSH]
           image-tag: [1.0-latest]
-          repository-name: [ !Sub "${EnvTag}/ibex/graphql" ]
+          repository-name: [!Sub "${EnvTag}/ibex/graphql"]
           result: [SUCCESS]
         detail-type: [ECR Image Action]
         source: [aws.ecr]
       Targets:
         - Arn: !Join
-            - ''
-            - - 'arn:aws:codepipeline:'
-              - !Ref 'AWS::Region'
-              - ':'
-              - !Ref 'AWS::AccountId'
-              - ':'
+            - ""
+            - - "arn:aws:codepipeline:"
+              - !Ref "AWS::Region"
+              - ":"
+              - !Ref "AWS::AccountId"
+              - ":"
               - !Ref myPipelineGraph
           RoleArn: !GetAtt myEventRoleGraphql.Arn
           Id: !Sub "codepipeline-${myPipelineGraph}"

@@ -2,7 +2,7 @@ AWSTemplateFormatVersion: 2010-09-09
 Description: Plantilla Base para grupos de seguridad
 
 # Definicion de Parametros
-Parameters: 
+Parameters:
   EnvTag:
     Type: String
   VPCID:
@@ -13,7 +13,7 @@ Resources:
   bastionWinSg:
     Type: AWS::EC2::SecurityGroup
     Properties:
-      GroupName: !Join [ "-", [ !Ref EnvTag, "bastion-win" ] ]
+      GroupName: !Join ["-", [!Ref EnvTag, "bastion-win"]]
       GroupDescription: Security Group for Bastion Windows Instances
       VpcId: !Ref VPCID
       SecurityGroupIngress:
@@ -27,7 +27,7 @@ Resources:
   bastionLinuxSg:
     Type: AWS::EC2::SecurityGroup
     Properties:
-      GroupName: !Join [ "-", [ !Ref EnvTag, "bastion-linux" ] ]
+      GroupName: !Join ["-", [!Ref EnvTag, "bastion-linux"]]
       GroupDescription: Security Group for Bastion Linux Instances
       VpcId: !Ref VPCID
       SecurityGroupIngress:
@@ -41,7 +41,7 @@ Resources:
   albFrontSg:
     Type: AWS::EC2::SecurityGroup
     Properties:
-      GroupName: !Join [ "-", [ !Ref EnvTag, "alb-front" ] ]
+      GroupName: !Join ["-", [!Ref EnvTag, "alb-front"]]
       GroupDescription: Security Group for Front ALB
       VpcId: !Ref VPCID
       SecurityGroupIngress:
@@ -59,7 +59,7 @@ Resources:
   graphqlSg:
     Type: AWS::EC2::SecurityGroup
     Properties:
-      GroupName: !Join [ "-", [ !Ref EnvTag, "graphql" ] ]
+      GroupName: !Join ["-", [!Ref EnvTag, "graphql"]]
       GroupDescription: Security Group for Graphql
       VpcId: !Ref VPCID
       SecurityGroupIngress:
@@ -73,7 +73,7 @@ Resources:
   albPrivSg:
     Type: AWS::EC2::SecurityGroup
     Properties:
-      GroupName: !Join [ "-", [ !Ref EnvTag, "alb-priv" ] ]
+      GroupName: !Join ["-", [!Ref EnvTag, "alb-priv"]]
       GroupDescription: Security Group for Private ALB
       VpcId: !Ref VPCID
       SecurityGroupIngress:
@@ -91,7 +91,7 @@ Resources:
   prismaSg:
     Type: AWS::EC2::SecurityGroup
     Properties:
-      GroupName: !Join [ "-", [ !Ref EnvTag, "prisma" ] ]
+      GroupName: !Join ["-", [!Ref EnvTag, "prisma"]]
       GroupDescription: Security Group for Prisma Server
       VpcId: !Ref VPCID
       SecurityGroupIngress:
@@ -106,7 +106,7 @@ Resources:
   SecretRotationLambdaSg:
     Type: AWS::EC2::SecurityGroup
     Properties:
-      GroupName: !Join [ "-", [ !Ref EnvTag, "lambda-secretDBRotation" ] ]
+      GroupName: !Join ["-", [!Ref EnvTag, "lambda-secretDBRotation"]]
       GroupDescription: Security Group for Lambda to rotate security password
       VpcId: !Ref VPCID
       Tags:
@@ -114,7 +114,7 @@ Resources:
           Value: !Ref EnvTag
 
 #Salida a mostrarse en la pantalla
-Outputs: 
+Outputs:
   bastionLinuxSg:
     Description: Bastion Linux SG ID
     Value: !GetAtt bastionLinuxSg.GroupId
