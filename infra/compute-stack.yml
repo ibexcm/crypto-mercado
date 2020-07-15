@@ -17,6 +17,8 @@ Parameters:
     Type: String
   SecretARN:
     Type: String
+  SecretTestARN:
+    Type: String
   LatestAmiId:
     Type: String
   bastionLinuxSg:
@@ -42,6 +44,8 @@ Parameters:
 Conditions:
   condAmbientePRO:
     !Or [!Equals [!Ref TipoAmbiente, PROD], !Equals [!Ref TipoAmbiente, prod]]
+  condAmbienteTEST:
+    !Or [!Equals [!Ref TipoAmbiente, TEST], !Equals [!Ref TipoAmbiente, test]]
 
 # Definicion de Parametros
 Resources:
@@ -97,6 +101,31 @@ Resources:
         - Key: Env
           Value: !Ref EnvTag
       VpcId: !Ref VPCID
+
+  myTargetPrismaTest:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Condition: condAmbienteTEST
+    Properties:
+      Name: !Join ["-", [!Ref EnvTag, "ecs-service-prisma-test"]]
+      HealthCheckIntervalSeconds: 10
+      HealthCheckPath: /status
+      HealthCheckProtocol: HTTP
+      HealthCheckTimeoutSeconds: 5
+      HealthyThresholdCount: 3
+      UnhealthyThresholdCount: 5
+      Matcher:
+        HttpCode: 200
+      Port: 80
+      Protocol: HTTP
+      TargetGroupAttributes:
+        - Key: deregistration_delay.timeout_seconds
+          Value: 60
+      TargetType: ip
+      Tags:
+        - Key: Env
+          Value: !Ref EnvTag
+      VpcId: !Ref VPCID
+
   myTargetPrisma:
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
     Properties:
@@ -119,6 +148,7 @@ Resources:
         - Key: Env
           Value: !Ref EnvTag
       VpcId: !Ref VPCID
+      
   myALBFront:
     Type: AWS::ElasticLoadBalancingV2::LoadBalancer
     Properties:
@@ -168,6 +198,7 @@ Resources:
       DefaultActions:
         - Type: forward
           TargetGroupArn: !Ref myTargetGraphql
+
   myListenerPriv80:
     Type: AWS::ElasticLoadBalancingV2::Listener
     Properties:
@@ -177,6 +208,17 @@ Resources:
       DefaultActions:
         - Type: forward
           TargetGroupArn: !Ref myTargetPrisma
+
+  myListenerPriv8000:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Condition: condAmbienteTEST
+    Properties:
+      LoadBalancerArn: !Ref myALBPriv
+      Port: 8000
+      Protocol: HTTP
+      DefaultActions:
+        - Type: forward
+          TargetGroupArn: !Ref myTargetPrismaTest
 
   ############ ECS
   myECSCluster:
@@ -280,6 +322,52 @@ Resources:
               awslogs-region: !Ref AWS::Region
               awslogs-stream-prefix: prisma
 
+  myLogGroupPrismaTest:
+    Type: AWS::Logs::LogGroup
+    Condition: condAmbienteTEST
+    Properties:
+      LogGroupName: !Join ["/", ["/ecs", !Ref EnvTag, "prisma", "test"]]
+      RetentionInDays: 30
+
+  myTaskPrismaTest:
+    Type: AWS::ECS::TaskDefinition
+    Condition: condAmbienteTEST
+    Properties:
+      Cpu: 512
+      Memory: 1024
+      RequiresCompatibilities:
+        - FARGATE
+      Family: !Join ["-", [!Ref EnvTag, "prisma", "test"]]
+      NetworkMode: awsvpc
+      ExecutionRoleArn: !GetAtt myTaskRolePrisma.Arn
+      TaskRoleArn: !GetAtt myTaskRolePrisma.Arn
+      ContainerDefinitions:
+        - Name: prisma-container
+          Essential: true
+          Image: !Sub "${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/${EnvTag}/ibex/prisma:1.34"
+          Cpu: 512
+          MemoryReservation: 1024
+          PortMappings:
+            - ContainerPort: 80
+          Environment:
+            - Name: JAVA_OPTS
+              Value: -Xmx750m
+            - Name: DATABASE_HOST
+              Value: !Sub "db.${EnvTag}.ibexcm.internal"
+          Secrets:
+            - Name: SECRET
+              ValueFrom: !Sub "${SecretTestARN}"
+          Ulimits:
+            - Name: nofile
+              HardLimit: 1000000
+              SoftLimit: 1000000
+          LogConfiguration:
+            LogDriver: awslogs
+            Options:
+              awslogs-group: !Join ["/", ["/ecs", !Ref EnvTag, "prisma", "test"]]
+              awslogs-region: !Ref AWS::Region
+              awslogs-stream-prefix: prisma
+
   myLogGroupGraphql:
     Type: AWS::Logs::LogGroup
     Properties:
@@ -360,6 +448,33 @@ Resources:
             - !Ref subnetPrivateB
       ServiceName: service-prisma
       TaskDefinition: !Ref myTaskPrisma
+      Tags:
+        - Key: Env
+          Value: !Ref EnvTag
+
+  myServicePrismaTest:
+    Type: AWS::ECS::Service
+    Condition: condAmbienteTEST
+    DependsOn: myListenerPriv8000
+    Properties:
+      Cluster: !Ref myECSCluster
+      DesiredCount: 0
+      EnableECSManagedTags: true
+      LaunchType: FARGATE
+      LoadBalancers:
+        - ContainerName: prisma-container
+          ContainerPort: 80
+          TargetGroupArn: !Ref myTargetPrismaTest
+      NetworkConfiguration:
+        AwsvpcConfiguration:
+          AssignPublicIp: DISABLED
+          SecurityGroups:
+            - !Ref prismaSg
+          Subnets:
+            - !Ref subnetPrivateA
+            - !Ref subnetPrivateB
+      ServiceName: service-prisma-test
+      TaskDefinition: !Ref myTaskPrismaTest
       Tags:
         - Key: Env
           Value: !Ref EnvTag

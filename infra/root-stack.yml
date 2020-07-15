@@ -126,6 +126,9 @@ Parameters:
   SecretARN:
     Type: String
     Description: AWS Secret Manager ARN
+  SecretTestARN:
+    Type: String
+    Description: AWS Secret Manager ARN for TEST
   WebClientDomain:
     Type: String
     Default: ibexcm.com
@@ -178,6 +181,7 @@ Resources:
         CertificadoARN: !Ref CertificadoARN
         KMSKeyARN: !Ref KMSKeyARN
         SecretARN: !Ref SecretARN
+        SecretTestARN: !Ref SecretTestARN
         LatestAmiId: !Ref LatestAmiId
         VPCID: !GetAtt VPCStack.Outputs.VPCID
         subnetPublicA: !GetAtt VPCStack.Outputs.subnetPublicA
@@ -216,6 +220,7 @@ Resources:
         TipoAmbiente: !Ref TipoAmbiente
         EnvTag: !Ref EnvTag
         SecretARN: !Ref SecretARN
+        SecretTestARN: !Ref SecretTestARN
         KMSKeyARN: !Ref KMSKeyARN
         APIDomain: !Ref APIDomain
         VPCID: !GetAtt VPCStack.Outputs.VPCID
