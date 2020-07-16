@@ -89,6 +89,10 @@ Resources:
           FromPort: 80
           ToPort: 80
           SourceSecurityGroupId: !Ref bastionLinuxSg
+        - IpProtocol: tcp
+          FromPort: 8000
+          ToPort: 8000
+          SourceSecurityGroupId: !Ref bastionLinuxSg
       Tags:
         - Key: Env
           Value: !Ref EnvTag
@@ -102,6 +106,10 @@ Resources:
         - IpProtocol: tcp
           FromPort: 80
           ToPort: 80
+          SourceSecurityGroupId: !Ref albPrivSg
+        - IpProtocol: tcp
+          FromPort: 8000
+          ToPort: 8000
           SourceSecurityGroupId: !Ref albPrivSg
       Tags:
         - Key: Env
