@@ -271,6 +271,7 @@ Resources:
               - Effect: Allow
                 Resource:
                   - !Sub "${SecretARN}*"
+                  - !Sub "${SecretTestARN}*"
                 Action:
                   - secretsmanager:GetSecretValue
       Path: /container/
