@@ -4,6 +4,7 @@ import {
   Container,
   Grid,
   Hidden,
+  Link,
   Theme,
   withStyles,
   WithStyles,
@@ -148,16 +149,18 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
           <Grid container justify="center" spacing={4}>
             <Grid item>
               <Typography variant="h4" color="primary" align="center">
-                OTC Desk
+                <strong>OTC Desk</strong>
               </Typography>
             </Grid>
             <Grid item>
-              <Button onClick={onContactSupport} variant="contained" color="primary">
-                <img src="/svg/whatsapp-icon.svg" width={21} />
-                <Typography component="span" ml={2}>
-                  45118238
-                </Typography>
-              </Button>
+              <Link href="https://wa.me/50245118238" target="_blank" rel="nofollow">
+                <Button variant="contained" color="primary">
+                  <img src="/svg/whatsapp-icon.svg" width={21} />
+                  <Typography component="span" ml={2}>
+                    45118238
+                  </Typography>
+                </Button>
+              </Link>
             </Grid>
           </Grid>
         </Container>
