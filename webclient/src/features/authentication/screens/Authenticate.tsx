@@ -61,7 +61,7 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
     key: keyof AuthenticateInput,
   ) => {
     const value = event.target.value;
-    setInput(prev => {
+    setInput((prev) => {
       input.args[key] = value;
       return {
         ...prev,
@@ -92,12 +92,11 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
             <Typography variant="h5" gutterBottom>
               Bienvenido
             </Typography>
-            <Typography mb={4}>IBEX Mercado Respalda tu Futuro.</Typography>
             <Card className={classes.warnCard}>
               <CardContent>
                 <Typography align="center" variant="body2">
-                  Asegúrate de estar visitando <strong>https://ibexcm.com</strong> en la
-                  barra de tu navegador.
+                  Asegúrate de estar visitando <strong>https://ibexmercado.com</strong> en
+                  la barra de tu navegador.
                 </Typography>
               </CardContent>
             </Card>

@@ -11,6 +11,8 @@ Parameters:
     Type: String
   SecretARN:
     Type: String
+  SecretTestARN:
+    Type: String
   VPCID:
     Type: String
   subnetPrivateA:
@@ -34,6 +36,8 @@ Parameters:
 Conditions:
   condAmbientePRO:
     !Or [!Equals [!Ref TipoAmbiente, PROD], !Equals [!Ref TipoAmbiente, prod]]
+  condAmbienteTEST:
+    !Or [!Equals [!Ref TipoAmbiente, TEST], !Equals [!Ref TipoAmbiente, test]]
 
 # Definicion de Recursos
 Resources:
@@ -188,6 +192,8 @@ Resources:
                 Resource:
                   - !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/codebuild/${EnvTag}/graphql"
                   - !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/codebuild/${EnvTag}/graphql:*"
+                  - !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/codebuild/${EnvTag}/graphql/test"
+                  - !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/codebuild/${EnvTag}/graphql/test:*"
                 Action:
                   - logs:CreateLogGroup
                   - logs:CreateLogStream
@@ -250,6 +256,11 @@ Resources:
                   - "*"
                 Action:
                   - ecr:GetAuthorizationToken
+              - Effect: Allow
+                Resource:
+                  - !Sub "arn:aws:ecs:${AWS::Region}:${AWS::AccountId}:service/*"
+                Action:
+                  - ecs:UpdateService
       Path: /cicd/
       Tags:
         - Key: Env
@@ -394,6 +405,13 @@ Resources:
     Type: AWS::Logs::LogGroup
     Properties:
       LogGroupName: !Join ["/", ["/codebuild", !Ref EnvTag, "graphql-deploy"]]
+      RetentionInDays: 30
+
+  myLogGroupBuildGraphqlTest:
+    Type: AWS::Logs::LogGroup
+    Condition: condAmbienteTEST
+    Properties:
+      LogGroupName: !Join ["/", ["/codebuild", !Ref EnvTag, "graphql", "test"]]
       RetentionInDays: 30
 
   myBuildAdmin:
@@ -555,6 +573,63 @@ Resources:
             - Type: BASE_REF
               Pattern:
                 !If [condAmbientePRO, "^refs/heads/production$", "^refs/heads/staging$"]
+              ExcludeMatchedPattern: false
+            - Type: FILE_PATH
+              Pattern: graphqlserver/*
+              ExcludeMatchedPattern: false
+
+  myBuildGraphTest:
+    Type: AWS::CodeBuild::Project
+    Condition: condAmbienteTEST
+    Properties:
+      Name: !Join ["-", [!Ref EnvTag, "graphql", "test"]]
+      ServiceRole: !GetAtt myIAMRoleGraphql.Arn
+      Artifacts:
+        Type: NO_ARTIFACTS
+      Environment:
+        ComputeType: BUILD_GENERAL1_SMALL
+        Image: aws/codebuild/standard:4.0
+        Type: LINUX_CONTAINER
+        PrivilegedMode: true
+        EnvironmentVariables:
+          - Name: ECS_CLUSTER
+            Type: PLAINTEXT
+            Value: !Join ["-", [!Ref EnvTag, "ibexcm"]]
+          - Name: PRISMA_ENDPOINT
+            Type: PLAINTEXT
+            Value: !Sub "http://prisma.${EnvTag}.ibexcm.internal:8000"
+          - Name: SECRET
+            Type: SECRETS_MANAGER 
+            Value: !Sub "${SecretTestARN}"
+      VpcConfig:
+        VpcId: !Ref VPCID
+        Subnets:
+          - !Ref subnetPrivateA
+          - !Ref subnetPrivateB
+        SecurityGroupIds:
+          - !Ref graphqlSg
+      Source:
+        Auth:
+          Type: OAUTH
+        GitCloneDepth: 1
+        BuildSpec: graphqlserver/buildspec-test.yml
+        Location: https://github.com/ibexmercado/crypto-mercado.git
+        ReportBuildStatus: true
+        Type: GITHUB
+      LogsConfig:
+        CloudWatchLogs:
+          Status: ENABLED
+          GroupName: !Join ["/", ["/codebuild", !Ref EnvTag, "graphql", "test"]]
+      Tags:
+        - Key: Env
+          Value: !Ref EnvTag
+      Triggers:
+        Webhook: true
+        FilterGroups:
+          - - Type: EVENT
+              Pattern: PULL_REQUEST_MERGED
+            - Type: BASE_REF
+              Pattern: "^refs/heads/master$"
               ExcludeMatchedPattern: false
             - Type: FILE_PATH
               Pattern: graphqlserver/*

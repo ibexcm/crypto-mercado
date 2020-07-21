@@ -128,11 +128,15 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
       </Box>
       <Box className={classes.descriptionSectionBox} py={8}>
         <Container style={{ minHeight: "auto" }} maxWidth="lg">
-          <Typography variant="h5" mb={3}>
-            Transferencias directas a tu wallet / cuenta bancaria en menos de 24 hrs
+          <Typography variant="h4" mb={4} color="primary">
+            CONTAMOS CON LIQUIDEZ INMEDIATA
           </Typography>
-          <Typography variant="h5" mb={3}>
-            Deposita en nuestra cuenta de “servicios” en BAC Credomatic
+          <Typography variant="h5" mb={3} color="primary">
+            <strong>1.</strong> Deposita en Q’s ó $ en nuestra cuenta de{" "}
+            <strong>BAC Credomatic</strong>
+          </Typography>
+          <Typography variant="h5" color="primary">
+            <strong>2.</strong> Te transferimos directamente a tu wallet o cuenta bancaria
           </Typography>
         </Container>
       </Box>
@@ -150,7 +154,7 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
             <Grid item>
               <Button onClick={onContactSupport} variant="contained" color="primary">
                 <img src="/svg/whatsapp-icon.svg" width={21} />
-                <Typography variant="span" ml={2}>
+                <Typography component="span" ml={2}>
                   45118238
                 </Typography>
               </Button>
@@ -160,7 +164,31 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
       </Box>
       <Box className={classes.connectionSectionBox} py={8}>
         <Container style={{ minHeight: "auto" }} maxWidth="md">
-          <img src="/svg/conexion-divider.svg" width="100%" />
+          <Hidden smUp>
+            <img src="/images/conexion-mobile.png" width="100%" />
+          </Hidden>
+          <Hidden smDown>
+            <img src="/svg/conexion-divider.svg" width="100%" />
+          </Hidden>
+        </Container>
+      </Box>
+      <Box className={classes.connectionSectionBox} pt={8}>
+        <Container style={{ minHeight: "auto" }} maxWidth="sm">
+          <Typography variant="h5" color="primary" align="center" mb={5}>
+            Aliados Estratégicos
+          </Typography>
+          <Grid container justify="space-between">
+            <Grid item xs={12} lg="auto">
+              <Box display="flex" justifyContent="center" pb={8}>
+                <img src="/svg/dt-logo-grey.svg" width={280} />
+              </Box>
+            </Grid>
+            <Grid item xs={12} lg="auto">
+              <Box display="flex" justifyContent="center" pb={8}>
+                <img src="/svg/itz-logo-grey.svg" width={100} />
+              </Box>
+            </Grid>
+          </Grid>
         </Container>
       </Box>
       <Footer />
@@ -253,6 +281,11 @@ export const Home = withStyles((theme: Theme) => ({
     textAlign: "center",
     "& h5": {
       fontWeight: theme.typography.body1.fontWeight,
+    },
+    [theme.breakpoints.down("sm")]: {
+      "& h4": {
+        fontSize: theme.typography.h5.fontSize,
+      },
     },
   },
   connectionSectionBox: {
