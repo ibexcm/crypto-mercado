@@ -38,6 +38,7 @@ export const theme = createMuiTheme({
   },
   typography: {
     fontFamily: "'Nunito Sans', sans-serif",
+    fontWeightBold: 900,
     h5: {
       fontWeight: 900,
     },
