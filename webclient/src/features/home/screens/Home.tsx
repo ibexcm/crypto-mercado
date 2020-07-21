@@ -128,14 +128,14 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
       </Box>
       <Box className={classes.descriptionSectionBox} py={8}>
         <Container style={{ minHeight: "auto" }} maxWidth="lg">
-          <Typography variant="h4" mb={4}>
+          <Typography variant="h4" mb={4} color="primary">
             CONTAMOS CON LIQUIDEZ INMEDIATA
           </Typography>
-          <Typography variant="h5" mb={3}>
+          <Typography variant="h5" mb={3} color="primary">
             <strong>1.</strong> Deposita en Q’s ó $ en nuestra cuenta de{" "}
             <strong>BAC Credomatic</strong>
           </Typography>
-          <Typography variant="h5">
+          <Typography variant="h5" color="primary">
             <strong>2.</strong> Te transferimos directamente a tu wallet o cuenta bancaria
           </Typography>
         </Container>
@@ -172,20 +172,20 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
           </Hidden>
         </Container>
       </Box>
-      <Box className={classes.connectionSectionBox} py={8}>
-        <Container style={{ minHeight: "auto" }} maxWidth="md">
+      <Box className={classes.connectionSectionBox} pt={8}>
+        <Container style={{ minHeight: "auto" }} maxWidth="sm">
           <Typography variant="h5" color="primary" align="center" mb={5}>
             Aliados Estratégicos
           </Typography>
-          <Grid container justify="center" spacing={6}>
-            <Grid item>
-              <Box width={280}>
-                <img src="/svg/dt-logo-black.svg" width="100%" />
+          <Grid container justify="space-between">
+            <Grid item xs={12} lg="auto">
+              <Box display="flex" justifyContent="center" pb={8}>
+                <img src="/svg/dt-logo-grey.svg" width={280} />
               </Box>
             </Grid>
-            <Grid item>
-              <Box width={100}>
-                <img src="/svg/itz-logo-blue.svg" width="100%" />
+            <Grid item xs={12} lg="auto">
+              <Box display="flex" justifyContent="center" pb={8}>
+                <img src="/svg/itz-logo-grey.svg" width={100} />
               </Box>
             </Grid>
           </Grid>
