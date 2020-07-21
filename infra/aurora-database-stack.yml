@@ -96,6 +96,14 @@ Parameters:
       - prod
     Default: dev
 
+  CreateReplica:
+    Type: String
+    Description: Create a readreplica for HA.
+    AllowedValues:
+      - "YES"
+      - "NO"
+    Default: "NO"
+
   Application:
     Type: String
     Description: The Application tag is used to designate the application of the associated AWS resource. In this capacity application does not refer to an installed software component, but rather the overall business application that the resource supports.
@@ -134,6 +142,7 @@ Metadata:
           - DBUsername
           - DBInstanceClass
           - DBEngineVersion
+          - CreateReplica
           - DBSnapshotName
           - NotificationList
       - Label:
@@ -184,7 +193,7 @@ Conditions:
   IsUseDBSnapshot: !Not [!Equals [!Ref DBSnapshotName, ""]]
   IsNotUseDBSnapshot: !Not [Condition: IsUseDBSnapshot]
   IsProd: !Equals [!Ref EnvironmentStage, "prod"]
-  IsReplica: !Or [!Equals [!Ref EnvironmentStage, "pre-prod"], Condition: IsProd]
+  IsReplica: !Or [!Equals [!Ref CreateReplica, "YES"], !Equals [!Ref CreateReplica, "yes"]]
   DoEnableIAM: !Not [!Equals [!Ref DBEngineVersion, "9.6.8"]]
 
 ###############################################################################
