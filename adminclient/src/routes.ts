@@ -13,6 +13,9 @@ export const routes = {
     cryptoToFiatTransactions: "/transactions/crypto-to-fiat",
     details: "/tx/:id",
   },
+  settings: {
+    exchangeRate: "/settings/exchange-rate",
+  },
 };
 
 export default routes;
