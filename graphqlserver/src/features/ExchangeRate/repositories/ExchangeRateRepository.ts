@@ -12,13 +12,11 @@ export class ExchangeRateRepository {
     { args: { price } }: MutationAdminSettingsCreateExchangeRateArgs,
     user: User,
   ): Promise<ExchangeRate> {
-    const [
-      {
-        currency: { symbol },
-      },
-    ] = await this.db.user({ id: user.id }).bankAccounts();
+    const [bankAccount] = await this.db.user({ id: user.id }).bankAccounts();
 
-    return this.db.createExchangeRate({
+    const { symbol } = await this.db.bankAccount({ id: bankAccount.id }).currency();
+
+    return await this.db.createExchangeRate({
       price,
       currency: {
         connect: {
