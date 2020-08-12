@@ -1,4 +1,4 @@
-# import User, Bank, Currency, Transaction from "@ibexcm/database/generated/prisma.graphql"
+# import User, Bank, Currency, Transaction, ExchangeRate from "@ibexcm/database/generated/prisma.graphql"
 # import AdminGetTransactionsInput, SetTransactionReceiptEvidenceInput, AdminMarkTransactionAsPaidInput, GetTransactionInput, CreateTransactionUserInput, GetTransactionBreakdownInput, TransactionBreakdown from "./transaction.graphql"
 
 type Query {
@@ -60,6 +60,11 @@ type Mutation {
 
   # TRANSACTIONS
   adminMarkTransactionAsPaid(args: AdminMarkTransactionAsPaidInput!): Transaction!
+
+  # SETTINGS
+  adminSettingsCreateExchangeRate(
+    args: AdminSettingsCreateExchangeRateInput!
+  ): ExchangeRate!
 }
 
 type Session {
@@ -151,4 +156,8 @@ input AuthenticateInput {
 input AdminAuthenticateInput {
   address: String!
   password: String!
+}
+
+input AdminSettingsCreateExchangeRateInput {
+  price: String!
 }

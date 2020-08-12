@@ -166,7 +166,7 @@ export class TransactionRepository {
 
     const price = {
       key: "Precio actual BTC",
-      value: `${currentPriceSymbol} ${btcFormatter.format(Number(currentPrice))}`,
+      value: `${currentPriceSymbol} ${fiatFormatter.format(Number(currentPrice))}`,
     };
 
     const amountByCurrentPrice = math.divide(Number(inputAmount), Number(currentPrice));
