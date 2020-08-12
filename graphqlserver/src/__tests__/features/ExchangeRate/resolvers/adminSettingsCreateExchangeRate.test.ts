@@ -7,7 +7,6 @@ import {
 } from "../../../../libraries/EmailVerification";
 import { smsVerificationRepositoryInjectionKey } from "../../../../libraries/SMSVerification";
 import onboardAdminUser from "../../../../__test-utils__/helpers/onboardAdminUser";
-import onboardUser from "../../../../__test-utils__/helpers/onboardUser";
 import setAdminBankAccounts from "../../../../__test-utils__/helpers/setAdminBankAccounts";
 import {
   mockEmailNotificationsRepository,
@@ -53,8 +52,6 @@ describe("adminSettingsCreateExchangeRate", () => {
   });
 
   test("success", async () => {
-    const users = await Promise.all(new Array(3).fill(null).map(_ => onboardUser()));
-
     const password = "password";
 
     await onboardAdminUser({ address: adminAccountEmailAddress, password }, db);
