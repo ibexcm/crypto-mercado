@@ -628,7 +628,7 @@ Resources:
         Webhook: true
         FilterGroups:
           - - Type: EVENT
-              Pattern: PULL_REQUEST_MERGED
+              Pattern: PULL_REQUEST_CREATED
             - Type: BASE_REF
               Pattern: "^refs/heads/master$"
               ExcludeMatchedPattern: false
