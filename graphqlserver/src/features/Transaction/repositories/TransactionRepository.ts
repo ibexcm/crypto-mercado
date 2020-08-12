@@ -31,7 +31,10 @@ import { UserRepository } from "../../User/repositories/UserRepository";
 import { TransactionError } from "../errors/TransactionError";
 import { TransactionTaxRepository } from "./TransactionTaxRepository";
 
-const formatter = Intl.NumberFormat();
+const fiatFormatter = Intl.NumberFormat();
+const btcFormatter = Intl.NumberFormat("en-US", {
+  minimumFractionDigits: 7,
+});
 
 export class TransactionRepository {
   private db: Prisma;
@@ -163,28 +166,28 @@ export class TransactionRepository {
 
     const price = {
       key: "Precio actual BTC",
-      value: `${currentPriceSymbol} ${formatter.format(Number(currentPrice))}`,
+      value: `${currentPriceSymbol} ${fiatFormatter.format(Number(currentPrice))}`,
     };
 
     const amountByCurrentPrice = math.divide(Number(inputAmount), Number(currentPrice));
 
     const amount = {
       key: "Cantidad",
-      value: `${CurrencySymbol.BTC} ${formatter.format(amountByCurrentPrice)}`,
+      value: `${CurrencySymbol.BTC} ${btcFormatter.format(amountByCurrentPrice)}`,
     };
 
     const { fee: assignedFee } = await this.TransactionFeeRepository.calculate(senderUser);
     const calculatedFee = math.multiply(amountByCurrentPrice, Number(assignedFee));
     const fee = {
       key: `Comisión IBEX (${math.multiply(Number(assignedFee), 100).toFixed(1)}%)`,
-      value: `${CurrencySymbol.BTC} ${formatter.format(calculatedFee)}`,
+      value: `${CurrencySymbol.BTC} ${btcFormatter.format(calculatedFee)}`,
     };
 
     const assignedTaxByCountry = this.TransactionTaxRepository.getTaxByCountry(country);
     const calculatedTax = math.multiply(calculatedFee, Number(assignedTaxByCountry));
     const tax = {
       key: `IVA (${math.multiply(Number(assignedTaxByCountry), 100).toFixed(1)}%)`,
-      value: `${CurrencySymbol.BTC} ${formatter.format(calculatedTax)}`,
+      value: `${CurrencySymbol.BTC} ${btcFormatter.format(calculatedTax)}`,
     };
 
     const subtotal = math
@@ -195,7 +198,7 @@ export class TransactionRepository {
 
     const total = {
       key: "Total",
-      value: `${CurrencySymbol.BTC} ${formatter.format(subtotal)}`,
+      value: `${CurrencySymbol.BTC} ${btcFormatter.format(subtotal)}`,
     };
 
     return {
@@ -230,28 +233,28 @@ export class TransactionRepository {
 
     const price = {
       key: "Precio actual BTC",
-      value: `${currentPriceSymbol} ${formatter.format(Number(currentPrice))}`,
+      value: `${currentPriceSymbol} ${fiatFormatter.format(Number(currentPrice))}`,
     };
 
     const amountByCurrentPrice = math.multiply(Number(currentPrice), Number(inputAmount));
 
     const amount = {
       key: "Cantidad",
-      value: `${currentPriceSymbol} ${formatter.format(amountByCurrentPrice)}`,
+      value: `${currentPriceSymbol} ${fiatFormatter.format(amountByCurrentPrice)}`,
     };
 
     const { fee: assignedFee } = await this.TransactionFeeRepository.calculate(senderUser);
     const calculatedFee = math.multiply(amountByCurrentPrice, Number(assignedFee));
     const fee = {
       key: `Comisión IBEX (${math.multiply(Number(assignedFee), 100).toFixed(1)}%)`,
-      value: `${currentPriceSymbol} ${formatter.format(calculatedFee)}`,
+      value: `${currentPriceSymbol} ${fiatFormatter.format(calculatedFee)}`,
     };
 
     const assignedTaxByCountry = this.TransactionTaxRepository.getTaxByCountry(country);
     const calculatedTax = math.multiply(calculatedFee, Number(assignedTaxByCountry));
     const tax = {
       key: `IVA (${math.multiply(Number(assignedTaxByCountry), 100).toFixed(1)}%)`,
-      value: `${currentPriceSymbol} ${formatter.format(calculatedTax)}`,
+      value: `${currentPriceSymbol} ${fiatFormatter.format(calculatedTax)}`,
     };
 
     const subtotal = math
@@ -261,7 +264,7 @@ export class TransactionRepository {
       .done();
     const total = {
       key: "Recibes",
-      value: `${currentPriceSymbol} ${formatter.format(subtotal)}`,
+      value: `${currentPriceSymbol} ${fiatFormatter.format(subtotal)}`,
     };
 
     let exchangeRate;
@@ -272,7 +275,7 @@ export class TransactionRepository {
       const calculatedExchangeRate = math.multiply(subtotal, Number(exchangeRatePrice));
       exchangeRate = {
         key: `Tipo de cambio (${exchangeRatePrice})`,
-        value: `${currency.symbol} ${formatter.format(calculatedExchangeRate)}`,
+        value: `${currency.symbol} ${fiatFormatter.format(calculatedExchangeRate)}`,
       };
     }
 

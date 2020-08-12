@@ -45,5 +45,7 @@ export const permissions = shield({
     // KYC
     adminKYCApproveUser: rules.isAdmin,
     adminKYCRejectUser: rules.isAdmin,
+    // SETTINGS
+    adminSettingsCreateExchangeRate: rules.isAdmin,
   },
 });
