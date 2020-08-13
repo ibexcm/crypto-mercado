@@ -1,4 +1,6 @@
 import {
+  Currency,
+  Email,
   Prisma,
   RecipientCreateOneWithoutTransactionInput,
   RecipientCreateWithoutTransactionInput,
@@ -125,6 +127,35 @@ export class TransactionRepository {
           },
         },
       },
+    });
+
+    const [email, fromCurrency, toCurrency] = await Promise.all<
+      Array<Email>,
+      Currency,
+      Currency
+    >([
+      this.db
+        .transaction({ id: transaction.id })
+        .sender()
+        .user()
+        .contact()
+        .email({ where: { verifiedAt_not: null } }),
+      this.db
+        .transaction({ id: transaction.id })
+        .receipt()
+        .fromCurrency(),
+      this.db
+        .transaction({ id: transaction.id })
+        .receipt()
+        .toCurrency(),
+    ]);
+
+    const [{ address }] = email;
+
+    this.emailNotificationsRepository.sendTransactionSuccessNotification(address, {
+      transaction,
+      fromCurrencySymbol: fromCurrency.symbol,
+      toCurrencySymbol: toCurrency.symbol,
     });
 
     return transaction;
