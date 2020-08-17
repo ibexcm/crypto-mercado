@@ -7,7 +7,7 @@ export interface IBitcoinPriceResponse {
 }
 
 export interface IBitcoinRepository {
-  getCurrentPriceByCurrency: (currency?: Currency) => Promise<IBitcoinPriceResponse>;
+  getCurrentPriceByCurrency: (currency: Currency) => Promise<IBitcoinPriceResponse>;
   getPriceAtDatetimeByCurrencySymbol: (
     datetime: Date,
     symbol?: CurrencySymbol,
