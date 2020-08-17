@@ -325,20 +325,6 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
                       />
                     </Paper>
                   </Box>
-                  <Box mb={3}>
-                    <Paper>
-                      <Box p={2}>
-                        <Typography variant="body2" mb={3}>
-                          Dirección {cryptoCurrency.symbol} de destino
-                        </Typography>
-                        <Box overflow="scroll">
-                          <Typography variant="h6">{address}</Typography>
-                        </Box>
-                      </Box>
-                    </Paper>
-                  </Box>
-                </Grid>
-                <Grid item xs={12} lg={5}>
                   <FiatToCryptoTransactionBreakdown
                     getTransactionBreakdownState={getTransactionBreakdownState}
                   />
@@ -352,6 +338,20 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
                   <Hidden smDown>
                     <Box>{getActions()}</Box>
                   </Hidden>
+                </Grid>
+                <Grid item xs={12} lg={5}>
+                  <Box mb={3}>
+                    <Paper>
+                      <Box p={2}>
+                        <Typography variant="body2" mb={3}>
+                          Dirección {cryptoCurrency.symbol} de destino
+                        </Typography>
+                        <Box overflow="scroll">
+                          <Typography variant="h6">{address}</Typography>
+                        </Box>
+                      </Box>
+                    </Paper>
+                  </Box>
                 </Grid>
               </Grid>
             </Container>
