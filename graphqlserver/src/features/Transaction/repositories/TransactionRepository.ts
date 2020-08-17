@@ -191,9 +191,7 @@ export class TransactionRepository {
     const {
       symbol: currentPriceSymbol,
       price: currentPrice,
-    } = await this.BitcoinRepository.getCurrentPriceByCurrencySymbol(
-      currency.symbol as CurrencySymbol,
-    );
+    } = await this.BitcoinRepository.getCurrentPriceByCurrency(currency);
 
     const price = {
       key: "Precio actual BTC",
@@ -260,7 +258,7 @@ export class TransactionRepository {
     const {
       symbol: currentPriceSymbol,
       price: currentPrice,
-    } = await this.BitcoinRepository.getCurrentPriceByCurrencySymbol();
+    } = await this.BitcoinRepository.getCurrentPriceByCurrency();
 
     const price = {
       key: "Precio actual BTC",

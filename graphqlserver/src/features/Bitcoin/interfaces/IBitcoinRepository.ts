@@ -1,14 +1,13 @@
+import { Currency } from "@ibexcm/database";
 import { CurrencySymbol } from "@ibexcm/libraries/models/currency";
 
 export interface IBitcoinPriceResponse {
-  symbol: CurrencySymbol;
+  symbol: string;
   price: string;
 }
 
 export interface IBitcoinRepository {
-  getCurrentPriceByCurrencySymbol: (
-    symbol?: CurrencySymbol,
-  ) => Promise<IBitcoinPriceResponse>;
+  getCurrentPriceByCurrency: (currency?: Currency) => Promise<IBitcoinPriceResponse>;
   getPriceAtDatetimeByCurrencySymbol: (
     datetime: Date,
     symbol?: CurrencySymbol,
