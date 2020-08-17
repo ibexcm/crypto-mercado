@@ -215,7 +215,9 @@ export class TransactionRepository {
     const assignedTaxByCountry = this.TransactionTaxRepository.getTaxByCountry(country);
     const calculatedTax = math.multiply(calculatedFee, Number(assignedTaxByCountry));
     const tax = {
-      key: `IVA (${math.multiply(Number(assignedTaxByCountry), 100).toFixed(1)}%)`,
+      key: `IVA sobre comisión (${math
+        .multiply(Number(assignedTaxByCountry), 100)
+        .toFixed(1)}%)`,
       value: `${CurrencySymbol.BTC} ${btcFormatter.format(calculatedTax)}`,
     };
 
@@ -282,7 +284,9 @@ export class TransactionRepository {
     const assignedTaxByCountry = this.TransactionTaxRepository.getTaxByCountry(country);
     const calculatedTax = math.multiply(calculatedFee, Number(assignedTaxByCountry));
     const tax = {
-      key: `IVA (${math.multiply(Number(assignedTaxByCountry), 100).toFixed(1)}%)`,
+      key: `IVA sobre comisión (${math
+        .multiply(Number(assignedTaxByCountry), 100)
+        .toFixed(1)}%)`,
       value: `${currentPriceSymbol} ${fiatFormatter.format(calculatedTax)}`,
     };
 
