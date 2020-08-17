@@ -84,6 +84,11 @@ const Component: React.FC<Props> = ({
             </Box>
           )}
         </Box>
+        <FiatToCryptoTransactionBreakdown
+          getTransactionBreakdownState={getTransactionBreakdownState}
+        />
+      </Grid>
+      <Grid item xs={12} lg={5}>
         <Box mb={3}>
           <Paper>
             <Box p={2}>
@@ -131,11 +136,6 @@ const Component: React.FC<Props> = ({
             </Box>
           </Paper>
         </Box>
-      </Grid>
-      <Grid item xs={12} lg={5}>
-        <FiatToCryptoTransactionBreakdown
-          getTransactionBreakdownState={getTransactionBreakdownState}
-        />
         <FiatToCryptoTransactionEvidence
           transaction={transaction}
           onAddFile={onAddFile}
