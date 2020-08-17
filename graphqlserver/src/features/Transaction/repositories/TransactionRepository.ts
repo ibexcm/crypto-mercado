@@ -242,20 +242,11 @@ export class TransactionRepository {
       value: `${CurrencySymbol.BTC} ${btcFormatter.format(subtotal)}`,
     };
 
-    let exchangeRate, priceAtRate;
+    let priceAtRate;
     if (destinationCurrency.symbol !== CurrencySymbol.USD) {
       const {
         price: exchangeRatePrice,
       } = await this.ExchangeRateRepository.getLatestByCurrency(destinationCurrency);
-
-      const calculatedExchangeRate = fiatFormatter.format(
-        math.multiply(subtotal, Number(exchangeRatePrice)),
-      );
-
-      exchangeRate = {
-        key: `Tipo de cambio (${exchangeRatePrice})`,
-        value: `${destinationCurrency.symbol} ${calculatedExchangeRate}`,
-      };
 
       priceAtRate = {
         key: `Tipo de cambio (${exchangeRatePrice} ${priceAtDestinationCurrency.symbol}/${priceAtBaseCurrency.symbol})`,
@@ -272,7 +263,6 @@ export class TransactionRepository {
       fee,
       tax,
       total,
-      exchangeRate,
       priceAtRate,
     };
   }
@@ -290,30 +280,42 @@ export class TransactionRepository {
       .profile()
       .country();
 
-    const currency = await this.db.bankAccount({ id: sender.bankAccountID }).currency();
+    const baseCurrency = await this.db.currency({ symbol: CurrencySymbol.USD });
+    const destinationCurrency = await this.db
+      .bankAccount({ id: sender.bankAccountID })
+      .currency();
 
-    const {
-      symbol: currentPriceSymbol,
-      price: currentPrice,
-    } = await this.BitcoinRepository.getCurrentPriceByCurrency(currency);
+    const priceAtBaseCurrency = await this.BitcoinRepository.getCurrentPriceByCurrency(
+      baseCurrency,
+    );
+    const priceAtDestinationCurrency = await this.BitcoinRepository.getCurrentPriceByCurrency(
+      destinationCurrency,
+    );
 
     const price = {
       key: "Precio actual BTC",
-      value: `${currentPriceSymbol} ${fiatFormatter.format(Number(currentPrice))}`,
+      value: `${priceAtBaseCurrency.symbol} ${fiatFormatter.format(
+        Number(priceAtBaseCurrency.price),
+      )}`,
     };
 
-    const amountByCurrentPrice = math.multiply(Number(currentPrice), Number(inputAmount));
+    const amountByCurrentPrice = math.multiply(
+      Number(priceAtDestinationCurrency.price),
+      Number(inputAmount),
+    );
 
     const amount = {
       key: "Cantidad",
-      value: `${currentPriceSymbol} ${fiatFormatter.format(amountByCurrentPrice)}`,
+      value: `${priceAtDestinationCurrency.symbol} ${fiatFormatter.format(
+        amountByCurrentPrice,
+      )}`,
     };
 
     const { fee: assignedFee } = await this.TransactionFeeRepository.calculate(senderUser);
     const calculatedFee = math.multiply(amountByCurrentPrice, Number(assignedFee));
     const fee = {
       key: `Comisión IBEX (${math.multiply(Number(assignedFee), 100).toFixed(1)}%)`,
-      value: `${currentPriceSymbol} ${fiatFormatter.format(calculatedFee)}`,
+      value: `${priceAtDestinationCurrency.symbol} ${fiatFormatter.format(calculatedFee)}`,
     };
 
     const assignedTaxByCountry = this.TransactionTaxRepository.getTaxByCountry(country);
@@ -322,7 +324,7 @@ export class TransactionRepository {
       key: `IVA sobre comisión (${math
         .multiply(Number(assignedTaxByCountry), 100)
         .toFixed(1)}%)`,
-      value: `${currentPriceSymbol} ${fiatFormatter.format(calculatedTax)}`,
+      value: `${priceAtDestinationCurrency.symbol} ${fiatFormatter.format(calculatedTax)}`,
     };
 
     const subtotal = math
@@ -330,20 +332,23 @@ export class TransactionRepository {
       .subtract(calculatedFee)
       .subtract(calculatedTax)
       .done();
+
     const total = {
       key: "Recibes",
-      value: `${currentPriceSymbol} ${fiatFormatter.format(subtotal)}`,
+      value: `${priceAtDestinationCurrency.symbol} ${fiatFormatter.format(subtotal)}`,
     };
 
-    let exchangeRate;
-    if (currency.symbol !== CurrencySymbol.USD) {
+    let priceAtRate;
+    if (priceAtDestinationCurrency.symbol !== CurrencySymbol.USD) {
       const {
         price: exchangeRatePrice,
-      } = await this.ExchangeRateRepository.getLatestByCurrency(currency);
-      const calculatedExchangeRate = math.multiply(subtotal, Number(exchangeRatePrice));
-      exchangeRate = {
-        key: `Tipo de cambio (${exchangeRatePrice})`,
-        value: `${currency.symbol} ${fiatFormatter.format(calculatedExchangeRate)}`,
+      } = await this.ExchangeRateRepository.getLatestByCurrency(destinationCurrency);
+
+      priceAtRate = {
+        key: `Tipo de cambio (${exchangeRatePrice} ${priceAtDestinationCurrency.symbol}/${priceAtBaseCurrency.symbol})`,
+        value: `${priceAtDestinationCurrency.symbol} ${fiatFormatter.format(
+          Number(priceAtDestinationCurrency.price),
+        )}`,
       };
     }
 
@@ -354,7 +359,7 @@ export class TransactionRepository {
       fee,
       tax,
       total,
-      exchangeRate,
+      priceAtRate,
     };
   }
 
