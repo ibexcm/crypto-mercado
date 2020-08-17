@@ -19,25 +19,20 @@ interface Props extends WithStyles {
 const Component: React.FC<Props> = ({ classes, getTransactionBreakdownState }) => {
   const { data, loading, error } = getTransactionBreakdownState;
 
-  const {
-    price,
-    amount,
-    fee,
-    tax,
-    total,
-    exchangeRate,
-  } = data?.getTransactionBreakdown || {
+  const { price, amount, fee, tax, total, priceAtRate } = data?.getTransactionBreakdown || {
     price: { key: "Precio actual BTC", value: <CircularProgress size={20} /> },
     amount: { key: "Cantidad", value: <CircularProgress size={20} /> },
     fee: { key: "Comisión IBEX (...)", value: <CircularProgress size={20} /> },
     tax: { key: "IVA (...)", value: <CircularProgress size={20} /> },
     total: { key: "Total", value: <CircularProgress size={20} /> },
+    priceAtRate: { key: "Tipo de cambio (...)", value: <CircularProgress size={20} /> },
   };
 
   return (
     <Box mb={3} textAlign="right">
       <Box mb={1}>
         <TransactionBreakdownRow pair={price} />
+        {priceAtRate && <TransactionBreakdownRow pair={priceAtRate} />}
       </Box>
       <Typography variant="overline" color="primary" mb={3}>
         Desglose
@@ -49,7 +44,6 @@ const Component: React.FC<Props> = ({ classes, getTransactionBreakdownState }) =
         <Divider />
       </Box>
       <TransactionBreakdownRow pair={total} />
-      {exchangeRate && <TransactionBreakdownRow pair={exchangeRate} />}
     </Box>
   );
 };

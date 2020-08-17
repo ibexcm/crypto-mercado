@@ -186,19 +186,29 @@ export class TransactionRepository {
       .profile()
       .country();
 
-    const currency = await this.db.bankAccount({ id: recipient.bankAccountID }).currency();
+    const baseCurrency = await this.db.currency({ symbol: CurrencySymbol.USD });
+    const destinationCurrency = await this.db
+      .bankAccount({ id: recipient.bankAccountID })
+      .currency();
 
-    const {
-      symbol: currentPriceSymbol,
-      price: currentPrice,
-    } = await this.BitcoinRepository.getCurrentPriceByCurrency(currency);
+    const priceAtBaseCurrency = await this.BitcoinRepository.getCurrentPriceByCurrency(
+      baseCurrency,
+    );
+    const priceAtDestinationCurrency = await this.BitcoinRepository.getCurrentPriceByCurrency(
+      destinationCurrency,
+    );
 
     const price = {
       key: "Precio actual BTC",
-      value: `${currentPriceSymbol} ${fiatFormatter.format(Number(currentPrice))}`,
+      value: `${priceAtBaseCurrency.symbol} ${fiatFormatter.format(
+        Number(priceAtBaseCurrency.price),
+      )}`,
     };
 
-    const amountByCurrentPrice = math.divide(Number(inputAmount), Number(currentPrice));
+    const amountByCurrentPrice = math.divide(
+      Number(inputAmount),
+      Number(priceAtDestinationCurrency.price),
+    );
 
     const amount = {
       key: "Cantidad",
@@ -232,6 +242,29 @@ export class TransactionRepository {
       value: `${CurrencySymbol.BTC} ${btcFormatter.format(subtotal)}`,
     };
 
+    let exchangeRate, priceAtRate;
+    if (destinationCurrency.symbol !== CurrencySymbol.USD) {
+      const {
+        price: exchangeRatePrice,
+      } = await this.ExchangeRateRepository.getLatestByCurrency(destinationCurrency);
+
+      const calculatedExchangeRate = fiatFormatter.format(
+        math.multiply(subtotal, Number(exchangeRatePrice)),
+      );
+
+      exchangeRate = {
+        key: `Tipo de cambio (${exchangeRatePrice})`,
+        value: `${destinationCurrency.symbol} ${calculatedExchangeRate}`,
+      };
+
+      priceAtRate = {
+        key: `Tipo de cambio (${exchangeRatePrice} ${priceAtDestinationCurrency.symbol}/${priceAtBaseCurrency.symbol})`,
+        value: `${priceAtDestinationCurrency.symbol} ${fiatFormatter.format(
+          Number(priceAtDestinationCurrency.price),
+        )}`,
+      };
+    }
+
     return {
       __typename: "FiatToBitcoinTransactionBreakdown",
       price,
@@ -239,6 +272,8 @@ export class TransactionRepository {
       fee,
       tax,
       total,
+      exchangeRate,
+      priceAtRate,
     };
   }
 
