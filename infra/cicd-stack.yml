@@ -629,6 +629,10 @@ Resources:
         FilterGroups:
           - - Type: EVENT
               Pattern: PULL_REQUEST_CREATED
+            - Type: EVENT
+              Pattern: PULL_REQUEST_UPDATED
+            - Type: HEAD_REF
+              Pattern: "^refs/heads/master$"
             - Type: BASE_REF
               Pattern: "^refs/heads/master$"
               ExcludeMatchedPattern: false
