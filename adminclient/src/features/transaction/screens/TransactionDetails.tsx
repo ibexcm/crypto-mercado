@@ -58,7 +58,6 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
   };
 
   const onUploadEnd = async (response: IPFSAddFileResponse[]) => {
-    console.log(response);
     const [{ hash: fileHash }] = response;
     try {
       await onTransactionReceiptEvidenceUploadEnd({
@@ -204,6 +203,7 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
                 </Grid>
               </Box>
             </Grid>
+            <Grid item lg={6}></Grid>
           </Grid>
         </Box>
         <Box>{getTransactionComponent()}</Box>
