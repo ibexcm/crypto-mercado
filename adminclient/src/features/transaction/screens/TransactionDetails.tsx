@@ -51,6 +51,8 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
     onUploadEnd: onTransactionReceiptEvidenceUploadEnd,
   } = TransactionRepository.useSetTransactionReceiptEvidenceMutation();
 
+  const { updateTransactionMethods } = TransactionRepository.useUpdateTransaction();
+
   const onAddFile = (file: DropzoneFile) => {
     onAddTransactionReceiptEvidence(file);
   };
@@ -137,6 +139,7 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
           getTransactionBreakdownState={getTransactionBreakdownState}
           onAddFile={onAddFile}
           onUploadEnd={onUploadEnd}
+          updateTransactionMethods={updateTransactionMethods}
         />
       );
     }

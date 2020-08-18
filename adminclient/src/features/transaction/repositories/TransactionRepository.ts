@@ -21,8 +21,27 @@ import {
 } from "@ibexcm/libraries/api/transaction";
 import { SetTransactionReceiptEvidenceMutation } from "@ibexcm/libraries/api/transactionReceipt";
 import { DropzoneFile } from "dropzone";
+import { IUpdateTransactionMethods } from "../interfaces/IUpdateTransactionMethods";
 
 export class TransactionRepository {
+  useUpdateTransaction(): {
+    updateTransactionMethods: IUpdateTransactionMethods;
+  } {
+    return {
+      updateTransactionMethods: {
+        onSetBasePrice: (value: string) => {
+          console.log("onSetBasePrice", value);
+        },
+        onSetExchangeRate: (value: string) => {
+          console.log("onSetExchangeRate", value);
+        },
+        onSetFee: (value: string) => {
+          console.log("onSetFee", value);
+        },
+      },
+    };
+  }
+
   useSetTransactionReceiptEvidenceMutation(): {
     state: MutationResult<Transaction>;
     onAddFile: (file: DropzoneFile) => void;
