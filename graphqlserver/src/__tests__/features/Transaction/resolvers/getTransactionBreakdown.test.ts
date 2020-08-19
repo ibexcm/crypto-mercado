@@ -33,6 +33,7 @@ describe("getTransactionBreakdown", () => {
   const bitcoinApiRepository = new MockBitcoinAPIRepository(
     dependencies.provide(ExchangeRateRepositoryInjectionKey),
   );
+
   dependencies.override(
     smsVerificationRepositoryInjectionKey,
     _ => smsVerificationRepository,
@@ -54,6 +55,7 @@ describe("getTransactionBreakdown", () => {
   });
 
   beforeEach(async () => {
+    jest.clearAllMocks();
     await db.deleteManyTransactions();
     await db.deleteManyUsers();
   });
@@ -90,7 +92,7 @@ describe("getTransactionBreakdown", () => {
       token,
     );
 
-    expect(bitcoinApiRepository.getCurrentPriceByCurrency).toHaveBeenCalledTimes(1);
+    expect(bitcoinApiRepository.getCurrentPriceByCurrency).toHaveBeenCalledTimes(2);
 
     expect(getTransactionBreakdown.price.key).toBeDefined();
     expect(getTransactionBreakdown.price.value).toBeDefined();
