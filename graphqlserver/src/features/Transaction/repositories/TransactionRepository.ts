@@ -11,12 +11,14 @@ import {
   TransactionReceiptCreateOneWithoutTransactionInput,
   TransactionReceiptCreateWithoutTransactionInput,
   TransactionTaxCreateOneInput,
+  TransactionUpdateInput,
   User,
 } from "@ibexcm/database";
 import {
   BitcoinToFiatTransactionBreakdown,
   CreateTransactionUserInput,
   FiatToBitcoinTransactionBreakdown,
+  MutationAdminUpdateTransactionArgs,
   MutationCreateTransactionArgs,
   QueryAdminGetTransactionsArgs,
   QueryGetTransactionArgs,
@@ -95,6 +97,71 @@ export class TransactionRepository {
     }
 
     return this.getFiatToBitcoinTransactionBreakdown(args, senderUser);
+  }
+
+  async adminUpdateTransaction(
+    { args }: MutationAdminUpdateTransactionArgs,
+    senderUser: User,
+  ): Promise<Transaction> {
+    const transactionID = args.id;
+    const data: TransactionUpdateInput = {
+      receipt: {
+        update: {},
+      },
+    };
+
+    if (Boolean(args?.amount)) {
+      data.amount = args.amount;
+    }
+
+    if (Boolean(args?.receipt?.exchangeRate?.price)) {
+      data.receipt.update.exchangeRate = {
+        create: {
+          price: args.receipt.exchangeRate.price,
+          currency: {
+            connect: {
+              symbol: CurrencySymbol.USD,
+            },
+          },
+        },
+      };
+    }
+
+    if (Boolean(args?.receipt?.fee?.value)) {
+      data.receipt.update.fee = {
+        create: {
+          fee: args.receipt.fee.value,
+        },
+      };
+    }
+
+    if (Boolean(args?.receipt?.tax?.value)) {
+      data.receipt.update.tax = {
+        create: {
+          tax: args.receipt.tax.value,
+        },
+      };
+    }
+
+    if (Boolean(args?.receipt?.cryptoEvidence?.price?.value)) {
+      await this.db.updateBitcoinReceiptEvidence({
+        where: { id: args.receipt.cryptoEvidence.id },
+        data: {
+          price: {
+            create: {
+              value: args.receipt.cryptoEvidence.price.value,
+              currency: {
+                connect: {
+                  symbol: CurrencySymbol.USD,
+                },
+              },
+            },
+          },
+        },
+      });
+    }
+
+    return await this.db.updateTransaction({ where: { id: transactionID }, data });
   }
 
   async createTransaction(

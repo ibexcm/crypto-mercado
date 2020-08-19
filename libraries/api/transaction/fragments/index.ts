@@ -1,3 +1,4 @@
+export * from "./CurrencyFragment";
 export * from "./Receipt";
 export * from "./Recipient";
 export * from "./Sender";

@@ -59,4 +59,20 @@ export const types = {
       return TransactionReceiptRepository.bitcoinReceipt(id);
     },
   },
+  BitcoinReceiptEvidence: {
+    price: ({ id }, args, { dependencies }: IContext) => {
+      const TransactionReceiptRepository = dependencies.provide(
+        TransactionReceiptRepositoryInjectionKey,
+      );
+      return TransactionReceiptRepository.price(id);
+    },
+  },
+  Price: {
+    currency: ({ id }, args, { dependencies }: IContext) => {
+      const TransactionReceiptRepository = dependencies.provide(
+        TransactionReceiptRepositoryInjectionKey,
+      );
+      return TransactionReceiptRepository.currency(id);
+    },
+  },
 };

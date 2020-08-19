@@ -1,3 +1,39 @@
+input AdminUpdateTransactionInput {
+  id: String!
+  amount: String
+  receipt: AdminUpdateTransactionReceiptInput
+}
+
+input AdminUpdateTransactionReceiptInput {
+  id: String!
+  fee: AdminUpdateTransactionReceiptFeeInput
+  tax: AdminUpdateTransactionReceiptTaxInput
+  exchangeRate: AdminUpdateTransactionReceiptExchangeRateInput
+  cryptoEvidence: AdminUpdateTransactionReceiptCryptoEvidenceInput
+  paidAt: DateTime
+}
+
+input AdminUpdateTransactionReceiptCryptoEvidenceInput {
+  id: String!
+  price: AdminUpdateTransactionReceiptCryptoEvidencePriceInput
+}
+
+input AdminUpdateTransactionReceiptCryptoEvidencePriceInput {
+  value: Float!
+}
+
+input AdminUpdateTransactionReceiptFeeInput {
+  value: String!
+}
+
+input AdminUpdateTransactionReceiptTaxInput {
+  value: String!
+}
+
+input AdminUpdateTransactionReceiptExchangeRateInput {
+  price: String!
+}
+
 input AdminGetTransactionsInput {
   where: TransactionWhereInput
   orderBy: TransactionOrderByInput
