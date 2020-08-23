@@ -1,4 +1,6 @@
 import {
+  Currency,
+  Email,
   Prisma,
   RecipientCreateOneWithoutTransactionInput,
   RecipientCreateWithoutTransactionInput,
@@ -9,12 +11,14 @@ import {
   TransactionReceiptCreateOneWithoutTransactionInput,
   TransactionReceiptCreateWithoutTransactionInput,
   TransactionTaxCreateOneInput,
+  TransactionUpdateInput,
   User,
 } from "@ibexcm/database";
 import {
   BitcoinToFiatTransactionBreakdown,
   CreateTransactionUserInput,
   FiatToBitcoinTransactionBreakdown,
+  MutationAdminUpdateTransactionArgs,
   MutationCreateTransactionArgs,
   QueryAdminGetTransactionsArgs,
   QueryGetTransactionArgs,
@@ -24,7 +28,10 @@ import {
 import { CurrencySymbol } from "@ibexcm/libraries/models/currency";
 import { IEmailNotificationsRepository } from "../../../libraries/EmailVerification/interfaces/IEmailNotificationsRepository";
 import math from "../../../libraries/math";
-import { IBitcoinRepository } from "../../Bitcoin/interfaces/IBitcoinRepository";
+import {
+  IBitcoinPriceResponse,
+  IBitcoinRepository,
+} from "../../Bitcoin/interfaces/IBitcoinRepository";
 import { ExchangeRateRepository } from "../../ExchangeRate/repositories/ExchangeRateRepository";
 import { TransactionFeeRepository } from "../../TransactionFee/repositories/TransactionFeeRepository";
 import { UserRepository } from "../../User/repositories/UserRepository";
@@ -95,6 +102,71 @@ export class TransactionRepository {
     return this.getFiatToBitcoinTransactionBreakdown(args, senderUser);
   }
 
+  async adminUpdateTransaction(
+    { args }: MutationAdminUpdateTransactionArgs,
+    senderUser: User,
+  ): Promise<Transaction> {
+    const transactionID = args.id;
+    const data: TransactionUpdateInput = {
+      receipt: {
+        update: {},
+      },
+    };
+
+    if (Boolean(args?.amount)) {
+      data.amount = args.amount;
+    }
+
+    if (Boolean(args?.receipt?.exchangeRate?.price)) {
+      data.receipt.update.exchangeRate = {
+        create: {
+          price: args.receipt.exchangeRate.price,
+          currency: {
+            connect: {
+              symbol: CurrencySymbol.USD,
+            },
+          },
+        },
+      };
+    }
+
+    if (Boolean(args?.receipt?.fee?.value)) {
+      data.receipt.update.fee = {
+        create: {
+          fee: args.receipt.fee.value,
+        },
+      };
+    }
+
+    if (Boolean(args?.receipt?.tax?.value)) {
+      data.receipt.update.tax = {
+        create: {
+          tax: args.receipt.tax.value,
+        },
+      };
+    }
+
+    if (Boolean(args?.receipt?.cryptoEvidence?.price?.value)) {
+      await this.db.updateBitcoinReceiptEvidence({
+        where: { id: args.receipt.cryptoEvidence.id },
+        data: {
+          price: {
+            create: {
+              value: args.receipt.cryptoEvidence.price.value,
+              currency: {
+                connect: {
+                  symbol: CurrencySymbol.USD,
+                },
+              },
+            },
+          },
+        },
+      });
+    }
+
+    return await this.db.updateTransaction({ where: { id: transactionID }, data });
+  }
+
   async createTransaction(
     args: MutationCreateTransactionArgs,
     senderUser: User,
@@ -127,6 +199,35 @@ export class TransactionRepository {
       },
     });
 
+    const [email, fromCurrency, toCurrency] = await Promise.all<
+      Array<Email>,
+      Currency,
+      Currency
+    >([
+      this.db
+        .transaction({ id: transaction.id })
+        .sender()
+        .user()
+        .contact()
+        .email({ where: { verifiedAt_not: null } }),
+      this.db
+        .transaction({ id: transaction.id })
+        .receipt()
+        .fromCurrency(),
+      this.db
+        .transaction({ id: transaction.id })
+        .receipt()
+        .toCurrency(),
+    ]);
+
+    const [{ address }] = email;
+
+    this.emailNotificationsRepository.sendTransactionSuccessNotification(address, {
+      transaction,
+      fromCurrencySymbol: fromCurrency.symbol,
+      toCurrencySymbol: toCurrency.symbol,
+    });
+
     return transaction;
   }
 
@@ -155,21 +256,29 @@ export class TransactionRepository {
       .profile()
       .country();
 
-    const currency = await this.db.bankAccount({ id: recipient.bankAccountID }).currency();
+    const baseCurrency = await this.db.currency({ symbol: CurrencySymbol.USD });
+    const destinationCurrency = await this.db
+      .bankAccount({ id: recipient.bankAccountID })
+      .currency();
 
-    const {
-      symbol: currentPriceSymbol,
-      price: currentPrice,
-    } = await this.BitcoinRepository.getCurrentPriceByCurrencySymbol(
-      currency.symbol as CurrencySymbol,
+    const priceAtBaseCurrency = await this.BitcoinRepository.getCurrentPriceByCurrency(
+      baseCurrency,
+    );
+    const priceAtDestinationCurrency = await this.BitcoinRepository.getCurrentPriceByCurrency(
+      destinationCurrency,
     );
 
     const price = {
       key: "Precio actual BTC",
-      value: `${currentPriceSymbol} ${fiatFormatter.format(Number(currentPrice))}`,
+      value: `${priceAtBaseCurrency.symbol} ${fiatFormatter.format(
+        Number(priceAtBaseCurrency.price),
+      )}`,
     };
 
-    const amountByCurrentPrice = math.divide(Number(inputAmount), Number(currentPrice));
+    const amountByCurrentPrice = math.divide(
+      Number(inputAmount),
+      Number(priceAtDestinationCurrency.price),
+    );
 
     const amount = {
       key: "Cantidad",
@@ -186,7 +295,9 @@ export class TransactionRepository {
     const assignedTaxByCountry = this.TransactionTaxRepository.getTaxByCountry(country);
     const calculatedTax = math.multiply(calculatedFee, Number(assignedTaxByCountry));
     const tax = {
-      key: `IVA (${math.multiply(Number(assignedTaxByCountry), 100).toFixed(1)}%)`,
+      key: `IVA sobre comisión (${math
+        .multiply(Number(assignedTaxByCountry), 100)
+        .toFixed(1)}%)`,
       value: `${CurrencySymbol.BTC} ${btcFormatter.format(calculatedTax)}`,
     };
 
@@ -201,6 +312,20 @@ export class TransactionRepository {
       value: `${CurrencySymbol.BTC} ${btcFormatter.format(subtotal)}`,
     };
 
+    let priceAtRate;
+    if (destinationCurrency.symbol !== CurrencySymbol.USD) {
+      const {
+        price: exchangeRatePrice,
+      } = await this.ExchangeRateRepository.getLatestByCurrency(destinationCurrency);
+
+      priceAtRate = {
+        key: `Tipo de cambio (${exchangeRatePrice} ${priceAtDestinationCurrency.symbol}/${priceAtBaseCurrency.symbol})`,
+        value: `${priceAtDestinationCurrency.symbol} ${fiatFormatter.format(
+          Number(priceAtDestinationCurrency.price),
+        )}`,
+      };
+    }
+
     return {
       __typename: "FiatToBitcoinTransactionBreakdown",
       price,
@@ -208,53 +333,107 @@ export class TransactionRepository {
       fee,
       tax,
       total,
+      priceAtRate,
     };
   }
 
   private async getBitcoinToFiatTransactionBreakdown(
-    args: QueryGetTransactionBreakdownArgs,
+    { args }: QueryGetTransactionBreakdownArgs,
     senderUser: User,
   ): Promise<BitcoinToFiatTransactionBreakdown> {
-    const {
-      args: { amount: inputAmount, sender },
-    } = args;
+    const { amount: inputAmount, sender } = args;
+
+    const transactionID = args?.transactionID;
 
     const country = await this.db
       .user({ id: senderUser.id })
       .profile()
       .country();
 
-    const currency = await this.db.bankAccount({ id: sender.bankAccountID }).currency();
+    const baseCurrency = await this.db.currency({ symbol: CurrencySymbol.USD });
+    const destinationCurrency = await this.db
+      .bankAccount({ id: sender.bankAccountID })
+      .currency();
 
-    const {
-      symbol: currentPriceSymbol,
-      price: currentPrice,
-    } = await this.BitcoinRepository.getCurrentPriceByCurrencySymbol();
+    let priceAtBaseCurrency: IBitcoinPriceResponse = await this.BitcoinRepository.getCurrentPriceByCurrency(
+      baseCurrency,
+    );
+
+    if (Boolean(transactionID)) {
+      const evidence = await this.db
+        .transaction({ id: transactionID })
+        .receipt()
+        .evidence();
+
+      if (Boolean(evidence)) {
+        const cryptoPrices = await Promise.all(
+          evidence.map(e =>
+            this.db
+              .transactionReceiptEvidence({ id: e.id })
+              .bitcoinReceipt()
+              .price(),
+          ),
+        );
+
+        if (Boolean(cryptoPrices)) {
+          priceAtBaseCurrency = {
+            price: cryptoPrices[cryptoPrices.length - 1].value,
+            symbol: CurrencySymbol.USD,
+          };
+        }
+      }
+    }
+
+    const priceAtDestinationCurrency = await this.BitcoinRepository.getCurrentPriceByCurrency(
+      destinationCurrency,
+    );
 
     const price = {
       key: "Precio actual BTC",
-      value: `${currentPriceSymbol} ${fiatFormatter.format(Number(currentPrice))}`,
+      value: `${priceAtBaseCurrency.symbol} ${fiatFormatter.format(
+        Number(priceAtBaseCurrency.price),
+      )}`,
     };
 
-    const amountByCurrentPrice = math.multiply(Number(currentPrice), Number(inputAmount));
+    const amountByCurrentPrice = math.multiply(
+      Number(priceAtDestinationCurrency.price),
+      Number(inputAmount),
+    );
 
     const amount = {
       key: "Cantidad",
-      value: `${currentPriceSymbol} ${fiatFormatter.format(amountByCurrentPrice)}`,
+      value: `${priceAtDestinationCurrency.symbol} ${fiatFormatter.format(
+        amountByCurrentPrice,
+      )}`,
     };
 
-    const { fee: assignedFee } = await this.TransactionFeeRepository.calculate(senderUser);
+    let assignedFee: string = (await this.TransactionFeeRepository.calculate(senderUser))
+      .fee;
+
+    if (Boolean(transactionID)) {
+      const transactionFee = await this.db
+        .transaction({ id: transactionID })
+        .receipt()
+        .fee();
+
+      if (Boolean(transactionFee)) {
+        assignedFee = transactionFee.fee;
+      }
+    }
+
     const calculatedFee = math.multiply(amountByCurrentPrice, Number(assignedFee));
     const fee = {
       key: `Comisión IBEX (${math.multiply(Number(assignedFee), 100).toFixed(1)}%)`,
-      value: `${currentPriceSymbol} ${fiatFormatter.format(calculatedFee)}`,
+      value: `${priceAtDestinationCurrency.symbol} ${fiatFormatter.format(calculatedFee)}`,
     };
 
     const assignedTaxByCountry = this.TransactionTaxRepository.getTaxByCountry(country);
     const calculatedTax = math.multiply(calculatedFee, Number(assignedTaxByCountry));
     const tax = {
-      key: `IVA (${math.multiply(Number(assignedTaxByCountry), 100).toFixed(1)}%)`,
-      value: `${currentPriceSymbol} ${fiatFormatter.format(calculatedTax)}`,
+      key: `IVA sobre comisión (${math
+        .multiply(Number(assignedTaxByCountry), 100)
+        .toFixed(1)}%)`,
+      value: `${priceAtDestinationCurrency.symbol} ${fiatFormatter.format(calculatedTax)}`,
     };
 
     const subtotal = math
@@ -262,20 +441,35 @@ export class TransactionRepository {
       .subtract(calculatedFee)
       .subtract(calculatedTax)
       .done();
+
     const total = {
       key: "Recibes",
-      value: `${currentPriceSymbol} ${fiatFormatter.format(subtotal)}`,
+      value: `${priceAtDestinationCurrency.symbol} ${fiatFormatter.format(subtotal)}`,
     };
 
-    let exchangeRate;
-    if (currency.symbol !== CurrencySymbol.USD) {
-      const {
-        price: exchangeRatePrice,
-      } = await this.ExchangeRateRepository.getLatestByCurrency(currency);
-      const calculatedExchangeRate = math.multiply(subtotal, Number(exchangeRatePrice));
-      exchangeRate = {
-        key: `Tipo de cambio (${exchangeRatePrice})`,
-        value: `${currency.symbol} ${fiatFormatter.format(calculatedExchangeRate)}`,
+    let priceAtRate;
+
+    if (priceAtDestinationCurrency.symbol !== CurrencySymbol.USD) {
+      let exchangeRatePrice = (
+        await this.ExchangeRateRepository.getLatestByCurrency(destinationCurrency)
+      ).price;
+
+      if (Boolean(transactionID)) {
+        const price = await this.db
+          .transaction({ id: transactionID })
+          .receipt()
+          .exchangeRate();
+
+        if (Boolean(price)) {
+          exchangeRatePrice = price.price;
+        }
+      }
+
+      priceAtRate = {
+        key: `Tipo de cambio (${exchangeRatePrice} ${priceAtDestinationCurrency.symbol}/${priceAtBaseCurrency.symbol})`,
+        value: `${priceAtDestinationCurrency.symbol} ${fiatFormatter.format(
+          Number(priceAtDestinationCurrency.price),
+        )}`,
       };
     }
 
@@ -286,7 +480,7 @@ export class TransactionRepository {
       fee,
       tax,
       total,
-      exchangeRate,
+      priceAtRate,
     };
   }
 

@@ -40,6 +40,8 @@ export const permissions = shield({
     createBitcoinAccount: and(rules.isUser, rules.isKYCApproved),
 
     // ADMIN
+    // TRANSACTIONS
+    adminUpdateTransaction: rules.isAdmin,
     // AUTH
     adminAuthenticate: rules.isValidAdminAuthentication,
     // KYC

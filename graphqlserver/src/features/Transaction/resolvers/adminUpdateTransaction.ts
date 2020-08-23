@@ -1,18 +1,18 @@
 import { Transaction } from "@ibexcm/database";
-import { MutationCreateTransactionArgs } from "@ibexcm/libraries/api";
+import { MutationAdminUpdateTransactionArgs } from "@ibexcm/libraries/api";
 import { IContext } from "../../../server/interfaces/IContext";
 import { TransactionRepositoryInjectionKey } from "../InjectionKeys";
 
-export async function createTransaction(
+export async function adminUpdateTransaction(
   parent,
-  args: MutationCreateTransactionArgs,
+  args: MutationAdminUpdateTransactionArgs,
   { dependencies, request }: IContext,
   info,
 ): Promise<Transaction> {
   try {
     const TransactionRepository = dependencies.provide(TransactionRepositoryInjectionKey);
 
-    return await TransactionRepository.createTransaction(args, request.auth.user);
+    return await TransactionRepository.adminUpdateTransaction(args, request.auth.user);
   } catch (error) {
     console.log(error);
   }

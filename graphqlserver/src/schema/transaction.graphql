@@ -1,3 +1,38 @@
+input AdminUpdateTransactionInput {
+  id: String!
+  amount: String
+  receipt: AdminUpdateTransactionReceiptInput
+}
+
+input AdminUpdateTransactionReceiptInput {
+  fee: AdminUpdateTransactionReceiptFeeInput
+  tax: AdminUpdateTransactionReceiptTaxInput
+  exchangeRate: AdminUpdateTransactionReceiptExchangeRateInput
+  cryptoEvidence: AdminUpdateTransactionReceiptCryptoEvidenceInput
+  paidAt: DateTime
+}
+
+input AdminUpdateTransactionReceiptCryptoEvidenceInput {
+  id: String!
+  price: AdminUpdateTransactionReceiptCryptoEvidencePriceInput
+}
+
+input AdminUpdateTransactionReceiptCryptoEvidencePriceInput {
+  value: Float!
+}
+
+input AdminUpdateTransactionReceiptFeeInput {
+  value: String!
+}
+
+input AdminUpdateTransactionReceiptTaxInput {
+  value: String!
+}
+
+input AdminUpdateTransactionReceiptExchangeRateInput {
+  price: String!
+}
+
 input AdminGetTransactionsInput {
   where: TransactionWhereInput
   orderBy: TransactionOrderByInput
@@ -37,6 +72,7 @@ input CreateTransactionUserInput {
 }
 
 input GetTransactionBreakdownInput {
+  transactionID: String
   amount: String
   sender: CreateTransactionUserInput
   recipient: CreateTransactionUserInput
@@ -53,6 +89,7 @@ type BitcoinToFiatTransactionBreakdown {
   tax: TransactionBreakdownField!
   total: TransactionBreakdownField!
   exchangeRate: TransactionBreakdownField
+  priceAtRate: TransactionBreakdownField
 }
 
 type FiatToBitcoinTransactionBreakdown {
@@ -62,6 +99,7 @@ type FiatToBitcoinTransactionBreakdown {
   tax: TransactionBreakdownField!
   total: TransactionBreakdownField!
   exchangeRate: TransactionBreakdownField
+  priceAtRate: TransactionBreakdownField
 }
 
 type TransactionBreakdownField {

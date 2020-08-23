@@ -154,9 +154,18 @@ type Recipient {
   transaction: Transaction! @relation(name: "RecipientToTransaction")
 }
 
+type Price {
+  id: ID! @id
+  value: Float!
+  currency: Currency!
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
 type BitcoinReceiptEvidence {
   id: ID! @id
   transactionHash: String
+  price: Price
   evidence: TransactionReceiptEvidence!
     @relation(name: "TransactionReceiptEvidenceToBitcoinReceiptEvidence")
 }
@@ -170,7 +179,7 @@ type BankReceiptEvidence {
 
 type TransactionReceiptEvidence {
   id: ID! @id
-  bitcoinReceipt: BitcoinReceiptEvidence
+  bitcoinReceipt: BitcoinReceiptEvidence  # Assume it is called cryptoEvidence as the structure for all cryptos is basically the same
     @relation(
       name: "TransactionReceiptEvidenceToBitcoinReceiptEvidence"
       link: INLINE

@@ -40,6 +40,7 @@ const Component: React.FC<Props> = ({ classes, history, footer }) => {
               </Box>
             </Toolbar>
           </AppBar>
+          <Box></Box>
           <Box px={3}>
             <Box mb={2}>
               <Link
@@ -79,7 +80,18 @@ const Component: React.FC<Props> = ({ classes, history, footer }) => {
             </Box>
           </Box>
           {/* {footer && footer} */}
-          <Box></Box>
+          <Box p={3}>
+            <Link
+              to={routes.settings.exchangeRate}
+              className={
+                isSelected(routes.settings.exchangeRate)
+                  ? `${classes.sidebarNavigationSelectedLink} ${classes.sidebarNavigationLink}`
+                  : classes.sidebarNavigationLink
+              }
+            >
+              <Typography variant="body2">Ajustes</Typography>
+            </Link>
+          </Box>
         </Box>
       </Drawer>
     </Hidden>
@@ -108,7 +120,7 @@ export const Sidebar = withStyles((theme: Theme) => ({
   drawerNavigation: {
     display: "flex",
     flexDirection: "column",
-    justifyContent: "center",
+    justifyContent: "space-between",
     height: "100%",
   },
   logoBox: {

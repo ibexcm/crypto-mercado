@@ -37,4 +37,8 @@ export class ExchangeRateRepository {
       })
     )[0];
   }
+
+  async currency(id: string): Promise<Currency> {
+    return await this.db.exchangeRate({ id }).currency();
+  }
 }
