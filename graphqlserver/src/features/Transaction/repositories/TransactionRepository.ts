@@ -365,7 +365,7 @@ export class TransactionRepository {
         .receipt()
         .evidence();
 
-      if (Boolean(evidence)) {
+      if (evidence.length > 0) {
         const cryptoPrices = await Promise.all(
           evidence.map(e =>
             this.db
@@ -375,7 +375,7 @@ export class TransactionRepository {
           ),
         );
 
-        if (Boolean(cryptoPrices)) {
+        if (cryptoPrices.length > 0) {
           priceAtBaseCurrency = {
             price: cryptoPrices[cryptoPrices.length - 1].value,
             symbol: CurrencySymbol.USD,
