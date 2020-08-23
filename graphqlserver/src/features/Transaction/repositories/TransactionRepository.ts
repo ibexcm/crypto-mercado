@@ -28,7 +28,10 @@ import {
 import { CurrencySymbol } from "@ibexcm/libraries/models/currency";
 import { IEmailNotificationsRepository } from "../../../libraries/EmailVerification/interfaces/IEmailNotificationsRepository";
 import math from "../../../libraries/math";
-import { IBitcoinRepository } from "../../Bitcoin/interfaces/IBitcoinRepository";
+import {
+  IBitcoinPriceResponse,
+  IBitcoinRepository,
+} from "../../Bitcoin/interfaces/IBitcoinRepository";
 import { ExchangeRateRepository } from "../../ExchangeRate/repositories/ExchangeRateRepository";
 import { TransactionFeeRepository } from "../../TransactionFee/repositories/TransactionFeeRepository";
 import { UserRepository } from "../../User/repositories/UserRepository";
@@ -335,12 +338,12 @@ export class TransactionRepository {
   }
 
   private async getBitcoinToFiatTransactionBreakdown(
-    args: QueryGetTransactionBreakdownArgs,
+    { args }: QueryGetTransactionBreakdownArgs,
     senderUser: User,
   ): Promise<BitcoinToFiatTransactionBreakdown> {
-    const {
-      args: { amount: inputAmount, sender },
-    } = args;
+    const { amount: inputAmount, sender } = args;
+
+    const transactionID = args?.transactionID;
 
     const country = await this.db
       .user({ id: senderUser.id })
@@ -352,9 +355,35 @@ export class TransactionRepository {
       .bankAccount({ id: sender.bankAccountID })
       .currency();
 
-    const priceAtBaseCurrency = await this.BitcoinRepository.getCurrentPriceByCurrency(
+    let priceAtBaseCurrency: IBitcoinPriceResponse = await this.BitcoinRepository.getCurrentPriceByCurrency(
       baseCurrency,
     );
+
+    if (Boolean(transactionID)) {
+      const evidence = await this.db
+        .transaction({ id: transactionID })
+        .receipt()
+        .evidence();
+
+      if (Boolean(evidence)) {
+        const cryptoPrices = await Promise.all(
+          evidence.map(e =>
+            this.db
+              .transactionReceiptEvidence({ id: e.id })
+              .bitcoinReceipt()
+              .price(),
+          ),
+        );
+
+        if (Boolean(cryptoPrices)) {
+          priceAtBaseCurrency = {
+            price: cryptoPrices[cryptoPrices.length - 1].value,
+            symbol: CurrencySymbol.USD,
+          };
+        }
+      }
+    }
+
     const priceAtDestinationCurrency = await this.BitcoinRepository.getCurrentPriceByCurrency(
       destinationCurrency,
     );
@@ -378,7 +407,20 @@ export class TransactionRepository {
       )}`,
     };
 
-    const { fee: assignedFee } = await this.TransactionFeeRepository.calculate(senderUser);
+    let assignedFee: string = (await this.TransactionFeeRepository.calculate(senderUser))
+      .fee;
+
+    if (Boolean(transactionID)) {
+      const transactionFee = await this.db
+        .transaction({ id: transactionID })
+        .receipt()
+        .fee();
+
+      if (Boolean(transactionFee)) {
+        assignedFee = transactionFee.fee;
+      }
+    }
+
     const calculatedFee = math.multiply(amountByCurrentPrice, Number(assignedFee));
     const fee = {
       key: `Comisión IBEX (${math.multiply(Number(assignedFee), 100).toFixed(1)}%)`,
@@ -406,10 +448,22 @@ export class TransactionRepository {
     };
 
     let priceAtRate;
+
     if (priceAtDestinationCurrency.symbol !== CurrencySymbol.USD) {
-      const {
-        price: exchangeRatePrice,
-      } = await this.ExchangeRateRepository.getLatestByCurrency(destinationCurrency);
+      let exchangeRatePrice = (
+        await this.ExchangeRateRepository.getLatestByCurrency(destinationCurrency)
+      ).price;
+
+      if (Boolean(transactionID)) {
+        const price = await this.db
+          .transaction({ id: transactionID })
+          .receipt()
+          .exchangeRate();
+
+        if (Boolean(price)) {
+          exchangeRatePrice = price.price;
+        }
+      }
 
       priceAtRate = {
         key: `Tipo de cambio (${exchangeRatePrice} ${priceAtDestinationCurrency.symbol}/${priceAtBaseCurrency.symbol})`,

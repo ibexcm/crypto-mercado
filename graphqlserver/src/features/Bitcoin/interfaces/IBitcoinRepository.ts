@@ -3,7 +3,7 @@ import { CurrencySymbol } from "@ibexcm/libraries/models/currency";
 
 export interface IBitcoinPriceResponse {
   symbol: string;
-  price: string;
+  price: string | number;
 }
 
 export interface IBitcoinRepository {

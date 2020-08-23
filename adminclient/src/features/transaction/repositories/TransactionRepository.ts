@@ -7,47 +7,115 @@ import {
 } from "@apollo/client";
 import {
   Mutation,
+  MutationAdminUpdateTransactionArgs,
   MutationSetTransactionReceiptEvidenceArgs,
   Query,
   QueryAdminGetTransactionsArgs,
   QueryGetTransactionArgs,
   QueryGetTransactionBreakdownArgs,
-  Transaction,
 } from "@ibexcm/libraries/api";
 import {
   AdminGetTransactionsQuery,
+  AdminUpdateTransactionMutation,
   GetTransactionBreakdownQuery,
   GetTransactionQuery,
 } from "@ibexcm/libraries/api/transaction";
 import { SetTransactionReceiptEvidenceMutation } from "@ibexcm/libraries/api/transactionReceipt";
 import { DropzoneFile } from "dropzone";
+import React from "react";
 import { IUpdateTransactionMethods } from "../interfaces/IUpdateTransactionMethods";
 
 export class TransactionRepository {
-  useUpdateTransaction(): {
+  useUpdateTransaction(
+    transactionID: string,
+  ): {
     updateTransactionMethods: IUpdateTransactionMethods;
+    state: MutationResult<Pick<Mutation, "adminUpdateTransaction">>;
+    setCryptoEvidenceID: React.Dispatch<React.SetStateAction<string>>;
   } {
+    const [cryptoEvidenceID, setCryptoEvidenceID] = React.useState<string>(null);
+
+    const [execute, state] = useMutation<
+      Pick<Mutation, "adminUpdateTransaction">,
+      MutationAdminUpdateTransactionArgs
+    >(AdminUpdateTransactionMutation);
+
     return {
       updateTransactionMethods: {
-        onSetBasePrice: (value: string) => {
-          console.log("onSetBasePrice", value);
+        onSetAmount: async (amount: string) => {
+          await execute({
+            variables: {
+              args: {
+                id: transactionID,
+                amount,
+              },
+            },
+          });
         },
-        onSetExchangeRate: (value: string) => {
-          console.log("onSetExchangeRate", value);
+        onSetBasePrice: async (value: string) => {
+          if (!Boolean(cryptoEvidenceID)) {
+            return;
+          }
+
+          await execute({
+            variables: {
+              args: {
+                id: transactionID,
+                receipt: {
+                  cryptoEvidence: {
+                    id: cryptoEvidenceID,
+                    price: {
+                      value: Number(value),
+                    },
+                  },
+                },
+              },
+            },
+          });
         },
-        onSetFee: (value: string) => {
-          console.log("onSetFee", value);
+        onSetExchangeRate: async (price: string) => {
+          await execute({
+            variables: {
+              args: {
+                id: transactionID,
+                receipt: {
+                  exchangeRate: {
+                    price,
+                  },
+                },
+              },
+            },
+          });
+        },
+        onSetFee: async (value: string) => {
+          await execute({
+            variables: {
+              args: {
+                id: transactionID,
+                receipt: {
+                  fee: {
+                    value,
+                  },
+                },
+              },
+            },
+          });
         },
       },
+      state,
+      setCryptoEvidenceID,
     };
   }
 
   useSetTransactionReceiptEvidenceMutation(): {
-    state: MutationResult<Transaction>;
+    state: MutationResult<Pick<Mutation, "setTransactionReceiptEvidence">>;
     onAddFile: (file: DropzoneFile) => void;
     onUploadEnd: (args: MutationSetTransactionReceiptEvidenceArgs) => Promise<void>;
   } {
-    const [execute, state] = useMutation(SetTransactionReceiptEvidenceMutation);
+    const [execute, state] = useMutation<
+      Pick<Mutation, "setTransactionReceiptEvidence">,
+      MutationSetTransactionReceiptEvidenceArgs
+    >(SetTransactionReceiptEvidenceMutation);
 
     const executeSetTransactionReceiptEvidenceMutation = async (args) => {
       const message = "Falló la carga del archivo.";

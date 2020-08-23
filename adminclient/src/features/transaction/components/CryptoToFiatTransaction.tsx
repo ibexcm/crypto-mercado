@@ -35,10 +35,11 @@ const Component: React.FC<Props> = ({
   updateTransactionMethods,
   ...props
 }) => {
+  const [amount, setAmount] = React.useState(transaction.amount);
+
   const {
     id,
     createdAt,
-    amount,
     sender,
     recipient,
     receipt: { paidAt },
@@ -54,6 +55,14 @@ const Component: React.FC<Props> = ({
     guatemala: { accountNumber, fullName, bankAccountType, bank },
   } = sender.bankAccount;
 
+  const onBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+    updateTransactionMethods.onSetAmount(amount);
+  };
+
+  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setAmount(e.target.value);
+  };
+
   return (
     <Grid container justify="space-between">
       <Grid item xs={12} lg={5}>
@@ -61,6 +70,8 @@ const Component: React.FC<Props> = ({
           <Paper>
             <TextField
               fullWidth
+              onChange={onChange}
+              onBlur={onBlur}
               label="Cantidad"
               variant="outlined"
               InputProps={{

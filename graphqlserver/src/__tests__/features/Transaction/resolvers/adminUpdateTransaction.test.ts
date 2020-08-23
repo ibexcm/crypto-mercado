@@ -98,7 +98,6 @@ describe("adminUpdateTransaction", () => {
     );
 
     const transactionID = createTransaction.id;
-    const transactionReceiptID = createTransaction.receipt.id;
     const amount = "100.00";
     const fee = { value: "1.5" };
     const exchangeRate = { price: "120000.00" };
@@ -143,7 +142,6 @@ describe("adminUpdateTransaction", () => {
           id: transactionID,
           amount,
           receipt: {
-            id: transactionReceiptID,
             exchangeRate,
             fee,
             tax,
