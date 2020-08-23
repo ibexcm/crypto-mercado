@@ -89,7 +89,7 @@ export class KYCRepository {
       .contact()
       .email({ where: { verifiedAt_not: null }, orderBy: "createdAt_DESC", first: 1 });
 
-    await this.emailNotificationsRepository.sendAdminKYCApproveUserNotification(address);
+    this.emailNotificationsRepository.sendAdminKYCApproveUserNotification(address);
 
     return true;
   }

@@ -31,13 +31,15 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
   const TransactionRepository = dependencies.provide(TransactionRepositoryInjectionKeys);
   const [error, setError] = React.useState<Error | null>(null);
 
+  const transactionID = match.params.id;
+
   const {
     data,
     loading: isTransactionQueryLoading,
     error: getTransactionQueryError,
     refetch: refetchGetTransactionQuery,
   } = TransactionRepository.useGetTransactionQuery({
-    args: { transactionID: match.params.id },
+    args: { transactionID },
   });
 
   const [
@@ -51,12 +53,41 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
     onUploadEnd: onTransactionReceiptEvidenceUploadEnd,
   } = TransactionRepository.useSetTransactionReceiptEvidenceMutation();
 
+  const {
+    updateTransactionMethods,
+    state: adminUpdateTransactionState,
+    setCryptoEvidenceID,
+  } = TransactionRepository.useUpdateTransaction(transactionID);
+
+  React.useEffect(() => {
+    if (!Boolean(adminUpdateTransactionState.data?.adminUpdateTransaction)) {
+      return;
+    }
+
+    refetchGetTransactionQuery();
+  }, [adminUpdateTransactionState.data]);
+
+  React.useEffect(() => {
+    const evidence = data?.getTransaction?.receipt?.evidence;
+
+    if (!Boolean(evidence)) {
+      return;
+    }
+
+    const cryptoReceipt = evidence.filter((e) => Boolean(e.bitcoinReceipt));
+
+    if (cryptoReceipt.length === 0) {
+      return;
+    }
+
+    setCryptoEvidenceID(evidence[evidence.length - 1].bitcoinReceipt.id);
+  }, [data]);
+
   const onAddFile = (file: DropzoneFile) => {
     onAddTransactionReceiptEvidence(file);
   };
 
   const onUploadEnd = async (response: IPFSAddFileResponse[]) => {
-    console.log(response);
     const [{ hash: fileHash }] = response;
     try {
       await onTransactionReceiptEvidenceUploadEnd({
@@ -99,6 +130,7 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
 
     const query: QueryGetTransactionBreakdownArgs = {
       args: {
+        transactionID,
         amount: transaction.amount,
         sender: {
           cryptoAccountID: null,
@@ -137,6 +169,7 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
           getTransactionBreakdownState={getTransactionBreakdownState}
           onAddFile={onAddFile}
           onUploadEnd={onUploadEnd}
+          updateTransactionMethods={updateTransactionMethods}
         />
       );
     }
@@ -201,6 +234,7 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
                 </Grid>
               </Box>
             </Grid>
+            <Grid item lg={6}></Grid>
           </Grid>
         </Box>
         <Box>{getTransactionComponent()}</Box>

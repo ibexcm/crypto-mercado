@@ -3,6 +3,8 @@ import {
   MutationAdminAuthenticateArgs,
   MutationAdminKycApproveUserArgs,
   MutationAdminKycRejectUserArgs,
+  MutationAdminSettingsCreateExchangeRateArgs,
+  MutationAdminUpdateTransactionArgs,
   MutationAuthenticateArgs,
   MutationCreateBitcoinAccountArgs,
   MutationCreateTransactionArgs,
@@ -26,6 +28,7 @@ import { GetBanksByCountryQuery } from "@ibexcm/libraries/api/bank";
 import { GetAdminBankAccountsQuery } from "@ibexcm/libraries/api/bankAccount";
 import { CreateBitcoinAccountMutation } from "@ibexcm/libraries/api/cryptoAccount";
 import { GetCurrenciesByCountryQuery } from "@ibexcm/libraries/api/currency";
+import { AdminSettingsCreateExchangeRateMutation } from "@ibexcm/libraries/api/exchangeRate";
 import {
   AdminGetUsersWithPendingKYCApprovalQuery,
   AdminKYCApproveUserMutation,
@@ -33,6 +36,7 @@ import {
 } from "@ibexcm/libraries/api/kyc";
 import {
   AdminGetTransactionsQuery,
+  AdminUpdateTransactionMutation,
   CreateTransactionMutation,
   GetTransactionBreakdownQuery,
   GetTransactionQuery,
@@ -285,6 +289,26 @@ const adminGetTransactions = async (
   );
 };
 
+const adminSettingsCreateExchangeRate = async (
+  args: MutationAdminSettingsCreateExchangeRateArgs,
+  authToken: string,
+) => {
+  return query<
+    MutationAdminSettingsCreateExchangeRateArgs,
+    Pick<Mutation, "adminSettingsCreateExchangeRate">
+  >(AdminSettingsCreateExchangeRateMutation, args, authToken);
+};
+
+const adminUpdateTransaction = async (
+  args: MutationAdminUpdateTransactionArgs,
+  authToken: string,
+) => {
+  return query<
+    MutationAdminUpdateTransactionArgs,
+    Pick<Mutation, "adminUpdateTransaction">
+  >(AdminUpdateTransactionMutation, args, authToken);
+};
+
 const GraphQLClient = {
   query,
   authenticate,
@@ -310,6 +334,8 @@ const GraphQLClient = {
   getAdminBankAccounts,
   setTransactionReceiptEvidence,
   adminGetTransactions,
+  adminSettingsCreateExchangeRate,
+  adminUpdateTransaction,
 };
 
 export default GraphQLClient;

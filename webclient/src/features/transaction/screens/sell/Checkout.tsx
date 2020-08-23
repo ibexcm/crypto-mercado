@@ -209,6 +209,21 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
                     />
                   </Paper>
                 </Box>
+                <CryptoToFiatTransactionBreakdown
+                  getTransactionBreakdownState={getTransactionBreakdownState}
+                />
+                <Box mb={3}>
+                  <Typography align="justify" variant="caption">
+                    Al dar click en "Confirmar", comprendo que debido a las fluctuaciones
+                    del precio de Bitcoin, puedo recibir una cantidad mayor o menor a la
+                    especificada en el desglose anterior.
+                  </Typography>
+                </Box>
+                <Hidden smDown>
+                  <Box>{getActions(bankAccount)}</Box>
+                </Hidden>
+              </Grid>
+              <Grid item xs={12} lg={5}>
                 <Box mb={3}>
                   <Paper>
                     <Box p={2}>
@@ -231,21 +246,6 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
                     </Box>
                   </Paper>
                 </Box>
-              </Grid>
-              <Grid item xs={12} lg={5}>
-                <CryptoToFiatTransactionBreakdown
-                  getTransactionBreakdownState={getTransactionBreakdownState}
-                />
-                <Box mb={3}>
-                  <Typography align="justify" variant="caption">
-                    Al dar click en "Confirmar", comprendo que debido a las fluctuaciones
-                    del precio de Bitcoin, puedo recibir una cantidad mayor o menor a la
-                    especificada en el desglose anterior.
-                  </Typography>
-                </Box>
-                <Hidden smDown>
-                  <Box>{getActions(bankAccount)}</Box>
-                </Hidden>
               </Grid>
             </Grid>
           </Container>

@@ -11,18 +11,18 @@ export const styles = (theme: Theme) => ({
     display: "flex",
   },
   topContainer: {
-    height: "30vh",
+    minHeight: "30vh",
     display: "flex" as "flex",
     flexDirection: "column" as "column",
     justifyContent: "flex-end" as "flex-end",
     [theme.breakpoints.down("sm")]: {
-      height: "25vh",
+      minHeight: "25vh",
     },
   },
   mainContainer: {
-    height: "70vh",
+    minHeight: "70vh",
     [theme.breakpoints.down("sm")]: {
-      height: "75vh",
+      minHeight: "75vh",
     },
     backgroundColor: "whitesmoke",
     overflowY: "scroll" as "scroll",

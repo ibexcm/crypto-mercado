@@ -25,6 +25,7 @@
     "@graphql-codegen/typescript-resolvers": "^1.12.2",
     "@ibexcm/database": "*",
     "@ibexcm/libraries": "*",
+    "@sendgrid/mail": "^7.2.3",
     "acorn": "^7.1.1",
     "apollo-server-errors": "^2.3.4",
     "aws-sdk": "^2.622.0",

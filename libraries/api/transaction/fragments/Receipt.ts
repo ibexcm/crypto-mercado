@@ -1,4 +1,5 @@
 import gql from "graphql-tag";
+import { CurrencyFragment } from "./CurrencyFragment";
 
 export const Receipt = gql`
   fragment Receipt on Transaction {
@@ -14,11 +15,24 @@ export const Receipt = gql`
         id
         tax
       }
+      exchangeRate {
+        id
+        price
+        currency {
+          ...CurrencyFragment
+        }
+      }
       evidence {
         id
         bitcoinReceipt {
           id
           transactionHash
+          price {
+            value
+            currency {
+              ...CurrencyFragment
+            }
+          }
         }
         bankReceipt {
           id
@@ -26,15 +40,12 @@ export const Receipt = gql`
         }
       }
       fromCurrency {
-        id
-        name
-        symbol
+        ...CurrencyFragment
       }
       toCurrency {
-        id
-        name
-        symbol
+        ...CurrencyFragment
       }
     }
   }
+  ${CurrencyFragment}
 `;

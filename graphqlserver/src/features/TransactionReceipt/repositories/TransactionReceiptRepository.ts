@@ -1,15 +1,14 @@
 import {
   Currency,
   ExchangeRate,
+  Price,
   Prisma,
   Transaction,
   TransactionFee,
   TransactionReceiptEvidenceUpdateManyInput,
-} from "@ibexcm/database";
-import {
-  MutationSetTransactionReceiptEvidenceArgs,
   TransactionTax,
-} from "@ibexcm/libraries/api";
+} from "@ibexcm/database";
+import { MutationSetTransactionReceiptEvidenceArgs } from "@ibexcm/libraries/api";
 
 export class TransactionReceiptRepository {
   private db: Prisma;
@@ -96,5 +95,13 @@ export class TransactionReceiptRepository {
 
   async bitcoinReceipt(id: string): Promise<ExchangeRate> {
     return await this.db.transactionReceiptEvidence({ id }).bitcoinReceipt();
+  }
+
+  async price(id: string): Promise<Price> {
+    return await this.db.bitcoinReceiptEvidence({ id }).price();
+  }
+
+  async currency(id: string): Promise<Price> {
+    return await this.db.price({ id }).currency();
   }
 }

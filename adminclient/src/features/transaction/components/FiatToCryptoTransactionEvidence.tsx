@@ -48,10 +48,6 @@ const Component: React.FC<Props> = ({
       <Paper>
         <Box p={2}>
           <Typography variant="body2">Evidencia</Typography>
-          <Typography variant="body2" mb={3} color="textSecondary">
-            Nota: La transacción se marcará como "pagada" en la fecha y hora si IBEX ingresa
-            el ID de la transacción.
-          </Typography>
           <Box mb={2}>
             <Typography gutterBottom>ID de la transacción</Typography>
             <Grid container spacing={2}>

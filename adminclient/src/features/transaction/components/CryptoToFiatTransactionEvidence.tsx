@@ -37,12 +37,6 @@ const Component: React.FC<Props> = ({
       <Paper>
         <Box p={2}>
           <Typography variant="body2">Evidencia</Typography>
-          <Typography variant="body2" mb={3} color="textSecondary">
-            Nota: Al subir un documento de evidencia de depósito bancario al emisor, la
-            transacción se marcará como "pagada" en la fecha y hora de la carga del
-            documento si existe evidencia por parte del emisor, en este caso, el ID de la
-            transacción.
-          </Typography>
           <Box mb={2}>
             <Typography>ID de la transacción</Typography>
             {bitcoinReceiptEvidence.length > 0 ? (
@@ -104,6 +98,11 @@ const Component: React.FC<Props> = ({
             <Box mt={2}>
               <DropzonePreview />
             </Box>
+          </Box>
+          <Box display="flex" justifyContent="flex-end">
+            <Button variant="contained" color="primary">
+              Marcar como pagada
+            </Button>
           </Box>
         </Box>
       </Paper>

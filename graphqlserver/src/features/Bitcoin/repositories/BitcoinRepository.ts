@@ -1,3 +1,4 @@
+import { Currency } from "@ibexcm/database";
 import { CurrencySymbol } from "@ibexcm/libraries/models/currency";
 import { IBitcoinAPIRepository } from "../../../libraries/Crypto/interfaces/IBitcoinAPIRepository";
 import {
@@ -12,12 +13,10 @@ export class BitcoinRepository implements IBitcoinRepository {
     this.BitcoinApiRepository = BitcoinApiRepository;
   }
 
-  async getCurrentPriceByCurrencySymbol(
-    symbol: CurrencySymbol = CurrencySymbol.USD,
-  ): Promise<IBitcoinPriceResponse> {
+  async getCurrentPriceByCurrency(currency: Currency): Promise<IBitcoinPriceResponse> {
     return {
-      symbol,
-      price: await this.BitcoinApiRepository.getCurrentPriceByCurrencySymbol(symbol),
+      symbol: currency.symbol,
+      price: await this.BitcoinApiRepository.getCurrentPriceByCurrency(currency),
     };
   }
 

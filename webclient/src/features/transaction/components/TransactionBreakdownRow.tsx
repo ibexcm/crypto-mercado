@@ -11,12 +11,12 @@ interface Props extends WithStyles {
 const Component: React.FC<Props> = ({ classes, pair }) => {
   return (
     <Grid container justify="flex-end" spacing={1}>
-      <Grid item xs={6}>
+      <Grid item xs={6} lg={7}>
         <Typography color="textSecondary" component="span">
           {pair.key}
         </Typography>
       </Grid>
-      <Grid item xs={6}>
+      <Grid item xs={6} lg={5}>
         <Typography component="span">{pair.value}</Typography>
       </Grid>
     </Grid>
