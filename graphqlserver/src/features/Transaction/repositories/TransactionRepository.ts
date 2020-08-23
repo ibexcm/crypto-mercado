@@ -146,7 +146,10 @@ export class TransactionRepository {
       };
     }
 
-    if (Boolean(args?.receipt?.cryptoEvidence?.price?.value)) {
+    if (
+      Boolean(args?.receipt?.cryptoEvidence?.id) &&
+      Boolean(args?.receipt?.cryptoEvidence?.price?.value)
+    ) {
       await this.db.updateBitcoinReceiptEvidence({
         where: { id: args.receipt.cryptoEvidence.id },
         data: {
