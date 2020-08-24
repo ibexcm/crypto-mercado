@@ -19,8 +19,8 @@ interface Props extends WithStyles {
 const Component: React.FC<Props> = ({ classes, getTransactionBreakdownState }) => {
   const { data, loading, error } = getTransactionBreakdownState;
 
-  const { price, amount, fee, tax, total, priceAtRate } = data?.getTransactionBreakdown || {
-    price: { key: "Precio actual BTC", value: <CircularProgress size={20} /> },
+  const { price, amount, fee, total, priceAtRate } = data?.getTransactionBreakdown || {
+    price: { key: "Precio BTC", value: <CircularProgress size={20} /> },
     amount: { key: "Cantidad", value: <CircularProgress size={20} /> },
     fee: { key: "Comisión IBEX (...)", value: <CircularProgress size={20} /> },
     total: { key: "Recibes", value: <CircularProgress size={20} /> },

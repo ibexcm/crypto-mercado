@@ -248,36 +248,26 @@ export class TransactionRepository {
   }
 
   private async getFiatToBitcoinTransactionBreakdown(
-    args: QueryGetTransactionBreakdownArgs,
+    { args }: QueryGetTransactionBreakdownArgs,
     senderUser: User,
   ): Promise<FiatToBitcoinTransactionBreakdown> {
-    const {
-      args: { amount: inputAmount, sender, recipient },
-    } = args;
+    const { amount: inputAmount, sender, recipient } = args;
 
-    const country = await this.db
-      .user({ id: senderUser.id })
-      .profile()
-      .country();
+    const transactionID = args?.transactionID;
 
     const baseCurrency = await this.db.currency({ symbol: CurrencySymbol.USD });
     const destinationCurrency = await this.db
       .bankAccount({ id: recipient.bankAccountID })
       .currency();
 
-    const priceAtBaseCurrency = await this.BitcoinRepository.getCurrentPriceByCurrency(
+    const { priceAtBaseCurrency, priceField } = await this.getPriceAtBaseCurrency(
       baseCurrency,
+      transactionID,
     );
+
     const priceAtDestinationCurrency = await this.BitcoinRepository.getCurrentPriceByCurrency(
       destinationCurrency,
     );
-
-    const price = {
-      key: "Precio actual BTC",
-      value: `${priceAtBaseCurrency.symbol} ${fiatFormatter.format(
-        Number(priceAtBaseCurrency.price),
-      )}`,
-    };
 
     const amountByCurrentPrice = math.divide(
       Number(inputAmount),
@@ -289,20 +279,20 @@ export class TransactionRepository {
       value: `${CurrencySymbol.BTC} ${btcFormatter.format(amountByCurrentPrice)}`,
     };
 
-    const { fee: assignedFee } = await this.TransactionFeeRepository.calculate(senderUser);
+    const assignedFee = await this.getAssignedFee(senderUser, transactionID);
     const calculatedFee = math.multiply(amountByCurrentPrice, Number(assignedFee));
-    const fee = {
-      key: `Comisión IBEX (${math.multiply(Number(assignedFee), 100).toFixed(1)}%)`,
-      value: `${CurrencySymbol.BTC} ${btcFormatter.format(calculatedFee)}`,
-    };
 
+    const country = await this.db
+      .user({ id: senderUser.id })
+      .profile()
+      .country();
     const assignedTaxByCountry = this.TransactionTaxRepository.getTaxByCountry(country);
     const calculatedTax = math.multiply(calculatedFee, Number(assignedTaxByCountry));
-    const tax = {
-      key: `IVA sobre comisión (${math
-        .multiply(Number(assignedTaxByCountry), 100)
-        .toFixed(1)}%)`,
-      value: `${CurrencySymbol.BTC} ${btcFormatter.format(calculatedTax)}`,
+    const feePlusTax = math.add(calculatedFee, calculatedTax);
+
+    const fee = {
+      key: `Comisión IBEX (${math.multiply(Number(assignedFee), 100).toFixed(1)}%)`,
+      value: `${CurrencySymbol.BTC} ${btcFormatter.format(Number(feePlusTax))}`,
     };
 
     const subtotal = math
@@ -316,26 +306,18 @@ export class TransactionRepository {
       value: `${CurrencySymbol.BTC} ${btcFormatter.format(subtotal)}`,
     };
 
-    let priceAtRate;
-    if (destinationCurrency.symbol !== CurrencySymbol.USD) {
-      const {
-        price: exchangeRatePrice,
-      } = await this.ExchangeRateRepository.getLatestByCurrency(destinationCurrency);
-
-      priceAtRate = {
-        key: `Tipo de cambio (${exchangeRatePrice} ${priceAtDestinationCurrency.symbol}/${priceAtBaseCurrency.symbol})`,
-        value: `${priceAtDestinationCurrency.symbol} ${fiatFormatter.format(
-          Number(priceAtDestinationCurrency.price),
-        )}`,
-      };
-    }
+    const { priceAtRateField: priceAtRate } = await this.getPriceAtRate(
+      priceAtBaseCurrency,
+      priceAtDestinationCurrency,
+      destinationCurrency,
+      transactionID,
+    );
 
     return {
       __typename: "FiatToBitcoinTransactionBreakdown",
-      price,
+      price: priceField,
       amount,
       fee,
-      tax,
       total,
       priceAtRate,
     };
@@ -349,61 +331,19 @@ export class TransactionRepository {
 
     const transactionID = args?.transactionID;
 
-    const country = await this.db
-      .user({ id: senderUser.id })
-      .profile()
-      .country();
-
     const baseCurrency = await this.db.currency({ symbol: CurrencySymbol.USD });
     const destinationCurrency = await this.db
       .bankAccount({ id: sender.bankAccountID })
       .currency();
 
-    let priceAtBaseCurrency: IBitcoinPriceResponse = await this.BitcoinRepository.getCurrentPriceByCurrency(
+    const { priceAtBaseCurrency, priceField } = await this.getPriceAtBaseCurrency(
       baseCurrency,
+      transactionID,
     );
-
-    const price: TransactionBreakdownField = {
-      key: "Precio actual BTC",
-      value: "",
-    };
-
-    if (Boolean(transactionID)) {
-      const evidence = await this.db
-        .transaction({ id: transactionID })
-        .receipt()
-        .evidence();
-
-      if (evidence.length > 0) {
-        const cryptoPrices = (
-          await Promise.all(
-            evidence.map(e =>
-              this.db
-                .transactionReceiptEvidence({ id: e.id })
-                .bitcoinReceipt()
-                .price(),
-            ),
-          )
-        ).filter(Boolean);
-
-        if (cryptoPrices.length > 0) {
-          priceAtBaseCurrency = {
-            price: cryptoPrices[cryptoPrices.length - 1].value,
-            symbol: CurrencySymbol.USD,
-          };
-
-          price.key = `Precio BTC obtenido`;
-        }
-      }
-    }
 
     const priceAtDestinationCurrency = await this.BitcoinRepository.getCurrentPriceByCurrency(
       destinationCurrency,
     );
-
-    price.value = `${priceAtBaseCurrency.symbol} ${fiatFormatter.format(
-      Number(priceAtBaseCurrency.price),
-    )}`;
 
     const amountByCurrentPrice = math.multiply(
       Number(priceAtDestinationCurrency.price),
@@ -417,21 +357,13 @@ export class TransactionRepository {
       )}`,
     };
 
-    let assignedFee: string = (await this.TransactionFeeRepository.calculate(senderUser))
-      .fee;
-
-    if (Boolean(transactionID)) {
-      const transactionFee = await this.db
-        .transaction({ id: transactionID })
-        .receipt()
-        .fee();
-
-      if (Boolean(transactionFee)) {
-        assignedFee = transactionFee.fee;
-      }
-    }
-
+    const assignedFee = await this.getAssignedFee(senderUser, transactionID);
     const calculatedFee = math.multiply(amountByCurrentPrice, Number(assignedFee));
+
+    const country = await this.db
+      .user({ id: senderUser.id })
+      .profile()
+      .country();
     const assignedTaxByCountry = this.TransactionTaxRepository.getTaxByCountry(country);
     const calculatedTax = math.multiply(calculatedFee, Number(assignedTaxByCountry));
     const feePlusTax = math.add(calculatedFee, calculatedTax);
@@ -454,35 +386,16 @@ export class TransactionRepository {
       value: `${priceAtDestinationCurrency.symbol} ${fiatFormatter.format(subtotal)}`,
     };
 
-    let priceAtRate;
-
-    if (priceAtDestinationCurrency.symbol !== CurrencySymbol.USD) {
-      let exchangeRatePrice = (
-        await this.ExchangeRateRepository.getLatestByCurrency(destinationCurrency)
-      ).price;
-
-      if (Boolean(transactionID)) {
-        const price = await this.db
-          .transaction({ id: transactionID })
-          .receipt()
-          .exchangeRate();
-
-        if (Boolean(price)) {
-          exchangeRatePrice = price.price;
-        }
-      }
-
-      priceAtRate = {
-        key: `Tipo de cambio (${exchangeRatePrice} ${priceAtDestinationCurrency.symbol}/${priceAtBaseCurrency.symbol})`,
-        value: `${priceAtDestinationCurrency.symbol} ${fiatFormatter.format(
-          Number(priceAtDestinationCurrency.price),
-        )}`,
-      };
-    }
+    const { priceAtRateField: priceAtRate } = await this.getPriceAtRate(
+      priceAtBaseCurrency,
+      priceAtDestinationCurrency,
+      destinationCurrency,
+      transactionID,
+    );
 
     return {
       __typename: "BitcoinToFiatTransactionBreakdown",
-      price,
+      price: priceField,
       amount,
       fee,
       total,
@@ -689,6 +602,117 @@ export class TransactionRepository {
           },
         },
       },
+    };
+  }
+
+  private async getPriceAtBaseCurrency(
+    baseCurrency: Currency,
+    transactionID: string,
+  ): Promise<{
+    priceAtBaseCurrency: IBitcoinPriceResponse;
+    priceField: TransactionBreakdownField;
+  }> {
+    let priceAtBaseCurrency: IBitcoinPriceResponse = await this.BitcoinRepository.getCurrentPriceByCurrency(
+      baseCurrency,
+    );
+
+    const priceField: TransactionBreakdownField = {
+      key: "Precio BTC Actual",
+      value: "",
+    };
+
+    if (Boolean(transactionID)) {
+      const evidence = await this.db
+        .transaction({ id: transactionID })
+        .receipt()
+        .evidence();
+
+      if (evidence.length > 0) {
+        const cryptoPrices = (
+          await Promise.all(
+            evidence.map(e =>
+              this.db
+                .transactionReceiptEvidence({ id: e.id })
+                .bitcoinReceipt()
+                .price(),
+            ),
+          )
+        ).filter(Boolean);
+
+        if (cryptoPrices.length > 0) {
+          priceAtBaseCurrency = {
+            price: cryptoPrices[cryptoPrices.length - 1].value,
+            symbol: CurrencySymbol.USD,
+          };
+
+          priceField.key = `Precio BTC Obtenido`;
+        }
+      }
+    }
+
+    priceField.value = `${priceAtBaseCurrency.symbol} ${fiatFormatter.format(
+      Number(priceAtBaseCurrency.price),
+    )}`;
+
+    return {
+      priceAtBaseCurrency,
+      priceField,
+    };
+  }
+
+  private async getAssignedFee(user: User, transactionID: string): Promise<string> {
+    let assignedFee: string = (await this.TransactionFeeRepository.calculate(user)).fee;
+
+    if (Boolean(transactionID)) {
+      const transactionFee = await this.db
+        .transaction({ id: transactionID })
+        .receipt()
+        .fee();
+
+      if (Boolean(transactionFee)) {
+        assignedFee = transactionFee.fee;
+      }
+    }
+
+    return assignedFee;
+  }
+
+  private async getPriceAtRate(
+    priceAtBaseCurrency: IBitcoinPriceResponse,
+    priceAtDestinationCurrency: IBitcoinPriceResponse,
+    destinationCurrency: Currency,
+    transactionID: string,
+  ): Promise<{
+    priceAtRateField: TransactionBreakdownField;
+  }> {
+    let priceAtRateField;
+
+    if (priceAtDestinationCurrency.symbol !== CurrencySymbol.USD) {
+      let exchangeRatePrice = (
+        await this.ExchangeRateRepository.getLatestByCurrency(destinationCurrency)
+      ).price;
+
+      if (Boolean(transactionID)) {
+        const price = await this.db
+          .transaction({ id: transactionID })
+          .receipt()
+          .exchangeRate();
+
+        if (Boolean(price)) {
+          exchangeRatePrice = price.price;
+        }
+      }
+
+      priceAtRateField = {
+        key: `Tipo de Cambio (${exchangeRatePrice} ${priceAtDestinationCurrency.symbol}/${priceAtBaseCurrency.symbol})`,
+        value: `${priceAtDestinationCurrency.symbol} ${fiatFormatter.format(
+          Number(priceAtDestinationCurrency.price),
+        )}`,
+      };
+    }
+
+    return {
+      priceAtRateField,
     };
   }
 }
