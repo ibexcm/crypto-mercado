@@ -210,7 +210,9 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
         },
       });
 
-      history.push(generatePath(routes.dashboard.buy.confirm, { id: transaction.id }));
+      history.push(
+        generatePath(routes.dashboard.transactions.details, { id: transaction.id }),
+      );
     } catch (error) {
       // TODO handle error
     }

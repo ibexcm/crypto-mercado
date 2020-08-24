@@ -113,7 +113,9 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
         args: { amount: input.args.amount, sender: { bankAccountID } },
       });
 
-      history.push(generatePath(routes.dashboard.sell.confirm, { id: transaction.id }));
+      history.push(
+        generatePath(routes.dashboard.transactions.details, { id: transaction.id }),
+      );
     } catch (error) {
       // TODO handle error
     }
