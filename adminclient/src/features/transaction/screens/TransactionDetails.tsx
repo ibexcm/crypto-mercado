@@ -179,6 +179,7 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
         transaction={transaction}
         getTransactionBreakdownState={getTransactionBreakdownState}
         onSetCryptoTransactionEvidence={onSetCryptoTransactionEvidence}
+        updateTransactionMethods={updateTransactionMethods}
       />
     );
   };

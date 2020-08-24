@@ -7,6 +7,7 @@ import React from "react";
 import { Typography } from "../../../common/components";
 import { styles } from "../../../common/theme";
 import { QueryGetTransactionBreakdownArgs } from "../../../libraries/api";
+import { IUpdateTransactionMethods } from "../interfaces/IUpdateTransactionMethods";
 import { TransactionBreakdownRow } from "./TransactionBreakdownRow";
 
 interface Props extends WithStyles {
@@ -14,9 +15,14 @@ interface Props extends WithStyles {
     Pick<Query, "getTransactionBreakdown">,
     QueryGetTransactionBreakdownArgs
   >;
+  updateTransactionMethods: IUpdateTransactionMethods;
 }
 
-const Component: React.FC<Props> = ({ classes, getTransactionBreakdownState }) => {
+const Component: React.FC<Props> = ({
+  classes,
+  getTransactionBreakdownState,
+  updateTransactionMethods,
+}) => {
   const { data, loading, error } = getTransactionBreakdownState;
 
   const { price, amount, fee, total, priceAtRate } = data?.getTransactionBreakdown || {
@@ -30,14 +36,22 @@ const Component: React.FC<Props> = ({ classes, getTransactionBreakdownState }) =
   return (
     <Box mb={3} textAlign="right">
       <Box mb={1}>
-        <TransactionBreakdownRow pair={price} />
-        {priceAtRate && <TransactionBreakdownRow pair={priceAtRate} />}
+        <TransactionBreakdownRow
+          pair={price}
+          onEditValue={updateTransactionMethods.onSetBasePrice}
+        />
+        {priceAtRate && (
+          <TransactionBreakdownRow
+            pair={priceAtRate}
+            onEditKey={updateTransactionMethods.onSetExchangeRate}
+          />
+        )}
       </Box>
       <Typography variant="overline" color="primary" mb={3}>
         Desglose
       </Typography>
       <TransactionBreakdownRow pair={amount} />
-      <TransactionBreakdownRow pair={fee} />
+      <TransactionBreakdownRow pair={fee} onEditKey={updateTransactionMethods.onSetFee} />
       <Box my={1}>
         <Divider />
       </Box>
