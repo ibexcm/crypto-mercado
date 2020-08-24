@@ -210,7 +210,6 @@ try {
   }
 } catch (_) {
   // ignore missing files
-  console.debug(`No ${environment} environment configuration file found`);
 }
 
 const config_dir = resolve(dirname(configuration_file));

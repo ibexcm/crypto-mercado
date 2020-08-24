@@ -227,7 +227,7 @@ describe("adminUpdateTransaction", () => {
 
     const transactionID = createTransaction.id;
 
-    const paidAt = new Date();
+    const paidAt = "2020-08-08T00:00:00.000Z";
 
     const {
       data: { adminUpdateTransaction },
@@ -304,6 +304,18 @@ describe("adminUpdateTransaction", () => {
     const transactionID = createTransaction.id;
 
     const paidAt = new Date();
+
+    await GraphQLClient.adminUpdateTransaction(
+      {
+        args: {
+          id: transactionID,
+          receipt: {
+            paidAt,
+          },
+        },
+      },
+      adminToken,
+    );
 
     const { errors } = await GraphQLClient.adminUpdateTransaction(
       {
