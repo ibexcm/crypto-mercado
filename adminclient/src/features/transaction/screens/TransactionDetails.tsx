@@ -80,7 +80,7 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
       return;
     }
 
-    setCryptoEvidenceID(evidence[evidence.length - 1].bitcoinReceipt.id);
+    setCryptoEvidenceID(cryptoReceipt[cryptoReceipt.length - 1].bitcoinReceipt.id);
   }, [data]);
 
   const onAddFile = (file: DropzoneFile) => {

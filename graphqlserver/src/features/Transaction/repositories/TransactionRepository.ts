@@ -369,14 +369,16 @@ export class TransactionRepository {
         .evidence();
 
       if (evidence.length > 0) {
-        const cryptoPrices = await Promise.all(
-          evidence.map(e =>
-            this.db
-              .transactionReceiptEvidence({ id: e.id })
-              .bitcoinReceipt()
-              .price(),
-          ),
-        );
+        const cryptoPrices = (
+          await Promise.all(
+            evidence.map(e =>
+              this.db
+                .transactionReceiptEvidence({ id: e.id })
+                .bitcoinReceipt()
+                .price(),
+            ),
+          )
+        ).filter(Boolean);
 
         if (cryptoPrices.length > 0) {
           priceAtBaseCurrency = {
