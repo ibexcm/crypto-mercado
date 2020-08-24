@@ -2,6 +2,7 @@ import { prisma as db } from "@ibexcm/database";
 import { TestDependencies } from "@ibexcm/libraries/di";
 import { CurrencySymbol } from "@ibexcm/libraries/models/currency";
 import { config } from "../../../../config";
+import { TransactionErrorCode } from "../../../../features/Transaction/errors/TransactionError";
 import {
   emailNotificationsRepositoryInjectionKey,
   emailVerificationRepositoryInjectionKey,
@@ -179,5 +180,143 @@ describe("adminUpdateTransaction", () => {
     ] = getTransaction.receipt.evidence;
 
     expect(value).toEqual(cryptoEvidence.price.value);
+  });
+
+  test("Marks transaction as paid.", async () => {
+    const { user: newUser, address, password } = await onboardUser();
+
+    const { token: adminToken } = await adminKYCApproveUser(newUser, db, {
+      address: adminAccountEmailAddress,
+    });
+
+    const { token } = await authenticate({ address, password });
+
+    const bitcoinAddress = await generateBitcoinAddress();
+
+    await GraphQLClient.createBitcoinAccount({ args: { address: bitcoinAddress } }, token);
+
+    const {
+      data: { user },
+    } = await GraphQLClient.user(token);
+
+    const [{ id: cryptoAccountID }] = user.cryptoAccounts;
+
+    const {
+      data: { getAdminBankAccounts },
+    } = await GraphQLClient.getAdminBankAccounts(token);
+
+    const [adminBankAccount] = getAdminBankAccounts.filter(
+      bankAccount => bankAccount.currency.symbol === CurrencySymbol.USD,
+    );
+
+    const {
+      data: { createTransaction },
+    } = await GraphQLClient.createTransaction(
+      {
+        args: {
+          sender: {
+            cryptoAccountID,
+          },
+          recipient: {
+            bankAccountID: adminBankAccount.id,
+          },
+        },
+      },
+      token,
+    );
+
+    const transactionID = createTransaction.id;
+
+    const paidAt = new Date();
+
+    const {
+      data: { adminUpdateTransaction },
+    } = await GraphQLClient.adminUpdateTransaction(
+      {
+        args: {
+          id: transactionID,
+          receipt: {
+            paidAt,
+          },
+        },
+      },
+      adminToken,
+    );
+
+    const {
+      data: { getTransaction },
+    } = await GraphQLClient.getTransaction(
+      {
+        args: {
+          transactionID,
+        },
+      },
+      adminToken,
+    );
+
+    expect(getTransaction.id).toEqual(transactionID);
+    expect(getTransaction.receipt.paidAt).toEqual(paidAt);
+  });
+
+  test("Fails on paid transaction.", async () => {
+    const { user: newUser, address, password } = await onboardUser();
+
+    const { token: adminToken } = await adminKYCApproveUser(newUser, db, {
+      address: adminAccountEmailAddress,
+    });
+
+    const { token } = await authenticate({ address, password });
+
+    const bitcoinAddress = await generateBitcoinAddress();
+
+    await GraphQLClient.createBitcoinAccount({ args: { address: bitcoinAddress } }, token);
+
+    const {
+      data: { user },
+    } = await GraphQLClient.user(token);
+
+    const [{ id: cryptoAccountID }] = user.cryptoAccounts;
+
+    const {
+      data: { getAdminBankAccounts },
+    } = await GraphQLClient.getAdminBankAccounts(token);
+
+    const [adminBankAccount] = getAdminBankAccounts.filter(
+      bankAccount => bankAccount.currency.symbol === CurrencySymbol.USD,
+    );
+
+    const {
+      data: { createTransaction },
+    } = await GraphQLClient.createTransaction(
+      {
+        args: {
+          sender: {
+            cryptoAccountID,
+          },
+          recipient: {
+            bankAccountID: adminBankAccount.id,
+          },
+        },
+      },
+      token,
+    );
+
+    const transactionID = createTransaction.id;
+
+    const paidAt = new Date();
+
+    const { errors } = await GraphQLClient.adminUpdateTransaction(
+      {
+        args: {
+          id: transactionID,
+          receipt: {
+            paidAt,
+          },
+        },
+      },
+      adminToken,
+    );
+
+    expect(errors[0].extensions.code).toEqual(TransactionErrorCode.transactionPaid);
   });
 });

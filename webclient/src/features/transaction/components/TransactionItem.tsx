@@ -44,11 +44,17 @@ const Component: React.FC<Props> = ({ classes, transaction, onClickTransactionIt
               <Box className={classes.rowItemBox}>
                 <ArrowRightAltIcon color="disabled" />
               </Box>
-              <Box className={classes.rowItemBox} pr={1}>
-                <ScheduleIcon fontSize="small" color="primary" />
-              </Box>
+              {!Boolean(transaction?.receipt?.paidAt) && (
+                <Box className={classes.rowItemBox} pr={1}>
+                  <ScheduleIcon fontSize="small" color="disabled" />
+                </Box>
+              )}
               <Box className={classes.rowItemBox}>
-                <Typography color="primary">
+                <Typography
+                  color={
+                    Boolean(transaction?.receipt?.paidAt) ? "primary" : "textSecondary"
+                  }
+                >
                   {transaction.receipt.toCurrency.symbol}
                 </Typography>
               </Box>

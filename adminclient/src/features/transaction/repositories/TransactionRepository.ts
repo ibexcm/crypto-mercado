@@ -40,66 +40,89 @@ export class TransactionRepository {
       MutationAdminUpdateTransactionArgs
     >(AdminUpdateTransactionMutation);
 
+    console.log(state);
+
     return {
       updateTransactionMethods: {
-        onSetAmount: async (amount: string) => {
-          await execute({
-            variables: {
-              args: {
-                id: transactionID,
-                amount,
+        onMarkAsPaid: async () => {
+          try {
+            await execute({
+              variables: {
+                args: {
+                  id: transactionID,
+                  receipt: {
+                    paidAt: new Date(),
+                  },
+                },
               },
-            },
-          });
+            });
+          } catch (error) {}
+        },
+        onSetAmount: async (amount: string) => {
+          try {
+            await execute({
+              variables: {
+                args: {
+                  id: transactionID,
+                  amount,
+                },
+              },
+            });
+          } catch (error) {}
         },
         onSetBasePrice: async (value: string) => {
           if (!Boolean(cryptoEvidenceID)) {
             return;
           }
-
-          await execute({
-            variables: {
-              args: {
-                id: transactionID,
-                receipt: {
-                  cryptoEvidence: {
-                    id: cryptoEvidenceID,
-                    price: {
-                      value: Number(value),
+          try {
+            await execute({
+              variables: {
+                args: {
+                  id: transactionID,
+                  receipt: {
+                    cryptoEvidence: {
+                      id: cryptoEvidenceID,
+                      price: {
+                        value: Number(value),
+                      },
                     },
                   },
                 },
               },
-            },
-          });
+            });
+          } catch (error) {}
         },
         onSetExchangeRate: async (price: string) => {
-          await execute({
-            variables: {
-              args: {
-                id: transactionID,
-                receipt: {
-                  exchangeRate: {
-                    price,
+          try {
+            await execute({
+              variables: {
+                args: {
+                  id: transactionID,
+                  receipt: {
+                    exchangeRate: {
+                      price,
+                    },
                   },
                 },
               },
-            },
-          });
+            });
+          } catch (error) {}
         },
         onSetFee: async (value: string) => {
-          await execute({
-            variables: {
-              args: {
-                id: transactionID,
-                receipt: {
-                  fee: {
-                    value,
+          try {
+            await execute({
+              variables: {
+                args: {
+                  id: transactionID,
+                  receipt: {
+                    fee: {
+                      value,
+                    },
                   },
                 },
               },
-            },
-          });
+            });
+          } catch (error) {}
         },
       },
       state,

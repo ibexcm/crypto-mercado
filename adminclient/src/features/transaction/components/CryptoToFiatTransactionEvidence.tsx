@@ -13,9 +13,11 @@ import {
   getBankReceiptEvidence,
   getBitcoinReceiptEvidence,
 } from "../../../libraries/utilities/transaction";
+import { IUpdateTransactionMethods } from "../interfaces/IUpdateTransactionMethods";
 
 interface Props extends WithStyles, IDropzoneProps {
   transaction: Transaction;
+  updateTransactionMethods: IUpdateTransactionMethods;
 }
 
 const Component: React.FC<Props> = ({
@@ -23,6 +25,7 @@ const Component: React.FC<Props> = ({
   onAddFile,
   onUploadEnd,
   transaction,
+  updateTransactionMethods,
   ...props
 }) => {
   const {
@@ -99,11 +102,17 @@ const Component: React.FC<Props> = ({
               <DropzonePreview />
             </Box>
           </Box>
-          <Box display="flex" justifyContent="flex-end">
-            <Button variant="contained" color="primary">
-              Marcar como pagada
-            </Button>
-          </Box>
+          {!Boolean(transaction?.receipt?.paidAt) && (
+            <Box display="flex" justifyContent="flex-end">
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={updateTransactionMethods.onMarkAsPaid}
+              >
+                Marcar como pagada
+              </Button>
+            </Box>
+          )}
         </Box>
       </Paper>
     </Box>

@@ -114,6 +114,21 @@ export class TransactionRepository {
       },
     };
 
+    const isTransactionPaid = await this.db
+      .transaction({ id: transactionID })
+      .receipt()
+      .paidAt();
+
+    if (Boolean(isTransactionPaid)) {
+      throw TransactionError.transactionPaid;
+    }
+
+    if (Boolean(args?.receipt?.paidAt)) {
+      data.receipt.update.paidAt = args.receipt.paidAt;
+
+      return await this.db.updateTransaction({ where: { id: transactionID }, data });
+    }
+
     if (Boolean(args?.amount)) {
       data.amount = args.amount;
     }

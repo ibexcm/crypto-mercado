@@ -16,15 +16,18 @@ import {
   getBankReceiptEvidence,
   getBitcoinReceiptEvidence,
 } from "../../../libraries/utilities/transaction";
+import { IUpdateTransactionMethods } from "../interfaces/IUpdateTransactionMethods";
 
 interface Props extends WithStyles, ICryptoTransactionEvidenceCallback {
   transaction: Transaction;
+  updateTransactionMethods: IUpdateTransactionMethods;
 }
 
 const Component: React.FC<Props> = ({
   classes,
   onSetCryptoTransactionEvidence,
   transaction,
+  updateTransactionMethods,
   ...props
 }) => {
   const [transactionHash, setTransactionHash] = React.useState<string | undefined>(
@@ -116,6 +119,17 @@ const Component: React.FC<Props> = ({
               <Typography variant="h6">PENDIENTE</Typography>
             )}
           </Box>
+          {!Boolean(transaction?.receipt?.paidAt) && (
+            <Box display="flex" justifyContent="flex-end">
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={updateTransactionMethods.onMarkAsPaid}
+              >
+                Marcar como pagada
+              </Button>
+            </Box>
+          )}
         </Box>
       </Paper>
     </Box>

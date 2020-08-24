@@ -131,6 +131,7 @@ const Component: React.FC<Props> = ({
           transaction={transaction}
           onAddFile={onAddFile}
           onUploadEnd={onUploadEnd}
+          updateTransactionMethods={updateTransactionMethods}
         />
       </Grid>
     </Grid>

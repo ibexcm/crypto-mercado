@@ -149,6 +149,7 @@ const Component: React.FC<Props> = ({
         <FiatToCryptoTransactionEvidence
           transaction={transaction}
           onSetCryptoTransactionEvidence={onSetCryptoTransactionEvidence}
+          updateTransactionMethods={updateTransactionMethods}
         />
       </Grid>
     </Grid>
