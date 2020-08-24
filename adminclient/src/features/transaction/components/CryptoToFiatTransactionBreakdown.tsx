@@ -29,7 +29,6 @@ const Component: React.FC<Props> = ({
     price: { key: "Precio actual BTC", value: <CircularProgress size={20} /> },
     amount: { key: "Cantidad", value: <CircularProgress size={20} /> },
     fee: { key: "Comisión IBEX (...)", value: <CircularProgress size={20} /> },
-    tax: { key: "IVA (...)", value: <CircularProgress size={20} /> },
     total: { key: "Recibes", value: <CircularProgress size={20} /> },
     priceAtRate: { key: "Tipo de cambio (...)", value: <CircularProgress size={20} /> },
   };
@@ -53,7 +52,6 @@ const Component: React.FC<Props> = ({
       </Typography>
       <TransactionBreakdownRow pair={amount} />
       <TransactionBreakdownRow pair={fee} onEditKey={updateTransactionMethods.onSetFee} />
-      <TransactionBreakdownRow pair={tax} />
       <Box my={1}>
         <Divider />
       </Box>

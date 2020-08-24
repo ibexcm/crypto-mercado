@@ -24,6 +24,7 @@ import {
   QueryGetTransactionArgs,
   QueryGetTransactionBreakdownArgs,
   TransactionBreakdown,
+  TransactionBreakdownField,
 } from "@ibexcm/libraries/api";
 import { CurrencySymbol } from "@ibexcm/libraries/models/currency";
 import { IEmailNotificationsRepository } from "../../../libraries/EmailVerification/interfaces/IEmailNotificationsRepository";
@@ -40,7 +41,7 @@ import { TransactionTaxRepository } from "./TransactionTaxRepository";
 
 const fiatFormatter = Intl.NumberFormat();
 const btcFormatter = Intl.NumberFormat("en-US", {
-  minimumFractionDigits: 7,
+  minimumFractionDigits: 5,
 });
 
 export class TransactionRepository {
@@ -362,6 +363,11 @@ export class TransactionRepository {
       baseCurrency,
     );
 
+    const price: TransactionBreakdownField = {
+      key: "Precio actual BTC",
+      value: "",
+    };
+
     if (Boolean(transactionID)) {
       const evidence = await this.db
         .transaction({ id: transactionID })
@@ -385,6 +391,8 @@ export class TransactionRepository {
             price: cryptoPrices[cryptoPrices.length - 1].value,
             symbol: CurrencySymbol.USD,
           };
+
+          price.key = `Precio BTC obtenido`;
         }
       }
     }
@@ -393,12 +401,9 @@ export class TransactionRepository {
       destinationCurrency,
     );
 
-    const price = {
-      key: "Precio actual BTC",
-      value: `${priceAtBaseCurrency.symbol} ${fiatFormatter.format(
-        Number(priceAtBaseCurrency.price),
-      )}`,
-    };
+    price.value = `${priceAtBaseCurrency.symbol} ${fiatFormatter.format(
+      Number(priceAtBaseCurrency.price),
+    )}`;
 
     const amountByCurrentPrice = math.multiply(
       Number(priceAtDestinationCurrency.price),
@@ -427,18 +432,15 @@ export class TransactionRepository {
     }
 
     const calculatedFee = math.multiply(amountByCurrentPrice, Number(assignedFee));
-    const fee = {
-      key: `Comisión IBEX (${math.multiply(Number(assignedFee), 100).toFixed(1)}%)`,
-      value: `${priceAtDestinationCurrency.symbol} ${fiatFormatter.format(calculatedFee)}`,
-    };
-
     const assignedTaxByCountry = this.TransactionTaxRepository.getTaxByCountry(country);
     const calculatedTax = math.multiply(calculatedFee, Number(assignedTaxByCountry));
-    const tax = {
-      key: `IVA sobre comisión (${math
-        .multiply(Number(assignedTaxByCountry), 100)
-        .toFixed(1)}%)`,
-      value: `${priceAtDestinationCurrency.symbol} ${fiatFormatter.format(calculatedTax)}`,
+    const feePlusTax = math.add(calculatedFee, calculatedTax);
+
+    const fee = {
+      key: `Comisión IBEX (${math.multiply(Number(assignedFee), 100).toFixed(1)}%)`,
+      value: `${priceAtDestinationCurrency.symbol} ${fiatFormatter.format(
+        Number(feePlusTax),
+      )}`,
     };
 
     const subtotal = math
@@ -483,7 +485,6 @@ export class TransactionRepository {
       price,
       amount,
       fee,
-      tax,
       total,
       priceAtRate,
     };

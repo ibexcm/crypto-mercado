@@ -100,8 +100,6 @@ describe("getTransactionBreakdown", () => {
     expect(getTransactionBreakdown.amount.value).toBeDefined();
     expect(getTransactionBreakdown.fee.key).toBeDefined();
     expect(getTransactionBreakdown.fee.value).toBeDefined();
-    expect(getTransactionBreakdown.tax.key).toBeDefined();
-    expect(getTransactionBreakdown.tax.value).toBeDefined();
     expect(getTransactionBreakdown.total.key).toBeDefined();
     expect(getTransactionBreakdown.total.value).toBeDefined();
     expect(getTransactionBreakdown.exchangeRate).toBeNull();
