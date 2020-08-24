@@ -7,6 +7,11 @@ env:
 phases:
   install:
     commands:
+      - npm i -g prisma
+      - npm i -g ts-node
+      - npm i -g typescript
+      - yarn
+      - yarn bootstrap
       - wget https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64
       - mv jq-linux64 jq
       - chmod +x jq
@@ -30,17 +35,8 @@ phases:
       - SHIFTM_PASSWORD=$(echo $SECRET | ./jq -r '.SHIFTM_PASSWORD')
       - SHIFTM_EXCHANGE_NAME=$(echo $SECRET | ./jq -r '.SHIFTM_EXCHANGE_NAME')
       - PRISMA_SECRET=$(echo $SECRET | ./jq -r '.PRISMA_SECRET')
-  install:
-    commands:
-      - npm i -g prisma
-      - npm i -g ts-node
-      - npm i -g typescript
-      - yarn
-      - yarn bootstrap
-  pre_build:
-    commands:
       - aws ecs update-service --cluster $ECS_CLUSTER --service service-prisma-test --desired-count 1 >> out.txt
-      - yarn api:schema:generate
+      - yarn api:schema:generate      
   build:
     commands:
       - cd graphqlserver
