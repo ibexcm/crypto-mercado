@@ -60,6 +60,6 @@ const Component: React.FC<Props> = ({
   );
 };
 
-export const CryptoToFiatTransactionBreakdown = withStyles((theme: Theme) => ({
+export const TransactionBreakdown = withStyles((theme: Theme) => ({
   ...styles(theme),
 }))(Component);

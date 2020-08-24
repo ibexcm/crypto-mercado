@@ -7,7 +7,6 @@ import React from "react";
 import { Typography } from "../../../common/components";
 import { styles } from "../../../common/theme";
 import { QueryGetTransactionBreakdownArgs } from "../../../libraries/api";
-import { IUpdateTransactionMethods } from "../interfaces/IUpdateTransactionMethods";
 import { TransactionBreakdownRow } from "./TransactionBreakdownRow";
 
 interface Props extends WithStyles {
@@ -15,43 +14,30 @@ interface Props extends WithStyles {
     Pick<Query, "getTransactionBreakdown">,
     QueryGetTransactionBreakdownArgs
   >;
-  updateTransactionMethods: IUpdateTransactionMethods;
 }
 
-const Component: React.FC<Props> = ({
-  classes,
-  getTransactionBreakdownState,
-  updateTransactionMethods,
-}) => {
+const Component: React.FC<Props> = ({ classes, getTransactionBreakdownState }) => {
   const { data, loading, error } = getTransactionBreakdownState;
 
   const { price, amount, fee, total, priceAtRate } = data?.getTransactionBreakdown || {
     price: { key: "Precio BTC", value: <CircularProgress size={20} /> },
     amount: { key: "Cantidad", value: <CircularProgress size={20} /> },
     fee: { key: "Comisión IBEX (...)", value: <CircularProgress size={20} /> },
-    total: { key: "Total", value: <CircularProgress size={20} /> },
+    total: { key: "Recibes", value: <CircularProgress size={20} /> },
     priceAtRate: { key: "Tipo de cambio (...)", value: <CircularProgress size={20} /> },
   };
 
   return (
     <Box mb={3} textAlign="right">
       <Box mb={1}>
-        <TransactionBreakdownRow
-          pair={price}
-          onEditValue={updateTransactionMethods.onSetBasePrice}
-        />
-        {priceAtRate && (
-          <TransactionBreakdownRow
-            pair={priceAtRate}
-            onEditKey={updateTransactionMethods.onSetExchangeRate}
-          />
-        )}
+        <TransactionBreakdownRow pair={price} />
+        {priceAtRate && <TransactionBreakdownRow pair={priceAtRate} />}
       </Box>
       <Typography variant="overline" color="primary" mb={3}>
         Desglose
       </Typography>
       <TransactionBreakdownRow pair={amount} />
-      <TransactionBreakdownRow pair={fee} onEditKey={updateTransactionMethods.onSetFee} />
+      <TransactionBreakdownRow pair={fee} />
       <Box my={1}>
         <Divider />
       </Box>
@@ -60,6 +46,6 @@ const Component: React.FC<Props> = ({
   );
 };
 
-export const FiatToCryptoTransactionBreakdown = withStyles((theme: Theme) => ({
+export const TransactionBreakdown = withStyles((theme: Theme) => ({
   ...styles(theme),
 }))(Component);

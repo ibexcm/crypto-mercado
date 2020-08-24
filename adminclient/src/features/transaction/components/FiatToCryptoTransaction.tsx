@@ -15,8 +15,8 @@ import { TextField, Typography } from "../../../common/components";
 import { styles } from "../../../common/theme";
 import { Query, Transaction } from "../../../libraries/api";
 import { IUpdateTransactionMethods } from "../interfaces/IUpdateTransactionMethods";
-import { FiatToCryptoTransactionBreakdown } from "./FiatToCryptoTransactionBreakdown";
 import { FiatToCryptoTransactionEvidence } from "./FiatToCryptoTransactionEvidence";
+import { TransactionBreakdown } from "./TransactionBreakdown";
 
 interface Props extends WithStyles, ICryptoTransactionEvidenceCallback {
   transaction: Transaction;
@@ -97,7 +97,7 @@ const Component: React.FC<Props> = ({
             </Box>
           )}
         </Box>
-        <FiatToCryptoTransactionBreakdown
+        <TransactionBreakdown
           getTransactionBreakdownState={getTransactionBreakdownState}
           updateTransactionMethods={updateTransactionMethods}
         />
