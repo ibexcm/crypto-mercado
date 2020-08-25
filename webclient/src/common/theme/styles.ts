@@ -87,6 +87,7 @@ export const styles = (theme: Theme) => ({
   navBarLink: {
     color: theme.palette.text.primary,
     textDecoration: "none",
+    display: "flex",
   },
   warnCard: {
     backgroundColor: theme.palette.warning.light,

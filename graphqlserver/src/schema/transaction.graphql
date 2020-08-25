@@ -86,8 +86,8 @@ type BitcoinToFiatTransactionBreakdown {
   price: TransactionBreakdownField!
   amount: TransactionBreakdownField!
   fee: TransactionBreakdownField!
-  tax: TransactionBreakdownField!
   total: TransactionBreakdownField!
+  tax: TransactionBreakdownField
   exchangeRate: TransactionBreakdownField
   priceAtRate: TransactionBreakdownField
 }
@@ -96,8 +96,8 @@ type FiatToBitcoinTransactionBreakdown {
   price: TransactionBreakdownField!
   amount: TransactionBreakdownField!
   fee: TransactionBreakdownField!
-  tax: TransactionBreakdownField!
   total: TransactionBreakdownField!
+  tax: TransactionBreakdownField
   exchangeRate: TransactionBreakdownField
   priceAtRate: TransactionBreakdownField
 }

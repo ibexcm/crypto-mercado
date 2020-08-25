@@ -29,7 +29,7 @@ import { styles } from "../../../../common/theme";
 import routes from "../../../../routes";
 import { useOnDebounceTextChange } from "../../../../utils";
 import { UserRepositoryInjectionKeys } from "../../../user/InjectionKeys";
-import { CryptoToFiatTransactionBreakdown, MobileNavBar } from "../../components";
+import { MobileNavBar, TransactionBreakdown } from "../../components";
 import { TransactionRepositoryInjectionKeys } from "../../InjectionKeys";
 
 interface Props
@@ -113,7 +113,9 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
         args: { amount: input.args.amount, sender: { bankAccountID } },
       });
 
-      history.push(generatePath(routes.dashboard.sell.confirm, { id: transaction.id }));
+      history.push(
+        generatePath(routes.dashboard.transactions.details, { id: transaction.id }),
+      );
     } catch (error) {
       // TODO handle error
     }
@@ -209,7 +211,7 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
                     />
                   </Paper>
                 </Box>
-                <CryptoToFiatTransactionBreakdown
+                <TransactionBreakdown
                   getTransactionBreakdownState={getTransactionBreakdownState}
                 />
                 <Box mb={3}>

@@ -7,6 +7,7 @@ import {
   Toolbar,
   WithStyles,
 } from "@material-ui/core";
+import ChevronLeft from "@material-ui/icons/ChevronLeft";
 import { withStyles } from "@material-ui/styles";
 import React from "react";
 import { Link } from "react-router-dom";
@@ -18,12 +19,17 @@ interface IMobileAppBarProps extends WithStyles {}
 const Component: React.FC<IMobileAppBarProps> = ({ classes }) => {
   return (
     <Hidden smDown>
-      <AppBar position="fixed" color="default" elevation={0}>
+      <AppBar position="absolute" color="default" elevation={0}>
         <Container maxWidth="lg" disableGutters style={{ minHeight: "auto" }}>
           <Toolbar className={classes.toolbar}>
             <Box className={classes.logoBox}>
-              <Link to={routes.root}>
-                <img src="/svg/ibex-logo.svg" width="100%" height="auto" />
+              <Link to={routes.dashboard.transactions.index} className={classes.navBarLink}>
+                <Box display="flex" flexDirection="column" justifyContent="center">
+                  <ChevronLeft />
+                </Box>
+                <Box display="flex" flexDirection="column" justifyContent="center">
+                  TRANSACCIONES
+                </Box>
               </Link>
             </Box>
             <Box className={classes.some}>

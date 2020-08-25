@@ -3,6 +3,7 @@ import { ApolloError } from "apollo-server-errors";
 export enum TransactionErrorCode {
   transactionDoesNotExist = "transactionDoesNotExist",
   invalidTransactionUser = "invalidTransactionUser",
+  transactionPaid = "transactionPaid",
 }
 
 const transactionDoesNotExist = new ApolloError(
@@ -15,7 +16,13 @@ const invalidTransactionUser = new ApolloError(
   TransactionErrorCode.invalidTransactionUser,
 );
 
+const transactionPaid = new ApolloError(
+  "Transaction is already paid",
+  TransactionErrorCode.transactionPaid,
+);
+
 export const TransactionError = {
   transactionDoesNotExist,
   invalidTransactionUser,
+  transactionPaid,
 };
