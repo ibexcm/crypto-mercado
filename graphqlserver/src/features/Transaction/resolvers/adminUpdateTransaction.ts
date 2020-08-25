@@ -9,11 +9,7 @@ export async function adminUpdateTransaction(
   { dependencies, request }: IContext,
   info,
 ): Promise<Transaction> {
-  try {
-    const TransactionRepository = dependencies.provide(TransactionRepositoryInjectionKey);
+  const TransactionRepository = dependencies.provide(TransactionRepositoryInjectionKey);
 
-    return await TransactionRepository.adminUpdateTransaction(args, request.auth.user);
-  } catch (error) {
-    console.log(error);
-  }
+  return await TransactionRepository.adminUpdateTransaction(args, request.auth.user);
 }

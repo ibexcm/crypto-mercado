@@ -13,8 +13,8 @@ import React from "react";
 import { IDropzoneProps, TextField, Typography } from "../../../common/components";
 import { styles } from "../../../common/theme";
 import { Query, Transaction } from "../../../libraries/api";
-import { FiatToCryptoTransactionBreakdown } from "./FiatToCryptoTransactionBreakdown";
 import { FiatToCryptoTransactionEvidence } from "./FiatToCryptoTransactionEvidence";
+import { TransactionBreakdown } from "./TransactionBreakdown";
 
 interface Props extends WithStyles, IDropzoneProps {
   transaction: Transaction;
@@ -84,9 +84,7 @@ const Component: React.FC<Props> = ({
             </Box>
           )}
         </Box>
-        <FiatToCryptoTransactionBreakdown
-          getTransactionBreakdownState={getTransactionBreakdownState}
-        />
+        <TransactionBreakdown getTransactionBreakdownState={getTransactionBreakdownState} />
       </Grid>
       <Grid item xs={12} lg={5}>
         <Box mb={3}>

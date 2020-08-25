@@ -3,4 +3,5 @@ export interface IUpdateTransactionMethods {
   onSetExchangeRate: (value: string) => void;
   onSetFee: (value: string) => void;
   onSetAmount: (value: string) => void;
+  onMarkAsPaid: () => void;
 }

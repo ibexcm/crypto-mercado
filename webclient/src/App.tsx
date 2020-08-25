@@ -16,14 +16,8 @@ import {
   VerifyPhoneNumber,
 } from "./features/onboarding/screens";
 import { TransactionDetails, TransactionsIndex } from "./features/transaction/screens";
-import {
-  Checkout as BuyCheckout,
-  Confirm as BuyConfirm,
-} from "./features/transaction/screens/buy";
-import {
-  Checkout as SellCheckout,
-  Confirm as SellConfirm,
-} from "./features/transaction/screens/sell";
+import { Checkout as BuyCheckout } from "./features/transaction/screens/buy";
+import { Checkout as SellCheckout } from "./features/transaction/screens/sell";
 import { routes } from "./routes";
 
 const App: React.FC = () => {
@@ -87,22 +81,12 @@ const App: React.FC = () => {
               exact
               component={SellCheckout}
             />
-            <PrivateRoute
-              path={routes.dashboard.sell.confirm}
-              exact
-              component={SellConfirm}
-            />
 
             {/* BUY */}
             <PrivateRoute
               path={routes.dashboard.buy.checkout}
               exact
               component={BuyCheckout}
-            />
-            <PrivateRoute
-              path={routes.dashboard.buy.confirm}
-              exact
-              component={BuyConfirm}
             />
           </Switch>
         </Router>
