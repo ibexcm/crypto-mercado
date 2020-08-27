@@ -1,5 +1,8 @@
-import { prisma as db } from "@ibexcm/database";
-import { TGuatemalaBankAccount } from "@ibexcm/libraries/api";
+import { prisma as db, Transaction } from "@ibexcm/database";
+import {
+  TGuatemalaBankAccount,
+  Transaction as TransactionResponse,
+} from "@ibexcm/libraries/api";
 import { TestDependencies } from "@ibexcm/libraries/di";
 import { CurrencySymbol } from "@ibexcm/libraries/models/currency";
 import { config } from "../../../../config";
@@ -112,6 +115,8 @@ describe("createTransaction", () => {
     expect(createTransaction.receipt.fromCurrency.symbol).toEqual(
       adminCryptoAccountCurrency.symbol,
     );
+
+    assertEmailNotifications(address, createTransaction, false);
   });
 
   test("creates USD to BTC transaction: the user EXPECTS BTC and SENDS a USD bank deposit.", async () => {
@@ -177,6 +182,8 @@ describe("createTransaction", () => {
     expect(createTransaction.receipt.fromCurrency.symbol).toEqual(
       adminBankAccount.currency.symbol,
     );
+
+    assertEmailNotifications(address, createTransaction, true);
   });
 
   test("creates GTQ to BTC transaction: the user EXPECTS BTC and SENDS a GTQ bank deposit.", async () => {
@@ -246,6 +253,8 @@ describe("createTransaction", () => {
     expect(createTransaction.receipt.fromCurrency.symbol).toEqual(
       adminBankAccount.currency.symbol,
     );
+
+    assertEmailNotifications(address, createTransaction, true);
   });
 
   test("creates BTC to GTQ transaction: the user SELLS BTC and EXPECTS a GTQ bank deposit.", async () => {
@@ -344,5 +353,33 @@ describe("createTransaction", () => {
     expect(createTransaction.receipt.fromCurrency.symbol).toEqual(
       adminCryptoAccountCurrency.symbol,
     );
+
+    assertEmailNotifications(address, createTransaction, false);
   });
+
+  const assertEmailNotifications = async (
+    address: string,
+    createTransaction: TransactionResponse,
+    isFiatToCryptoTransaction: boolean,
+  ) => {
+    const [transaction, clientID] = await Promise.all<Transaction, string>([
+      db.transaction({ id: createTransaction.id }),
+      db
+        .transaction({ id: createTransaction.id })
+        .sender()
+        .user()
+        .account()
+        .clientID(),
+    ]);
+
+    expect(
+      emailNotificationsRepository.sendTransactionRequestNotification,
+    ).toHaveBeenCalledWith(address, {
+      transaction,
+      fromCurrencySymbol: createTransaction.receipt.fromCurrency.symbol,
+      toCurrencySymbol: createTransaction.receipt.toCurrency.symbol,
+      clientID,
+      isFiatToCryptoTransaction,
+    });
+  };
 });

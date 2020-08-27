@@ -12,5 +12,9 @@ export async function setTransactionReceiptEvidence(
   const TransactionReceiptRepository = dependencies.provide(
     TransactionReceiptRepositoryInjectionKey,
   );
-  return await TransactionReceiptRepository.setTransactionReceiptEvidence(args);
+
+  return await TransactionReceiptRepository.setTransactionReceiptEvidence(
+    args,
+    request.auth.user,
+  );
 }

@@ -1,4 +1,4 @@
-import { prisma as db } from "@ibexcm/database";
+import { Currency, prisma as db, Transaction } from "@ibexcm/database";
 import { TestDependencies } from "@ibexcm/libraries/di";
 import { CurrencySymbol } from "@ibexcm/libraries/models/currency";
 import { config } from "../../../../config";
@@ -256,6 +256,39 @@ describe("adminUpdateTransaction", () => {
 
     expect(getTransaction.id).toEqual(transactionID);
     expect(getTransaction.receipt.paidAt).toEqual(paidAt);
+
+    const [transaction, fromCurrency, toCurrency, clientID] = await Promise.all<
+      Transaction,
+      Currency,
+      Currency,
+      string
+    >([
+      db.transaction({ id: transactionID }),
+      db
+        .transaction({ id: transactionID })
+        .receipt()
+        .fromCurrency(),
+      db
+        .transaction({ id: transactionID })
+        .receipt()
+        .toCurrency(),
+      db
+        .transaction({ id: transactionID })
+        .sender()
+        .user()
+        .account()
+        .clientID(),
+    ]);
+
+    expect(
+      emailNotificationsRepository.sendTransactionSuccessNotification,
+    ).toHaveBeenCalledWith(address, {
+      transaction,
+      fromCurrencySymbol: fromCurrency.symbol,
+      toCurrencySymbol: toCurrency.symbol,
+      clientID,
+      isFiatToCryptoTransaction: true,
+    });
   });
 
   test("Fails on paid transaction.", async () => {
