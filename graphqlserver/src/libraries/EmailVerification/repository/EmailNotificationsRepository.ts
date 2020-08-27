@@ -2,7 +2,7 @@ import config from "../../../config";
 import { IEmailNotificationsRepository } from "../interfaces/IEmailNotificationsRepository";
 import sendgridClient from "../service/sendgridClient";
 
-const { host, from } = config.get("email");
+const { host, from, adminHost } = config.get("email");
 const { adminAccountEmailAddress } = config.get("flags");
 
 const sendAdminKYCApproveUserNotification: IEmailNotificationsRepository["sendAdminKYCApproveUserNotification"] = async (
@@ -105,7 +105,7 @@ const sendAdminTransactionEvidenceSubmittedNotification: IEmailNotificationsRepo
       },
       templateId: "d-c4a752e4b64a4be2bc6b217d324592fb",
       dynamicTemplateData: {
-        tx_url: `admin.${host}/tx/${transaction.id}`,
+        tx_url: `${adminHost}/tx/${transaction.id}`,
         clientID,
       },
     });
