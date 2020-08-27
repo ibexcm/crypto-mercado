@@ -7,19 +7,24 @@ import {
   TransactionFee,
   TransactionReceiptEvidenceUpdateManyInput,
   TransactionTax,
+  User,
 } from "@ibexcm/database";
 import { MutationSetTransactionReceiptEvidenceArgs } from "@ibexcm/libraries/api";
+import { IEmailNotificationsRepository } from "../../../libraries/EmailVerification/interfaces/IEmailNotificationsRepository";
 
 export class TransactionReceiptRepository {
   private db: Prisma;
+  private emailNotificationsRepository: IEmailNotificationsRepository;
 
-  constructor(db: Prisma) {
+  constructor(db: Prisma, emailNotificationsRepository: IEmailNotificationsRepository) {
     this.db = db;
+    this.emailNotificationsRepository = emailNotificationsRepository;
   }
 
-  async setTransactionReceiptEvidence({
-    args,
-  }: MutationSetTransactionReceiptEvidenceArgs): Promise<Transaction> {
+  async setTransactionReceiptEvidence(
+    { args }: MutationSetTransactionReceiptEvidenceArgs,
+    user: User,
+  ): Promise<Transaction> {
     const { transactionID, bitcoin, fiat } = args;
 
     const transaction = await this.db.transaction({ id: transactionID });
@@ -61,6 +66,27 @@ export class TransactionReceiptRepository {
         evidence,
       },
     });
+
+    const [senderUserID, clientID] = await Promise.all<string, string>([
+      this.db
+        .transaction({ id: transactionID })
+        .sender()
+        .user()
+        .id(),
+      this.db
+        .transaction({ id: transactionID })
+        .sender()
+        .user()
+        .account()
+        .clientID(),
+    ]);
+
+    if (user.id === senderUserID) {
+      this.emailNotificationsRepository.sendAdminTransactionEvidenceSubmittedNotification({
+        transaction,
+        clientID,
+      });
+    }
 
     return transaction;
   }

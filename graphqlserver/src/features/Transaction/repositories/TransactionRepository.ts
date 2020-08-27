@@ -126,6 +126,46 @@ export class TransactionRepository {
     if (Boolean(args?.receipt?.paidAt)) {
       data.receipt.update.paidAt = args.receipt.paidAt;
 
+      const [
+        [{ address }],
+        transaction,
+        fromCurrency,
+        toCurrency,
+        clientID,
+      ] = await Promise.all<Array<Email>, Transaction, Currency, Currency, string>([
+        this.db
+          .transaction({ id: transactionID })
+          .sender()
+          .user()
+          .contact()
+          .email({ where: { verifiedAt_not: null } }),
+        this.db.transaction({ id: transactionID }),
+        this.db
+          .transaction({ id: transactionID })
+          .receipt()
+          .fromCurrency(),
+        this.db
+          .transaction({ id: transactionID })
+          .receipt()
+          .toCurrency(),
+        this.db
+          .transaction({ id: transactionID })
+          .sender()
+          .user()
+          .account()
+          .clientID(),
+      ]);
+
+      const isFiatToCryptoTransaction = this.isFiatToCryptoTransaction(fromCurrency);
+
+      this.emailNotificationsRepository.sendTransactionSuccessNotification(address, {
+        transaction,
+        fromCurrencySymbol: fromCurrency.symbol,
+        toCurrencySymbol: toCurrency.symbol,
+        clientID,
+        isFiatToCryptoTransaction,
+      });
+
       return await this.db.updateTransaction({ where: { id: transactionID }, data });
     }
 
@@ -218,10 +258,11 @@ export class TransactionRepository {
       },
     });
 
-    const [email, fromCurrency, toCurrency] = await Promise.all<
+    const [[{ address }], fromCurrency, toCurrency, clientID] = await Promise.all<
       Array<Email>,
       Currency,
-      Currency
+      Currency,
+      string
     >([
       this.db
         .transaction({ id: transaction.id })
@@ -237,17 +278,31 @@ export class TransactionRepository {
         .transaction({ id: transaction.id })
         .receipt()
         .toCurrency(),
+      this.db
+        .transaction({ id: transaction.id })
+        .sender()
+        .user()
+        .account()
+        .clientID(),
     ]);
 
-    const [{ address }] = email;
+    const isFiatToCryptoTransaction = this.isFiatToCryptoTransaction(fromCurrency);
 
-    this.emailNotificationsRepository.sendTransactionSuccessNotification(address, {
+    this.emailNotificationsRepository.sendTransactionRequestNotification(address, {
       transaction,
       fromCurrencySymbol: fromCurrency.symbol,
       toCurrencySymbol: toCurrency.symbol,
+      clientID,
+      isFiatToCryptoTransaction,
     });
 
     return transaction;
+  }
+
+  isFiatToCryptoTransaction(currency: Currency): boolean {
+    return [CurrencySymbol.GTQ, CurrencySymbol.USD].includes(
+      currency.symbol as CurrencySymbol,
+    );
   }
 
   async sender(id: string): Promise<Sender> {
