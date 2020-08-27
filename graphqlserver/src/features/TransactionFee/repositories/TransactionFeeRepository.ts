@@ -8,6 +8,6 @@ export class TransactionFeeRepository {
   }
 
   async calculate(user: User): Promise<Pick<TransactionFee, "fee">> {
-    return { fee: (3.5 / 100).toString() };
+    return { fee: (5 / 100).toString() };
   }
 }
