@@ -105,7 +105,7 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
   );
 };
 
-export const Authenticate = withStyles((theme: Theme) => ({
+export const RequestLink = withStyles((theme: Theme) => ({
   ...styles(theme),
   homeContainer: {
     backgroundColor: "white",
