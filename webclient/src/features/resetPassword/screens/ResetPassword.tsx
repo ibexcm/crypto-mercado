@@ -7,7 +7,6 @@ import { Box, Container, Theme, withStyles, WithStyles } from "@material-ui/core
 import {
   Button,
   InputErrorBox,
-  StepsSidebar,
   TextField,
   ToolbarPadding,
   Typography,
