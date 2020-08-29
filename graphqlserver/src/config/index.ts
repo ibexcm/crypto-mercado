@@ -118,6 +118,13 @@ const configuration = convict({
       env: "SENDGRID_TEMPLATE_HOST",
       arg: "sendgrid-template-host",
     },
+    adminHost: {
+      doc: "Sendgrid email template admin host",
+      format: "url",
+      default: "http://localhost:3000",
+      env: "SENDGRID_TEMPLATE_ADMIN_HOST",
+      arg: "sendgrid-template-admin-host",
+    },
     from: {
       doc: "Email from",
       format: "email",
