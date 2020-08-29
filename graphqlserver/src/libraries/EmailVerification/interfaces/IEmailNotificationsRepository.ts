@@ -41,4 +41,9 @@ export interface IEmailNotificationsRepository {
     transaction: Transaction;
     clientID: string;
   }): Promise<void>;
+  sendAdminCustomerOnboardingCompleteNotification({
+    clientID,
+  }: {
+    clientID: string;
+  }): Promise<void>;
 }

@@ -114,9 +114,30 @@ const sendAdminTransactionEvidenceSubmittedNotification: IEmailNotificationsRepo
   }
 };
 
+const sendAdminCustomerOnboardingCompleteNotification: IEmailNotificationsRepository["sendAdminCustomerOnboardingCompleteNotification"] = async ({
+  clientID,
+}) => {
+  try {
+    await sendgridClient.send({
+      to: [{ email: adminAccountEmailAddress }],
+      from: {
+        email: from,
+        name: "IBEX Mercado",
+      },
+      templateId: "d-0f746480160240c68f839c3653ccc942",
+      dynamicTemplateData: {
+        clientID,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+  }
+};
+
 export const EmailNotificationsRepository: IEmailNotificationsRepository = {
   sendAdminKYCApproveUserNotification,
   sendTransactionRequestNotification,
   sendTransactionSuccessNotification,
   sendAdminTransactionEvidenceSubmittedNotification,
+  sendAdminCustomerOnboardingCompleteNotification,
 };

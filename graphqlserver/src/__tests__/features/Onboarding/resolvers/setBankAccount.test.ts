@@ -2,9 +2,11 @@ import { prisma as db } from "@ibexcm/database";
 import { TGuatemalaBankAccount } from "@ibexcm/libraries/api";
 import { TestDependencies } from "@ibexcm/libraries/di";
 import { dbInjectionKey } from "../../../../InjectionKeys";
+import { emailNotificationsRepositoryInjectionKey } from "../../../../libraries/EmailVerification";
 import { smsVerificationRepositoryInjectionKey } from "../../../../libraries/SMSVerification";
 import { transformGuatemalaAccountNumber } from "../../../../middleware/transforms/setBankAccount";
 import {
+  mockEmailNotificationsRepository,
   MockServer,
   mockSMSVerificationRepository,
 } from "../../../../__test-utils__/mocks";
@@ -16,9 +18,14 @@ describe("setBankAccount", () => {
   const accountNumber = "01-234567-89";
   const bankAccountType = TGuatemalaBankAccount.Monetaria;
   const dependencies = new TestDependencies();
+  const emailNotificationsRepository = mockEmailNotificationsRepository();
   dependencies.override(dbInjectionKey, _ => db);
   dependencies.override(smsVerificationRepositoryInjectionKey, _ =>
     mockSMSVerificationRepository(),
+  );
+  dependencies.override(
+    emailNotificationsRepositoryInjectionKey,
+    _ => emailNotificationsRepository,
   );
 
   const server = new MockServer(dependencies);
@@ -43,6 +50,7 @@ describe("setBankAccount", () => {
     const {
       data: {
         user: {
+          id: userID,
           profile: {
             country: { id: countryID },
           },
@@ -92,5 +100,16 @@ describe("setBankAccount", () => {
     );
     expect(guatemalaBankAccount.bankAccountType).toEqual(bankAccountType);
     expect(bank.id).toEqual(bankID);
+
+    const [clientID] = await Promise.all<string>([
+      db
+        .user({ id: userID })
+        .account()
+        .clientID(),
+    ]);
+
+    expect(
+      emailNotificationsRepository.sendAdminCustomerOnboardingCompleteNotification,
+    ).toHaveBeenCalledWith({ clientID });
   });
 });
