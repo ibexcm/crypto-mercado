@@ -22,13 +22,14 @@ phases:
       - SENDGRID_API_KEY=$(echo $SECRET | ./jq -r '.SENDGRID_API_KEY')
       - SENDGRID_API_URL=$(echo $SECRET | ./jq -r '.SENDGRID_API_URL')
       - SENDGRID_TEMPLATE_HOST=$(echo $SECRET | ./jq -r '.SENDGRID_TEMPLATE_HOST')
+      - SENDGRID_TEMPLATE_ADMIN_HOST=$(echo $SECRET | ./jq -r '.SENDGRID_TEMPLATE_ADMIN_HOST')
       - TWILIO_SID=$(echo $SECRET | ./jq -r '.TWILIO_SID')
       - TWILIO_AID=$(echo $SECRET | ./jq -r '.TWILIO_AID')
       - TWILIO_TOKEN=$(echo $SECRET | ./jq -r '.TWILIO_TOKEN')
       - JWT_PUBLIC_KEY=$(echo $SECRET | ./jq -r '.JWT_PUBLIC_KEY')
       - JWT_PRIVATE_KEY=$(echo $SECRET | ./jq -r '.JWT_PRIVATE_KEY')
       - GRAPHQL_PORT=$(echo $SECRET | ./jq -r '.GRAPHQL_PORT')
-      - GRAPHQL_ENDPOINT=$(echo $SECRET | ./jq -r '.GRAPHQL_ENDPOINT')    
+      - GRAPHQL_ENDPOINT=$(echo $SECRET | ./jq -r '.GRAPHQL_ENDPOINT')
       - SHIFTM_USERNAME=$(echo $SECRET | ./jq -r '.SHIFTM_USERNAME')
       - SHIFTM_PASSWORD=$(echo $SECRET | ./jq -r '.SHIFTM_PASSWORD')
       - SHIFTM_EXCHANGE_NAME=$(echo $SECRET | ./jq -r '.SHIFTM_EXCHANGE_NAME')
@@ -45,6 +46,7 @@ phases:
         --build-arg SENDGRID_API_KEY=$SENDGRID_API_KEY
         --build-arg SENDGRID_API_URL=$SENDGRID_API_URL
         --build-arg SENDGRID_TEMPLATE_HOST=$SENDGRID_TEMPLATE_HOST
+        --build-arg SENDGRID_TEMPLATE_ADMIN_HOST=$SENDGRID_TEMPLATE_ADMIN_HOST
         --build-arg TWILIO_SID=$TWILIO_SID
         --build-arg TWILIO_AID=$TWILIO_AID
         --build-arg TWILIO_TOKEN=$TWILIO_TOKEN

@@ -31,5 +31,8 @@ export const mockEmailNotificationsRepository = (): IEmailNotificationsRepositor
     sendAdminTransactionEvidenceSubmittedNotification: jest.fn(
       (args: { transaction: Transaction; clientID: string }) => Promise.resolve(),
     ),
+    sendAdminCustomerOnboardingCompleteNotification: jest.fn(
+      (args: { transaction: Transaction; clientID: string }) => Promise.resolve(),
+    ),
   };
 };
