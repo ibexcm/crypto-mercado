@@ -4,6 +4,10 @@ export const routes = {
   authentication: {
     signIn: "/inicia-sesion",
   },
+  recovery: {
+    sendPasswordRecoveryLink: "/recuperar-cuenta",
+    resetPassword: "/restablecer-password",
+  },
   onboarding: {
     sendPhoneNumberVerificationCode: "/kyc/ingresa-tu-telefono",
     verifyPhoneNumber: "/kyc/verifica-tu-telefono",
