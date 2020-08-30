@@ -4,17 +4,7 @@ import { styles } from "../../../common/theme";
 import { MobileNavBar, NavBar } from "../components";
 import { TabPanel, TabContext, TabList } from "@material-ui/lab";
 import { RouteComponentProps, StaticContext } from "react-router";
-import {
-  Box,
-  Tab,
-  Card,
-  CardContent,
-  Container,
-  Theme,
-  withStyles,
-  WithStyles,
-} from "@material-ui/core";
-
+import { Box, Tab, Container, Theme, withStyles, WithStyles } from "@material-ui/core";
 import {
   Button,
   InputErrorBox,
@@ -30,10 +20,15 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
 
   const [emailError, setEmailError] = React.useState<Error | null>(null);
   const [smsError, setSmsError] = React.useState<Error | null>(null);
-  const [value, setValue] = React.useState("1");
+  const [recoveryOption, setRecoveryOption] = React.useState("1");
 
-  const handleChange = (event: React.ChangeEvent<{}>, newValue: string) => {
-    setValue(newValue);
+  const handleChange = (event: React.ChangeEvent<{}>, newOption: string) => {
+    setRecoveryOption(newOption);
+  };
+
+  const onKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "Enter") {
+    }
   };
 
   return (
@@ -49,21 +44,22 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
         >
           <ToolbarPadding />
           <Box mb={4}>
-            <Typography variant="h5" gutterBottom>
+            <Typography variant="h5" mb={1}>
               Restablece tu Contraseña
             </Typography>
-            <Card className={classes.warnCard}>
-              <CardContent>
-                <Typography align="center" variant="body2">
-                  Elige a donde quieres que se envie tu enlace de restablecimiento de
-                  contraseña.
-                </Typography>
-              </CardContent>
-            </Card>
+            <Typography>
+              Elige a donde quieres que se envíe el enlace de restablecimiento de
+              contraseña.
+            </Typography>
           </Box>
-          <Box>
-            <TabContext value={value}>
-              <TabList onChange={handleChange} aria-label="Reset Password Methods">
+          <Box justifyContent="center">
+            <TabContext value={recoveryOption}>
+              <TabList
+                variant="fullWidth"
+                onChange={handleChange}
+                aria-label="Reset Password Methods"
+                centered
+              >
                 <Tab label="Email" value="1" />
                 <Tab label="SMS" value="2" />
               </TabList>
@@ -73,11 +69,17 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
                     fullWidth
                     label="Email"
                     variant="outlined"
-                    type="text"
+                    type="email"
                     mb={3}
                   />
                   <InputErrorBox error={emailError} />
-                  <Button color="primary" variant="contained" fullWidth size="large">
+                  <Button
+                    color="primary"
+                    variant="contained"
+                    fullWidth
+                    size="large"
+                    onKeyPress={onKeyPress}
+                  >
                     Enviar
                   </Button>
                 </Box>
@@ -86,13 +88,19 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
                 <Box>
                   <TextField
                     fullWidth
-                    label="Número de Teléfono"
+                    label="Número de teléfono"
                     variant="outlined"
-                    type="text"
+                    type="tel"
                     mb={3}
                   />
                   <InputErrorBox error={smsError} />
-                  <Button color="primary" variant="contained" fullWidth size="large">
+                  <Button
+                    color="primary"
+                    variant="contained"
+                    fullWidth
+                    size="large"
+                    onKeyPress={onKeyPress}
+                  >
                     Enviar
                   </Button>
                 </Box>
