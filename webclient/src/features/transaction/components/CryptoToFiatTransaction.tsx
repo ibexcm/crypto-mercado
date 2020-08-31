@@ -11,7 +11,7 @@ import {
   WithStyles,
 } from "@material-ui/core";
 import React from "react";
-import { CryptoToFiatTransactionBreakdown } from ".";
+import { TransactionBreakdown } from ".";
 import { TextField, Typography } from "../../../common/components";
 import { styles } from "../../../common/theme";
 import { Query, Transaction } from "../../../libraries/api";
@@ -79,6 +79,9 @@ const Component: React.FC<Props> = ({
             </Box>
           )}
         </Box>
+        <TransactionBreakdown getTransactionBreakdownState={getTransactionBreakdownState} />
+      </Grid>
+      <Grid item xs={12} lg={5}>
         <Box mb={3}>
           <Paper>
             <Box p={2}>
@@ -108,11 +111,6 @@ const Component: React.FC<Props> = ({
             </Box>
           </Paper>
         </Box>
-      </Grid>
-      <Grid item xs={12} lg={5}>
-        <CryptoToFiatTransactionBreakdown
-          getTransactionBreakdownState={getTransactionBreakdownState}
-        />
         <CryptoToFiatTransactionEvidence
           transaction={transaction}
           onSetCryptoTransactionEvidence={onSetCryptoTransactionEvidence}

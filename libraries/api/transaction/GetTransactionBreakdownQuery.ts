@@ -28,6 +28,10 @@ export const GetTransactionBreakdownQuery = gql`
           key
           value
         }
+        priceAtRate {
+          key
+          value
+        }
       }
       ... on BitcoinToFiatTransactionBreakdown {
         price {
@@ -51,6 +55,10 @@ export const GetTransactionBreakdownQuery = gql`
           value
         }
         exchangeRate {
+          key
+          value
+        }
+        priceAtRate {
           key
           value
         }

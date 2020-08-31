@@ -1,7 +1,9 @@
+import { Currency } from "@ibexcm/database";
 import { CurrencySymbol } from "@ibexcm/libraries/models/currency";
 import axios, { AxiosResponse } from "axios";
 import { config } from "../../../config";
 import { BitcoinError } from "../../../features/Bitcoin/errors/BitcoinError";
+import { ExchangeRateRepository } from "../../../features/ExchangeRate/repositories/ExchangeRateRepository";
 import { IBitcoinAPIRepository } from "../interfaces/IBitcoinAPIRepository";
 import { IShiftMarketsAuthenticationResponse } from "../interfaces/IShiftMarketsAuthenticationResponse";
 import { IShiftMarketsSecuritiesResponse } from "../interfaces/IShiftMarketsSecuritiesResponse";
@@ -16,6 +18,11 @@ export class BitcoinAPIRepository implements IBitcoinAPIRepository {
   private clientAccessToken: string;
   private expiresIn: number;
   private keepAliveInterval: NodeJS.Timeout;
+  private exchangeRateRepository: ExchangeRateRepository;
+
+  constructor(exchangeRateRepository: ExchangeRateRepository) {
+    this.exchangeRateRepository = exchangeRateRepository;
+  }
 
   async connectToPriceFeedProvider() {
     try {
@@ -31,9 +38,7 @@ export class BitcoinAPIRepository implements IBitcoinAPIRepository {
     }
   }
 
-  async getCurrentPriceByCurrencySymbol(
-    symbol: CurrencySymbol = CurrencySymbol.USD,
-  ): Promise<string> {
+  async getCurrentPriceByCurrency(currency: Currency): Promise<string> {
     const response: AxiosResponse<IShiftMarketsSecuritiesResponse[]> = await axios.request({
       method: "GET",
       url: `${BitcoinAPIRepository.baseUrl}/securities/statistics`,
@@ -52,9 +57,10 @@ export class BitcoinAPIRepository implements IBitcoinAPIRepository {
 
     const [{ ask }] = securities.filter(security => security.security_id === "BTCUSD");
 
-    switch (symbol) {
+    switch (currency.symbol) {
       case CurrencySymbol.GTQ:
-        return (Number(ask) * 7.5).toString();
+        const { price } = await this.exchangeRateRepository.getLatestByCurrency(currency);
+        return (Number(ask) * Number(price)).toString();
       default:
         return ask;
     }

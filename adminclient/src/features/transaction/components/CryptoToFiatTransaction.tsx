@@ -10,10 +10,11 @@ import {
   WithStyles,
 } from "@material-ui/core";
 import React from "react";
-import { CryptoToFiatTransactionBreakdown } from ".";
+import { TransactionBreakdown } from ".";
 import { IDropzoneProps, TextField, Typography } from "../../../common/components";
 import { styles } from "../../../common/theme";
 import { Query, Transaction } from "../../../libraries/api";
+import { IUpdateTransactionMethods } from "../interfaces/IUpdateTransactionMethods";
 import { CryptoToFiatTransactionEvidence } from "./CryptoToFiatTransactionEvidence";
 
 interface Props extends WithStyles, IDropzoneProps {
@@ -22,6 +23,7 @@ interface Props extends WithStyles, IDropzoneProps {
     Pick<Query, "getTransactionBreakdown">,
     QueryGetTransactionBreakdownArgs
   >;
+  updateTransactionMethods: IUpdateTransactionMethods;
 }
 
 const Component: React.FC<Props> = ({
@@ -30,12 +32,14 @@ const Component: React.FC<Props> = ({
   getTransactionBreakdownState,
   onAddFile,
   onUploadEnd,
+  updateTransactionMethods,
   ...props
 }) => {
+  const [amount, setAmount] = React.useState(transaction.amount);
+
   const {
     id,
     createdAt,
-    amount,
     sender,
     recipient,
     receipt: { paidAt },
@@ -51,6 +55,14 @@ const Component: React.FC<Props> = ({
     guatemala: { accountNumber, fullName, bankAccountType, bank },
   } = sender.bankAccount;
 
+  const onBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+    updateTransactionMethods.onSetAmount(amount);
+  };
+
+  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setAmount(e.target.value);
+  };
+
   return (
     <Grid container justify="space-between">
       <Grid item xs={12} lg={5}>
@@ -58,7 +70,8 @@ const Component: React.FC<Props> = ({
           <Paper>
             <TextField
               fullWidth
-              disabled
+              onChange={onChange}
+              onBlur={onBlur}
               label="Cantidad"
               variant="outlined"
               InputProps={{
@@ -79,9 +92,12 @@ const Component: React.FC<Props> = ({
             </Box>
           )}
         </Box>
-        <CryptoToFiatTransactionBreakdown
+        <TransactionBreakdown
           getTransactionBreakdownState={getTransactionBreakdownState}
+          updateTransactionMethods={updateTransactionMethods}
         />
+      </Grid>
+      <Grid item xs={12} lg={5}>
         <Box mb={3}>
           <Paper>
             <Box p={2}>
@@ -111,12 +127,11 @@ const Component: React.FC<Props> = ({
             </Box>
           </Paper>
         </Box>
-      </Grid>
-      <Grid item xs={12} lg={5}>
         <CryptoToFiatTransactionEvidence
           transaction={transaction}
           onAddFile={onAddFile}
           onUploadEnd={onUploadEnd}
+          updateTransactionMethods={updateTransactionMethods}
         />
       </Grid>
     </Grid>

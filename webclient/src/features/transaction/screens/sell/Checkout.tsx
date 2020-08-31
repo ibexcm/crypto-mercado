@@ -29,7 +29,7 @@ import { styles } from "../../../../common/theme";
 import routes from "../../../../routes";
 import { useOnDebounceTextChange } from "../../../../utils";
 import { UserRepositoryInjectionKeys } from "../../../user/InjectionKeys";
-import { CryptoToFiatTransactionBreakdown, MobileNavBar } from "../../components";
+import { MobileNavBar, TransactionBreakdown } from "../../components";
 import { TransactionRepositoryInjectionKeys } from "../../InjectionKeys";
 
 interface Props
@@ -113,7 +113,9 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
         args: { amount: input.args.amount, sender: { bankAccountID } },
       });
 
-      history.push(generatePath(routes.dashboard.sell.confirm, { id: transaction.id }));
+      history.push(
+        generatePath(routes.dashboard.transactions.details, { id: transaction.id }),
+      );
     } catch (error) {
       // TODO handle error
     }
@@ -209,6 +211,21 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
                     />
                   </Paper>
                 </Box>
+                <TransactionBreakdown
+                  getTransactionBreakdownState={getTransactionBreakdownState}
+                />
+                <Box mb={3}>
+                  <Typography align="justify" variant="caption">
+                    Al dar click en "Confirmar", comprendo que debido a las fluctuaciones
+                    del precio de Bitcoin, puedo recibir una cantidad mayor o menor a la
+                    especificada en el desglose anterior.
+                  </Typography>
+                </Box>
+                <Hidden smDown>
+                  <Box>{getActions(bankAccount)}</Box>
+                </Hidden>
+              </Grid>
+              <Grid item xs={12} lg={5}>
                 <Box mb={3}>
                   <Paper>
                     <Box p={2}>
@@ -231,21 +248,6 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
                     </Box>
                   </Paper>
                 </Box>
-              </Grid>
-              <Grid item xs={12} lg={5}>
-                <CryptoToFiatTransactionBreakdown
-                  getTransactionBreakdownState={getTransactionBreakdownState}
-                />
-                <Box mb={3}>
-                  <Typography align="justify" variant="caption">
-                    Al dar click en "Confirmar", comprendo que debido a las fluctuaciones
-                    del precio de Bitcoin, puedo recibir una cantidad mayor o menor a la
-                    especificada en el desglose anterior.
-                  </Typography>
-                </Box>
-                <Hidden smDown>
-                  <Box>{getActions(bankAccount)}</Box>
-                </Hidden>
               </Grid>
             </Grid>
           </Container>

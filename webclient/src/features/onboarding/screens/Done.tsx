@@ -19,7 +19,6 @@ const Component: React.FC<Props> = ({ classes, history, match, ...props }) => {
       <StepsSidebar />
       <Container maxWidth="xs">
         <MobileAppBar />
-        <ToolbarPadding />
         <Box
           mb={4}
           textAlign="center"
@@ -28,6 +27,7 @@ const Component: React.FC<Props> = ({ classes, history, match, ...props }) => {
           justifyContent="center"
           minHeight="85vh"
         >
+          <ToolbarPadding />
           <Typography variant="h5" mb={1}>
             ¡Todo listo!
           </Typography>

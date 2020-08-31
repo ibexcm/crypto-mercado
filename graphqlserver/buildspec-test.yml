@@ -7,12 +7,19 @@ env:
 phases:
   install:
     commands:
+      - aws ecs update-service --cluster $ECS_CLUSTER --service service-prisma-test --desired-count 1 >> out.txt
+      - npm i -g prisma
+      - npm i -g ts-node
+      - npm i -g typescript
+      - yarn
+      - yarn bootstrap
       - wget https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64
       - mv jq-linux64 jq
       - chmod +x jq
   pre_build:
     commands:
       - ADMIN_ACCOUNT_EMAIL_ADDRESS=$(echo $SECRET | ./jq -r '.ADMIN_ACCOUNT_EMAIL_ADDRESS')
+      - SENDGRID_TEMPLATE_ADMIN_HOST=$(echo $SECRET | ./jq -r '.SENDGRID_TEMPLATE_ADMIN_HOST')
       - IP_ADDRESS=$(echo $SECRET | ./jq -r '.IP_ADDRESS')
       - URL_PROTOCOL=$(echo $SECRET | ./jq -r '.URL_PROTOCOL')
       - EMAIL_FROM=$(echo $SECRET | ./jq -r '.EMAIL_FROM')
@@ -25,21 +32,11 @@ phases:
       - JWT_PUBLIC_KEY=$(echo $SECRET | ./jq -r '.JWT_PUBLIC_KEY')
       - JWT_PRIVATE_KEY=$(echo $SECRET | ./jq -r '.JWT_PRIVATE_KEY')
       - GRAPHQL_PORT=$(echo $SECRET | ./jq -r '.GRAPHQL_PORT')
-      - GRAPHQL_ENDPOINT=$(echo $SECRET | ./jq -r '.GRAPHQL_ENDPOINT')    
+      - GRAPHQL_ENDPOINT=$(echo $SECRET | ./jq -r '.GRAPHQL_ENDPOINT')
       - SHIFTM_USERNAME=$(echo $SECRET | ./jq -r '.SHIFTM_USERNAME')
       - SHIFTM_PASSWORD=$(echo $SECRET | ./jq -r '.SHIFTM_PASSWORD')
       - SHIFTM_EXCHANGE_NAME=$(echo $SECRET | ./jq -r '.SHIFTM_EXCHANGE_NAME')
       - PRISMA_SECRET=$(echo $SECRET | ./jq -r '.PRISMA_SECRET')
-  install:
-    commands:
-      - npm i -g prisma
-      - npm i -g ts-node
-      - npm i -g typescript
-      - yarn
-      - yarn bootstrap
-  pre_build:
-    commands:
-      - aws ecs update-service --cluster $ECS_CLUSTER --service service-prisma-test --desired-count 1 >> out.txt
       - yarn api:schema:generate
   build:
     commands:

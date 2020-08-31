@@ -240,6 +240,7 @@ Resources:
               - Effect: Allow
                 Resource:
                   - !Sub "${SecretARN}*"
+                  - !Sub "${SecretTestARN}*"
                 Action:
                   - secretsmanager:GetSecretValue
               - Effect: Allow
@@ -627,7 +628,9 @@ Resources:
         Webhook: true
         FilterGroups:
           - - Type: EVENT
-              Pattern: PULL_REQUEST_MERGED
+              Pattern: PULL_REQUEST_CREATED
+            - Type: EVENT
+              Pattern: PULL_REQUEST_UPDATED
             - Type: BASE_REF
               Pattern: "^refs/heads/master$"
               ExcludeMatchedPattern: false

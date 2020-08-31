@@ -3,7 +3,7 @@ import { Subscription } from "rxjs";
 import { Store } from "../../../libraries/store";
 
 const StoreKeys = {
-  authToken: "authToken",
+  adminAuthToken: "adminAuthToken",
 };
 
 export class AuthTokenRepository {
@@ -15,13 +15,13 @@ export class AuthTokenRepository {
 
   useAuthToken() {
     const [authToken, setAuthToken] = React.useState<string | undefined>(
-      this.store.get(StoreKeys.authToken),
+      this.store.get(StoreKeys.adminAuthToken),
     );
 
     let subscription: Subscription;
 
     const subscribe = () => {
-      subscription = this.store.observe(StoreKeys.authToken).subscribe(setAuthToken);
+      subscription = this.store.observe(StoreKeys.adminAuthToken).subscribe(setAuthToken);
     };
 
     React.useEffect(() => {
@@ -36,10 +36,10 @@ export class AuthTokenRepository {
   }
 
   setAuthToken(token: string, expires = 7) {
-    return this.store.set(StoreKeys.authToken, token, { expires });
+    return this.store.set(StoreKeys.adminAuthToken, token, { expires });
   }
 
   deleteAuthToken() {
-    return this.store.delete(StoreKeys.authToken);
+    return this.store.delete(StoreKeys.adminAuthToken);
   }
 }

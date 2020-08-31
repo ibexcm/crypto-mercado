@@ -14,6 +14,7 @@ import { genSalt, hash } from "bcryptjs";
 import { config } from "../../../config";
 import { ENVType } from "../../../config/models/ENVType";
 import { IEmailVerificationRepository } from "../../../libraries/EmailVerification";
+import { IEmailNotificationsRepository } from "../../../libraries/EmailVerification/interfaces/IEmailNotificationsRepository";
 import { IFileManagementRepository } from "../../../libraries/FileManagement";
 import { ISessionRepository } from "../../../libraries/Session/interfaces/ISessionRepository";
 import { ISMSVerificationRepository } from "../../../libraries/SMSVerification";
@@ -24,6 +25,7 @@ export class OnboardingRepository {
   private sessionRepository: ISessionRepository;
   private smsVerificationRepository: ISMSVerificationRepository;
   private emailVerificationRepository: IEmailVerificationRepository;
+  private emailNotificationsRepository: IEmailNotificationsRepository;
   private fileManagementRepository: IFileManagementRepository;
   private verifiedPhoneNumbers: string[];
   private verifiedEmails: string[];
@@ -34,11 +36,13 @@ export class OnboardingRepository {
     smsVerificationRepository: ISMSVerificationRepository,
     fileManagementRepository: IFileManagementRepository,
     emailVerificationRepository: IEmailVerificationRepository,
+    emailNotificationsRepository: IEmailNotificationsRepository,
   ) {
     this.db = db;
     this.sessionRepository = sessionRepository;
     this.smsVerificationRepository = smsVerificationRepository;
     this.emailVerificationRepository = emailVerificationRepository;
+    this.emailNotificationsRepository = emailNotificationsRepository;
     this.fileManagementRepository = fileManagementRepository;
     this.verifiedPhoneNumbers =
       config.get("env") !== ENVType.production
@@ -245,6 +249,19 @@ export class OnboardingRepository {
         },
       },
     });
+
+    try {
+      const [clientID] = await Promise.all<string>([
+        this.db
+          .user({ id: _user.id })
+          .account()
+          .clientID(),
+      ]);
+
+      this.emailNotificationsRepository.sendAdminCustomerOnboardingCompleteNotification({
+        clientID,
+      });
+    } catch (error) {}
 
     return await this.sessionRepository.createAuthenticationSession(_user);
   }

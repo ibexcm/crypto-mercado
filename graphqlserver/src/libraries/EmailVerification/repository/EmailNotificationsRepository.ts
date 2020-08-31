@@ -1,33 +1,143 @@
-import axios from "axios";
 import config from "../../../config";
 import { IEmailNotificationsRepository } from "../interfaces/IEmailNotificationsRepository";
+import sendgridClient from "../service/sendgridClient";
 
-const { host, from } = config.get("email");
-const { apiUrl } = config.get("sendgrid");
+const { host, from, adminHost } = config.get("email");
+const { adminAccountEmailAddress } = config.get("flags");
 
-const sendAdminKYCApproveUserNotification = async (address: string) => {
-  await axios.request({
-    method: "POST",
-    url: apiUrl,
-    data: {
-      from,
-      template_id: "",
-      personalizations: [
-        {
-          to: [
-            {
-              email: address,
-            },
-          ],
-          dynamic_template_data: {
-            sign_in_url: `${host}/iniciar-sesion`,
-          },
-        },
-      ],
-    },
-  });
+const sendAdminKYCApproveUserNotification: IEmailNotificationsRepository["sendAdminKYCApproveUserNotification"] = async (
+  address: string,
+) => {
+  try {
+    await sendgridClient.send({
+      subject: "Bienvenido a IBEX Mercado",
+      to: [{ email: address }],
+      from: {
+        email: from,
+        name: "IBEX Mercado",
+      },
+      templateId: "d-0c197c7b17f2424992e9a8e0fe1a16c6",
+      dynamicTemplateData: {
+        sign_in_url: `${host}/inicia-sesion`,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+const sendTransactionRequestNotification: IEmailNotificationsRepository["sendTransactionRequestNotification"] = async (
+  address,
+  {
+    transaction,
+    fromCurrencySymbol,
+    toCurrencySymbol,
+    clientID,
+    isFiatToCryptoTransaction,
+  },
+) => {
+  try {
+    await sendgridClient.send({
+      subject: `Nueva Transacción ${fromCurrencySymbol}:${toCurrencySymbol}`,
+      to: [{ email: address }],
+      from: {
+        email: from,
+        name: "IBEX Mercado",
+      },
+      templateId: "d-99467cfe63e84df3affde781e1049544",
+      dynamicTemplateData: {
+        tx_dashboard_url: `${host}/dashboard/tx/${transaction.id}`,
+        amount: transaction.amount,
+        fromCurrencySymbol,
+        toCurrencySymbol,
+        clientID,
+        isFiatToCryptoTransaction,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+const sendTransactionSuccessNotification: IEmailNotificationsRepository["sendTransactionSuccessNotification"] = async (
+  address,
+  {
+    transaction,
+    fromCurrencySymbol,
+    toCurrencySymbol,
+    clientID,
+    isFiatToCryptoTransaction,
+  },
+) => {
+  try {
+    await sendgridClient.send({
+      subject: `Transacción Exitosa ${fromCurrencySymbol}:${toCurrencySymbol}`,
+      to: [{ email: address }],
+      from: {
+        email: from,
+        name: "IBEX Mercado",
+      },
+      templateId: "d-8570d73cf42449b7b366b955be3a22e8",
+      dynamicTemplateData: {
+        tx_dashboard_url: `${host}/dashboard/tx/${transaction.id}`,
+        amount: transaction.amount,
+        fromCurrencySymbol,
+        toCurrencySymbol,
+        clientID,
+        isFiatToCryptoTransaction,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+const sendAdminTransactionEvidenceSubmittedNotification: IEmailNotificationsRepository["sendAdminTransactionEvidenceSubmittedNotification"] = async ({
+  transaction,
+  clientID,
+}) => {
+  try {
+    await sendgridClient.send({
+      to: [{ email: adminAccountEmailAddress }],
+      from: {
+        email: from,
+        name: "IBEX Mercado",
+      },
+      templateId: "d-c4a752e4b64a4be2bc6b217d324592fb",
+      dynamicTemplateData: {
+        tx_url: `${adminHost}/tx/${transaction.id}`,
+        clientID,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+const sendAdminCustomerOnboardingCompleteNotification: IEmailNotificationsRepository["sendAdminCustomerOnboardingCompleteNotification"] = async ({
+  clientID,
+}) => {
+  try {
+    await sendgridClient.send({
+      to: [{ email: adminAccountEmailAddress }],
+      from: {
+        email: from,
+        name: "IBEX Mercado",
+      },
+      templateId: "d-0f746480160240c68f839c3653ccc942",
+      dynamicTemplateData: {
+        clientID,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+  }
 };
 
 export const EmailNotificationsRepository: IEmailNotificationsRepository = {
   sendAdminKYCApproveUserNotification,
+  sendTransactionRequestNotification,
+  sendTransactionSuccessNotification,
+  sendAdminTransactionEvidenceSubmittedNotification,
+  sendAdminCustomerOnboardingCompleteNotification,
 };

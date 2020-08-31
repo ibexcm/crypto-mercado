@@ -9,6 +9,11 @@ export async function createTransaction(
   { dependencies, request }: IContext,
   info,
 ): Promise<Transaction> {
-  const TransactionRepository = dependencies.provide(TransactionRepositoryInjectionKey);
-  return await TransactionRepository.createTransaction(args, request.auth.user);
+  try {
+    const TransactionRepository = dependencies.provide(TransactionRepositoryInjectionKey);
+
+    return await TransactionRepository.createTransaction(args, request.auth.user);
+  } catch (error) {
+    console.log(error);
+  }
 }

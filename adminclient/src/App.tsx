@@ -4,6 +4,7 @@ import DependencyContext from "./common/contexts/DependencyContext";
 import { GraphQL } from "./features/app/components";
 import { Authenticate } from "./features/authentication/screens";
 import { Approval, Evaluate } from "./features/kyc/screens";
+import { ExchangeRateSettings } from "./features/settings/screens";
 import {
   CryptoToFiatTransactionsIndex,
   FiatToCryptoTransactionsIndex,
@@ -34,6 +35,13 @@ const App: React.FC = () => {
             component={FiatToCryptoTransactionsIndex}
           />
           <Route path={routes.transaction.details} exact component={TransactionDetails} />
+
+          {/* Settings */}
+          <Route
+            path={routes.settings.exchangeRate}
+            exact
+            component={ExchangeRateSettings}
+          />
         </Router>
       </GraphQL>
     </DependencyContext.Provider>

@@ -11,7 +11,9 @@ npm-debug.*
 web-build/
 web-report/
 .env
+.env-prod
 .env-development
+.env-staging
 .env-test
 .firebase
 dist/

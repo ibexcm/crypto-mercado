@@ -1,6 +1,7 @@
 import { types as bankTypes } from "../../features/Bank/resolvers";
 import { types as bankAccountTypes } from "../../features/BankAccount/resolvers";
 import { types as cryptoAccountTypes } from "../../features/CryptoAccount/resolvers";
+import { types as exchangeRateTypes } from "../../features/ExchangeRate/resolvers";
 import { types as recipientTypes } from "../../features/Recipient/resolvers";
 import { types as senderTypes } from "../../features/Sender/resolvers";
 import { types as transactionTypes } from "../../features/Transaction/resolvers";
@@ -16,4 +17,5 @@ export const Type = {
   ...transactionReceiptTypes,
   ...bankAccountTypes,
   ...cryptoAccountTypes,
+  ...exchangeRateTypes,
 };

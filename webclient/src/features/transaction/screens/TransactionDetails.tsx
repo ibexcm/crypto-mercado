@@ -22,6 +22,7 @@ import {
   CryptoToFiatTransaction,
   FiatToCryptoTransaction,
   MobileNavBar,
+  NavBar,
 } from "../components";
 import { TransactionRepositoryInjectionKeys } from "../InjectionKeys";
 
@@ -39,13 +40,15 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
 
   const [error, setError] = React.useState<Error | null>(null);
 
+  const transactionID = match.params.id;
+
   const {
     data: getTransactionQueryData,
     loading: isTransactionQueryLoading,
     error: getTransactionQueryError,
     refetch: refetchGetTransactionQuery,
   } = TransactionRepository.useGetTransactionQuery({
-    args: { transactionID: match.params.id },
+    args: { transactionID },
   });
 
   const [
@@ -66,6 +69,7 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
 
     const query: QueryGetTransactionBreakdownArgs = {
       args: {
+        transactionID,
         amount,
         sender: {
           cryptoAccountID: null,
@@ -163,8 +167,9 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
   return (
     <Box className={classes.drawerContainer} position="relative">
       <StepsSidebar variant="primary"></StepsSidebar>
-      <Container disableGutters maxWidth={false}>
+      <Container disableGutters maxWidth={false} style={{ position: "relative" }}>
         <MobileNavBar />
+        <NavBar />
         <Box className={classes.topContainer}>
           <Container style={{ minHeight: "auto" }}>
             <ToolbarPadding />

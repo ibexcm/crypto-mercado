@@ -1,4 +1,4 @@
-import { prisma as db } from "@ibexcm/database";
+import { prisma as db, Transaction } from "@ibexcm/database";
 import { TestDependencies } from "@ibexcm/libraries/di";
 import { CurrencySymbol } from "@ibexcm/libraries/models/currency";
 import { config } from "../../../../config";
@@ -117,6 +117,20 @@ describe("setTransactionReceiptEvidence", () => {
 
     expect(bitcoinReceiptEvidence.transactionHash).toEqual(transactionHash);
     expect(transactionReceiptEvidenceTransaction.id).toEqual(transactionID);
+
+    const [transaction, clientID] = await Promise.all<Transaction, string>([
+      db.transaction({ id: transactionID }),
+      db
+        .transaction({ id: transactionID })
+        .sender()
+        .user()
+        .account()
+        .clientID(),
+    ]);
+
+    expect(
+      emailNotificationsRepository.sendAdminTransactionEvidenceSubmittedNotification,
+    ).toHaveBeenCalledWith({ transaction, clientID });
   });
 
   test("sets transaction receipt bankReceipt evidence", async () => {
@@ -196,6 +210,11 @@ describe("setTransactionReceiptEvidence", () => {
 
     expect(bankReceiptEvidence.fileHash).toEqual(fileHash);
     expect(transactionReceiptEvidenceTransaction.id).toEqual(transactionID);
+
+    jest.clearAllMocks();
+    expect(
+      emailNotificationsRepository.sendAdminTransactionEvidenceSubmittedNotification,
+    ).toHaveBeenCalledTimes(0);
   });
 
   test("invalidTransactionUser", async () => {
