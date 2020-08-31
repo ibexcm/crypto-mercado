@@ -6,7 +6,7 @@ import { ISMSAccountRecoveryRepository } from "../interfaces";
 const { aid, token } = config.get("twilio");
 const { messages } = Twilio(aid, token);
 
-const sendRecoveryPasswordLink: ISMSAccountRecoveryRepository["sendRecoveryPasswordLink"] = async (
+const sendRecoveryLink: ISMSAccountRecoveryRepository["sendRecoveryLink"] = async (
   to: string,
   from: string,
   host: string,
@@ -33,5 +33,5 @@ const sendRecoveryPasswordLink: ISMSAccountRecoveryRepository["sendRecoveryPassw
 };
 
 export const SMSAccountRecoveryRepository: ISMSAccountRecoveryRepository = {
-  sendRecoveryPasswordLink,
+  sendRecoveryLink,
 };
