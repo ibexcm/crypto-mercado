@@ -19,6 +19,7 @@ import { TransactionDetails, TransactionsIndex } from "./features/transaction/sc
 import { Checkout as BuyCheckout } from "./features/transaction/screens/buy";
 import { Checkout as SellCheckout } from "./features/transaction/screens/sell";
 import { routes } from "./routes";
+import { NotFound } from "./features/not-found/screens/NotFound";
 
 const App: React.FC = () => {
   const dependencies = React.useContext(DependencyContext);
@@ -88,6 +89,9 @@ const App: React.FC = () => {
               exact
               component={BuyCheckout}
             />
+
+            {/*NOT FOUND */}
+            <Route component={NotFound} />
           </Switch>
         </Router>
       </GraphQL>
