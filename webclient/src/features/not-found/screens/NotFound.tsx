@@ -19,7 +19,7 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
         <Box>
           <ToolbarPadding />
           <Box>
-            <Typography variant="h5" mb={2}>
+            <Typography variant="h5" mb={4}>
               Lo sentimos, No pudimos Encontrar la Página.
             </Typography>
             <img src="/svg/not-found.svg" alt="Not Found Image" />
