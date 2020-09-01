@@ -22,12 +22,12 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
             flexDirection="column"
             display="flex"
             justifyContent="center"
-            py={15}
+            py={18}
           >
             <Box className={classes.notFoundHeader}>
               <Typography variant="h1">
                 Lo sentimos,{" "}
-                <Typography component="span">No pudimos encontrar la página.</Typography>
+                <Typography component="span">No podemos encontrar la página.</Typography>
               </Typography>
             </Box>
             <Box className={classes.piggyBank} my={4}>
