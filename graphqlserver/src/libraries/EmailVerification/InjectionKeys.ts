@@ -1,10 +1,15 @@
 import { InjectionKey, InjectionKeyScope } from "@ibexcm/libraries/di";
-import { IEmailAccountRecoveryRepository } from "./interfaces";
-import { IEmailNotificationsRepository } from "./interfaces";
-import { IEmailVerificationRepository } from "./interfaces";
-import { EmailAccountRecoveryRepository } from "./repository";
-import { EmailNotificationsRepository } from "./repository";
-import { EmailVerificationRepository } from "./repository";
+import {
+  IEmailAccountRecoveryRepository,
+  IEmailNotificationsRepository,
+  IEmailVerificationRepository,
+} from "./interfaces";
+
+import {
+  EmailAccountRecoveryRepository,
+  EmailNotificationsRepository,
+  EmailVerificationRepository,
+} from "./repository";
 
 export const emailVerificationRepositoryInjectionKey: InjectionKey<IEmailVerificationRepository> = {
   name: "emailVerificationRepository",
