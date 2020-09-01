@@ -31,7 +31,7 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
               </Typography>
             </Box>
             <Box className={classes.piggyBank} my={4}>
-              <img src="/svg/not-found.svg" width="50%" height="50%" />
+              <img src="/svg/not-found.svg" width="auto" height="auto" />
             </Box>
           </Box>
         </Container>
