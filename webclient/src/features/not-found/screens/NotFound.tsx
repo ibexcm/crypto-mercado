@@ -1,8 +1,8 @@
 import React from "react";
 import DependencyContext from "../../../common/contexts/DependencyContext";
 import { styles } from "../../../common/theme";
+import { Typography } from "../../../common/components";
 import { MobileNavBar, NavBar } from "../components";
-import { ToolbarPadding, Typography } from "../../../common/components";
 import { RouteComponentProps, StaticContext } from "react-router";
 import { Box, Container, Theme, withStyles, WithStyles } from "@material-ui/core";
 
@@ -12,20 +12,30 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
   const dependencies = React.useContext(DependencyContext);
 
   return (
-    <Box className={classes.homeContainer}>
-      <MobileNavBar />
-      <NavBar />
-      <Container maxWidth="xs">
-        <Box>
-          <ToolbarPadding />
-          <Box>
-            <Typography variant="h5" mb={4}>
-              Lo sentimos, No pudimos Encontrar la Página.
-            </Typography>
-            <img src="/svg/not-found.svg" alt="Not Found Image" />
+    <Box>
+      <Box className={classes.homeContainer}>
+        <Container maxWidth="lg" className={classes.introContainer}>
+          <MobileNavBar />
+          <NavBar />
+          <Box
+            minHeight="70vh"
+            flexDirection="column"
+            display="flex"
+            justifyContent="center"
+            py={15}
+          >
+            <Box className={classes.notFoundHeader}>
+              <Typography variant="h1">
+                Lo sentimos,{" "}
+                <Typography component="span">No pudimos encontrar la página.</Typography>
+              </Typography>
+            </Box>
+            <Box className={classes.piggyBank} my={4}>
+              <img src="/svg/not-found.svg" width="50%" height="50%" />
+            </Box>
           </Box>
-        </Box>
-      </Container>
+        </Container>
+      </Box>
     </Box>
   );
 };
@@ -33,6 +43,28 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
 export const NotFound = withStyles((theme: Theme) => ({
   ...styles(theme),
   homeContainer: {
-    backgroundColor: "white",
+    backgroundColor: "#f7f7f7",
+  },
+  notFoundHeader: {
+    textAlign: "center",
+    color: "#282929",
+    "& h1": {
+      fontSize: theme.typography.h3.fontSize,
+      [theme.breakpoints.up("sm")]: {
+        fontSize: theme.typography.h3.fontSize,
+      },
+    },
+    "& span": {
+      display: "block",
+      fontSize: theme.typography.h3.fontSize,
+      [theme.breakpoints.up("sm")]: {
+        fontSize: theme.typography.h3.fontSize,
+      },
+    },
+  },
+  piggyBank: {
+    display: "flex",
+    justifyContent: "center",
+    flexDirection: "row",
   },
 }))(Component);
