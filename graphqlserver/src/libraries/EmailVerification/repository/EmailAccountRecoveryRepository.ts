@@ -11,7 +11,7 @@ const sendRecoveryLink: IEmailAccountRecoveryRepository["sendRecoveryLink"] = as
 ) => {
   try {
     await sendgridClient.send({
-      subject: "Restablecimiento de Contraseña",
+      subject: "Recupera tu Contraseña",
       to: [{ email: address }],
       from: {
         email: from,
