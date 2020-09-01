@@ -6,7 +6,7 @@ export const routes = {
   },
   recovery: {
     sendPasswordRecoveryLink: "/recuperar-cuenta",
-    resetPassword: "/restablecer-password",
+    resetPassword: "/restablecer-contrasena",
   },
   onboarding: {
     sendPhoneNumberVerificationCode: "/kyc/ingresa-tu-telefono",
