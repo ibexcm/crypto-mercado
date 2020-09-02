@@ -47,7 +47,7 @@ export const NotFound = withStyles((theme: Theme) => ({
   },
   notFoundHeader: {
     textAlign: "center",
-    color: theme.palette.black,
+    color: "black",
     "& h1": {
       fontSize: theme.typography.h3.fontSize,
       [theme.breakpoints.up("sm")]: {
