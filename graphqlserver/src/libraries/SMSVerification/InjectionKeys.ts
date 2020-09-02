@@ -1,6 +1,6 @@
 import { InjectionKey, InjectionKeyScope } from "@ibexcm/libraries/di";
-import { SMSVerificationRepository, SMSAccountRecoveryRepository } from "./repository";
-import { ISMSVerificationRepository, ISMSAccountRecoveryRepository } from "./interfaces";
+import { ISMSAccountRecoveryRepository, ISMSVerificationRepository } from "./interfaces";
+import { SMSAccountRecoveryRepository, SMSVerificationRepository } from "./repository";
 
 export const smsVerificationRepositoryInjectionKey: InjectionKey<ISMSVerificationRepository> = {
   name: "smsVerificationRepository",
