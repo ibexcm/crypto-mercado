@@ -45,7 +45,7 @@ type Mutation {
 
   #ACCOUNT RECOVERY
   sendSMSAccountRecovery(args: SendSMSAccountRecoveryInput!): Boolean!
-  sendEmailAccountRecovery(args: SendEmaillAccountRecoveryInput!): Boolean!
+  sendEmailAccountRecovery(args: SendEmailAccountRecoveryInput!): Boolean!
   resetPassword(args: SetPasswordInput!): Session!
 
   # ADMIN
