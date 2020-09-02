@@ -1,10 +1,10 @@
+import { Box, Container, Theme, withStyles, WithStyles } from "@material-ui/core";
 import React from "react";
+import { RouteComponentProps, StaticContext } from "react-router";
+import { Typography } from "../../../common/components";
 import DependencyContext from "../../../common/contexts/DependencyContext";
 import { styles } from "../../../common/theme";
-import { Typography } from "../../../common/components";
 import { MobileNavBar, NavBar } from "../components";
-import { RouteComponentProps, StaticContext } from "react-router";
-import { Box, Container, Theme, withStyles, WithStyles } from "@material-ui/core";
 
 interface Props extends WithStyles, RouteComponentProps<{}, StaticContext> {}
 
@@ -43,11 +43,11 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
 export const NotFound = withStyles((theme: Theme) => ({
   ...styles(theme),
   homeContainer: {
-    backgroundColor: "#f7f7f7",
+    backgroundColor: theme.palette.grey[200],
   },
   notFoundHeader: {
     textAlign: "center",
-    color: "#282929",
+    color: theme.palette.black,
     "& h1": {
       fontSize: theme.typography.h3.fontSize,
       [theme.breakpoints.up("sm")]: {
