@@ -284,3 +284,22 @@ export const isRecoveryNumberAvailable = rule({
 
   return true;
 });
+
+export const isRecoveryTimeExpired = rule({
+  cache: true,
+})(
+  async (
+    parent,
+    { args: { password } },
+    {
+      dependencies,
+      request: {
+        headers: { cookie },
+      },
+    }: IContext,
+    info,
+  ) => {
+    //TODO
+    return true;
+  },
+);
