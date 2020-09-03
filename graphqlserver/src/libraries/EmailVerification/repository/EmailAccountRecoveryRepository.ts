@@ -10,7 +10,7 @@ const sendRecoveryLink: IEmailAccountRecoveryRepository["sendRecoveryLink"] = as
   { token },
 ) => {
   try {
-    await sendgridClient.send({
+    const [sent] = await sendgridClient.send({
       subject: "Recupera tu Contraseña",
       to: [{ email: address }],
       from: {
@@ -22,6 +22,8 @@ const sendRecoveryLink: IEmailAccountRecoveryRepository["sendRecoveryLink"] = as
         reset_password_url: `${host}/restablecer-contrasena?t=${token}`,
       },
     });
+
+    return sent.statusCode === 200;
   } catch (error) {
     switch (error.code) {
       case 403:
