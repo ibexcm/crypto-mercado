@@ -1,7 +1,7 @@
 import { MutationSendSmsAccountRecoveryArgs } from "@ibexcm/libraries/api";
 import { IContext } from "../../../server/interfaces/IContext";
 import { accountRecoveryInjectioKey } from "../InjectionKeys";
-import { createCookie } from "../util";
+import { createSecureCookieOptions } from "../util";
 
 export async function sendSMSAccountRecovery(
   parent,
@@ -12,9 +12,9 @@ export async function sendSMSAccountRecovery(
   try {
     const accountRecoveryRepository = dependencies.provide(accountRecoveryInjectioKey);
     const { token, smsSent } = await accountRecoveryRepository.sendSMSAccountRecovery(args);
-    const cookieOptions = await createCookie();
+    const cookieOptions = await createSecureCookieOptions();
 
-    response.cookie("auth", token, cookieOptions);
+    response.cookie("recovery", token, cookieOptions);
     return smsSent;
   } catch (error) {}
 }

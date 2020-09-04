@@ -32,6 +32,11 @@ export const permissions = shield({
     uploadGovernmentID: rules.isUser,
     setBankAccount: rules.isUser,
 
+    //ACCOUNT RECOVERY
+    sendSMSAccountRecovery: rules.isRecoveryPhoneNumberAvailable,
+    sendEmailAccountRecovery: rules.isRecoveryEmailAvailable,
+    resetPassword: rules.isRecoveryTimeExpired,
+
     // TRANSACTION
     createTransaction: and(rules.isUser, rules.isKYCApproved),
     setTransactionReceiptEvidence: and(rules.isUser, rules.isTransactionUser),

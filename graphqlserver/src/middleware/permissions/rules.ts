@@ -12,6 +12,7 @@ import {
 } from "@ibexcm/libraries/api";
 import { compare } from "bcryptjs";
 import { rule } from "graphql-shield";
+import { AccountRecoveryError } from "../../features/AccountRecovery/errors/AccountRecoveryError";
 import { AuthenticationError } from "../../features/Authentication/errors/AuthenticationError";
 import { OnboardingError } from "../../features/Onboarding/errors/OnboardingError";
 import { TransactionError } from "../../features/Transaction/errors/TransactionError";
@@ -263,13 +264,13 @@ export const isRecoveryEmailAvailable = rule({
     .user();
 
   if (!Boolean(user)) {
-    return false;
+    return AccountRecoveryError.unregisteredEmailError;
   }
 
   return true;
 });
 
-export const isRecoveryNumberAvailable = rule({
+export const isRecoveryPhoneNumberAvailable = rule({
   cache: true,
 })(async (parent, { args: { number } }, { dependencies }: IContext, info) => {
   const db = dependencies.provide(dbInjectionKey);
@@ -279,7 +280,7 @@ export const isRecoveryNumberAvailable = rule({
     .user();
 
   if (!Boolean(user)) {
-    return false;
+    return AccountRecoveryError.unregisteredPhoneNumber;
   }
 
   return true;
@@ -291,15 +292,13 @@ export const isRecoveryTimeExpired = rule({
   async (
     parent,
     { args: { password } },
-    {
-      dependencies,
-      request: {
-        headers: { cookie },
-      },
-    }: IContext,
+    { dependencies, request: { cookies } }: IContext,
     info,
   ) => {
-    //TODO
+    if (!Boolean(cookies.recovery)) {
+      return AccountRecoveryError.unauthorizedError;
+    }
+
     return true;
   },
 );
