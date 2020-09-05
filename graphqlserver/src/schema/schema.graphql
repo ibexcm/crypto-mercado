@@ -10,6 +10,9 @@ type Query {
   getTransaction(args: GetTransactionInput!): Transaction!
   getTransactionBreakdown(args: GetTransactionBreakdownInput!): TransactionBreakdown!
 
+  # ACCOUNT RECOVERY
+  recoverAccount(args: recoverAccountInput!): Session!
+
   # ADMIN
   getAdminBankAccounts: [BankAccount!]!
 
@@ -44,8 +47,6 @@ type Mutation {
   createBitcoinAccount(args: CreateBitcoinAccountInput!): Boolean!
 
   #ACCOUNT RECOVERY
-  sendSMSAccountRecovery(args: SendSMSAccountRecoveryInput!): Boolean!
-  sendEmailAccountRecovery(args: SendEmailAccountRecoveryInput!): Boolean!
   resetPassword(args: SetPasswordInput!): Session!
 
   # ADMIN
@@ -168,10 +169,15 @@ input AdminSettingsCreateExchangeRateInput {
   price: String!
 }
 
-input SendSMSAccountRecoveryInput {
+input recoverAccountInput {
+  number: recoverAccountSmsInput
+  address: recoverAccountEmailInput
+}
+
+input recoverAccountSmsInput {
   number: String!
 }
 
-input SendEmailAccountRecoveryInput {
+input recoverAccountEmailInput {
   address: String!
 }
