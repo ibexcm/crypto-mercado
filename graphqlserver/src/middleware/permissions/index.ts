@@ -1,4 +1,4 @@
-import { and, or, not, shield } from "graphql-shield";
+import { and, not, or, shield } from "graphql-shield";
 import * as rules from "./rules";
 
 export const permissions = shield({
@@ -35,7 +35,7 @@ export const permissions = shield({
     setBankAccount: rules.isUser,
 
     //ACCOUNT RECOVERY
-    resetPassword: and(rules.isUser, rules.isPasswordResetAuthorized),
+    resetPassword: rules.isPasswordResetAuthorized,
 
     // TRANSACTION
     createTransaction: and(rules.isUser, rules.isKYCApproved),
