@@ -11,13 +11,11 @@ const host =
 
 const sendRecoveryLink: ISMSAccountRecoveryRepository["sendRecoveryLink"] = async (
   to: string,
-  from: string,
   { token },
 ) => {
   try {
     const { status } = await messages.create({
       to,
-      from,
       body: `Recupera tu contraseña con este enlace: ${host}/restablecer-contrasena?t=${token}`,
     });
 
