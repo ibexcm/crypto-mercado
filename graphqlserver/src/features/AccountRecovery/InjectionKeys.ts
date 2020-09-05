@@ -1,7 +1,8 @@
 import { InjectionKey, InjectionKeyScope } from "@ibexcm/libraries/di";
 import { dbInjectionKey } from "../../InjectionKeys";
-import { sessionRepositoryInjectionKey } from "../../libraries/Session";
+import { cookiesGenRepositoryInjectionKey } from "../../libraries/Cookies";
 import { emailAccountRecoveryRepositoryInjectionKey } from "../../libraries/EmailVerification";
+import { sessionRepositoryInjectionKey } from "../../libraries/Session";
 import { smsAccountRecoveryRepositoryInjectionKey } from "../../libraries/SMSVerification";
 import { AccountRecoveryRepository } from "./repositories/AccountRecoveryRepository";
 
@@ -11,6 +12,7 @@ export const accountRecoveryInjectioKey: InjectionKey<AccountRecoveryRepository>
   closure: dependencies => {
     const db = dependencies.provide(dbInjectionKey);
     const sessionRepository = dependencies.provide(sessionRepositoryInjectionKey);
+    const cookiesGenRepository = dependencies.provide(cookiesGenRepositoryInjectionKey);
     const emailAccountRecoveryRepository = dependencies.provide(
       emailAccountRecoveryRepositoryInjectionKey,
     );
@@ -21,6 +23,7 @@ export const accountRecoveryInjectioKey: InjectionKey<AccountRecoveryRepository>
     return new AccountRecoveryRepository(
       db,
       sessionRepository,
+      cookiesGenRepository,
       emailAccountRecoveryRepository,
       smsAccountRecoveryRepository,
     );
