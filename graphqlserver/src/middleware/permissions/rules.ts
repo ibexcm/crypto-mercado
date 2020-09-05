@@ -254,51 +254,15 @@ export const isEmailAvailable = rule({ cache: true })(
   },
 );
 
-export const isRecoveryEmailAvailable = rule({
+export const isPasswordResetAuthorized = rule({
   cache: true,
-})(async (parent, { args: { address } }, { dependencies }: IContext, info) => {
+})(async (parent, args, { dependencies, request: { cookies } }: IContext, info) => {
   const db = dependencies.provide(dbInjectionKey);
-  const user = await db
-    .email({ address })
-    .contact()
-    .user();
+  const usr = await db.$exists.user({ id: cookies.authToken.user.id });
 
-  if (!Boolean(user)) {
-    return AccountRecoveryError.unregisteredEmailError;
+  if (!Boolean(cookies.authToken) || !Boolean(usr)) {
+    return AccountRecoveryError.unauthorizedError;
   }
 
   return true;
 });
-
-export const isRecoveryPhoneNumberAvailable = rule({
-  cache: true,
-})(async (parent, { args: { number } }, { dependencies }: IContext, info) => {
-  const db = dependencies.provide(dbInjectionKey);
-  const user = await db
-    .phoneNumber({ number })
-    .contact()
-    .user();
-
-  if (!Boolean(user)) {
-    return AccountRecoveryError.unregisteredPhoneNumber;
-  }
-
-  return true;
-});
-
-export const isRecoveryTimeExpired = rule({
-  cache: true,
-})(
-  async (
-    parent,
-    { args: { password } },
-    { dependencies, request: { cookies } }: IContext,
-    info,
-  ) => {
-    if (!Boolean(cookies.recovery)) {
-      return AccountRecoveryError.unauthorizedError;
-    }
-
-    return true;
-  },
-);
