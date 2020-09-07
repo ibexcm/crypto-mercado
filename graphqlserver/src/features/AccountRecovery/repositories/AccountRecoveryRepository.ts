@@ -55,22 +55,21 @@ export class AccountRecoveryRepository {
         .user();
     }
 
-    const { token, expiresAt } = await this.sessionRepository.createAccountRecoverySession(
-      user,
-    );
+    const auth = await this.sessionRepository.createAccountRecoverySession(user);
 
     if (Boolean(address))
-      await this.emailAccountRecoveryRepository.sendRecoveryLink(address, { token });
+      await this.emailAccountRecoveryRepository.sendRecoveryLink(address, {
+        token: auth.token,
+      });
     else if (Boolean(number))
-      await this.smsAccountRecoveryRepository.sendRecoveryLink(number, { token });
+      await this.smsAccountRecoveryRepository.sendRecoveryLink(number, {
+        token: auth.token,
+      });
 
-    const cookieValues = await this.cookiesGenRepository.createCookie(token);
+    const cookieValues = await this.cookiesGenRepository.createCookie(auth.token);
     response.cookie(...cookieValues);
 
-    return {
-      token,
-      expiresAt,
-    };
+    return auth;
   }
 
   async resetPassword(
