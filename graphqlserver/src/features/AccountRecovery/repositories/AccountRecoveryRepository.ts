@@ -1,5 +1,9 @@
 import { Prisma, User } from "@ibexcm/database";
-import { MutationResetPasswordArgs, QueryRecoverAccountArgs } from "@ibexcm/libraries/api";
+import {
+  MutationResetPasswordArgs,
+  QueryRecoverAccountArgs,
+  Session,
+} from "@ibexcm/libraries/api";
 import { genSalt, hash } from "bcryptjs";
 import { ICookiesGenRepository } from "../../../libraries/Cookies";
 import { IEmailAccountRecoveryRepository } from "../../../libraries/EmailVerification";
@@ -36,7 +40,7 @@ export class AccountRecoveryRepository {
       },
     }: QueryRecoverAccountArgs,
     response: IContext["response"],
-  ) {
+  ): Promise<Session> {
     let user;
 
     if (Boolean(address)) {
@@ -69,7 +73,10 @@ export class AccountRecoveryRepository {
     };
   }
 
-  async resetPassword({ args: { password } }: MutationResetPasswordArgs, user: User) {
+  async resetPassword(
+    { args: { password } }: MutationResetPasswordArgs,
+    user: User,
+  ): Promise<Session> {
     const _user = await this.db.updateUser({
       where: {
         id: user.id,
