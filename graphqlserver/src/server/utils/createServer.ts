@@ -1,7 +1,6 @@
 import { binding } from "@ibexcm/database";
 import { IDependencies } from "@ibexcm/libraries/di";
 import bodyparser from "body-parser";
-import cookieParser from "cookie-parser";
 import { GraphQLServer, PubSub } from "graphql-yoga";
 import { ContextParameters } from "graphql-yoga/dist/types";
 import { Prisma as PrismaBinding } from "prisma-binding";
@@ -29,7 +28,6 @@ export const createServer = (dependencies: IDependencies) => {
   server.express.use(jwtRepository.auth.optional);
   server.express.use(bodyparser.urlencoded({ extended: false }));
   server.express.use(bodyparser.json());
-  server.express.use(cookieParser());
 
   return server;
 };
