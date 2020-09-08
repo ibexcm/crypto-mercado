@@ -5,80 +5,78 @@ import {
   Session,
 } from "@ibexcm/libraries/api";
 import { genSalt, hash } from "bcryptjs";
-import { ICookiesGenRepository } from "../../../libraries/Cookies";
 import { IEmailAccountRecoveryRepository } from "../../../libraries/EmailVerification";
 import { ISessionRepository } from "../../../libraries/Session";
 import { ISMSAccountRecoveryRepository } from "../../../libraries/SMSVerification";
-import { IContext } from "../../../server/interfaces/IContext";
 
 export class AccountRecoveryRepository {
   private db: Prisma;
   private sessionRepository: ISessionRepository;
-  private cookiesGenRepository: ICookiesGenRepository;
   private emailAccountRecoveryRepository: IEmailAccountRecoveryRepository;
   private smsAccountRecoveryRepository: ISMSAccountRecoveryRepository;
 
   constructor(
     db: Prisma,
     sessionRepository: ISessionRepository,
-    cookiesGenRepository: ICookiesGenRepository,
     emailAccountRecoveryRepository: IEmailAccountRecoveryRepository,
     smsAccountRecoveryRepository: ISMSAccountRecoveryRepository,
   ) {
     this.db = db;
     this.sessionRepository = sessionRepository;
-    this.cookiesGenRepository = cookiesGenRepository;
     this.emailAccountRecoveryRepository = emailAccountRecoveryRepository;
     this.smsAccountRecoveryRepository = smsAccountRecoveryRepository;
   }
 
-  async recoverAccount(
-    {
-      args: {
-        address: { address },
-        number: { number },
-      },
-    }: QueryRecoverAccountArgs,
-    response: IContext["response"],
-  ): Promise<Session> {
-    let user;
+  private async sendEmailAccountRecoveryLink(address: string) {
+    const user = await this.db
+      .email({ address })
+      .contact()
+      .user();
 
+    const session = await this.sessionRepository.createAccountRecoverySession(user);
+
+    await this.emailAccountRecoveryRepository.sendRecoveryLink(address, {
+      token: session.token,
+    });
+
+    return session;
+  }
+
+  private async sendSMSAccountRecoveryLink(number: string) {
+    const user = await this.db
+      .phoneNumber({ number })
+      .contact()
+      .user();
+
+    const session = await this.sessionRepository.createAccountRecoverySession(user);
+
+    await this.smsAccountRecoveryRepository.sendRecoveryLink(number, {
+      token: session.token,
+    });
+
+    return session;
+  }
+
+  async recoverAccount({
+    args: {
+      emailRecovery: { address },
+      smsRecovery: { number },
+    },
+  }: QueryRecoverAccountArgs): Promise<Session> {
     if (Boolean(address)) {
-      user = await this.db
-        .email({ address })
-        .contact()
-        .user();
-    } else if (Boolean(number)) {
-      user = await this.db
-        .phoneNumber({ number })
-        .contact()
-        .user();
+      return this.sendEmailAccountRecoveryLink(address);
     }
 
-    const auth = await this.sessionRepository.createAccountRecoverySession(user);
-
-    if (Boolean(address))
-      await this.emailAccountRecoveryRepository.sendRecoveryLink(address, {
-        token: auth.token,
-      });
-    else if (Boolean(number))
-      await this.smsAccountRecoveryRepository.sendRecoveryLink(number, {
-        token: auth.token,
-      });
-
-    const cookieValues = await this.cookiesGenRepository.createCookie(auth.token);
-    response.cookie(...cookieValues);
-
-    return auth;
+    return this.sendSMSAccountRecoveryLink(number);
   }
 
   async resetPassword(
     { args: { password } }: MutationResetPasswordArgs,
-    user: User,
+    usr: User,
   ): Promise<Session> {
-    const _user = await this.db.updateUser({
+    const user = await this.db.updateUser({
       where: {
-        id: user.id,
+        id: usr.id,
       },
       data: {
         account: {
@@ -88,6 +86,7 @@ export class AccountRecoveryRepository {
         },
       },
     });
-    return await this.sessionRepository.createAuthenticationSession(_user);
+
+    return await this.sessionRepository.createAuthenticationSession(user);
   }
 }

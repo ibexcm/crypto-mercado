@@ -4,11 +4,11 @@ import { accountRecoveryInjectioKey } from "../InjectionKeys";
 export async function recoverAccount(
   parent,
   args: QueryRecoverAccountArgs,
-  { dependencies, response }: IContext,
+  { dependencies }: IContext,
   info,
 ) {
   try {
     const accountRecoveryRepository = dependencies.provide(accountRecoveryInjectioKey);
-    return await accountRecoveryRepository.recoverAccount(args, response);
+    return await accountRecoveryRepository.recoverAccount(args);
   } catch (error) {}
 }

@@ -256,11 +256,12 @@ export const isEmailAvailable = rule({ cache: true })(
 
 export const isPasswordResetAuthorized = rule({
   cache: true,
-})(async (parent, args, { dependencies, request: { cookies } }: IContext, info) => {
+})(async (parent, args, { dependencies, request: { query } }: IContext, info) => {
   const db = dependencies.provide(dbInjectionKey);
-  const usr = await db.$exists.user({ id: cookies.authToken.user.id });
 
-  if (!Boolean(cookies.authToken) || !Boolean(usr)) {
+  const user = await db.$exists.user({ id: query.authToken.user.id });
+
+  if (!Boolean(query.authToken) || !Boolean(user)) {
     return AccountRecoveryError.unauthorizedError;
   }
 

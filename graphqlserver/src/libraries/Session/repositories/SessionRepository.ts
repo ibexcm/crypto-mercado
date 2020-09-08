@@ -41,7 +41,7 @@ export class SessionRepository implements ISessionRepository {
 
   async createAccountRecoverySession(
     user: User,
-    { duration = "15m" }: { duration?: string } = {},
+    { duration = "5m" }: { duration?: string } = {},
   ): Promise<Session> {
     const expiresIn = ms(duration);
     const expiresAt = DateTime.utc()

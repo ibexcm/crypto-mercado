@@ -12,7 +12,7 @@ export async function resetPassword(
     const accountRecoveryRepository = dependencies.provide(accountRecoveryInjectioKey);
     return await accountRecoveryRepository.resetPassword(
       args,
-      request.cookies.authToken.user,
+      request.query.authToken.user,
     );
   } catch (error) {}
 }
