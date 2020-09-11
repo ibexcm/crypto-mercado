@@ -253,17 +253,3 @@ export const isEmailAvailable = rule({ cache: true })(
     return true;
   },
 );
-
-export const isPasswordResetAuthorized = rule({
-  cache: true,
-})(async (parent, args, { dependencies, request: { query } }: IContext, info) => {
-  const db = dependencies.provide(dbInjectionKey);
-
-  const user = await db.$exists.user({ id: query.authToken.user.id });
-
-  if (!Boolean(query.authToken) || !Boolean(user)) {
-    return AccountRecoveryError.unauthorizedError;
-  }
-
-  return true;
-});
