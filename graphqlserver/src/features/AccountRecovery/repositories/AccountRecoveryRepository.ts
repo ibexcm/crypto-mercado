@@ -27,36 +27,6 @@ export class AccountRecoveryRepository {
     this.smsAccountRecoveryRepository = smsAccountRecoveryRepository;
   }
 
-  private async sendEmailAccountRecoveryLink(address: string) {
-    const user = await this.db
-      .email({ address })
-      .contact()
-      .user();
-
-    const session = await this.sessionRepository.createAccountRecoverySession(user);
-
-    await this.emailAccountRecoveryRepository.sendRecoveryLink(address, {
-      token: session.token,
-    });
-
-    return session;
-  }
-
-  private async sendSMSAccountRecoveryLink(number: string) {
-    const user = await this.db
-      .phoneNumber({ number })
-      .contact()
-      .user();
-
-    const session = await this.sessionRepository.createAccountRecoverySession(user);
-
-    await this.smsAccountRecoveryRepository.sendRecoveryLink(number, {
-      token: session.token,
-    });
-
-    return session;
-  }
-
   async recoverAccount({
     args: {
       emailRecovery: { address },
@@ -88,5 +58,35 @@ export class AccountRecoveryRepository {
     });
 
     return await this.sessionRepository.createAuthenticationSession(user);
+  }
+
+  private async sendEmailAccountRecoveryLink(address: string) {
+    const user = await this.db
+      .email({ address })
+      .contact()
+      .user();
+
+    const session = await this.sessionRepository.createAccountRecoverySession(user);
+
+    await this.emailAccountRecoveryRepository.sendRecoveryLink(address, {
+      token: session.token,
+    });
+
+    return session;
+  }
+
+  private async sendSMSAccountRecoveryLink(number: string) {
+    const user = await this.db
+      .phoneNumber({ number })
+      .contact()
+      .user();
+
+    const session = await this.sessionRepository.createAccountRecoverySession(user);
+
+    await this.smsAccountRecoveryRepository.sendRecoveryLink(number, {
+      token: session.token,
+    });
+
+    return session;
   }
 }
