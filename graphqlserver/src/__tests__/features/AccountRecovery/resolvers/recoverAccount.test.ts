@@ -32,12 +32,10 @@ describe("Get Account Recovery Link", () => {
     server.stop();
   });
 
-  test("Should Return a Session", async () => {
-    const recoveryPhoneNumber = "+000000000";
+  test("Should Send a email and return a Session", async () => {
     const recoveryEmailAddress = "user@ibexcm.com";
 
     await onboardUser({
-      number: recoveryPhoneNumber,
       address: recoveryEmailAddress,
     });
 
@@ -46,7 +44,28 @@ describe("Get Account Recovery Link", () => {
     } = await GraphQLClient.recoverAccount({
       args: {
         emailRecovery: { address: recoveryEmailAddress },
-        smsRecovery: { number: recoveryPhoneNumber },
+      },
+    });
+
+    expect(recoverAccount.token).toBeDefined();
+  });
+
+  test("Should send a sms and return a Session", async () => {
+    const address = "usr1@ibexcm.org";
+    const password = "password";
+    const phoneNumber = "+000000000";
+
+    await onboardUser({
+      address,
+      password,
+      number: phoneNumber,
+    });
+
+    const {
+      data: { recoverAccount },
+    } = await GraphQLClient.recoverAccount({
+      args: {
+        smsRecovery: { number: phoneNumber },
       },
     });
 
