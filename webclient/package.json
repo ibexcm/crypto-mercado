@@ -29,7 +29,8 @@
     "react-scripts": "^3.4.0",
     "spinners-react": "^1.0.3",
     "styled-components": "^5.0.1",
-    "styled-system": "^5.1.5"
+    "styled-system": "^5.1.5",
+    "zxcvbn": "^4.4.2"
   },
   "devDependencies": {
     "@types/dropzone": "^5.5.1",
