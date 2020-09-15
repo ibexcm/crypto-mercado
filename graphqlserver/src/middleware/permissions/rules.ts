@@ -12,6 +12,7 @@ import {
 } from "@ibexcm/libraries/api";
 import { compare } from "bcryptjs";
 import { rule } from "graphql-shield";
+import { AccountRecoveryError } from "../../features/AccountRecovery/errors/AccountRecoveryError";
 import { AuthenticationError } from "../../features/Authentication/errors/AuthenticationError";
 import { OnboardingError } from "../../features/Onboarding/errors/OnboardingError";
 import { TransactionError } from "../../features/Transaction/errors/TransactionError";

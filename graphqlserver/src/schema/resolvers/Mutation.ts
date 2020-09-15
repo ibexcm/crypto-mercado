@@ -1,3 +1,4 @@
+import { mutations as accountRecoveryMutations } from "../../features/AccountRecovery/resolvers";
 import { mutations as authenticationMutations } from "../../features/Authentication/resolvers";
 import { mutations as cryptoAccountMutations } from "../../features/CryptoAccount/resolvers";
 import { mutations as exchangeRateMutations } from "../../features/ExchangeRate/resolvers";
@@ -9,6 +10,7 @@ import { mutations as transactionReceiptMutations } from "../../features/Transac
 export const Mutation = {
   ...onboardingMutations,
   ...authenticationMutations,
+  ...accountRecoveryMutations,
   ...kycMutations,
   ...transactionMutations,
   ...cryptoAccountMutations,

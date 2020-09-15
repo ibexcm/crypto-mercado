@@ -1,4 +1,4 @@
-import { and, shield } from "graphql-shield";
+import { and, or, shield } from "graphql-shield";
 import * as rules from "./rules";
 
 export const permissions = shield({
@@ -8,6 +8,8 @@ export const permissions = shield({
     getTransaction: rules.isUser,
     getAdminBankAccounts: rules.isUser,
 
+    //ACCOUNT RECOVERY
+    recoverAccount: or(rules.isEmailAvailable, rules.isPhoneNumberAvailable),
     // ADMIN
     // KYC
     adminGetUsersWithPendingKYCApproval: rules.isAdmin,
@@ -31,6 +33,9 @@ export const permissions = shield({
     setPassword: rules.isUser,
     uploadGovernmentID: rules.isUser,
     setBankAccount: rules.isUser,
+
+    //ACCOUNT RECOVERY
+    resetPassword: rules.isUser,
 
     // TRANSACTION
     createTransaction: and(rules.isUser, rules.isKYCApproved),
