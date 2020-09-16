@@ -66,7 +66,7 @@ const App: React.FC = () => {
 
             {/*ACCOUNT RECOVERY */}
             <Route
-              path={routes.recovery.requestRecoveryAccountLink}
+              path={routes.recovery.requestAccountRecoveryLink}
               exact
               component={RequestLink}
             />

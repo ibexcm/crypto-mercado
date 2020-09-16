@@ -15,7 +15,7 @@ export const routes = {
     done: "/kyc/fin",
   },
   recovery: {
-    requestRecoveryAccountLink: "/recuperar-cuenta",
+    requestAccountRecoveryLink: "/recuperar-cuenta",
     resetPassword: "/restablecer-contrasena",
   },
   dashboard: {
