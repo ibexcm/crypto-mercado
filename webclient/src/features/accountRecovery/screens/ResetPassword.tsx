@@ -11,17 +11,29 @@ import {
   ToolbarPadding,
   Typography,
 } from "../../../common/components";
+import {
+  AccountRecoveryRepositoryInjectionKey,
+  ValidationRepositoryInjectionKey,
+} from "../InjectionKey";
 
 interface Props extends WithStyles, RouteComponentProps<{}, StaticContext> {}
 
 const Component: React.FC<Props> = ({ classes, history, location, match, ...props }) => {
   const dependencies = React.useContext(DependencyContext);
+  const ValidationRepository = dependencies.provide(ValidationRepositoryInjectionKey);
+  const AccountRecoveryRepository = dependencies.provide(
+    AccountRecoveryRepositoryInjectionKey,
+  );
 
   const [error, setError] = React.useState<Error | null>(null);
 
   const onKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter") {
     }
+  };
+
+  const onInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.value;
   };
 
   return (
