@@ -1,5 +1,7 @@
+import zxcvbn from "zxcvbn";
+
 export class ValidationRepository {
-  private email = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
+  private emailPattern = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
   private phones = {
     "es-GT": /^(\+502)?[2-8]\d{7}$/,
   };
@@ -43,6 +45,34 @@ export class ValidationRepository {
   }
 
   isValidEmail(str: string): boolean {
-    return this.email.test(str);
+    return this.emailPattern.test(str);
+  }
+
+  isPasswordSecure(password: string) {
+    const { score } = zxcvbn(password);
+    let color = "red";
+    let isSecure = false;
+
+    switch (score) {
+      case 2:
+        color = "orange";
+        break;
+      case 3:
+        color = "yellow";
+        isSecure = true;
+        break;
+      case 4:
+        color = "green";
+        isSecure = true;
+        break;
+      default:
+        color = "red";
+        isSecure = false;
+    }
+
+    return {
+      color,
+      isSecure,
+    };
   }
 }
