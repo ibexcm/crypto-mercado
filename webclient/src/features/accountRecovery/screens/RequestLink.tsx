@@ -34,6 +34,9 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
   const [emailError, setEmailError] = React.useState<Error | null>(null);
   const [smsError, setSmsError] = React.useState<Error | null>(null);
 
+  const [emailButtonStatus, setEmailButtonStatus] = React.useState<boolean>(true);
+  const [smsButtonStatus, setSmsButtonStatus] = React.useState<boolean>(true);
+
   const [emailInput, setEmailInput] = React.useState<QueryRecoverAccountArgs>({
     args: {
       emailRecovery: {
@@ -88,7 +91,10 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
   const onChangeEmailInput = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
     if (!ValidationRepository.isValidEmail(value)) {
-      setEmailError(new Error("Correo inválido."));
+      setEmailError(new Error("Correo inválido"));
+    } else {
+      setEmailError(null);
+      setEmailButtonStatus(false);
     }
     setEmailInput({ args: { emailRecovery: { address: value } } });
   };
@@ -97,6 +103,9 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
     const value = event.target.value;
     if (!ValidationRepository.isValidPhone(value, "es-GT", { strictMode: true })) {
       setSmsError(new Error("Número inválido"));
+    } else {
+      setSmsError(null);
+      setSmsButtonStatus(false);
     }
     setSmsInput({ args: { smsRecovery: { number: value } } });
   };
@@ -180,6 +189,7 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
                     fullWidth
                     size="large"
                     onKeyPress={onKeyPress}
+                    disabled={emailButtonStatus}
                   >
                     Enviar
                   </Button>
@@ -203,6 +213,7 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
                     fullWidth
                     size="large"
                     onKeyPress={onKeyPress}
+                    disabled={smsButtonStatus}
                   >
                     Enviar
                   </Button>
