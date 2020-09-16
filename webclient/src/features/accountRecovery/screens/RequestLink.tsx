@@ -3,12 +3,16 @@ import DependencyContext from "../../../common/contexts/DependencyContext";
 import { styles } from "../../../common/theme";
 import { MobileNavBar, NavBar } from "../components";
 import { TabPanel, TabContext, TabList } from "@material-ui/lab";
-import { AccountRecoveryRepositoryInjectionKey } from "../InjectionKey";
+import {
+  AccountRecoveryRepositoryInjectionKey,
+  ValidationRepositoryInjectionKey,
+} from "../InjectionKey";
 import { RouteComponentProps, StaticContext } from "react-router";
 import { Box, Tab, Container, Theme, withStyles, WithStyles } from "@material-ui/core";
 import {
   Button,
   InputErrorBox,
+  Modal,
   TextField,
   ToolbarPadding,
   Typography,
@@ -19,11 +23,13 @@ interface Props extends WithStyles, RouteComponentProps<{}, StaticContext> {}
 
 const Component: React.FC<Props> = ({ classes, history, location, match, ...props }) => {
   const dependencies = React.useContext(DependencyContext);
+  const ValidationRepository = dependencies.provide(ValidationRepositoryInjectionKey);
   const AccountRecoveryRepository = dependencies.provide(
     AccountRecoveryRepositoryInjectionKey,
   );
 
   const [recoveryOption, setRecoveryOption] = React.useState("1");
+  const [isModalOpen, setIsModalOpen] = React.useState(false);
 
   const [emailError, setEmailError] = React.useState<Error | null>(null);
   const [smsError, setSmsError] = React.useState<Error | null>(null);
@@ -81,11 +87,17 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
 
   const onChangeEmailInput = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
+    if (!ValidationRepository.isValidEmail(value)) {
+      setEmailError(new Error("Correo inválido."));
+    }
     setEmailInput({ args: { emailRecovery: { address: value } } });
   };
 
   const onChangeSmsInput = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
+    if (!ValidationRepository.isValidPhone(value, "es-GT", { strictMode: true })) {
+      setSmsError(new Error("Número inválido"));
+    }
     setSmsInput({ args: { smsRecovery: { number: value } } });
   };
 
@@ -99,6 +111,27 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
 
   return (
     <Box className={classes.homeContainer}>
+      <Modal
+        onClose={() => {
+          setIsModalOpen(false);
+        }}
+        open={isModalOpen}
+      >
+        <Box
+          p={2}
+          height="35vh"
+          display="flex"
+          flexDirection="column"
+          justifyContent="center"
+          alignItems="center"
+        >
+          <Typography align="center">
+            {!isByEmail()
+              ? `Enviamos un correo a ${emailInput.args.emailRecovery.address}.`
+              : `Enviamos un SMS a ${smsInput.args.smsRecovery.number}.`}
+          </Typography>
+        </Box>
+      </Modal>
       <MobileNavBar />
       <NavBar />
       <Container maxWidth="xs">
