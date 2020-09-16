@@ -189,6 +189,7 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
                     fullWidth
                     size="large"
                     onKeyPress={onKeyPress}
+                    onClick={onSendLink}
                     disabled={emailButtonStatus}
                   >
                     Enviar
@@ -213,6 +214,7 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
                     fullWidth
                     size="large"
                     onKeyPress={onKeyPress}
+                    onClick={onSendLink}
                     disabled={smsButtonStatus}
                   >
                     Enviar
