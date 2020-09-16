@@ -2,6 +2,7 @@ import React from "react";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import { PrivateRoute } from "./common/components";
 import DependencyContext from "./common/contexts/DependencyContext";
+import { RequestLink } from "./features/accountRecovery/screens";
 import { GraphQL } from "./features/app/components";
 import { Authenticate } from "./features/authentication/screens";
 import { Home } from "./features/home/screens";
@@ -62,6 +63,13 @@ const App: React.FC = () => {
               component={SetBankAccount}
             />
             <Route path={routes.onboarding.done} exact component={Done} />
+
+            {/*ACCOUNT RECOVERY */}
+            <Route
+              path={routes.recovery.requestRecoveryAccountLink}
+              exact
+              component={RequestLink}
+            />
 
             {/* TRANSACTION */}
             <PrivateRoute
