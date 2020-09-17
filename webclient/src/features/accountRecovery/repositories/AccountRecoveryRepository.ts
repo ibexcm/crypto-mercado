@@ -1,15 +1,9 @@
+import { LazyQueryResult, MutationResult, useLazyQuery, useMutation } from "@apollo/client";
 import {
-  LazyQueryResult,
-  MutationResult,
-  QueryResult,
-  useLazyQuery,
-  useMutation,
-} from "@apollo/client";
-import {
-  QueryRecoverAccountArgs,
-  Query,
-  MutationResetPasswordArgs,
   Mutation,
+  MutationResetPasswordArgs,
+  Query,
+  QueryRecoverAccountArgs,
 } from "@ibexcm/libraries/api";
 import {
   GetAccountRecoveryLink,
@@ -24,10 +18,10 @@ export class AccountRecoveryRepository {
     this.AuthTokenRepository = AuthTokenRepository;
   }
 
-  useGetAccountRecoveryLink(): [
-    (args: QueryRecoverAccountArgs) => Promise<void>,
-    LazyQueryResult<Pick<Query, "recoverAccount">, QueryRecoverAccountArgs>,
-  ] {
+  useGetAccountRecoveryLink(): {
+    executeGetAccountRecoveryLink: (args: QueryRecoverAccountArgs) => Promise<void>;
+    state: LazyQueryResult<Pick<Query, "recoverAccount">, QueryRecoverAccountArgs>;
+  } {
     const [execute, state] = useLazyQuery<
       Pick<Query, "recoverAccount">,
       QueryRecoverAccountArgs
@@ -43,10 +37,14 @@ export class AccountRecoveryRepository {
       const {
         recoverAccount: { token },
       } = state.data;
+
       this.AuthTokenRepository.setAuthToken(token as string);
     };
 
-    return [executeGetAccountRecoveryLink, state];
+    return {
+      executeGetAccountRecoveryLink,
+      state,
+    };
   }
 
   useResetPasswordMutation(): {

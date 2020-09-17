@@ -27,7 +27,7 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
     AccountRecoveryRepositoryInjectionKey,
   );
 
-  const [recoveryOption, setRecoveryOption] = React.useState("1");
+  const [recoveryOption, setRecoveryOption] = React.useState(RecoveryOption.email);
   const [isModalOpen, setIsModalOpen] = React.useState(false);
 
   const [emailInputError, setEmailInputError] = React.useState<Error | null>(null);
@@ -51,9 +51,9 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
     },
   });
 
-  const [
+  const {
     executeGetAccountRecoveryLink,
-  ] = AccountRecoveryRepository.useGetAccountRecoveryLink();
+  } = AccountRecoveryRepository.useGetAccountRecoveryLink();
 
   const onSendLink = async () => {
     try {
@@ -73,7 +73,10 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
     }
   };
 
-  const handleRecoveryOptionChange = (event: React.ChangeEvent<{}>, newOption: string) => {
+  const handleRecoveryOptionChange = (
+    event: React.ChangeEvent<{}>,
+    newOption: RecoveryOption,
+  ) => {
     setRecoveryOption(newOption);
   };
 
@@ -161,10 +164,18 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
                 aria-label="Reset Password Methods"
                 centered
               >
-                <Tab label="Email" value="1" disabled={sendBySms()} />
-                <Tab label="SMS" value="2" disabled={sendByEmail()} />
+                <Tab
+                  label="Email"
+                  value={RecoveryOption.email}
+                  disabled={shouldSendBySMS()}
+                />
+                <Tab
+                  label="SMS"
+                  value={RecoveryOption.sms}
+                  disabled={shouldSendByEmail()}
+                />
               </TabList>
-              <TabPanel value="1">
+              <TabPanel value={RecoveryOption.email}>
                 <Box>
                   <TextField
                     fullWidth
@@ -189,7 +200,7 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
                   </Button>
                 </Box>
               </TabPanel>
-              <TabPanel value="2">
+              <TabPanel value={RecoveryOption.sms}>
                 <Box>
                   <TextField
                     fullWidth
