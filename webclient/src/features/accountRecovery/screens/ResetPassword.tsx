@@ -35,8 +35,14 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
     args: { password: "" },
   });
 
+  const {
+    execute: executeResetPasswordMutation,
+  } = AccountRecoveryRepository.useResetPasswordMutation();
+
   const onResetPassword = async () => {
     try {
+      await executeResetPasswordMutation(input);
+      history.push(routes.authentication.signIn);
     } catch (error) {
       setError(error);
     }
@@ -54,13 +60,15 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
 
   const onConfirmPasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
+
     if (value !== input.args.password) {
-      setError(new Error("La contraseñas no coinciden."));
+      setError(new Error("La contraseñas no coinciden"));
       setConfirmButtonDisabled(true);
     } else {
       setError(null);
       setConfirmButtonDisabled(false);
     }
+
     setConfirmPasswordInput({ args: { password: value } });
   };
 
