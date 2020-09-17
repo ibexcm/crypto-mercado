@@ -14,7 +14,6 @@ import {
   InputErrorBox,
   Modal,
   TextField,
-  ToolbarPadding,
   Typography,
 } from "../../../common/components";
 import { QueryRecoverAccountArgs } from "@ibexcm/libraries/api";
@@ -34,8 +33,8 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
   const [emailError, setEmailError] = React.useState<Error | null>(null);
   const [smsError, setSmsError] = React.useState<Error | null>(null);
 
-  const [emailButtonStatus, setEmailButtonStatus] = React.useState<boolean>(true);
-  const [smsButtonStatus, setSmsButtonStatus] = React.useState<boolean>(true);
+  const [emailDisable, setDisableEmail] = React.useState<boolean>(true);
+  const [smsDisable, setDisableSms] = React.useState<boolean>(true);
 
   const [emailInput, setEmailInput] = React.useState<QueryRecoverAccountArgs>({
     args: {
@@ -70,7 +69,7 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
 
       setAuthToken(data.recoverAccount.token);
     } catch (err) {
-      if (isByEmail()) {
+      if (!isByEmail()) {
         setEmailError(err);
       } else {
         setSmsError(err);
@@ -92,9 +91,10 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
     const value = event.target.value;
     if (!ValidationRepository.isValidEmail(value)) {
       setEmailError(new Error("Correo inválido"));
+      setDisableEmail(true);
     } else {
+      setDisableEmail(false);
       setEmailError(null);
-      setEmailButtonStatus(false);
     }
     setEmailInput({ args: { emailRecovery: { address: value } } });
   };
@@ -103,9 +103,10 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
     const value = event.target.value;
     if (!ValidationRepository.isValidPhone(value, "es-GT", { strictMode: true })) {
       setSmsError(new Error("Número inválido"));
+      setDisableSms(true);
     } else {
       setSmsError(null);
-      setSmsButtonStatus(false);
+      setDisableSms(false);
     }
     setSmsInput({ args: { smsRecovery: { number: value } } });
   };
@@ -126,14 +127,7 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
         }}
         open={isModalOpen}
       >
-        <Box
-          p={2}
-          height="35vh"
-          display="flex"
-          flexDirection="column"
-          justifyContent="center"
-          alignItems="center"
-        >
+        <Box flexDirection="column" justifyContent="center" alignItems="center">
           <Typography align="center">
             {!isByEmail()
               ? `Enviamos un correo a ${emailInput.args.emailRecovery.address}.`
@@ -150,10 +144,9 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
           display="flex"
           justifyContent="center"
         >
-          <ToolbarPadding />
           <Box mb={4}>
             <Typography variant="h5" mb={1}>
-              Restablece tu Contraseña
+              Recupera Tu cuenta
             </Typography>
             <Typography>
               Elige a donde quieres que se envíe el enlace de restablecimiento de
@@ -190,7 +183,7 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
                     size="large"
                     onKeyPress={onKeyPress}
                     onClick={onSendLink}
-                    disabled={emailButtonStatus}
+                    disabled={emailDisable}
                   >
                     Enviar
                   </Button>
@@ -215,7 +208,7 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
                     size="large"
                     onKeyPress={onKeyPress}
                     onClick={onSendLink}
-                    disabled={smsButtonStatus}
+                    disabled={smsDisable}
                   >
                     Enviar
                   </Button>
