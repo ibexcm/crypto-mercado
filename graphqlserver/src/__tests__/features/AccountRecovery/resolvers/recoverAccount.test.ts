@@ -32,7 +32,7 @@ describe("Get Account Recovery Link", () => {
     server.stop();
   });
 
-  test("Should Send a email and return a Session", async () => {
+  test("Should Send an email and return a Session", async () => {
     const recoveryEmailAddress = "user@ibexcm.com";
 
     await onboardUser({
@@ -50,7 +50,7 @@ describe("Get Account Recovery Link", () => {
     expect(recoverAccount.token).toBeDefined();
   });
 
-  test("Should send a sms and return a Session", async () => {
+  test("Should send an sms and return a Session", async () => {
     const address = "usr1@ibexcm.org";
     const password = "password";
     const phoneNumber = "+000000000";

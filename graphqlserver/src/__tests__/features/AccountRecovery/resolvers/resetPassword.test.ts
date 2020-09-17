@@ -9,7 +9,7 @@ import {
 import { emailAccountRecoveryRepositoryInjectionKey } from "../../../../libraries/EmailVerification";
 import { smsAccountRecoveryRepositoryInjectionKey } from "../../../../libraries/SMSVerification";
 import onboardUser from "../../../../__test-utils__/helpers/onboardUser";
-import sendRecoveryAccountLink from "../../../../__test-utils__/helpers/sendRecoveryAccountLink";
+import sendAccountRecoveryLink from "../../../../__test-utils__/helpers/sendAccountRecoveryLink";
 import GraphQLClient from "../../../../__test-utils__/mocks/GraphQLClient";
 
 describe("Reset Password", () => {
@@ -41,13 +41,18 @@ describe("Reset Password", () => {
 
     await onboardUser({ address, password });
 
-    const { token } = await sendRecoveryAccountLink({ address });
+    const { token } = await sendAccountRecoveryLink({ address });
 
     const {
       data: { resetPassword },
     } = await GraphQLClient.resetPassword({ args: { password: newPassword } }, token);
 
+    const {
+      data: { authenticate },
+    } = await GraphQLClient.authenticate({ args: { address, password: newPassword } });
+
     expect(resetPassword.token).toBeDefined();
+    expect(authenticate.token).toBeDefined();
   });
 
   test("It should update user password by sms and return a Session", async () => {
@@ -58,12 +63,17 @@ describe("Reset Password", () => {
 
     await onboardUser({ address, password });
 
-    const { token } = await sendRecoveryAccountLink({ phoneNumber });
+    const { token } = await sendAccountRecoveryLink({ phoneNumber });
 
     const {
       data: { resetPassword },
     } = await GraphQLClient.resetPassword({ args: { password: newPassword } }, token);
 
+    const {
+      data: { authenticate },
+    } = await GraphQLClient.authenticate({ args: { address, password: newPassword } });
+
     expect(resetPassword.token).toBeDefined();
+    expect(authenticate.token).toBeDefined();
   });
 });
