@@ -30,11 +30,11 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
   const [recoveryOption, setRecoveryOption] = React.useState("1");
   const [isModalOpen, setIsModalOpen] = React.useState(false);
 
-  const [emailError, setEmailError] = React.useState<Error | null>(null);
-  const [smsError, setSmsError] = React.useState<Error | null>(null);
+  const [emailInputError, setEmailInputError] = React.useState<Error | null>(null);
+  const [smsInputError, setSmsInputError] = React.useState<Error | null>(null);
 
-  const [emailDisable, setDisableEmail] = React.useState<boolean>(true);
-  const [smsDisable, setDisableSms] = React.useState<boolean>(true);
+  const [sendEmailButtonDisable, setEmailButtonDisable] = React.useState<boolean>(true);
+  const [sendSmsButtonDisable, setSendSmsButtonDisable] = React.useState<boolean>(true);
 
   const [emailInput, setEmailInput] = React.useState<QueryRecoverAccountArgs>({
     args: {
@@ -53,26 +53,22 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
 
   const [
     executeGetAccountRecoveryLink,
-    { data, loading, error },
-    setAuthToken,
   ] = AccountRecoveryRepository.useGetAccountRecoveryLink();
 
   const onSendLink = async () => {
     try {
-      if (isByEmail()) {
-        setEmailError(null);
+      if (sendByEmail()) {
+        setEmailInputError(null);
         await executeGetAccountRecoveryLink(emailInput);
       } else {
-        setSmsError(null);
+        setSmsInputError(null);
         await executeGetAccountRecoveryLink(smsInput);
       }
-
-      setAuthToken(data.recoverAccount.token);
     } catch (err) {
-      if (!isByEmail()) {
-        setEmailError(err);
+      if (sendByEmail()) {
+        setEmailInputError(err);
       } else {
-        setSmsError(err);
+        setSmsInputError(err);
       }
     }
   };
@@ -89,34 +85,38 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
 
   const onChangeEmailInput = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
+
     if (!ValidationRepository.isValidEmail(value)) {
-      setEmailError(new Error("Correo inválido"));
-      setDisableEmail(true);
+      setEmailInputError(new Error("Correo inválido"));
+      setEmailButtonDisable(true);
     } else {
-      setDisableEmail(false);
-      setEmailError(null);
+      setEmailButtonDisable(false);
+      setEmailInputError(null);
     }
+
     setEmailInput({ args: { emailRecovery: { address: value } } });
   };
 
   const onChangeSmsInput = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
+
     if (!ValidationRepository.isValidPhone(value, "es-GT", { strictMode: true })) {
-      setSmsError(new Error("Número inválido"));
-      setDisableSms(true);
+      setSmsInputError(new Error("Número inválido"));
+      setSendSmsButtonDisable(true);
     } else {
-      setSmsError(null);
-      setDisableSms(false);
+      setSmsInputError(null);
+      setSendSmsButtonDisable(false);
     }
+
     setSmsInput({ args: { smsRecovery: { number: value } } });
   };
 
-  const isByEmail = (): boolean => {
-    return smsInput.args.smsRecovery.number !== "+502";
+  const sendByEmail = (): boolean => {
+    return emailInput.args.emailRecovery.address !== "";
   };
 
-  const isBySms = (): boolean => {
-    return emailInput.args.emailRecovery.address !== "";
+  const sendBySms = (): boolean => {
+    return smsInput.args.smsRecovery.number !== "+502";
   };
 
   return (
@@ -129,7 +129,7 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
       >
         <Box flexDirection="column" justifyContent="center" alignItems="center">
           <Typography align="center">
-            {!isByEmail()
+            {sendByEmail()
               ? `Enviamos un correo a ${emailInput.args.emailRecovery.address}.`
               : `Enviamos un SMS a ${smsInput.args.smsRecovery.number}.`}
           </Typography>
@@ -161,8 +161,8 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
                 aria-label="Reset Password Methods"
                 centered
               >
-                <Tab label="Email" value="1" disabled={isByEmail()} />
-                <Tab label="SMS" value="2" disabled={isBySms()} />
+                <Tab label="Email" value="1" disabled={sendBySms()} />
+                <Tab label="SMS" value="2" disabled={sendByEmail()} />
               </TabList>
               <TabPanel value="1">
                 <Box>
@@ -175,7 +175,7 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
                     value={emailInput.args.emailRecovery.address}
                     mb={3}
                   />
-                  <InputErrorBox error={emailError} />
+                  <InputErrorBox error={emailInputError} />
                   <Button
                     color="primary"
                     variant="contained"
@@ -183,7 +183,7 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
                     size="large"
                     onKeyPress={onKeyPress}
                     onClick={onSendLink}
-                    disabled={emailDisable}
+                    disabled={sendEmailButtonDisable}
                   >
                     Enviar
                   </Button>
@@ -200,7 +200,7 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
                     onChange={onChangeSmsInput}
                     mb={3}
                   />
-                  <InputErrorBox error={smsError} />
+                  <InputErrorBox error={smsInputError} />
                   <Button
                     color="primary"
                     variant="contained"
@@ -208,7 +208,7 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
                     size="large"
                     onKeyPress={onKeyPress}
                     onClick={onSendLink}
-                    disabled={smsDisable}
+                    disabled={sendSmsButtonDisable}
                   >
                     Enviar
                   </Button>
