@@ -50,29 +50,24 @@ export class ValidationRepository {
 
   isPasswordSecure(password: string) {
     const { score } = zxcvbn(password);
-    let color = "red";
+    let message = "Contraseña Insegura";
     let isSecure = false;
+    let color = "#d10a00";
 
-    switch (score) {
-      case 2:
-        color = "orange";
-        break;
-      case 3:
-        color = "yellow";
-        isSecure = true;
-        break;
-      case 4:
-        color = "green";
-        isSecure = true;
-        break;
-      default:
-        color = "red";
-        isSecure = false;
+    if (score === 3) {
+      message = "Contraseña Aceptable";
+      color = "#d16c00";
+    }
+
+    if (score === 4) {
+      message = "Contraseña Segura";
+      color = "green";
     }
 
     return {
-      color,
+      message,
       isSecure,
+      color,
     };
   }
 }
