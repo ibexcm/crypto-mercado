@@ -1,2 +1,2 @@
 export * from "./InjectionKeys";
-export * from "./interfaces/ISMSVerificationRepository";
+export * from "./interfaces";

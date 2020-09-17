@@ -22,7 +22,7 @@ export const emailNotificationsRepositoryInjectionKey: InjectionKey<IEmailNotifi
   closure: _ => EmailNotificationsRepository,
 };
 
-export const emailRecoveryAccountRepositoryInjectionKey: InjectionKey<IEmailAccountRecoveryRepository> = {
+export const emailAccountRecoveryRepositoryInjectionKey: InjectionKey<IEmailAccountRecoveryRepository> = {
   name: "emailAccountRecoveryRepository",
   scope: InjectionKeyScope.singleton,
   closure: _ => EmailAccountRecoveryRepository,

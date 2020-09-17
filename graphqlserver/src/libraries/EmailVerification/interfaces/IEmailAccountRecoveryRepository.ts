@@ -1,3 +1,3 @@
 export interface IEmailAccountRecoveryRepository {
-  sendRecoveryLink(address: string, { token }): Promise<void>;
+  sendRecoveryLink(address: string, { token }): Promise<boolean>;
 }

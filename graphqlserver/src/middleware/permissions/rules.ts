@@ -12,6 +12,7 @@ import {
 } from "@ibexcm/libraries/api";
 import { compare } from "bcryptjs";
 import { rule } from "graphql-shield";
+import { AccountRecoveryError } from "../../features/AccountRecovery/errors/AccountRecoveryError";
 import { AuthenticationError } from "../../features/Authentication/errors/AuthenticationError";
 import { OnboardingError } from "../../features/Onboarding/errors/OnboardingError";
 import { TransactionError } from "../../features/Transaction/errors/TransactionError";
@@ -252,35 +253,3 @@ export const isEmailAvailable = rule({ cache: true })(
     return true;
   },
 );
-
-export const isRecoveryEmailAvailable = rule({
-  cache: true,
-})(async (parent, { args: { address } }, { dependencies }: IContext, info) => {
-  const db = dependencies.provide(dbInjectionKey);
-  const user = await db
-    .email({ address })
-    .contact()
-    .user();
-
-  if (!Boolean(user)) {
-    return false;
-  }
-
-  return true;
-});
-
-export const isRecoveryNumberAvailable = rule({
-  cache: true,
-})(async (parent, { args: { number } }, { dependencies }: IContext, info) => {
-  const db = dependencies.provide(dbInjectionKey);
-  const user = await db
-    .phoneNumber({ number })
-    .contact()
-    .user();
-
-  if (!Boolean(user)) {
-    return false;
-  }
-
-  return true;
-});
