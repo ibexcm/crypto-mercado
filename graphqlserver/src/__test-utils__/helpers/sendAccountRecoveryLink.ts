@@ -13,7 +13,5 @@ export default async ({
     args: { emailRecovery: { address }, smsRecovery: { number: phoneNumber } },
   });
 
-  const token = recoverAccount.token;
-
-  return { token };
+  return recoverAccount;
 };

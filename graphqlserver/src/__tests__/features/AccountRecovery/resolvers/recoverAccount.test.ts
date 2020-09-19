@@ -47,7 +47,8 @@ describe("Get Account Recovery Link", () => {
       },
     });
 
-    expect(recoverAccount.token).toBeDefined();
+    expect(recoverAccount).toBeDefined();
+    expect(recoverAccount).toBe(true);
   });
 
   test("Should send an sms and return a Session", async () => {
@@ -69,6 +70,7 @@ describe("Get Account Recovery Link", () => {
       },
     });
 
-    expect(recoverAccount.token).toBeDefined();
+    expect(recoverAccount).toBeDefined();
+    expect(recoverAccount).toBe(true);
   });
 });

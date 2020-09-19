@@ -39,9 +39,9 @@ describe("Reset Password", () => {
     const password = "password";
     const newPassword = "secret";
 
-    await onboardUser({ address, password });
+    const { token } = await onboardUser({ address, password });
 
-    const { token } = await sendAccountRecoveryLink({ address });
+    await sendAccountRecoveryLink({ address });
 
     const {
       data: { resetPassword },
@@ -61,9 +61,9 @@ describe("Reset Password", () => {
     const password = "password";
     const newPassword = "secret";
 
-    await onboardUser({ address, password });
+    const { token } = await onboardUser({ address, password });
 
-    const { token } = await sendAccountRecoveryLink({ phoneNumber });
+    await sendAccountRecoveryLink({ phoneNumber });
 
     const {
       data: { resetPassword },
