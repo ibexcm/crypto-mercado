@@ -11,7 +11,7 @@ type Query {
   getTransactionBreakdown(args: GetTransactionBreakdownInput!): TransactionBreakdown!
 
   # ACCOUNT RECOVERY
-  recoverAccount(args: recoverAccountInput!): Session!
+  recoverAccount(args: recoverAccountInput!): Boolean!
 
   # ADMIN
   getAdminBankAccounts: [BankAccount!]!
