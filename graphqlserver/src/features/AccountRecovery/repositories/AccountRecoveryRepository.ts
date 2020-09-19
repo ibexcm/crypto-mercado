@@ -32,12 +32,12 @@ export class AccountRecoveryRepository {
       emailRecovery: { address },
       smsRecovery: { number },
     },
-  }: QueryRecoverAccountArgs): Promise<Session> {
+  }: QueryRecoverAccountArgs): Promise<Boolean> {
     if (Boolean(address)) {
-      return this.sendEmailAccountRecoveryLink(address);
+      return await this.sendEmailAccountRecoveryLink(address);
     }
 
-    return this.sendSMSAccountRecoveryLink(number);
+    return await this.sendSMSAccountRecoveryLink(number);
   }
 
   async resetPassword(
@@ -66,13 +66,11 @@ export class AccountRecoveryRepository {
       .contact()
       .user();
 
-    const session = await this.sessionRepository.createAccountRecoverySession(user);
+    const { token } = await this.sessionRepository.createAccountRecoverySession(user);
 
-    await this.emailAccountRecoveryRepository.sendRecoveryLink(address, {
-      token: session.token,
+    return await this.emailAccountRecoveryRepository.sendRecoveryLink(address, {
+      token,
     });
-
-    return session;
   }
 
   private async sendSMSAccountRecoveryLink(number: string) {
@@ -81,12 +79,10 @@ export class AccountRecoveryRepository {
       .contact()
       .user();
 
-    const session = await this.sessionRepository.createAccountRecoverySession(user);
+    const { token } = await this.sessionRepository.createAccountRecoverySession(user);
 
-    await this.smsAccountRecoveryRepository.sendRecoveryLink(number, {
-      token: session.token,
+    return await this.smsAccountRecoveryRepository.sendRecoveryLink(number, {
+      token,
     });
-
-    return session;
   }
 }
