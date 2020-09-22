@@ -8,6 +8,7 @@
     "@ibexcm/libraries": "*",
     "@material-ui/core": "^4.8.2",
     "@material-ui/icons": "^4.5.1",
+    "@material-ui/lab": "^4.0.0-alpha.56",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",
@@ -28,7 +29,8 @@
     "react-scripts": "^3.4.0",
     "spinners-react": "^1.0.3",
     "styled-components": "^5.0.1",
-    "styled-system": "^5.1.5"
+    "styled-system": "^5.1.5",
+    "zxcvbn": "^4.4.2"
   },
   "devDependencies": {
     "@types/dropzone": "^5.5.1",
@@ -42,6 +44,7 @@
     "@types/react-router-dom": "^5.0.1",
     "@types/styled-components": "^5.0.1",
     "@types/styled-system": "^5.1.9",
+    "@types/zxcvbn": "^4.4.0",
     "typescript": "^3.8.3"
   },
   "scripts": {
