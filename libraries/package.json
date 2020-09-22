@@ -37,5 +37,27 @@
   },
   "publishConfig": {
     "registry": "https://npm.pkg.github.com/"
+  },
+  "jest": {
+    "testTimeout": 60000,
+    "transform": {
+      "^.+\\.tsx?$": "ts-jest"
+    },
+    "testEnvironment": "node",
+    "testPathIgnorePatterns": [
+      "<rootDir>/lib/",
+      "<rootDir>/node_modules/"
+    ],
+    "modulePaths": [
+      "<rootDir>/"
+    ],
+    "testRegex": "(/__test{s}__/.*|\\.(test|spec))\\.(ts|tsx)$",
+    "moduleFileExtensions": [
+      "ts",
+      "js",
+      "json",
+      "tsx",
+      "jsx"
+    ]
   }
 }
