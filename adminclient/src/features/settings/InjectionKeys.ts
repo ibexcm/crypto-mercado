@@ -1,4 +1,4 @@
-import { InjectionKey, InjectionKeyScope } from "../../libraries/di";
+import { InjectionKey, InjectionKeyScope } from "@ibexcm/libraries/di";
 import { ExchangeRateSettings } from "./repositories/ExchangeRateSettings";
 
 export const ExchangeRateSettingsInjectionKeys: InjectionKey<ExchangeRateSettings> = {

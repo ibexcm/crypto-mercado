@@ -13,7 +13,11 @@
     "compile": "tsc",
     "api:schema:compile": "npm run compile",
     "test": "jest",
-    "test:coverage": "jest --coverage"
+    "test:coverage": "jest --coverage",
+    "publish:prepare": "npm run compile && cp package.json dist && cp .npmrc dist"
+  },
+  "directories": {
+    "dist": "dist"
   },
   "dependencies": {
     "@babel/runtime": "^7.8.3",
@@ -37,5 +41,27 @@
   },
   "publishConfig": {
     "registry": "https://npm.pkg.github.com/"
+  },
+  "jest": {
+    "testTimeout": 60000,
+    "transform": {
+      "^.+\\.tsx?$": "ts-jest"
+    },
+    "testEnvironment": "node",
+    "testPathIgnorePatterns": [
+      "<rootDir>/lib/",
+      "<rootDir>/node_modules/"
+    ],
+    "modulePaths": [
+      "<rootDir>/"
+    ],
+    "testRegex": "(/__test{s}__/.*|\\.(test|spec))\\.(ts|tsx)$",
+    "moduleFileExtensions": [
+      "ts",
+      "js",
+      "json",
+      "tsx",
+      "jsx"
+    ]
   }
 }
