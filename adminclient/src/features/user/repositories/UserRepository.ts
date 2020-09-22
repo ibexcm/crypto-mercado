@@ -1,6 +1,6 @@
 import { useQuery } from "@apollo/client";
+import { Query, QueryAdminGetUserArgs } from "@ibexcm/libraries/api";
 import { AdminGetUserQuery, UserQuery } from "@ibexcm/libraries/api/user";
-import { Query, QueryAdminGetUserArgs } from "../../../libraries/api";
 
 export class UserRepository {
   useUserQuery() {

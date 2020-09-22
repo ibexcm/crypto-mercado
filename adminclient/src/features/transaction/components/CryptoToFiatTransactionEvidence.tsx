@@ -1,3 +1,8 @@
+import { Transaction } from "@ibexcm/libraries/api";
+import {
+  getBankReceiptEvidence,
+  getBitcoinReceiptEvidence,
+} from "@ibexcm/libraries/utilities/transaction";
 import { Box, Grid, Paper, Theme, withStyles, WithStyles } from "@material-ui/core";
 import React from "react";
 import {
@@ -8,11 +13,6 @@ import {
   Typography,
 } from "../../../common/components";
 import { styles } from "../../../common/theme";
-import { Transaction } from "../../../libraries/api";
-import {
-  getBankReceiptEvidence,
-  getBitcoinReceiptEvidence,
-} from "../../../libraries/utilities/transaction";
 import { IUpdateTransactionMethods } from "../interfaces/IUpdateTransactionMethods";
 
 interface Props extends WithStyles, IDropzoneProps {

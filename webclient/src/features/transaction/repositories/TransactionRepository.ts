@@ -9,8 +9,10 @@ import {
   Mutation,
   MutationCreateTransactionArgs,
   MutationSetTransactionReceiptEvidenceArgs,
+  Query,
   QueryGetTransactionArgs,
   QueryGetTransactionBreakdownArgs,
+  Transaction,
 } from "@ibexcm/libraries/api";
 import {
   CreateTransactionMutation,
@@ -19,7 +21,6 @@ import {
 } from "@ibexcm/libraries/api/transaction";
 import { SetTransactionReceiptEvidenceMutation } from "@ibexcm/libraries/api/transactionReceipt";
 import { DropzoneFile } from "dropzone";
-import { Query, Transaction } from "../../../libraries/api";
 
 export class TransactionRepository {
   useSetTransactionReceiptEvidenceMutation(): {

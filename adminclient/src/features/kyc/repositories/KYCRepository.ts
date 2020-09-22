@@ -1,10 +1,9 @@
 import { MutationResult, useMutation, useQuery } from "@apollo/client";
-import { Query } from "@ibexcm/libraries/api";
+import { Mutation, MutationAdminKycApproveUserArgs, Query } from "@ibexcm/libraries/api";
 import {
   AdminGetUsersWithPendingKYCApprovalQuery,
   AdminKYCApproveUserMutation,
 } from "@ibexcm/libraries/api/kyc";
-import { Mutation, MutationAdminKycApproveUserArgs } from "../../../libraries/api";
 
 export class KYCRepository {
   useAdminGetUsersWithPendingKYCApprovalQuery() {
@@ -23,7 +22,7 @@ export class KYCRepository {
     const [execute, { loading }] = useMutation(AdminKYCApproveUserMutation);
 
     return {
-      execute: async args => {
+      execute: async (args) => {
         const message = "Falló la aprobación de este usuario.";
         try {
           const {

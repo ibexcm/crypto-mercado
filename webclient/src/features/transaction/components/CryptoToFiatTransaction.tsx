@@ -1,5 +1,9 @@
 import { LazyQueryResult } from "@apollo/client";
-import { QueryGetTransactionBreakdownArgs } from "@ibexcm/libraries/api";
+import {
+  Query,
+  QueryGetTransactionBreakdownArgs,
+  Transaction,
+} from "@ibexcm/libraries/api";
 import { ICryptoTransactionEvidenceCallback } from "@ibexcm/libraries/interfaces";
 import {
   Box,
@@ -14,7 +18,6 @@ import React from "react";
 import { TransactionBreakdown } from ".";
 import { TextField, Typography } from "../../../common/components";
 import { styles } from "../../../common/theme";
-import { Query, Transaction } from "../../../libraries/api";
 import { CryptoToFiatTransactionEvidence } from "./CryptoToFiatTransactionEvidence";
 
 interface Props extends WithStyles, ICryptoTransactionEvidenceCallback {
