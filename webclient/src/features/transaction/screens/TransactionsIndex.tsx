@@ -1,4 +1,4 @@
-import { SendPhoneNumberVerificationCodeInput } from "@ibexcm/libraries/api";
+import { SendPhoneNumberVerificationCodeInput, Transaction } from "@ibexcm/libraries/api";
 import {
   Box,
   Container,
@@ -19,7 +19,6 @@ import {
 } from "../../../common/components";
 import DependencyContext from "../../../common/contexts/DependencyContext";
 import { styles } from "../../../common/theme";
-import { Transaction } from "../../../libraries/api";
 import routes from "../../../routes";
 import { UserRepositoryInjectionKeys } from "../../user/InjectionKeys";
 import { MobileNavBar, TransactionItem } from "../components";

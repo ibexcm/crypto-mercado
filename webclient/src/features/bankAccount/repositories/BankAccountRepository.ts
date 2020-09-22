@@ -1,6 +1,6 @@
 import { useQuery } from "@apollo/client";
+import { Query } from "@ibexcm/libraries/api";
 import { GetAdminBankAccountsQuery } from "@ibexcm/libraries/api/bankAccount";
-import { Query } from "../../../libraries/api";
 
 export class BankAccountRepository {
   useGetAdminBankAccountsQuery() {

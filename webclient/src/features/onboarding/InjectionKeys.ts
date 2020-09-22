@@ -1,4 +1,4 @@
-import { Dependencies, InjectionKey, InjectionKeyScope } from "../../libraries/di";
+import { Dependencies, InjectionKey, InjectionKeyScope } from "@ibexcm/libraries/di";
 import { AuthTokenRepositoryInjectionKeys } from "../authentication/InjectionKeys";
 import { OnboardingRepository } from "./repositories";
 

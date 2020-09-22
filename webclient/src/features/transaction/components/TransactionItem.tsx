@@ -1,3 +1,4 @@
+import { Transaction } from "@ibexcm/libraries/api";
 import { Box, Grid, Paper, Theme, WithStyles } from "@material-ui/core";
 import ArrowRightAltIcon from "@material-ui/icons/ArrowRightAlt";
 import ChevronRightIcon from "@material-ui/icons/ChevronRight";
@@ -6,7 +7,6 @@ import { withStyles } from "@material-ui/styles";
 import React from "react";
 import { Typography } from "../../../common/components";
 import { styles } from "../../../common/theme";
-import { Transaction } from "../../../libraries/api";
 
 interface Props extends WithStyles {
   transaction: Transaction;

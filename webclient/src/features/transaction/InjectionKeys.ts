@@ -1,10 +1,10 @@
-import { InjectionKey, InjectionKeyScope } from "../../libraries/di";
+import { InjectionKey, InjectionKeyScope } from "@ibexcm/libraries/di";
 import { TransactionRepository } from "./repositories/TransactionRepository";
 
 export const TransactionRepositoryInjectionKeys: InjectionKey<TransactionRepository> = {
   name: "TransactionRepository",
   scope: InjectionKeyScope.singleton,
-  closure: dependencies => {
+  closure: (dependencies) => {
     return new TransactionRepository();
   },
 };

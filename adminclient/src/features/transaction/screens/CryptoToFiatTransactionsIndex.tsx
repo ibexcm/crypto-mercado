@@ -1,4 +1,8 @@
-import { SendPhoneNumberVerificationCodeInput, Transaction } from "@ibexcm/libraries/api";
+import {
+  SendPhoneNumberVerificationCodeInput,
+  Transaction,
+  TransactionOrderByInput,
+} from "@ibexcm/libraries/api";
 import {
   Backdrop,
   Box,
@@ -22,7 +26,6 @@ import { generatePath, RouteComponentProps, StaticContext } from "react-router";
 import { Button, Sidebar, ToolbarPadding, Typography } from "../../../common/components";
 import DependencyContext from "../../../common/contexts/DependencyContext";
 import { styles } from "../../../common/theme";
-import { TransactionOrderByInput } from "../../../libraries/api";
 import routes from "../../../routes";
 import { TransactionRepositoryInjectionKeys } from "../InjectionKeys";
 
