@@ -10,10 +10,11 @@
     "lib/**/*"
   ],
   "scripts": {
-    "compile": "tsc",
-    "api:schema:compile": "npm run compile",
+    "compile": "npm run clean && tsc",
+    "clean": "rimraf dist",
     "test": "jest",
     "test:coverage": "jest --coverage",
+    "api:schema:compile": "npm run publish:prepare",
     "publish:prepare": "npm run compile && cp package.json dist && cp .npmrc dist"
   },
   "directories": {
