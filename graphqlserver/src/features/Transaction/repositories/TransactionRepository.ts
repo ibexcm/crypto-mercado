@@ -698,16 +698,14 @@ export class TransactionRepository {
         .evidence();
 
       if (evidence.length > 0) {
-        const cryptoPrices = (
-          await Promise.all(
-            evidence.map(e =>
-              this.db
-                .transactionReceiptEvidence({ id: e.id })
-                .bitcoinReceipt()
-                .price(),
-            ),
-          )
-        ).filter(Boolean);
+        const cryptoPrices = (await Promise.all(
+          evidence.map(e =>
+            this.db
+              .transactionReceiptEvidence({ id: e.id })
+              .bitcoinReceipt()
+              .price(),
+          ),
+        )).filter(Boolean);
 
         if (cryptoPrices.length > 0) {
           priceAtBaseCurrency = {
@@ -758,9 +756,9 @@ export class TransactionRepository {
     let priceAtRateField;
 
     if (priceAtDestinationCurrency.symbol !== CurrencySymbol.USD) {
-      let exchangeRatePrice = (
-        await this.ExchangeRateRepository.getLatestByCurrency(destinationCurrency)
-      ).price;
+      let exchangeRatePrice = (await this.ExchangeRateRepository.getLatestByCurrency(
+        destinationCurrency,
+      )).price;
 
       if (Boolean(transactionID)) {
         const price = await this.db
@@ -770,11 +768,17 @@ export class TransactionRepository {
 
         if (Boolean(price)) {
           exchangeRatePrice = price.price;
+          priceAtDestinationCurrency.price = math.multiply(
+            Number(priceAtBaseCurrency.price),
+            Number(exchangeRatePrice),
+          );
         }
       }
 
       priceAtRateField = {
-        key: `Tipo de Cambio (${exchangeRatePrice} ${priceAtDestinationCurrency.symbol}/${priceAtBaseCurrency.symbol})`,
+        key: `Tipo de Cambio (${exchangeRatePrice} ${priceAtDestinationCurrency.symbol}/${
+          priceAtBaseCurrency.symbol
+        })`,
         value: `${priceAtDestinationCurrency.symbol} ${fiatFormatter.format(
           Number(priceAtDestinationCurrency.price),
         )}`,
