@@ -15,6 +15,7 @@ import {
 } from "../../../common/components";
 import { QueryRecoverAccountArgs } from "@ibexcm/libraries/api";
 import { RecoveryOption } from "../enum/RecoveryOption";
+import { isValidEmail, isValidPhoneNumber } from "@ibexcm/libraries/validation";
 
 interface Props extends WithStyles, RouteComponentProps<{}, StaticContext> {}
 
@@ -24,26 +25,18 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
     AccountRecoveryRepositoryInjectionKey,
   );
 
+  const [isSubmitButtonDisabled, setIsSubmitButtonDisabled] = React.useState<boolean>(true);
   const [recoveryOption, setRecoveryOption] = React.useState(RecoveryOption.email);
   const [isModalOpen, setIsModalOpen] = React.useState(false);
 
-  const [emailInputError, setEmailInputError] = React.useState<Error | null>(null);
-  const [smsInputError, setSmsInputError] = React.useState<Error | null>(null);
-
-  const [sendEmailButtonDisable, setEmailButtonDisable] = React.useState<boolean>(true);
-  const [sendSmsButtonDisable, setSendSmsButtonDisable] = React.useState<boolean>(true);
-
-  const [emailInput, setEmailInput] = React.useState<QueryRecoverAccountArgs>({
+  const [inputError, setInputError] = React.useState<Error | null>(null);
+  const [input, setInput] = React.useState<QueryRecoverAccountArgs>({
     args: {
       emailRecovery: {
         address: "",
       },
-    },
-  });
-  const [smsInput, setSmsInput] = React.useState<QueryRecoverAccountArgs>({
-    args: {
       smsRecovery: {
-        number: "+502",
+        number: "",
       },
     },
   });
@@ -54,24 +47,25 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
 
   const onSendLink = async () => {
     try {
-      if (sendByEmail()) {
-        setEmailInputError(null);
-        await executeGetAccountRecoveryLink(emailInput);
-      } else {
-        setSmsInputError(null);
-        await executeGetAccountRecoveryLink(smsInput);
-      }
+      await executeGetAccountRecoveryLink(input);
+      setIsModalOpen(true);
     } catch (err) {
-      if (sendByEmail()) {
-        setEmailInputError(err);
-      } else {
-        setSmsInputError(err);
-      }
+      setInputError(err);
+    }
+  };
+
+  const OnInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.value;
+
+    if (recoveryOption === RecoveryOption.email) {
+      setInput({ args: { emailRecovery: { address: value } } });
+    } else {
+      setInput({ args: { smsRecovery: { number: value } } });
     }
   };
 
   const handleRecoveryOptionChange = (
-    event: React.ChangeEvent<{}>,
+    _event: React.ChangeEvent<{}>,
     newOption: RecoveryOption,
   ) => {
     setRecoveryOption(newOption);
@@ -83,41 +77,16 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
     }
   };
 
-  const onChangeEmailInput = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const value = event.target.value;
-
-    if (true) {
-      setEmailInputError(new Error("Correo inválido"));
-      setEmailButtonDisable(true);
-    } else {
-      setEmailButtonDisable(false);
-      setEmailInputError(null);
+  const getOnSuccessMessage = () => {
+    if (recoveryOption === RecoveryOption.email) {
+      return `Enviamos un correo a ${input.args.emailRecovery.address}`;
     }
-
-    setEmailInput({ args: { emailRecovery: { address: value } } });
+    return `Enviamos un SMS a ${input.args.smsRecovery.number}`;
   };
 
-  const onChangeSmsInput = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const value = event.target.value;
+  const shouldSendByEmail = () => isValidEmail(input.args.emailRecovery.address);
 
-    if (true) {
-      setSmsInputError(new Error("Número inválido"));
-      setSendSmsButtonDisable(true);
-    } else {
-      setSmsInputError(null);
-      setSendSmsButtonDisable(false);
-    }
-
-    setSmsInput({ args: { smsRecovery: { number: value } } });
-  };
-
-  const sendByEmail = (): boolean => {
-    return emailInput.args.emailRecovery.address !== "";
-  };
-
-  const sendBySms = (): boolean => {
-    return smsInput.args.smsRecovery.number !== "+502";
-  };
+  const shouldSendBySms = () => isValidPhoneNumber(input.args.smsRecovery.number);
 
   return (
     <Box className={classes.homeContainer}>
@@ -128,11 +97,7 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
         open={isModalOpen}
       >
         <Box flexDirection="column" justifyContent="center" alignItems="center">
-          <Typography align="center">
-            {sendByEmail()
-              ? `Enviamos un correo a ${emailInput.args.emailRecovery.address}.`
-              : `Enviamos un SMS a ${smsInput.args.smsRecovery.number}.`}
-          </Typography>
+          <Typography align="center">{getOnSuccessMessage()}</Typography>
         </Box>
       </Modal>
       <MobileNavBar />
@@ -164,7 +129,7 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
                 <Tab
                   label="Email"
                   value={RecoveryOption.email}
-                  disabled={shouldSendBySMS()}
+                  disabled={shouldSendBySms()}
                 />
                 <Tab
                   label="SMS"
@@ -179,11 +144,11 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
                     label="Email"
                     variant="outlined"
                     type="email"
-                    onChange={onChangeEmailInput}
-                    value={emailInput.args.emailRecovery.address}
+                    onChange={OnInputChange}
+                    value={input.args.emailRecovery.address}
                     mb={3}
                   />
-                  <InputErrorBox error={emailInputError} />
+                  <InputErrorBox error={inputError} />
                 </Box>
               </TabPanel>
               <TabPanel value={RecoveryOption.sms}>
@@ -193,11 +158,11 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
                     label="Número de teléfono"
                     variant="outlined"
                     type="tel"
-                    value={smsInput.args.smsRecovery.number}
-                    onChange={onChangeSmsInput}
+                    onChange={OnInputChange}
+                    value={input.args.smsRecovery.number}
                     mb={3}
                   />
-                  <InputErrorBox error={smsInputError} />
+                  <InputErrorBox error={inputError} />
                 </Box>
               </TabPanel>
             </TabContext>
@@ -208,7 +173,7 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
               size="large"
               onKeyPress={onKeyPress}
               onClick={onSendLink}
-              disabled={sendSmsButtonDisable}
+              disabled={isSubmitButtonDisabled}
             >
               Enviar
             </Button>
