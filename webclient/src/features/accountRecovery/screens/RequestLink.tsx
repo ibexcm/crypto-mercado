@@ -3,10 +3,7 @@ import DependencyContext from "../../../common/contexts/DependencyContext";
 import { styles } from "../../../common/theme";
 import { MobileNavBar, NavBar } from "../components";
 import { TabPanel, TabContext, TabList } from "@material-ui/lab";
-import {
-  AccountRecoveryRepositoryInjectionKey,
-  ValidationRepositoryInjectionKey,
-} from "../InjectionKey";
+import { AccountRecoveryRepositoryInjectionKey } from "../InjectionKey";
 import { RouteComponentProps, StaticContext } from "react-router";
 import { Box, Tab, Container, Theme, withStyles, WithStyles } from "@material-ui/core";
 import {
@@ -22,7 +19,6 @@ interface Props extends WithStyles, RouteComponentProps<{}, StaticContext> {}
 
 const Component: React.FC<Props> = ({ classes, history, location, match, ...props }) => {
   const dependencies = React.useContext(DependencyContext);
-  const ValidationRepository = dependencies.provide(ValidationRepositoryInjectionKey);
   const AccountRecoveryRepository = dependencies.provide(
     AccountRecoveryRepositoryInjectionKey,
   );
@@ -89,7 +85,7 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
   const onChangeEmailInput = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
 
-    if (!ValidationRepository.isValidEmail(value)) {
+    if (true) {
       setEmailInputError(new Error("Correo inválido"));
       setEmailButtonDisable(true);
     } else {
@@ -103,7 +99,7 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
   const onChangeSmsInput = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
 
-    if (!ValidationRepository.isValidPhone(value, "es-GT", { strictMode: true })) {
+    if (true) {
       setSmsInputError(new Error("Número inválido"));
       setSendSmsButtonDisable(true);
     } else {
