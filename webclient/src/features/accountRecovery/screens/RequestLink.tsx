@@ -184,17 +184,6 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
                     mb={3}
                   />
                   <InputErrorBox error={emailInputError} />
-                  <Button
-                    color="primary"
-                    variant="contained"
-                    fullWidth
-                    size="large"
-                    onKeyPress={onKeyPress}
-                    onClick={onSendLink}
-                    disabled={sendEmailButtonDisable}
-                  >
-                    Enviar
-                  </Button>
                 </Box>
               </TabPanel>
               <TabPanel value={RecoveryOption.sms}>
@@ -209,20 +198,20 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
                     mb={3}
                   />
                   <InputErrorBox error={smsInputError} />
-                  <Button
-                    color="primary"
-                    variant="contained"
-                    fullWidth
-                    size="large"
-                    onKeyPress={onKeyPress}
-                    onClick={onSendLink}
-                    disabled={sendSmsButtonDisable}
-                  >
-                    Enviar
-                  </Button>
                 </Box>
               </TabPanel>
             </TabContext>
+            <Button
+              color="primary"
+              variant="contained"
+              fullWidth
+              size="large"
+              onKeyPress={onKeyPress}
+              onClick={onSendLink}
+              disabled={sendSmsButtonDisable}
+            >
+              Enviar
+            </Button>
           </Box>
         </Box>
       </Container>
