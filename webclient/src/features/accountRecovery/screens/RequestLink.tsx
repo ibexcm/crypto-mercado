@@ -14,6 +14,7 @@ import {
   Typography,
 } from "../../../common/components";
 import { QueryRecoverAccountArgs } from "@ibexcm/libraries/api";
+import { RecoveryOption } from "../enum/RecoveryOption";
 
 interface Props extends WithStyles, RouteComponentProps<{}, StaticContext> {}
 
