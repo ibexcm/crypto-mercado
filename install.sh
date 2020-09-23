@@ -18,4 +18,7 @@ yarn link @ibexcm/libraries
 cd $ROOT/adminclient
 yarn link @ibexcm/libraries
 
+cd $ROOT/libraries
+yarn link @ibexcm/database
+
 
