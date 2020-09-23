@@ -8,7 +8,7 @@
     "sourceMap": true,
     "outDir": "dist",
     "lib": ["esnext", "dom"],
-    "allowJs": false,
+    "allowJs": true,
     "preserveSymlinks": true
   }
 }
