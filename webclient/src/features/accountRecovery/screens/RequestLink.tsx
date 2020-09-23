@@ -1,11 +1,9 @@
+import { QueryRecoverAccountArgs } from "@ibexcm/libraries/api";
+import { isValidEmail, isValidPhoneNumber } from "@ibexcm/libraries/validation";
+import { Box, Container, Tab, Theme, withStyles, WithStyles } from "@material-ui/core";
+import { TabContext, TabList, TabPanel } from "@material-ui/lab";
 import React from "react";
-import DependencyContext from "../../../common/contexts/DependencyContext";
-import { styles } from "../../../common/theme";
-import { MobileNavBar, NavBar } from "../components";
-import { TabPanel, TabContext, TabList } from "@material-ui/lab";
-import { AccountRecoveryRepositoryInjectionKey } from "../InjectionKey";
 import { RouteComponentProps, StaticContext } from "react-router";
-import { Box, Tab, Container, Theme, withStyles, WithStyles } from "@material-ui/core";
 import {
   Button,
   InputErrorBox,
@@ -13,9 +11,11 @@ import {
   TextField,
   Typography,
 } from "../../../common/components";
-import { QueryRecoverAccountArgs } from "@ibexcm/libraries/api";
+import DependencyContext from "../../../common/contexts/DependencyContext";
+import { styles } from "../../../common/theme";
+import { MobileNavBar, NavBar } from "../components";
 import { RecoveryOption } from "../enum/RecoveryOption";
-import { isValidEmail, isValidPhoneNumber } from "@ibexcm/libraries/validation";
+import { AccountRecoveryRepositoryInjectionKey } from "../InjectionKey";
 
 interface Props extends WithStyles, RouteComponentProps<{}, StaticContext> {}
 
@@ -36,7 +36,7 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
         address: "",
       },
       smsRecovery: {
-        number: "",
+        number: "+502",
       },
     },
   });
@@ -58,8 +58,20 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
     const value = event.target.value;
 
     if (recoveryOption === RecoveryOption.email) {
+      if (shouldSendByEmail()) {
+        setIsSubmitButtonDisabled(false);
+      } else {
+        setInputError(new Error("Correo Inválido"));
+      }
+
       setInput({ args: { emailRecovery: { address: value } } });
     } else {
+      if (shouldSendBySms()) {
+        setIsSubmitButtonDisabled(false);
+      } else {
+        setInputError(new Error("Número Inválido"));
+      }
+
       setInput({ args: { smsRecovery: { number: value } } });
     }
   };
