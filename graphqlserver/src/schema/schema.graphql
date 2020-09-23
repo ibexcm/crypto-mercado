@@ -46,9 +46,6 @@ type Mutation {
   # CRYPTO ACCOUNTS
   createBitcoinAccount(args: CreateBitcoinAccountInput!): Boolean!
 
-  #ACCOUNT RECOVERY
-  resetPassword(args: SetPasswordInput!): Session!
-
   # ADMIN
   # AUTHENTICATION: admin* must be the prefix for admin endpoints
   adminAuthenticate(args: AdminAuthenticateInput!): Session!
@@ -167,17 +164,4 @@ input AdminAuthenticateInput {
 
 input AdminSettingsCreateExchangeRateInput {
   price: String!
-}
-
-input recoverAccountInput {
-  smsRecovery: recoverAccountSmsInput
-  emailRecovery: recoverAccountEmailInput
-}
-
-input recoverAccountSmsInput {
-  number: String!
-}
-
-input recoverAccountEmailInput {
-  address: String!
 }
