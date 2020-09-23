@@ -47,8 +47,7 @@
     "start": "BROWSER=none react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "link:install": "yarn link @ibexcm/libraries"
+    "eject": "react-scripts eject"
   },
   "browserslist": {
     "production": [
