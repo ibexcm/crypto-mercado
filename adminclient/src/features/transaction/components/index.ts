@@ -4,3 +4,4 @@ export * from "./FiatToCryptoTransaction";
 export * from "./FiatToCryptoTransactionEvidence";
 export * from "./NavBar";
 export * from "./TransactionBreakdown";
+export * from "./TransactionIndexTable";

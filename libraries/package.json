@@ -2,12 +2,12 @@
   "name": "@ibexcm/libraries",
   "version": "1.0.3",
   "description": "IBEXCM Shared Libraries",
-  "main": "lib/index.js",
-  "types": "lib/index",
+  "main": "dist/index.js",
+  "types": "dist/index",
   "author": "netpoe",
   "license": "MIT",
   "files": [
-    "lib/**/*"
+    "dist/**/*"
   ],
   "scripts": {
     "compile": "npm run clean && tsc",
