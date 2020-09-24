@@ -8,9 +8,7 @@ phases:
   install:
     commands:
       - aws ecs update-service --cluster $ECS_CLUSTER --service service-prisma-test --desired-count 1 >> out.txt
-      - npm i -g prisma
-      - npm i -g ts-node
-      - npm i -g typescript
+      - npm i -g prisma typescript ts-node
       - yarn
       - yarn bootstrap
       - wget https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64
