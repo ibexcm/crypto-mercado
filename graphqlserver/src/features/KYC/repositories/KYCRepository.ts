@@ -20,7 +20,7 @@ export class KYCRepository {
         role: {
           type_not: "ADMIN",
         },
-        bankAccounts_every: {
+        bankAccounts_some: {
           verifiedAt: null,
           guatemala: {
             accountNumber_not: null,
@@ -34,7 +34,7 @@ export class KYCRepository {
         profile: {
           documents: {
             guatemala: {
-              dpi_every: {
+              dpi_some: {
                 id_not: null,
                 verifiedAt: null,
               },
