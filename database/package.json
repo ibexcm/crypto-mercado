@@ -2,24 +2,27 @@
   "name": "@ibexcm/database",
   "version": "1.0.2",
   "description": "IBEXCM Database",
-  "main": "lib/index.js",
-  "types": "lib/index.d.ts",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "author": "netpoe",
   "license": "MIT",
   "files": [
-    "lib/**/*"
+    "dist/**/*"
   ],
   "scripts": {
     "build": "npm run deploy && npm run generate && npm run compile",
     "compile": "npm run clean && tsc",
-    "clean": "rimraf lib",
+    "clean": "rimraf dist",
     "reset": "prisma reset && npm run seed",
     "deploy": "prisma deploy",
     "deploy:force": "prisma deploy -f",
     "generate": "prisma generate",
     "seed": "ts-node ./schema/seed.ts",
-    "api:schema:generate": "npm run generate",
-    "api:schema:compile": "npm run compile"
+    "api:schema:compile": "npm run generate && npm run publish:prepare",
+    "publish:prepare": "npm run compile && cp package.json dist && cp generated/prisma.graphql dist/generated"
+  },
+  "directories": {
+    "dist": "dist"
   },
   "dependencies": {
     "convict": "^5.2.0",

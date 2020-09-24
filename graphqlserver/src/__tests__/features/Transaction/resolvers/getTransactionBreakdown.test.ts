@@ -92,7 +92,7 @@ describe("getTransactionBreakdown", () => {
       token,
     );
 
-    expect(bitcoinApiRepository.getCurrentPriceByCurrency).toHaveBeenCalledTimes(2);
+    expect(bitcoinApiRepository.getCurrentPriceByCurrency).toHaveBeenCalledTimes(1);
 
     expect(getTransactionBreakdown.price.key).toBeDefined();
     expect(getTransactionBreakdown.price.value).toBeDefined();
@@ -153,7 +153,7 @@ describe("getTransactionBreakdown", () => {
       token,
     );
 
-    expect(bitcoinApiRepository.getCurrentPriceByCurrency).toHaveBeenCalledTimes(2);
+    expect(bitcoinApiRepository.getCurrentPriceByCurrency).toHaveBeenCalledTimes(1);
 
     expect(getTransactionBreakdown.price.key).toBeDefined();
     expect(getTransactionBreakdown.price.value).toBeDefined();

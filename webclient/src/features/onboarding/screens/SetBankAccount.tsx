@@ -1,4 +1,10 @@
-import { Bank, Currency, Query } from "@ibexcm/libraries/api";
+import {
+  Bank,
+  Currency,
+  MutationSetBankAccountArgs,
+  Query,
+  TGuatemalaBankAccount,
+} from "@ibexcm/libraries/api";
 import {
   Backdrop,
   Box,
@@ -26,7 +32,6 @@ import {
 import DependencyContext from "../../../common/contexts/DependencyContext";
 import { styles } from "../../../common/theme";
 import { UserRepositoryInjectionKeys } from "../../../features/user/InjectionKeys";
-import { MutationSetBankAccountArgs, TGuatemalaBankAccount } from "../../../libraries/api";
 import routes from "../../../routes";
 import { MobileAppBar, SidebarNavigation } from "../components";
 import { OnboardingRepositoryInjectionKeys } from "../InjectionKeys";

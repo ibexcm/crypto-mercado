@@ -1,4 +1,8 @@
-import { SendPhoneNumberVerificationCodeInput } from "@ibexcm/libraries/api";
+import {
+  AuthenticateInput,
+  MutationAuthenticateArgs,
+  SendPhoneNumberVerificationCodeInput,
+} from "@ibexcm/libraries/api";
 import {
   Box,
   Card,
@@ -19,7 +23,6 @@ import {
 } from "../../../common/components";
 import DependencyContext from "../../../common/contexts/DependencyContext";
 import { styles } from "../../../common/theme";
-import { AuthenticateInput, MutationAuthenticateArgs } from "../../../libraries/api";
 import routes from "../../../routes";
 import { MobileNavBar, NavBar } from "../components";
 import { AuthenticationRepositoryInjectionKeys } from "../InjectionKeys";
