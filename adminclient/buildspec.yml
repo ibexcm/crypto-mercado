@@ -3,12 +3,12 @@ version: 0.2
 phases:
   install:
     commands:
-      - yarn
-      - yarn bootstrap
       - npm i -g prisma typescript ts-node
   pre_build:
     commands:
       - sed -i "s/api.ibexcm.com/$API_DOMAIN/g" adminclient/src/features/app/components/GraphQL.tsx
+      - yarn
+      - yarn bootstrap
       - yarn api:schema:generate
   build:
     commands:
