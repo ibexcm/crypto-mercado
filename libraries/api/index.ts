@@ -1175,6 +1175,8 @@ export type Mutation = {
   createBitcoinAccount: Scalars['Boolean'],
   /** TRANSACTIONS */
   createTransaction: Transaction,
+  /** ACCOUNT RECOVERY */
+  resetPassword: Session,
   sendEmailVerificationCode: Scalars['Boolean'],
   /** ONBOARDING */
   sendPhoneNumberVerificationCode: Scalars['Boolean'],
@@ -1232,6 +1234,11 @@ export type MutationCreateBitcoinAccountArgs = {
 
 export type MutationCreateTransactionArgs = {
   args: CreateTransactionInput
+};
+
+
+export type MutationResetPasswordArgs = {
+  args: SetPasswordInput
 };
 
 
@@ -1513,6 +1520,8 @@ export type Query = {
   /** TRANSACTION */
   getTransaction: Transaction,
   getTransactionBreakdown: TransactionBreakdown,
+  /** ACCOUNT RECOVERY */
+  recoverAccount: Scalars['Boolean'],
   user: User,
 };
 
@@ -1546,6 +1555,11 @@ export type QueryGetTransactionBreakdownArgs = {
   args: GetTransactionBreakdownInput
 };
 
+
+export type QueryRecoverAccountArgs = {
+  args: RecoverAccountInput
+};
+
 export type Recipient = {
    __typename?: 'Recipient',
   id: Scalars['ID'],
@@ -1577,6 +1591,19 @@ export type RecipientWhereInput = {
   AND?: Maybe<Array<RecipientWhereInput>>,
   OR?: Maybe<Array<RecipientWhereInput>>,
   NOT?: Maybe<Array<RecipientWhereInput>>,
+};
+
+export type RecoverAccountEmailInput = {
+  address: Scalars['String'],
+};
+
+export type RecoverAccountInput = {
+  emailRecovery?: Maybe<RecoverAccountEmailInput>,
+  smsRecovery?: Maybe<RecoverAccountSmsInput>,
+};
+
+export type RecoverAccountSmsInput = {
+  number: Scalars['String'],
 };
 
 export type SendEmailVerificationCodeInput = {

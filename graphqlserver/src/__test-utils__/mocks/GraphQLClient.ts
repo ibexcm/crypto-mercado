@@ -8,6 +8,7 @@ import {
   MutationAuthenticateArgs,
   MutationCreateBitcoinAccountArgs,
   MutationCreateTransactionArgs,
+  MutationResetPasswordArgs,
   MutationSendEmailVerificationCodeArgs,
   MutationSendPhoneNumberVerificationCodeArgs,
   MutationSetBankAccountArgs,
@@ -23,6 +24,7 @@ import {
   QueryGetCurrenciesByCountryArgs,
   QueryGetTransactionArgs,
   QueryGetTransactionBreakdownArgs,
+  QueryRecoverAccountArgs,
 } from "@ibexcm/libraries/api";
 import { GetBanksByCountryQuery } from "@ibexcm/libraries/api/bank";
 import { GetAdminBankAccountsQuery } from "@ibexcm/libraries/api/bankAccount";
@@ -55,6 +57,10 @@ import {
   VerifyEmailMutation,
   VerifyPhoneNumberMutation,
 } from "@ibexcm/libraries/api/user";
+import {
+  GetAccountRecoveryLink,
+  ResetPasswordMutation,
+} from "@ibexcm/libraries/api/accountRecovery";
 import { ApolloError } from "apollo-server-errors";
 import axios from "axios";
 import { print } from "graphql";
@@ -309,12 +315,29 @@ const adminUpdateTransaction = async (
   >(AdminUpdateTransactionMutation, args, authToken);
 };
 
+const recoverAccount = async (args: QueryRecoverAccountArgs) => {
+  return query<QueryRecoverAccountArgs, Pick<Query, "recoverAccount">>(
+    GetAccountRecoveryLink,
+    args,
+  );
+};
+
+const resetPassword = async (args: MutationResetPasswordArgs, authToken: string) => {
+  return query<MutationResetPasswordArgs, Pick<Mutation, "resetPassword">>(
+    ResetPasswordMutation,
+    args,
+    authToken,
+  );
+};
+
 const GraphQLClient = {
   query,
   authenticate,
   adminAuthenticate,
   adminGetUser,
   user,
+  recoverAccount,
+  resetPassword,
   getBanksByCountry,
   getCurrenciesByCountry,
   verifyPhoneNumber,
