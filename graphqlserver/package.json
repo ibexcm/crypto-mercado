@@ -22,7 +22,9 @@
     "api:schema:generate": "graphql-codegen --config codegen.yml"
   },
   "dependencies": {
-    "@graphql-codegen/typescript-resolvers": "1.12.2",
+    "@graphql-codegen/typescript-resolvers": "^1.12.2",
+    "@ibexcm/database": "*",
+    "@ibexcm/libraries": "*",
     "@sendgrid/mail": "^7.2.3",
     "acorn": "^7.1.1",
     "apollo-server-errors": "^2.3.4",
@@ -46,7 +48,7 @@
   },
   "devDependencies": {
     "@apollo/client": "^3.0.0-beta.33",
-    "@graphql-codegen/cli": "1.12.2",
+    "@graphql-codegen/cli": "^1.12.2",
     "@graphql-codegen/typescript": "1.12.2",
     "@types/axios": "^0.14.0",
     "@types/bcryptjs": "^2.4.2",
@@ -61,16 +63,15 @@
     "@types/twilio": "0.0.10",
     "dotenv-cli": "^2.0.1",
     "jest": "^25.1.0",
-    "prisma-client-lib": "^1.34.10",
     "supertest": "^4.0.2",
     "ts-jest": "^25.2.0",
-    "ts-node-dev": "^1.0.0-pre.42"
+    "ts-node-dev": "^1.0.0-pre.42",
+    "typescript": "^4.0.2"
   },
   "jest": {
     "testTimeout": 60000,
     "transform": {
-      "^.+\\.tsx?$": "ts-jest",
-      "^.+\\.jsx?$": "ts-jest"
+      "^.+\\.tsx?$": "ts-jest"
     },
     "testEnvironment": "node",
     "testPathIgnorePatterns": [

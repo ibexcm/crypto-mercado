@@ -8,10 +8,10 @@
     "esModuleInterop": true,
     "sourceMap": true,
     "rootDir": ".",
-    "outDir": "dist",
+    "outDir": "lib",
     "noImplicitAny": false,
     "declaration": true,
     "pretty": true
   },
-  "include": ["generated", "./index.ts"]
+  "include": ["generated"]
 }
