@@ -6,10 +6,10 @@
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "sourceMap": true,
-    "outDir": "lib",
+    "outDir": "dist",
     "noImplicitAny": false,
     "declaration": true,
     "pretty": true
   },
-  "exclude": ["node_modules", "lib"]
+  "exclude": ["node_modules", "dist"]
 }

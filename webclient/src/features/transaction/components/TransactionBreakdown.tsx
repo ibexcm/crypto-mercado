@@ -1,12 +1,11 @@
 import { LazyQueryResult } from "@apollo/client";
-import { Query } from "@ibexcm/libraries/api";
+import { Query, QueryGetTransactionBreakdownArgs } from "@ibexcm/libraries/api";
 import { Box, Divider, Theme, WithStyles } from "@material-ui/core";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import { withStyles } from "@material-ui/styles";
 import React from "react";
 import { Typography } from "../../../common/components";
 import { styles } from "../../../common/theme";
-import { QueryGetTransactionBreakdownArgs } from "../../../libraries/api";
 import { TransactionBreakdownRow } from "./TransactionBreakdownRow";
 
 interface Props extends WithStyles {

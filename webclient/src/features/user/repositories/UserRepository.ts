@@ -1,8 +1,7 @@
 import { ApolloError, MutationResult, useMutation, useQuery } from "@apollo/client";
-import { Mutation, MutationCreateBitcoinAccountArgs } from "@ibexcm/libraries/api";
+import { Mutation, MutationCreateBitcoinAccountArgs, Query } from "@ibexcm/libraries/api";
 import { CreateBitcoinAccountMutation } from "@ibexcm/libraries/api/cryptoAccount";
 import { UserQuery } from "@ibexcm/libraries/api/user";
-import { Query } from "../../../libraries/api";
 import { AuthTokenRepository } from "../../authentication/repositories/AuthTokenRepository";
 
 export class UserRepository {

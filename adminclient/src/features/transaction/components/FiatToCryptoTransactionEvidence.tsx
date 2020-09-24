@@ -1,4 +1,9 @@
+import { Transaction } from "@ibexcm/libraries/api";
 import { ICryptoTransactionEvidenceCallback } from "@ibexcm/libraries/interfaces";
+import {
+  getBankReceiptEvidence,
+  getBitcoinReceiptEvidence,
+} from "@ibexcm/libraries/utilities/transaction";
 import {
   Box,
   Grid,
@@ -11,11 +16,6 @@ import {
 import React from "react";
 import { Button, Typography } from "../../../common/components";
 import { styles } from "../../../common/theme";
-import { Transaction } from "../../../libraries/api";
-import {
-  getBankReceiptEvidence,
-  getBitcoinReceiptEvidence,
-} from "../../../libraries/utilities/transaction";
 import { IUpdateTransactionMethods } from "../interfaces/IUpdateTransactionMethods";
 
 interface Props extends WithStyles, ICryptoTransactionEvidenceCallback {
