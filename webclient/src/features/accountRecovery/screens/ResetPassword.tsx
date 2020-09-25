@@ -67,7 +67,7 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
   };
 
   const getOnEnteredPasswordMessage = () => {
-    if (isValidPassword(input.args.password)) {
+    if (shouldPasswordBeReset)) {
       return null;
     }
 
