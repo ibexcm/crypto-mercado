@@ -44,6 +44,9 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
     executeGetAccountRecoveryLink,
   } = AccountRecoveryRepository.useGetAccountRecoveryLink();
 
+  const shouldSendByEmail = isValidEmail(input.args.emailRecovery.address);
+  const shouldSendBySMS = isValidPhoneNumber(input.args.smsRecovery.number);
+
   const onSendLink = async () => {
     try {
       await executeGetAccountRecoveryLink(input);
@@ -92,10 +95,6 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
     }
     return `Enviamos un SMS a ${input.args.smsRecovery.number}`;
   };
-
-  const shouldSendByEmail = isValidEmail(input.args.emailRecovery.address);
-
-  const shouldSendBySMS = isValidPhoneNumber(input.args.smsRecovery.number);
 
   return (
     <Box className={classes.homeContainer}>

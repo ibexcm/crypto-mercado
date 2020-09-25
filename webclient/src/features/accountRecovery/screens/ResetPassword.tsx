@@ -32,6 +32,9 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
     execute: executeResetPasswordMutation,
   } = AccountRecoveryRepository.useResetPasswordMutation();
 
+  const shouldPasswordBeReset = isValidPassword(input.args.password);
+  const passwordsMatch = input.args.password === confirmPasswordInput.args.password;
+
   const onResetPassword = async () => {
     try {
       await executeResetPasswordMutation(input);
@@ -73,9 +76,6 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
 
     return "Contraseña Insegura";
   };
-
-  const shouldPasswordBeReset = isValidPassword(input.args.password);
-  const passwordsMatch = input.args.password === confirmPasswordInput.args.password;
 
   return (
     <Box className={classes.homeContainer}>
