@@ -2,6 +2,7 @@ import React from "react";
 import routes from "../../../routes";
 import DependencyContext from "../../../common/contexts/DependencyContext";
 import { styles } from "../../../common/theme";
+import { isValidPassword } from "@ibexcm/libraries/validation";
 import { MobileNavBar, NavBar } from "../components";
 import { MutationResetPasswordArgs } from "@ibexcm/libraries/api";
 import { RouteComponentProps, StaticContext } from "react-router";
@@ -16,8 +17,6 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
   const AccountRecoveryRepository = dependencies.provide(
     AccountRecoveryRepositoryInjectionKey,
   );
-
-  const [confirmButtonDisabled, setConfirmButtonDisabled] = React.useState<boolean>(true);
 
   const [error, setError] = React.useState<Error | null>(null);
   const [input, setInput] = React.useState<MutationResetPasswordArgs>({
@@ -51,12 +50,11 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
   const onConfirmPasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
 
-    if (value !== input.args.password) {
-      setError(new Error("La contraseñas no coinciden"));
-      setConfirmButtonDisabled(true);
+    if (passwordsMatch) {
+      setError(new Error("Las contraseñas no coinciden"));
+      return;
     } else {
       setError(null);
-      setConfirmButtonDisabled(false);
     }
 
     setConfirmPasswordInput({ args: { password: value } });
@@ -67,6 +65,17 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
       onResetPassword();
     }
   };
+
+  const getOnEnteredPasswordMessage = () => {
+    if (isValidPassword(input.args.password)) {
+      return null;
+    }
+
+    return "Contraseña Insegura";
+  };
+
+  const shouldPasswordBeReset = isValidPassword(input.args.password);
+  const passwordsMatch = input.args.password === confirmPasswordInput.args.password;
 
   return (
     <Box className={classes.homeContainer}>
@@ -80,12 +89,12 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
           justifyContent="center"
         >
           <Box flexDirection="column" display="flex" justifyContent="center">
-            <Typography variant="h5">Restablece tu Contraseña</Typography>
-            <Typography>Elige una nueva contraseña.</Typography>
+            <Typography variant="h5">Restablece Tu Contraseña</Typography>
+            <Typography>Elige una nueva contraseña</Typography>
           </Box>
           <Box my={2}>
             <Box>
-              <Typography>{""}</Typography>
+              <Typography>{getOnEnteredPasswordMessage()}</Typography>
             </Box>
             <TextField
               autoFocus
@@ -116,7 +125,7 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
               fullWidth
               size="large"
               onClick={onResetPassword}
-              disabled={confirmButtonDisabled}
+              disabled={!passwordsMatch || !shouldPasswordBeReset}
             >
               Confirmar
             </Button>
