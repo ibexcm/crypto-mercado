@@ -1,13 +1,13 @@
+import { Transaction } from "@ibexcm/libraries/api";
 import { ICryptoTransactionEvidenceCallback } from "@ibexcm/libraries/interfaces";
+import {
+  getBankReceiptEvidence,
+  getBitcoinReceiptEvidence,
+} from "@ibexcm/libraries/utilities/transaction";
 import { Box, Grid, Paper, Theme, withStyles, WithStyles } from "@material-ui/core";
 import React from "react";
 import { Button, TextField, Typography } from "../../../common/components";
 import { styles } from "../../../common/theme";
-import { Transaction } from "../../../libraries/api";
-import {
-  getBankReceiptEvidence,
-  getBitcoinReceiptEvidence,
-} from "../../../libraries/utilities/transaction";
 
 interface Props extends WithStyles, ICryptoTransactionEvidenceCallback {
   transaction: Transaction;

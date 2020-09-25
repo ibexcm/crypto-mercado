@@ -1,13 +1,6 @@
 overwrite: true
 schema: "./src/schema/schema.graphql"
-documents: null
 generates:
   ../libraries/api/index.ts:
-    plugins:
-      - "typescript"
-  ../webclient/src/libraries/api/index.ts:
-    plugins:
-      - "typescript"
-  ../adminclient/src/libraries/api/index.ts:
     plugins:
       - "typescript"

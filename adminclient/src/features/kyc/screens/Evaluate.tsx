@@ -1,3 +1,4 @@
+import { AdminKycApproveUserGovernmentIdInput } from "@ibexcm/libraries/api";
 import {
   Backdrop,
   Box,
@@ -20,7 +21,6 @@ import {
 } from "../../../common/components";
 import DependencyContext from "../../../common/contexts/DependencyContext";
 import { styles } from "../../../common/theme";
-import { AdminKycApproveUserGovernmentIdInput } from "../../../libraries/api";
 import routes from "../../../routes";
 import { UserRepositoryInjectionKeys } from "../../user/InjectionKeys";
 import { KYCRepositoryInjectionKeys } from "../InjectionKeys";

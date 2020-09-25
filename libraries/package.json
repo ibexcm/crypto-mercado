@@ -2,28 +2,66 @@
   "name": "@ibexcm/libraries",
   "version": "1.0.3",
   "description": "IBEXCM Shared Libraries",
-  "main": "lib/index.js",
-  "types": "lib/index",
+  "main": "dist/index.js",
+  "types": "dist/index",
   "author": "netpoe",
   "license": "MIT",
   "files": [
-    "lib/**/*"
+    "dist/**/*"
   ],
   "scripts": {
-    "compile": "tsc",
-    "api:schema:compile": "npm run compile"
+    "compile": "npm run clean && tsc",
+    "clean": "rimraf dist",
+    "test": "jest",
+    "test:coverage": "jest --coverage",
+    "api:schema:compile": "npm run publish:prepare",
+    "publish:prepare": "npm run compile && cp package.json dist && cp .npmrc dist"
+  },
+  "directories": {
+    "dist": "dist"
   },
   "dependencies": {
     "@babel/runtime": "^7.8.3",
-    "@ibexcm/database": "1.0.2",
     "axios": "^0.19.2",
-    "graphql": "14.6.0"
+    "google-libphonenumber": "^3.2.13",
+    "graphql": "14.6.0",
+    "validator": "^13.1.17",
+    "zxcvbn": "^4.4.2"
   },
   "devDependencies": {
+    "@types/google-libphonenumber": "^7.4.19",
+    "@types/jest": "^26.0.14",
     "@types/node": "^13.9.2",
-    "graphql-tag": "^2.10.3"
+    "@types/validator": "^13.1.0",
+    "@types/zxcvbn": "^4.4.0",
+    "graphql-tag": "^2.10.3",
+    "jest": "^26.4.2",
+    "ts-jest": "^26.4.0",
+    "typescript": "^4.0.3"
   },
   "publishConfig": {
     "registry": "https://npm.pkg.github.com/"
+  },
+  "jest": {
+    "testTimeout": 60000,
+    "transform": {
+      "^.+\\.tsx?$": "ts-jest"
+    },
+    "testEnvironment": "node",
+    "testPathIgnorePatterns": [
+      "<rootDir>/lib/",
+      "<rootDir>/node_modules/"
+    ],
+    "modulePaths": [
+      "<rootDir>/"
+    ],
+    "testRegex": "(/__test{s}__/.*|\\.(test|spec))\\.(ts|tsx)$",
+    "moduleFileExtensions": [
+      "ts",
+      "js",
+      "json",
+      "tsx",
+      "jsx"
+    ]
   }
 }
