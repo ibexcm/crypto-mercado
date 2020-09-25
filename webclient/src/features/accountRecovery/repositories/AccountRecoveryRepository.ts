@@ -9,14 +9,9 @@ import {
   GetAccountRecoveryLink,
   ResetPasswordMutation,
 } from "@ibexcm/libraries/api/accountRecovery";
-import { AuthTokenRepository } from "../../authentication/repositories/AuthTokenRepository";
 
 export class AccountRecoveryRepository {
-  private AuthTokenRepository: AuthTokenRepository;
-
-  constructor(AuthTokenRepository: AuthTokenRepository) {
-    this.AuthTokenRepository = AuthTokenRepository;
-  }
+  constructor() {}
 
   useGetAccountRecoveryLink(): {
     executeGetAccountRecoveryLink: (args: QueryRecoverAccountArgs) => Promise<void>;
@@ -31,14 +26,8 @@ export class AccountRecoveryRepository {
       execute({ variables: args });
 
       if (Boolean(state?.error)) {
-        throw new Error(state.error.name);
+        throw new Error(state.error.message);
       }
-
-      const {
-        recoverAccount: { token },
-      } = state.data;
-
-      this.AuthTokenRepository.setAuthToken(token as string);
     };
 
     return {

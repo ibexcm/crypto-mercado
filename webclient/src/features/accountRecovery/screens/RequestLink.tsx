@@ -25,7 +25,6 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
     AccountRecoveryRepositoryInjectionKey,
   );
 
-  const [isSubmitButtonDisabled, setIsSubmitButtonDisabled] = React.useState<boolean>(true);
   const [recoveryOption, setRecoveryOption] = React.useState(RecoveryOption.email);
   const [isModalOpen, setIsModalOpen] = React.useState(false);
 
@@ -58,21 +57,19 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
     const value = event.target.value;
 
     if (recoveryOption === RecoveryOption.email) {
-      if (shouldSendByEmail()) {
-        setIsSubmitButtonDisabled(false);
-      } else {
+      if (!shouldSendByEmail) {
         setInputError(new Error("Correo Inválido"));
       }
-
       setInput({ args: { emailRecovery: { address: value } } });
-    } else {
-      if (shouldSendBySms()) {
-        setIsSubmitButtonDisabled(false);
-      } else {
-        setInputError(new Error("Número Inválido"));
-      }
 
+      return;
+    } else {
+      if (!shouldSendBySMS) {
+        setInputError(new Error("Correo Inválido"));
+      }
       setInput({ args: { smsRecovery: { number: value } } });
+
+      return;
     }
   };
 
@@ -96,9 +93,9 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
     return `Enviamos un SMS a ${input.args.smsRecovery.number}`;
   };
 
-  const shouldSendByEmail = () => isValidEmail(input.args.emailRecovery.address);
+  const shouldSendByEmail = isValidEmail(input.args.emailRecovery.address);
 
-  const shouldSendBySms = () => isValidPhoneNumber(input.args.smsRecovery.number);
+  const shouldSendBySMS = isValidPhoneNumber(input.args.smsRecovery.number);
 
   return (
     <Box className={classes.homeContainer}>
@@ -123,7 +120,7 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
         >
           <Box mb={4}>
             <Typography variant="h5" mb={1}>
-              Recupera Tu cuenta
+              Recupera Tu Cuenta
             </Typography>
             <Typography>
               Elige a donde quieres que se envíe el enlace de restablecimiento de
@@ -141,13 +138,9 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
                 <Tab
                   label="Email"
                   value={RecoveryOption.email}
-                  disabled={shouldSendBySms()}
+                  disabled={shouldSendBySMS}
                 />
-                <Tab
-                  label="SMS"
-                  value={RecoveryOption.sms}
-                  disabled={shouldSendByEmail()}
-                />
+                <Tab label="SMS" value={RecoveryOption.sms} disabled={shouldSendByEmail} />
               </TabList>
               <TabPanel value={RecoveryOption.email}>
                 <Box>
@@ -185,7 +178,7 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
               size="large"
               onKeyPress={onKeyPress}
               onClick={onSendLink}
-              disabled={isSubmitButtonDisabled}
+              disabled={!shouldSendByEmail || !shouldSendBySMS}
             >
               Enviar
             </Button>
