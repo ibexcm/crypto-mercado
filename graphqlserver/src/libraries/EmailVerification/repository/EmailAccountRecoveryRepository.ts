@@ -11,7 +11,7 @@ const sendRecoveryLink: IEmailAccountRecoveryRepository["sendRecoveryLink"] = as
 ) => {
   try {
     const [sent] = await sendgridClient.send({
-      subject: "Recupera tu Contraseña",
+      subject: "Recupera Tu Cuenta",
       to: [{ email: address }],
       from: {
         email: from,
@@ -19,7 +19,7 @@ const sendRecoveryLink: IEmailAccountRecoveryRepository["sendRecoveryLink"] = as
       },
       templateId: "d-12adbdac5e764c98b2446c47241bda66",
       dynamicTemplateData: {
-        reset_password_url: `${host}/restablecer-contrasena?authToken=${token}`,
+        reset_password_url: `${host}/restablece-tu-contrasena?token=${token}`,
       },
     });
 
