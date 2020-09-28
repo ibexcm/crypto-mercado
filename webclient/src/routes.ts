@@ -16,7 +16,7 @@ export const routes = {
   },
   recovery: {
     requestAccountRecoveryLink: "/recuperar-cuenta",
-    resetPassword: "/restablecer-contrasena",
+    resetPassword: "/restablece-tu-contrasena",
   },
   dashboard: {
     sell: {

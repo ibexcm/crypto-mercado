@@ -2,7 +2,7 @@ import React from "react";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import { PrivateRoute } from "./common/components";
 import DependencyContext from "./common/contexts/DependencyContext";
-import { RequestLink } from "./features/accountRecovery/screens";
+import { RequestLink, ResetPassword } from "./features/accountRecovery/screens";
 import { GraphQL } from "./features/app/components";
 import { Authenticate } from "./features/authentication/screens";
 import { Home } from "./features/home/screens";
@@ -70,6 +70,8 @@ const App: React.FC = () => {
               exact
               component={RequestLink}
             />
+
+            <Route exact path={routes.recovery.resetPassword} component={ResetPassword} />
 
             {/* TRANSACTION */}
             <PrivateRoute
