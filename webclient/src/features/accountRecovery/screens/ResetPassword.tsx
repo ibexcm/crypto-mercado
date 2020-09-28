@@ -1,13 +1,13 @@
+import { MutationResetPasswordArgs } from "@ibexcm/libraries/api";
+import { isValidPassword } from "@ibexcm/libraries/validation";
+import { Box, Container, Theme, withStyles, WithStyles } from "@material-ui/core";
 import React from "react";
-import routes from "../../../routes";
+import { RouteComponentProps, StaticContext } from "react-router";
+import { Button, InputErrorBox, TextField, Typography } from "../../../common/components";
 import DependencyContext from "../../../common/contexts/DependencyContext";
 import { styles } from "../../../common/theme";
-import { isValidPassword } from "@ibexcm/libraries/validation";
+import routes from "../../../routes";
 import { MobileNavBar, NavBar } from "../components";
-import { MutationResetPasswordArgs } from "@ibexcm/libraries/api";
-import { RouteComponentProps, StaticContext } from "react-router";
-import { Box, Container, Theme, withStyles, WithStyles } from "@material-ui/core";
-import { Button, InputErrorBox, TextField, Typography } from "../../../common/components";
 import { AccountRecoveryRepositoryInjectionKey } from "../InjectionKey";
 
 interface Props extends WithStyles, RouteComponentProps<{}, StaticContext> {}
@@ -28,6 +28,8 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
     args: { password: "" },
   });
 
+  const query = AccountRecoveryRepository.useQueryParams();
+
   const {
     execute: executeResetPasswordMutation,
   } = AccountRecoveryRepository.useResetPasswordMutation();
@@ -37,7 +39,7 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
 
   const onResetPassword = async () => {
     try {
-      await executeResetPasswordMutation(input);
+      await executeResetPasswordMutation(input, query.get("token"));
       history.push(routes.authentication.signIn);
     } catch (error) {
       setError(error);
