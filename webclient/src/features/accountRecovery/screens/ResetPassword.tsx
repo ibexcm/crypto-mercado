@@ -5,6 +5,7 @@ import React from "react";
 import { RouteComponentProps, StaticContext } from "react-router";
 import { Button, InputErrorBox, TextField, Typography } from "../../../common/components";
 import DependencyContext from "../../../common/contexts/DependencyContext";
+import { NavigationRepositoryInjectionKey } from "../../../common/InjectionKeys";
 import { styles } from "../../../common/theme";
 import routes from "../../../routes";
 import { MobileNavBar, NavBar } from "../components";
@@ -14,6 +15,7 @@ interface Props extends WithStyles, RouteComponentProps<{}, StaticContext> {}
 
 const Component: React.FC<Props> = ({ classes, history, location, match, ...props }) => {
   const dependencies = React.useContext(DependencyContext);
+  const NavigationRepository = dependencies.provide(NavigationRepositoryInjectionKey);
   const AccountRecoveryRepository = dependencies.provide(
     AccountRecoveryRepositoryInjectionKey,
   );
@@ -28,7 +30,7 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
     args: { password: "" },
   });
 
-  const query = AccountRecoveryRepository.useQueryParams();
+  const query = NavigationRepository.useQueryParams();
 
   const {
     execute: executeResetPasswordMutation,

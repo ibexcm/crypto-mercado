@@ -9,16 +9,9 @@ import {
   GetAccountRecoveryLink,
   ResetPasswordMutation,
 } from "@ibexcm/libraries/api/accountRecovery";
-import { useLocation } from "react-router-dom";
 
 export class AccountRecoveryRepository {
   constructor() {}
-
-  useQueryParams(): URLSearchParams {
-    const location = useLocation();
-
-    return new URLSearchParams(location.search);
-  }
 
   useGetAccountRecoveryLink(): {
     executeGetAccountRecoveryLink: (args: QueryRecoverAccountArgs) => Promise<void>;
