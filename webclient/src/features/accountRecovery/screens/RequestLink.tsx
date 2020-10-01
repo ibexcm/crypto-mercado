@@ -27,6 +27,8 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
 
   const [recoveryOption, setRecoveryOption] = React.useState(RecoveryOption.email);
   const [isModalOpen, setIsModalOpen] = React.useState(false);
+  const [shouldSendByEmail, setShouldSendByEmail] = React.useState(false);
+  const [shouldSendBySMS, setShouldSendBySMS] = React.useState(false);
 
   const [inputError, setInputError] = React.useState<Error | null>(null);
   const [input, setInput] = React.useState<QueryRecoverAccountArgs>({
@@ -44,11 +46,28 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
     executeGetAccountRecoveryLink,
   } = AccountRecoveryRepository.useGetAccountRecoveryLink();
 
-  const shouldSendByEmail = isValidEmail(input.args.emailRecovery.address);
-  const shouldSendBySMS = isValidPhoneNumber(input.args.smsRecovery.number);
+  const isEmailOptionActive = recoveryOption === RecoveryOption.email;
+
+  React.useEffect(() => {
+    try {
+      if (isEmailOptionActive) {
+        setShouldSendByEmail(isValidEmail(input.args.emailRecovery.address));
+        return;
+      }
+
+      setShouldSendBySMS(isValidPhoneNumber(input.args.smsRecovery.number));
+    } catch (error) {}
+  }, [input.args.emailRecovery.address, input.args.smsRecovery.number]);
 
   const onSendLink = async () => {
     try {
+      if (
+        (isEmailOptionActive && !shouldSendByEmail) ||
+        (!isEmailOptionActive && !shouldSendBySMS)
+      ) {
+        return;
+      }
+
       await executeGetAccountRecoveryLink(input);
       setIsModalOpen(true);
     } catch (err) {
@@ -56,23 +75,25 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
     }
   };
 
-  const OnInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const onEmailInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
 
-    if (recoveryOption === RecoveryOption.email) {
-      if (!shouldSendByEmail) {
-        setInputError(new Error("Correo Inválido"));
-      }
-      setInput({ args: { emailRecovery: { address: value } } });
+    setInputError(null);
+    setInput({ args: { ...input.args, emailRecovery: { address: value } } });
 
-      return;
-    } else {
-      if (!shouldSendBySMS) {
-        setInputError(new Error("Correo Inválido"));
-      }
-      setInput({ args: { smsRecovery: { number: value } } });
+    if (!shouldSendByEmail) {
+      setInputError(new Error("Correo Inválido"));
+    }
+  };
 
-      return;
+  const onSMSInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.value;
+
+    setInputError(null);
+    setInput({ args: { ...input.args, smsRecovery: { number: value } } });
+
+    if (!shouldSendBySMS) {
+      setInputError(new Error("Número Inválido"));
     }
   };
 
@@ -80,6 +101,7 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
     _event: React.ChangeEvent<{}>,
     newOption: RecoveryOption,
   ) => {
+    setInputError(null);
     setRecoveryOption(newOption);
   };
 
@@ -90,11 +112,26 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
   };
 
   const getOnSuccessMessage = () => {
-    if (recoveryOption === RecoveryOption.email) {
+    if (isEmailOptionActive) {
       return `Enviamos un correo a ${input.args.emailRecovery.address}`;
     }
+
     return `Enviamos un SMS a ${input.args.smsRecovery.number}`;
   };
+
+  const getButton = (disabled: boolean) => (
+    <Button
+      color="primary"
+      variant="contained"
+      fullWidth
+      size="large"
+      onKeyPress={onKeyPress}
+      onClick={onSendLink}
+      disabled={disabled}
+    >
+      Enviar
+    </Button>
+  );
 
   return (
     <Box className={classes.homeContainer}>
@@ -134,12 +171,8 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
                 aria-label="Reset Password Methods"
                 centered
               >
-                <Tab
-                  label="Email"
-                  value={RecoveryOption.email}
-                  disabled={shouldSendBySMS}
-                />
-                <Tab label="SMS" value={RecoveryOption.sms} disabled={shouldSendByEmail} />
+                <Tab label="Email" value={RecoveryOption.email} />
+                <Tab label="SMS" value={RecoveryOption.sms} />
               </TabList>
               <TabPanel value={RecoveryOption.email}>
                 <Box>
@@ -148,11 +181,12 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
                     label="Email"
                     variant="outlined"
                     type="email"
-                    onChange={OnInputChange}
+                    onChange={onEmailInputChange}
                     value={input.args.emailRecovery.address}
                     mb={3}
                   />
                   <InputErrorBox error={inputError} />
+                  {getButton(!shouldSendByEmail)}
                 </Box>
               </TabPanel>
               <TabPanel value={RecoveryOption.sms}>
@@ -162,25 +196,15 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
                     label="Número de teléfono"
                     variant="outlined"
                     type="tel"
-                    onChange={OnInputChange}
+                    onChange={onSMSInputChange}
                     value={input.args.smsRecovery.number}
                     mb={3}
                   />
                   <InputErrorBox error={inputError} />
+                  {getButton(!shouldSendBySMS)}
                 </Box>
               </TabPanel>
             </TabContext>
-            <Button
-              color="primary"
-              variant="contained"
-              fullWidth
-              size="large"
-              onKeyPress={onKeyPress}
-              onClick={onSendLink}
-              disabled={!shouldSendByEmail || !shouldSendBySMS}
-            >
-              Enviar
-            </Button>
           </Box>
         </Box>
       </Container>
