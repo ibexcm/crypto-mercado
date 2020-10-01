@@ -8,6 +8,7 @@ import {
   Card,
   CardContent,
   Container,
+  Link,
   Theme,
   withStyles,
   WithStyles,
@@ -141,6 +142,11 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
             >
               INICIAR SESIÓN
             </Button>
+            <Box my={2}>
+              <Link href={routes.recovery.requestAccountRecoveryLink}>
+                <Typography align="center">¿Olvidaste tu contraseña?</Typography>
+              </Link>
+            </Box>
           </Box>
         </Box>
       </Container>
