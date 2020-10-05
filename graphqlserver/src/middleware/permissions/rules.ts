@@ -8,6 +8,8 @@ import {
   MutationSetTransactionReceiptEvidenceArgs,
   MutationVerifyEmailArgs,
   MutationVerifyPhoneNumberArgs,
+  RecoverAccountInput,
+  RecoverAccountEmailInput,
   TUserRole,
 } from "@ibexcm/libraries/api";
 import { compare } from "bcryptjs";
@@ -256,32 +258,54 @@ export const isEmailAvailable = rule({ cache: true })(
 
 export const isRecoveryEmailAvailable = rule({
   cache: true,
-})(async (parent, { args: { address } }, { dependencies }: IContext, info) => {
-  const db = dependencies.provide(dbInjectionKey);
-  const user = await db
-    .email({ address })
-    .contact()
-    .user();
+})(
+  async (
+    parent,
+    {
+      args: {
+        emailRecovery: { address },
+      },
+    },
+    { dependencies }: IContext,
+    info,
+  ) => {
+    const db = dependencies.provide(dbInjectionKey);
+    const user = await db
+      .email({ address })
+      .contact()
+      .user();
 
-  if (!Boolean(user)) {
-    return false;
-  }
+    if (!Boolean(user)) {
+      return AccountRecoveryError.unregisteredEmailError;
+    }
 
-  return true;
-});
+    return true;
+  },
+);
 
 export const isRecoveryNumberAvailable = rule({
   cache: true,
-})(async (parent, { args: { number } }, { dependencies }: IContext, info) => {
-  const db = dependencies.provide(dbInjectionKey);
-  const user = await db
-    .phoneNumber({ number })
-    .contact()
-    .user();
+})(
+  async (
+    parent,
+    {
+      args: {
+        smsRecovery: { number },
+      },
+    },
+    { dependencies }: IContext,
+    info,
+  ) => {
+    const db = dependencies.provide(dbInjectionKey);
+    const user = await db
+      .phoneNumber({ number })
+      .contact()
+      .user();
 
-  if (!Boolean(user)) {
-    return false;
-  }
+    if (!Boolean(user)) {
+      return AccountRecoveryError.unregisteredPhoneNumber;
+    }
 
-  return true;
-});
+    return true;
+  },
+);
