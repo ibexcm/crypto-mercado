@@ -14,7 +14,12 @@ const Component: React.FC<IMobileAppBarProps> = ({ classes }) => {
         <Toolbar className={classes.toolbar}>
           <Box className={classes.logoBox}>
             <Link to={routes.root}>
-              <img src="/svg/ibex-icon.svg" width="100%" height="auto" />
+              <img
+                src="/svg/ibex-icon.svg"
+                alt="IBEX Homepage Icon"
+                width="100%"
+                height="auto"
+              />
             </Link>
           </Box>
           <Box className={classes.some}>

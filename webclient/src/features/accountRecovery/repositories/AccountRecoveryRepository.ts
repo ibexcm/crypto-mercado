@@ -11,8 +11,6 @@ import {
 } from "@ibexcm/libraries/api/accountRecovery";
 
 export class AccountRecoveryRepository {
-  constructor() {}
-
   useGetAccountRecoveryLink(): {
     executeGetAccountRecoveryLink: (args: QueryRecoverAccountArgs) => Promise<void>;
     state: LazyQueryResult<Pick<Query, "recoverAccount">, QueryRecoverAccountArgs>;
