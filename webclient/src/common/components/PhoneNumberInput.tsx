@@ -6,34 +6,48 @@ import { InputErrorBox } from "./InputErrorBox";
 
 interface Props extends WithStyles {
   value: string;
-  setParentInput(number: string): void;
   error: Error | null;
+  parentInputState(phoneNumber: string): void;
+  shouldSMSBeSent(state: boolean): void;
 }
 
 const Component: React.FC<Props> = ({
   classes,
   value,
-  setParentInput,
   error,
+  parentInputState,
+  shouldSMSBeSent,
   ...props
 }) => {
   const [inputError, setInputError] = React.useState<Error | null>(null);
 
+  React.useEffect(() => {
+    try {
+      if (!isValidPhoneNumber(value)) {
+        shouldSMSBeSent(false);
+      }
+    } catch (error) {
+      shouldSMSBeSent(false);
+    }
+  }, [value]);
+
   const onChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const value = event.target.value;
+    const currentValue = event.target.value;
     const invalidPhoneNumberError = new Error("Número Inválido");
 
     try {
-      if (!isValidPhoneNumber(value)) {
+      if (!isValidPhoneNumber(currentValue)) {
+        shouldSMSBeSent(false);
         setInputError(invalidPhoneNumberError);
       } else {
+        shouldSMSBeSent(true);
         setInputError(null);
       }
     } catch (error) {
       setInputError(invalidPhoneNumberError);
     }
 
-    setParentInput(value);
+    parentInputState(currentValue);
   };
 
   return (
@@ -48,7 +62,7 @@ const Component: React.FC<Props> = ({
           value={value}
         />
         <Box mt={2}>
-          <InputErrorBox error={inputError || error} />
+          <InputErrorBox error={error || inputError} />
         </Box>
       </Box>
     </>

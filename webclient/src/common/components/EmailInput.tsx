@@ -6,29 +6,39 @@ import { InputErrorBox } from "./InputErrorBox";
 
 interface Props extends WithStyles {
   value: string;
-  setParentInput(email: string): void;
   error: Error | null;
+  parentInputState(email: string): void;
+  shouldEmailBeSent(state: boolean): void;
 }
 
 const Component: React.FC<Props> = ({
   classes,
   value,
-  setParentInput,
   error,
+  parentInputState,
+  shouldEmailBeSent,
   ...props
 }) => {
   const [inputError, setInputError] = React.useState<Error | null>(null);
 
-  const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const value = event.target.value;
-
+  React.useEffect(() => {
     if (!isValidEmail(value)) {
+      shouldEmailBeSent(false);
+    }
+  }, [value]);
+
+  const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const currentValue = event.target.value;
+
+    if (!isValidEmail(currentValue)) {
+      shouldEmailBeSent(false);
       setInputError(new Error("Email Inválido"));
     } else {
+      shouldEmailBeSent(true);
       setInputError(null);
     }
 
-    setParentInput(value);
+    parentInputState(currentValue);
   };
 
   return (
@@ -43,7 +53,7 @@ const Component: React.FC<Props> = ({
           onChange={onChange}
         />
         <Box mt={2}>
-          <InputErrorBox error={inputError || error} />
+          <InputErrorBox error={error || inputError} />
         </Box>
       </Box>
     </>
