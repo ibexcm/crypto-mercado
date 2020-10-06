@@ -51,13 +51,6 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
 
   const onSendLink = async () => {
     try {
-      if (
-        (isEmailOptionActive && !shouldSendByEmail) ||
-        (!isEmailOptionActive && !shouldSendBySMS)
-      ) {
-        return;
-      }
-
       await executeGetAccountRecoveryLink(input);
       setIsModalOpen(true);
     } catch (error) {
@@ -149,7 +142,7 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
             alignItems="center"
             mb={3}
           >
-            <Typography align="center">{getOnSuccessMessage()}</Typography>
+            {getOnSuccessMessage()}
           </Box>
         </Box>
       </Modal>
@@ -185,18 +178,20 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
               <TabPanel value={RecoveryOption.email}>
                 <EmailInput
                   value={input.args.emailRecovery?.address || ""}
-                  setParentInput={setEmail}
                   error={error}
+                  parentInputState={setEmail}
+                  shouldEmailBeSent={setShouldSendByEmail}
                 />
                 <Box>{getButton(!shouldSendByEmail)}</Box>
               </TabPanel>
               <TabPanel value={RecoveryOption.sms}>
                 <PhoneNumberInput
                   value={input.args.smsRecovery?.number || "+502"}
-                  setParentInput={setPhoneNumber}
                   error={error}
+                  parentInputState={setPhoneNumber}
+                  shouldSMSBeSent={setShouldSendBySMS}
                 />
-                <Box>{getButton(!shouldSendByEmail)}</Box>
+                <Box>{getButton(!shouldSendBySMS)}</Box>
               </TabPanel>
             </TabContext>
           </Box>
