@@ -12,7 +12,7 @@ const minHeight = 49;
 
 const Component: React.FC<Props> = ({ classes, error }) => {
   return (
-    <Box mb={1}>
+    <Box mb={1} mt={2}>
       {Boolean(error) ? (
         <Box
           className={classes.box}

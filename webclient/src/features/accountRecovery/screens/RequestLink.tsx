@@ -1,16 +1,16 @@
 import { QueryRecoverAccountArgs } from "@ibexcm/libraries/api";
 import { Box, Container, Tab, Theme, withStyles, WithStyles } from "@material-ui/core";
-import { TabContext, TabList, TabPanel } from "@material-ui/lab";
-import React from "react";
 import MailOutlineIcon from "@material-ui/icons/MailOutline";
 import SmsOutlinedIcon from "@material-ui/icons/SmsOutlined";
+import { TabContext, TabList, TabPanel } from "@material-ui/lab";
+import React from "react";
 import { RouteComponentProps, StaticContext } from "react-router";
 import {
   Button,
-  Modal,
-  Typography,
   EmailInput,
+  Modal,
   PhoneNumberInput,
+  Typography,
 } from "../../../common/components";
 import DependencyContext from "../../../common/contexts/DependencyContext";
 import { styles } from "../../../common/theme";
@@ -28,8 +28,6 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
 
   const [recoveryOption, setRecoveryOption] = React.useState(RecoveryOption.email);
   const [isModalOpen, setIsModalOpen] = React.useState(false);
-  const [shouldSendByEmail, setShouldSendByEmail] = React.useState(false);
-  const [shouldSendBySMS, setShouldSendBySMS] = React.useState(false);
 
   const [error, setError] = React.useState<Error | null>(null);
   const [input, setInput] = React.useState<QueryRecoverAccountArgs>({
@@ -66,12 +64,16 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
     setRecoveryOption(newOption);
   };
 
-  const setEmail = (email: string) => {
-    setInput({ ...input, args: { emailRecovery: { address: email } } });
+  const setEmail = (address: string) => {
+    setInput({
+      args: { emailRecovery: { address }, smsRecovery: { ...input.args.smsRecovery } },
+    });
   };
 
   const setPhoneNumber = (number: string) => {
-    setInput({ ...input, args: { smsRecovery: { number } } });
+    setInput({
+      args: { smsRecovery: { number }, emailRecovery: { ...input.args.emailRecovery } },
+    });
   };
 
   const onKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -177,21 +179,27 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
               </TabList>
               <TabPanel value={RecoveryOption.email}>
                 <EmailInput
-                  value={input.args.emailRecovery?.address || ""}
+                  value={input?.args?.emailRecovery?.address}
                   error={error}
-                  parentInputState={setEmail}
-                  shouldEmailBeSent={setShouldSendByEmail}
+                  onError={setError}
+                  onChange={setEmail}
                 />
-                <Box>{getButton(!shouldSendByEmail)}</Box>
+                <Box>
+                  {getButton(
+                    Boolean(error) || !Boolean(input?.args?.emailRecovery?.address),
+                  )}
+                </Box>
               </TabPanel>
               <TabPanel value={RecoveryOption.sms}>
                 <PhoneNumberInput
-                  value={input.args.smsRecovery?.number || "+502"}
+                  value={input?.args?.smsRecovery?.number}
                   error={error}
-                  parentInputState={setPhoneNumber}
-                  shouldSMSBeSent={setShouldSendBySMS}
+                  onError={setError}
+                  onChange={setPhoneNumber}
                 />
-                <Box>{getButton(!shouldSendBySMS)}</Box>
+                <Box>
+                  {getButton(Boolean(error) || !Boolean(input?.args?.smsRecovery?.number))}
+                </Box>
               </TabPanel>
             </TabContext>
           </Box>

@@ -1,62 +1,46 @@
+import { RecoverAccountEmailInput } from "@ibexcm/libraries/api";
 import { isValidEmail } from "@ibexcm/libraries/validation";
 import { Box, TextField, Theme, withStyles, WithStyles } from "@material-ui/core";
 import React from "react";
+import { InputValidationProps } from "../interface/InputValidationProps";
 import { styles } from "../theme";
 import { InputErrorBox } from "./InputErrorBox";
 
-interface Props extends WithStyles {
-  value: string;
-  error: Error | null;
-  parentInputState(email: string): void;
-  shouldEmailBeSent(state: boolean): void;
-}
+interface Props
+  extends WithStyles,
+    InputValidationProps<RecoverAccountEmailInput["address"]> {}
 
-const Component: React.FC<Props> = ({
-  classes,
-  value,
-  error,
-  parentInputState,
-  shouldEmailBeSent,
-  ...props
-}) => {
-  const [inputError, setInputError] = React.useState<Error | null>(null);
+const Component: React.FC<Props> = ({ value, error, onError, onChange }) => {
+  const invalidEmailInputError = new Error("Email Inválido");
 
   React.useEffect(() => {
-    if (!isValidEmail(value)) {
-      shouldEmailBeSent(false);
+    if (!Boolean(value)) {
+      return;
     }
+
+    if (!isValidEmail(value)) {
+      onError(invalidEmailInputError);
+      return;
+    }
+
+    onError(null);
+    onChange(value);
   }, [value]);
 
-  const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const currentValue = event.target.value;
-
-    if (!isValidEmail(currentValue)) {
-      shouldEmailBeSent(false);
-      setInputError(new Error("Email Inválido"));
-    } else {
-      shouldEmailBeSent(true);
-      setInputError(null);
-    }
-
-    parentInputState(currentValue);
-  };
-
   return (
-    <>
-      <Box my={3}>
-        <TextField
-          fullWidth
-          label="Email"
-          variant="outlined"
-          type="email"
-          value={value}
-          onChange={onChange}
-        />
-        <Box mt={2}>
-          <InputErrorBox error={error || inputError} />
-        </Box>
-      </Box>
-    </>
+    <Box my={3}>
+      <TextField
+        fullWidth
+        label="Email"
+        variant="outlined"
+        type="email"
+        value={value}
+        onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+          onChange(event.target.value)
+        }
+      />
+      <InputErrorBox error={error} />
+    </Box>
   );
 };
 
