@@ -21,11 +21,7 @@ export class AccountRecoveryRepository {
     >(GetAccountRecoveryLink);
 
     const executeGetAccountRecoveryLink = async (args: QueryRecoverAccountArgs) => {
-      execute({ variables: args });
-
-      if (Boolean(state?.error)) {
-        throw new Error(state.error.message);
-      }
+      await execute({ variables: args });
     };
 
     return {

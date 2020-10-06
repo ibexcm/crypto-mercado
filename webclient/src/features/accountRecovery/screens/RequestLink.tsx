@@ -43,7 +43,16 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
 
   const {
     executeGetAccountRecoveryLink,
+    state: { error: executeGetAccountRecoveryLinkError },
   } = AccountRecoveryRepository.useGetAccountRecoveryLink();
+
+  React.useEffect(() => {
+    if (!Boolean(executeGetAccountRecoveryLinkError)) {
+      return;
+    }
+
+    setError(executeGetAccountRecoveryLinkError);
+  }, [executeGetAccountRecoveryLinkError]);
 
   const isEmailOptionActive = recoveryOption === RecoveryOption.email;
 
