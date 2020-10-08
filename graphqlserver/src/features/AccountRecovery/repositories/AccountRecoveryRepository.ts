@@ -99,7 +99,7 @@ export class AccountRecoveryRepository {
     } = input;
 
     try {
-      if (Boolean(number === "+502") || !isValidPhoneNumber(number)) {
+      if (!isValidPhoneNumber(number)) {
         delete input.args.smsRecovery.number;
       } else if (!isValidEmail(address)) {
         delete input.args.emailRecovery.address;
