@@ -43,23 +43,28 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
 
   const {
     executeGetAccountRecoveryLink,
-    state: { error: executeGetAccountRecoveryLinkError },
+    state: {
+      error: executeGetAccountRecoveryLinkError,
+      data: executeGetAccountRecoveryLinkStatus,
+    },
   } = AccountRecoveryRepository.useGetAccountRecoveryLink();
 
   React.useEffect(() => {
     if (!Boolean(executeGetAccountRecoveryLinkError)) {
+      if (executeGetAccountRecoveryLinkStatus?.recoverAccount) {
+        setIsModalOpen(true);
+      }
       return;
     }
 
     setError(executeGetAccountRecoveryLinkError);
-  }, [executeGetAccountRecoveryLinkError]);
+  }, [executeGetAccountRecoveryLinkError, executeGetAccountRecoveryLinkStatus]);
 
   const isEmailOptionActive = recoveryOption === RecoveryOption.email;
 
   const onSendLink = async () => {
     try {
       await executeGetAccountRecoveryLink(input);
-      setIsModalOpen(true);
     } catch (error) {
       setError(error);
     }
