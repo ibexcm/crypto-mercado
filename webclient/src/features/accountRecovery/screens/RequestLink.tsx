@@ -53,6 +53,7 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
     if (!Boolean(executeGetAccountRecoveryLinkError)) {
       if (executeGetAccountRecoveryLinkStatus?.recoverAccount) {
         setIsModalOpen(true);
+        return;
       }
       return;
     }
