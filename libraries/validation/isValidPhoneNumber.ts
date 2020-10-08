@@ -4,9 +4,7 @@ export default function isValidPhoneNumber(phoneNumber: string): boolean {
   const Verificator = new PhoneNumberUtil();
   const phoneNumberCodeGT = "+502";
 
-  if (!Boolean(phoneNumber.length >= 8)) {
-    return false;
-  } else if (Boolean(phoneNumber === phoneNumberCodeGT)) {
+  if (!Boolean(phoneNumber.length >= 8) || Boolean(phoneNumber === phoneNumberCodeGT)) {
     return false;
   }
 
