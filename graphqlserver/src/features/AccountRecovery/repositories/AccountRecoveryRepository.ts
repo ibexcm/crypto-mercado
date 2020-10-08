@@ -4,10 +4,12 @@ import {
   QueryRecoverAccountArgs,
   Session,
 } from "@ibexcm/libraries/api";
+import { isValidEmail, isValidPhoneNumber } from "@ibexcm/libraries/validation";
 import { genSalt, hash } from "bcryptjs";
 import { IEmailAccountRecoveryRepository } from "../../../libraries/EmailVerification";
 import { ISessionRepository } from "../../../libraries/Session";
 import { ISMSAccountRecoveryRepository } from "../../../libraries/SMSVerification";
+import { AccountRecoveryError } from "../errors/AccountRecoveryError";
 
 export class AccountRecoveryRepository {
   private db: Prisma;
@@ -60,7 +62,11 @@ export class AccountRecoveryRepository {
     return await this.sessionRepository.createAuthenticationSession(user);
   }
 
-  private async sendEmailAccountRecoveryLink(address: string) {
+  private async sendEmailAccountRecoveryLink(address: string): Promise<boolean> {
+    if (isValidEmail(address)) {
+      throw AccountRecoveryError.invalidEmailAddressError;
+    }
+
     const user = await this.db
       .email({ address })
       .contact()
@@ -73,7 +79,11 @@ export class AccountRecoveryRepository {
     });
   }
 
-  private async sendSMSAccountRecoveryLink(number: string) {
+  private async sendSMSAccountRecoveryLink(number: string): Promise<boolean> {
+    if (isValidPhoneNumber(number)) {
+      throw AccountRecoveryError.invalidPhoneNumberError;
+    }
+
     const user = await this.db
       .phoneNumber({ number })
       .contact()
