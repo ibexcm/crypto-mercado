@@ -39,6 +39,10 @@ export class AuthTokenRepository {
     return this.store.set(StoreKeys.authToken, token, { expires });
   }
 
+  getAuthToken() {
+    return this.store.get(StoreKeys.authToken);
+  }
+
   deleteAuthToken() {
     return this.store.delete(StoreKeys.authToken);
   }
