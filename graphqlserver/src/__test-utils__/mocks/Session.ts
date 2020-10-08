@@ -9,5 +9,8 @@ export const mockSessionRepository = (
     createAuthenticationSession: jest.fn(
       (user: User) => new Promise<Session>(resolve => resolve({ token, expiresAt })),
     ),
+    createAccountRecoverySession: jest.fn(
+      (user: User) => new Promise<Session>(resolve => resolve({ token, expiresAt })),
+    ),
   };
 };
