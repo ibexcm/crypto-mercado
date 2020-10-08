@@ -29,17 +29,19 @@ export class AccountRecoveryRepository {
     this.smsAccountRecoveryRepository = smsAccountRecoveryRepository;
   }
 
-  async recoverAccount({
-    args: {
-      emailRecovery: { address },
-      smsRecovery: { number },
-    },
-  }: QueryRecoverAccountArgs): Promise<Boolean> {
+  async recoverAccount(input: QueryRecoverAccountArgs): Promise<Boolean> {
+    const {
+      args: {
+        emailRecovery: { address },
+        smsRecovery: { number },
+      },
+    } = this.clearInvalidValues(input);
+
     if (Boolean(address)) {
       return await this.sendEmailAccountRecoveryLink(address);
+    } else if (Boolean(number)) {
+      return await this.sendSMSAccountRecoveryLink(number);
     }
-
-    return await this.sendSMSAccountRecoveryLink(number);
   }
 
   async resetPassword(
@@ -63,10 +65,6 @@ export class AccountRecoveryRepository {
   }
 
   private async sendEmailAccountRecoveryLink(address: string): Promise<boolean> {
-    if (isValidEmail(address)) {
-      throw AccountRecoveryError.invalidEmailAddressError;
-    }
-
     const user = await this.db
       .email({ address })
       .contact()
@@ -80,10 +78,6 @@ export class AccountRecoveryRepository {
   }
 
   private async sendSMSAccountRecoveryLink(number: string): Promise<boolean> {
-    if (isValidPhoneNumber(number)) {
-      throw AccountRecoveryError.invalidPhoneNumberError;
-    }
-
     const user = await this.db
       .phoneNumber({ number })
       .contact()
@@ -94,5 +88,26 @@ export class AccountRecoveryRepository {
     return await this.smsAccountRecoveryRepository.sendRecoveryLink(number, {
       token,
     });
+  }
+
+  private clearInvalidValues(input: QueryRecoverAccountArgs): QueryRecoverAccountArgs {
+    const {
+      args: {
+        emailRecovery: { address },
+        smsRecovery: { number },
+      },
+    } = input;
+
+    try {
+      if (Boolean(number === "+502") || !isValidPhoneNumber(number)) {
+        delete input.args.smsRecovery.number;
+      } else if (!isValidEmail(address)) {
+        delete input.args.emailRecovery.address;
+      }
+    } catch (error) {
+      delete input.args.smsRecovery.number;
+    }
+
+    return input;
   }
 }
