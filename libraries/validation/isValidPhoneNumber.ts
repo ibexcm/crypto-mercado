@@ -1,10 +1,13 @@
 import { PhoneNumberUtil } from "google-libphonenumber";
+import { CountryPhoneNumberCode } from "../models/country";
 
 export default function isValidPhoneNumber(phoneNumber: string): boolean {
   const Verificator = new PhoneNumberUtil();
-  const phoneNumberCodeGT = "+502";
 
-  if (!Boolean(phoneNumber.length >= 8) || Boolean(phoneNumber === phoneNumberCodeGT)) {
+  if (
+    !Boolean(phoneNumber.length >= 8) ||
+    [CountryPhoneNumberCode.GTQ].includes(phoneNumber as CountryPhoneNumberCode)
+  ) {
     return false;
   }
 
