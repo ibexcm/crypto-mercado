@@ -58,11 +58,11 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
   }, [executeGetAccountRecoveryLinkError]);
 
   React.useEffect(() => {
-    if (executeGetAccountRecoveryLinkStatus?.recoverAccount) {
-      setIsModalOpen(true);
+    if (!Boolean(executeGetAccountRecoveryLinkStatus?.recoverAccount)) {
+      return;
     }
 
-    return;
+    setIsModalOpen(true);
   }, [executeGetAccountRecoveryLinkStatus]);
 
   const isEmailOptionActive = recoveryOption === RecoveryOption.email;
