@@ -350,18 +350,18 @@ describe("adminUpdateTransaction", () => {
       adminToken,
     );
 
-    const { errors } = await GraphQLClient.adminUpdateTransaction(
-      {
-        args: {
-          id: transactionID,
-          receipt: {
-            paidAt,
+    await expect(
+      GraphQLClient.adminUpdateTransaction(
+        {
+          args: {
+            id: transactionID,
+            receipt: {
+              paidAt,
+            },
           },
         },
-      },
-      adminToken,
-    );
-
-    expect(errors[0].extensions.code).toEqual(TransactionErrorCode.transactionPaid);
+        adminToken,
+      ),
+    ).rejects.toThrowError(TransactionErrorCode.transactionPaid);
   });
 });

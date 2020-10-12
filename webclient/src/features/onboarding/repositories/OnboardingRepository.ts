@@ -43,7 +43,7 @@ export class OnboardingRepository {
     const [execute] = useMutation(SendPhoneNumberVerificationCodeMutation);
 
     return {
-      execute: async args => {
+      execute: async (args) => {
         const {
           data,
           error,
@@ -70,7 +70,7 @@ export class OnboardingRepository {
     const [execute] = useMutation(VerifyPhoneNumberMutation);
 
     return {
-      execute: async args => {
+      execute: async (args) => {
         const {
           data,
           error,
@@ -101,7 +101,7 @@ export class OnboardingRepository {
     const [execute] = useMutation(SendEmailVerificationCodeMutation);
 
     return {
-      execute: async args => {
+      execute: async (args) => {
         const {
           data,
           error,
@@ -124,16 +124,22 @@ export class OnboardingRepository {
 
   useVerifyEmailMutation(): {
     execute: (args: MutationVerifyEmailArgs) => Promise<void>;
+    setAuthToken: (token: string, callback: () => void) => void;
   } {
     const [execute] = useMutation(VerifyEmailMutation);
 
     return {
-      execute: async args => {
+      execute: async (args) => {
         const {
           data,
           error,
         }: Partial<MutationResult<Pick<Mutation, "verifyEmail">>> = await execute({
           variables: args,
+          context: {
+            headers: {
+              Authorization: `Bearer ${this.AuthTokenRepository.getAuthToken()}`,
+            },
+          },
         });
 
         if (Boolean(error)) {
@@ -150,6 +156,15 @@ export class OnboardingRepository {
 
         this.AuthTokenRepository.setAuthToken(token as string);
       },
+      setAuthToken: (token, callback) => {
+        if (!Boolean(token)) {
+          return;
+        }
+
+        this.AuthTokenRepository.setAuthToken(token);
+
+        callback();
+      },
     };
   }
 
@@ -159,7 +174,7 @@ export class OnboardingRepository {
     const [execute] = useMutation(SetPasswordMutation);
 
     return {
-      execute: async args => {
+      execute: async (args) => {
         const {
           data,
           error,
@@ -190,7 +205,7 @@ export class OnboardingRepository {
     const [execute] = useMutation(UploadGovernmentIDMutation);
 
     return {
-      execute: async args => {
+      execute: async (args) => {
         const {
           data,
           error,
@@ -217,7 +232,7 @@ export class OnboardingRepository {
     const [execute] = useMutation(SetBankAccountMutation);
 
     return {
-      execute: async args => {
+      execute: async (args) => {
         const message =
           "No pudimos vincular tu cuenta de banco. Revisa los campos e intenta de nuevo.";
         try {

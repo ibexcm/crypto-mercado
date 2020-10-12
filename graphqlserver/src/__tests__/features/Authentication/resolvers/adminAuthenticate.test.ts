@@ -1,10 +1,14 @@
 import { prisma as db } from "@ibexcm/database";
 import { TestDependencies } from "@ibexcm/libraries/di";
 import { AuthenticationErrorCode } from "../../../../features/Authentication/errors/AuthenticationError";
-import { emailVerificationRepositoryInjectionKey } from "../../../../libraries/EmailVerification";
+import {
+  emailNotificationsRepositoryInjectionKey,
+  emailVerificationRepositoryInjectionKey,
+} from "../../../../libraries/EmailVerification";
 import { smsVerificationRepositoryInjectionKey } from "../../../../libraries/SMSVerification";
 import onboardUser from "../../../../__test-utils__/helpers/onboardUser";
 import {
+  mockEmailNotificationsRepository,
   mockEmailVerificationRepository,
   MockServer,
   mockSMSVerificationRepository,
@@ -16,6 +20,11 @@ describe("adminAuthenticate", () => {
   const server = new MockServer(dependencies);
   const smsVerificationRepository = mockSMSVerificationRepository();
   const emailVerificationRepository = mockEmailVerificationRepository();
+  const emailNotificationsRepository = mockEmailNotificationsRepository();
+  dependencies.override(
+    emailNotificationsRepositoryInjectionKey,
+    _ => emailNotificationsRepository,
+  );
   dependencies.override(
     smsVerificationRepositoryInjectionKey,
     _ => smsVerificationRepository,
@@ -74,12 +83,11 @@ describe("adminAuthenticate", () => {
 
     await onboardUser({ address, password });
 
-    const { data, errors } = await GraphQLClient.adminAuthenticate({
-      args: { address, password },
-    });
-
-    expect(data).toBeNull();
-    expect(errors[0].extensions.code).toEqual(AuthenticationErrorCode.invalidAdminRole);
+    await expect(
+      GraphQLClient.adminAuthenticate({
+        args: { address, password },
+      }),
+    ).rejects.toThrowError(AuthenticationErrorCode.invalidAdminRole);
   });
 
   test("authenticate admin user fails: incorrect password", async () => {
@@ -101,11 +109,10 @@ describe("adminAuthenticate", () => {
       },
     });
 
-    const { data, errors } = await GraphQLClient.adminAuthenticate({
-      args: { address, password: "invalidpassword" },
-    });
-
-    expect(data).toBeNull();
-    expect(errors[0].extensions.code).toEqual(AuthenticationErrorCode.invalidPassword);
+    await expect(
+      GraphQLClient.adminAuthenticate({
+        args: { address, password: "invalidpassword" },
+      }),
+    ).rejects.toThrowError(AuthenticationErrorCode.invalidPassword);
   });
 });

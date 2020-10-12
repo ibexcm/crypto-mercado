@@ -5,9 +5,9 @@ import { onboardingRepositoryInjectionKey } from "../InjectionKeys";
 export async function sendEmailVerificationCode(
   parent,
   args: MutationSendEmailVerificationCodeArgs,
-  { dependencies }: IContext,
+  { dependencies, request }: IContext,
   info,
 ): Promise<boolean> {
   const userRepository = dependencies.provide(onboardingRepositoryInjectionKey);
-  return userRepository.sendEmailVerificationCode(args);
+  return userRepository.sendEmailVerificationCode(args, request.auth.user);
 }

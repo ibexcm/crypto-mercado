@@ -43,6 +43,9 @@ describe("createBitcoinAccount", () => {
 
   beforeAll(async () => {
     await server.start();
+  });
+
+  beforeEach(async () => {
     await db.deleteManyUsers();
   });
 
@@ -80,14 +83,9 @@ describe("createBitcoinAccount", () => {
 
     await GraphQLClient.createBitcoinAccount({ args: { address: bitcoinAddress } }, token);
 
-    const { errors } = await GraphQLClient.createBitcoinAccount(
-      { args: { address: bitcoinAddress } },
-      token,
-    );
-
-    expect(errors[0].extensions.code).toBe(
-      CryptoAccountErrorCode.bitcoinAddressAlreadyExists,
-    );
+    await expect(
+      GraphQLClient.createBitcoinAccount({ args: { address: bitcoinAddress } }, token),
+    ).rejects.toThrowError(CryptoAccountErrorCode.bitcoinAddressAlreadyExists);
   });
 
   test("invalid address", async () => {
@@ -99,20 +97,14 @@ describe("createBitcoinAccount", () => {
 
     let bitcoinAddress = "";
 
-    const { errors } = await GraphQLClient.createBitcoinAccount(
-      { args: { address: bitcoinAddress } },
-      token,
-    );
-
-    expect(errors[0].extensions.code).toBe(CryptoAccountErrorCode.invalidBitcoinAddress);
+    await expect(
+      GraphQLClient.createBitcoinAccount({ args: { address: bitcoinAddress } }, token),
+    ).rejects.toThrowError(CryptoAccountErrorCode.invalidBitcoinAddress);
 
     bitcoinAddress = "invalid";
 
-    const { errors: errors2 } = await GraphQLClient.createBitcoinAccount(
-      { args: { address: bitcoinAddress } },
-      token,
-    );
-
-    expect(errors2[0].extensions.code).toBe(CryptoAccountErrorCode.invalidBitcoinAddress);
+    await expect(
+      GraphQLClient.createBitcoinAccount({ args: { address: bitcoinAddress } }, token),
+    ).rejects.toThrowError(CryptoAccountErrorCode.invalidBitcoinAddress);
   });
 });

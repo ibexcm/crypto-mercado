@@ -62,14 +62,17 @@ export class OnboardingRepository {
     return await this.smsVerificationRepository.sendVerificationCode(number);
   }
 
-  async sendEmailVerificationCode({
-    args: { address },
-  }: MutationSendEmailVerificationCodeArgs): Promise<boolean> {
+  async sendEmailVerificationCode(
+    { args: { address } }: MutationSendEmailVerificationCodeArgs,
+    user: User,
+  ): Promise<boolean> {
     if (this.verifiedEmails.includes(address)) {
       return true;
     }
 
-    return await this.emailVerificationRepository.sendVerificationCode(address);
+    const { token } = await this.sessionRepository.createAuthenticationSession(user);
+
+    return await this.emailVerificationRepository.sendVerificationCode(address, token);
   }
 
   async verifyPhoneNumber({
