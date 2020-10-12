@@ -234,7 +234,7 @@ describe("setTransactionReceiptEvidence", () => {
     });
 
     await adminKYCApproveUser(anotherUser, db, {
-      address: adminAccountEmailAddress,
+      address: "admin@ibexcm.com",
     });
 
     const { token: senderUserToken } = await authenticate({

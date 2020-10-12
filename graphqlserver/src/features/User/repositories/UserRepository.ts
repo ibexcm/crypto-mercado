@@ -134,11 +134,26 @@ export class UserRepository {
     };
   }
 
+  async documents(id: string): Promise<ProfileDocument[]> {
+    return await this.db.profile({ id }).documents();
+  }
+
+  async guatemala(id: string): Promise<GuatemalaDocument> {
+    return await this.db.profileDocument({ id }).guatemala();
+  }
+
+  async dpi(id: string): Promise<GuatemalaDPI[]> {
+    return await this.db.guatemalaDocument({ id }).dpi();
+  }
+
   async bankAccounts(
     id: string,
   ): Promise<
     Array<
-      BankAccount & { currency: Currency; guatemala: GuatemalaBankAccount & { bank: Bank } }
+      BankAccount & {
+        currency: Currency;
+        guatemala: GuatemalaBankAccount & { bank: Bank };
+      }
     >
   > {
     const bankAccounts = await this.db.user({ id }).bankAccounts();

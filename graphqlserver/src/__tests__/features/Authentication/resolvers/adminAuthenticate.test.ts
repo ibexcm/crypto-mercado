@@ -1,10 +1,14 @@
 import { prisma as db } from "@ibexcm/database";
 import { TestDependencies } from "@ibexcm/libraries/di";
 import { AuthenticationErrorCode } from "../../../../features/Authentication/errors/AuthenticationError";
-import { emailVerificationRepositoryInjectionKey } from "../../../../libraries/EmailVerification";
+import {
+  emailNotificationsRepositoryInjectionKey,
+  emailVerificationRepositoryInjectionKey,
+} from "../../../../libraries/EmailVerification";
 import { smsVerificationRepositoryInjectionKey } from "../../../../libraries/SMSVerification";
 import onboardUser from "../../../../__test-utils__/helpers/onboardUser";
 import {
+  mockEmailNotificationsRepository,
   mockEmailVerificationRepository,
   MockServer,
   mockSMSVerificationRepository,
@@ -16,6 +20,11 @@ describe("adminAuthenticate", () => {
   const server = new MockServer(dependencies);
   const smsVerificationRepository = mockSMSVerificationRepository();
   const emailVerificationRepository = mockEmailVerificationRepository();
+  const emailNotificationsRepository = mockEmailNotificationsRepository();
+  dependencies.override(
+    emailNotificationsRepositoryInjectionKey,
+    _ => emailNotificationsRepository,
+  );
   dependencies.override(
     smsVerificationRepositoryInjectionKey,
     _ => smsVerificationRepository,
