@@ -6,7 +6,7 @@ import {
   QueryRecoverAccountArgs,
 } from "@ibexcm/libraries/api";
 import {
-  GetAccountRecoveryLink,
+  GetAccountRecoveryLinkQuery,
   ResetPasswordMutation,
 } from "@ibexcm/libraries/api/accountRecovery";
 
@@ -18,7 +18,7 @@ export class AccountRecoveryRepository {
     const [execute, state] = useLazyQuery<
       Pick<Query, "recoverAccount">,
       QueryRecoverAccountArgs
-    >(GetAccountRecoveryLink);
+    >(GetAccountRecoveryLinkQuery);
 
     const executeGetAccountRecoveryLink = async (args: QueryRecoverAccountArgs) => {
       await execute({ variables: args });

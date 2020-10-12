@@ -26,6 +26,10 @@ import {
   QueryGetTransactionBreakdownArgs,
   QueryRecoverAccountArgs,
 } from "@ibexcm/libraries/api";
+import {
+  GetAccountRecoveryLinkQuery,
+  ResetPasswordMutation,
+} from "@ibexcm/libraries/api/accountRecovery";
 import { GetBanksByCountryQuery } from "@ibexcm/libraries/api/bank";
 import { GetAdminBankAccountsQuery } from "@ibexcm/libraries/api/bankAccount";
 import { CreateBitcoinAccountMutation } from "@ibexcm/libraries/api/cryptoAccount";
@@ -57,10 +61,6 @@ import {
   VerifyEmailMutation,
   VerifyPhoneNumberMutation,
 } from "@ibexcm/libraries/api/user";
-import {
-  GetAccountRecoveryLink,
-  ResetPasswordMutation,
-} from "@ibexcm/libraries/api/accountRecovery";
 import { ApolloError } from "apollo-server-errors";
 import axios from "axios";
 import { print } from "graphql";
@@ -317,7 +317,7 @@ const adminUpdateTransaction = async (
 
 const recoverAccount = async (args: QueryRecoverAccountArgs) => {
   return query<QueryRecoverAccountArgs, Pick<Query, "recoverAccount">>(
-    GetAccountRecoveryLink,
+    GetAccountRecoveryLinkQuery,
     args,
   );
 };

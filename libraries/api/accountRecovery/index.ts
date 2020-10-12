@@ -1,2 +1,2 @@
-export * from "./recoverAccount";
-export * from "./resetPassword";
+export * from "./GetAccountRecoveryLinkQuery";
+export * from "./ResetPasswordMutation";

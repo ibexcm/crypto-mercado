@@ -1,6 +1,6 @@
 import gql from "graphql-tag";
 
-export const GetAccountRecoveryLink = gql`
+export const GetAccountRecoveryLinkQuery = gql`
   query GetAccountRecoveryLink($args: recoverAccountInput!) {
     recoverAccount(args: $args)
   }
