@@ -74,12 +74,11 @@ describe("adminAuthenticate", () => {
 
     await onboardUser({ address, password });
 
-    const { data, errors } = await GraphQLClient.adminAuthenticate({
-      args: { address, password },
-    });
-
-    expect(data).toBeNull();
-    expect(errors[0].extensions.code).toEqual(AuthenticationErrorCode.invalidAdminRole);
+    await expect(
+      GraphQLClient.adminAuthenticate({
+        args: { address, password },
+      }),
+    ).rejects.toThrowError(AuthenticationErrorCode.invalidAdminRole);
   });
 
   test("authenticate admin user fails: incorrect password", async () => {
@@ -101,11 +100,10 @@ describe("adminAuthenticate", () => {
       },
     });
 
-    const { data, errors } = await GraphQLClient.adminAuthenticate({
-      args: { address, password: "invalidpassword" },
-    });
-
-    expect(data).toBeNull();
-    expect(errors[0].extensions.code).toEqual(AuthenticationErrorCode.invalidPassword);
+    await expect(
+      GraphQLClient.adminAuthenticate({
+        args: { address, password: "invalidpassword" },
+      }),
+    ).rejects.toThrowError(AuthenticationErrorCode.invalidPassword);
   });
 });

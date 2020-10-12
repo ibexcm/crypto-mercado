@@ -114,8 +114,8 @@ describe("adminGetUsersWithPendingKYCApproval", () => {
       args: { number: Faker.phone.phoneNumber(), code: "12345" },
     });
 
-    const { errors } = await GraphQLClient.adminGetUsersWithPendingKYCApproval(token);
-
-    expect(errors[0].extensions.code).toEqual(AuthenticationErrorCode.invalidAdminRole);
+    await expect(
+      GraphQLClient.adminGetUsersWithPendingKYCApproval(token),
+    ).rejects.toThrowError(AuthenticationErrorCode.invalidAdminRole);
   });
 });

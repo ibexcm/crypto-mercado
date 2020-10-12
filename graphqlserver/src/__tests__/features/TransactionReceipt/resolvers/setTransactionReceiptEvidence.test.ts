@@ -270,19 +270,18 @@ describe("setTransactionReceiptEvidence", () => {
     const { id: transactionID } = createTransaction;
     const transactionHash = "transactionHash";
 
-    const { errors, data } = await GraphQLClient.setTransactionReceiptEvidence(
-      {
-        args: {
-          transactionID,
-          bitcoin: {
-            transactionHash,
+    await expect(
+      GraphQLClient.setTransactionReceiptEvidence(
+        {
+          args: {
+            transactionID,
+            bitcoin: {
+              transactionHash,
+            },
           },
         },
-      },
-      anotherUserToken,
-    );
-
-    expect(errors[0].extensions.code).toEqual(TransactionErrorCode.invalidTransactionUser);
-    expect(data).toBeNull();
+        anotherUserToken,
+      ),
+    ).rejects.toThrowError(TransactionErrorCode.invalidTransactionUser);
   });
 });

@@ -115,11 +115,11 @@ describe("adminKYCApproveUser", () => {
     const governmentIDArgs = getGovernmentIDArgs("123");
     const bankAccountArgs = getBankAccountArgs("123");
 
-    const { errors } = await GraphQLClient.adminKYCApproveUser(
-      { userArgs: { id: "123" }, governmentIDArgs, bankAccountArgs },
-      token,
-    );
-
-    expect(errors[0].extensions.code).toEqual(AuthenticationErrorCode.invalidAdminRole);
+    await expect(
+      GraphQLClient.adminKYCApproveUser(
+        { userArgs: { id: "123" }, governmentIDArgs, bankAccountArgs },
+        token,
+      ),
+    ).rejects.toThrowError(AuthenticationErrorCode.invalidAdminRole);
   });
 });

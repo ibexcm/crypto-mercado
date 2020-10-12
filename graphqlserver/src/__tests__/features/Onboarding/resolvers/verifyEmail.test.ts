@@ -65,9 +65,9 @@ describe("verifyEmail", () => {
       },
     } = await GraphQLClient.verifyPhoneNumber({ args: { number: "+0000000002", code } });
 
-    const { errors } = await GraphQLClient.verifyEmail({ args: { address, code } }, token);
-
-    expect(errors[0].extensions.code).toEqual(OnboardingErrorCode.emailExists);
+    await expect(
+      GraphQLClient.verifyEmail({ args: { address, code } }, token),
+    ).rejects.toThrowError(OnboardingErrorCode.emailExists);
   });
 
   test("incorrect code", async () => {
@@ -80,14 +80,14 @@ describe("verifyEmail", () => {
     emailVerificationRepository.verifyCode = (email, code) => Promise.resolve(false);
 
     const newAddress = "email2@ibexcm.com";
-    const { errors } = await GraphQLClient.verifyEmail(
-      {
-        args: { address: newAddress, code },
-      },
-      token,
-    );
-
-    expect(errors[0].extensions.code).toEqual(OnboardingErrorCode.verificationCode);
+    await expect(
+      GraphQLClient.verifyEmail(
+        {
+          args: { address: newAddress, code },
+        },
+        token,
+      ),
+    ).rejects.toThrowError(OnboardingErrorCode.verificationCode);
 
     const email = await db.email({ address: newAddress });
     expect(email).toBeNull();
