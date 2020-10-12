@@ -31,6 +31,7 @@ const Component: React.FC<Props> = ({ classes, history, location, ...props }) =>
   const [isVerifiying, setIsVerifying] = React.useState(true);
   const [error, setError] = React.useState<Error | null>(null);
   const address = queryParams.get("a") as string;
+  const token = queryParams.get("t") as string;
   const [input] = React.useState<MutationVerifyEmailArgs>({
     args: {
       address,
@@ -61,10 +62,13 @@ const Component: React.FC<Props> = ({ classes, history, location, ...props }) =>
 
   const {
     execute: executeVerifyEmailMutation,
+    setAuthToken,
   } = OnboardingRepository.useVerifyEmailMutation();
 
   React.useEffect(() => {
-    onVerifyEmail();
+    setAuthToken(token, () => {
+      onVerifyEmail();
+    });
   }, []);
 
   const onVerifyEmail = async () => {

@@ -6,11 +6,13 @@ describe("Phone Number Validation", () => {
     const noAreaCode = "334455";
     const nonExistent = "+50200000000";
     const anotherNonExistent = "+50211001100";
+    const onlyAreaCode = "+502";
 
     expect(isValidPhoneNumber(invalidNumber)).toBe(false);
     expect(isValidPhoneNumber(noAreaCode)).toBe(false);
     expect(isValidPhoneNumber(nonExistent)).toBe(false);
     expect(isValidPhoneNumber(anotherNonExistent)).toBe(false);
+    expect(isValidPhoneNumber(onlyAreaCode)).toBe(false);
   });
 
   test("Should validate a correct phone number and return true", () => {
