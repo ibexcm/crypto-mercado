@@ -21,6 +21,9 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
   );
 
   const [error, setError] = React.useState<Error | null>(null);
+  const [invalidPasswordError, setInvalidPasswordError] = React.useState<Error | null>(
+    null,
+  );
   const [input, setInput] = React.useState<MutationResetPasswordArgs>({
     args: { password: "" },
   });
@@ -36,11 +39,35 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
     execute: executeResetPasswordMutation,
   } = AccountRecoveryRepository.useResetPasswordMutation();
 
+  React.useEffect(() => {
+    setInvalidPasswordError(
+      !Boolean(input.args.password)
+        ? null
+        : shouldPasswordBeReset
+        ? null
+        : new Error("Contraseña insegura"),
+    );
+  }, [input.args.password]);
+
+  React.useEffect(() => {
+    setError(
+      !Boolean(confirmPasswordInput.args.password)
+        ? null
+        : passwordsMatch
+        ? null
+        : new Error("Las contraseñas no coinciden"),
+    );
+  }, [confirmPasswordInput.args.password]);
+
   const shouldPasswordBeReset = isValidPassword(input.args.password);
   const passwordsMatch = input.args.password === confirmPasswordInput.args.password;
 
   const onResetPassword = async () => {
     try {
+      if (!passwordsMatch || !shouldPasswordBeReset) {
+        return;
+      }
+
       await executeResetPasswordMutation(input, query.get("token"));
       history.push(routes.authentication.signIn);
     } catch (error) {
@@ -50,20 +77,11 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
 
   const onInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
-
     setInput({ args: { password: value } });
   };
 
   const onConfirmPasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
-
-    if (passwordsMatch) {
-      setError(new Error("Las contraseñas no coinciden"));
-      return;
-    } else {
-      setError(null);
-    }
-
     setConfirmPasswordInput({ args: { password: value } });
   };
 
@@ -71,14 +89,6 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
     if (event.key === "Enter") {
       onResetPassword();
     }
-  };
-
-  const getOnEnteredPasswordMessage = () => {
-    if (shouldPasswordBeReset) {
-      return null;
-    }
-
-    return "Contraseña Insegura";
   };
 
   return (
@@ -97,9 +107,6 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
             <Typography>Elige una nueva contraseña</Typography>
           </Box>
           <Box my={2}>
-            <Box>
-              <Typography>{getOnEnteredPasswordMessage()}</Typography>
-            </Box>
             <TextField
               autoFocus
               fullWidth
@@ -123,6 +130,7 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
               my={2}
             />
             <InputErrorBox error={error} />
+            <InputErrorBox error={invalidPasswordError} />
             <Button
               color="primary"
               variant="contained"
