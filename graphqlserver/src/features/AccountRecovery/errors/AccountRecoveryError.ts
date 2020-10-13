@@ -7,6 +7,7 @@ export enum AccountRecoveryErrorCode {
   unregisteredPhoneNumber = "unregisteredPhoneNumber",
   invalidPhoneNumber = "invalidPhoneNumber",
   invalidEmailAddress = "invalidEmailAddress",
+  unregisteredUser = "unregisteredUser",
 }
 
 const invalidPasswordError = new ApolloError(
@@ -39,11 +40,17 @@ const invalidEmailAddressError = new ApolloError(
   AccountRecoveryErrorCode.invalidEmailAddress,
 );
 
+const unregisteredUserError = new ApolloError(
+  "User is not registered",
+  AccountRecoveryErrorCode.unregisteredUser,
+);
+
 export const AccountRecoveryError = {
   invalidPasswordError,
   unauthorizedError,
   unregisteredEmailError,
   unregisteredPhoneNumber,
+  unregisteredUserError,
   invalidPhoneNumberError,
   invalidEmailAddressError,
 };
