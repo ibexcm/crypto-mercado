@@ -68,11 +68,11 @@ describe("authenticate", () => {
 
     await adminKYCApproveUser(user, db);
 
-    const { errors } = await GraphQLClient.authenticate({
-      args: { address, password: "invalid" },
-    });
-
-    expect(errors[0].extensions.code).toEqual(AuthenticationErrorCode.invalidPassword);
+    await expect(
+      GraphQLClient.authenticate({
+        args: { address, password: "invalid" },
+      }),
+    ).rejects.toThrowError(AuthenticationErrorCode.invalidPassword);
   });
 
   test("invalid username", async () => {
@@ -83,11 +83,11 @@ describe("authenticate", () => {
 
     await adminKYCApproveUser(user, db);
 
-    const { errors } = await GraphQLClient.authenticate({
-      args: { address: "invalid", password },
-    });
-
-    expect(errors[0].extensions.code).toEqual(AuthenticationErrorCode.invalidUsername);
+    await expect(
+      GraphQLClient.authenticate({
+        args: { address: "invalid", password },
+      }),
+    ).rejects.toThrowError(AuthenticationErrorCode.invalidUsername);
   });
 
   test("KYC pending", async () => {
@@ -96,10 +96,10 @@ describe("authenticate", () => {
 
     await onboardUser({ address, password });
 
-    const { errors } = await GraphQLClient.authenticate({
-      args: { address, password },
-    });
-
-    expect(errors[0].extensions.code).toEqual(AuthenticationErrorCode.invalidBankAccount);
+    await expect(
+      GraphQLClient.authenticate({
+        args: { address, password },
+      }),
+    ).rejects.toThrowError(AuthenticationErrorCode.invalidBankAccount);
   });
 });

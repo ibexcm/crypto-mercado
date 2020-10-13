@@ -1,13 +1,13 @@
 import { ApolloError } from "apollo-server-errors";
 
 enum EmailVerificationErrorCode {
-  invalidPhoneNumber = "invalidPhoneNumber",
+  invalidEmailAddress = "invalidEmailAddress",
   maxAttemptsReached = "maxAttemptsReached",
 }
 
 const invalidEmailAddressError = new ApolloError(
   "Invalid email address",
-  EmailVerificationErrorCode.invalidPhoneNumber,
+  EmailVerificationErrorCode.invalidEmailAddress,
 );
 
 const maxAttemptsReachedError = new ApolloError(

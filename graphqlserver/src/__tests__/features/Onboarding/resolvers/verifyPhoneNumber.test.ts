@@ -53,20 +53,20 @@ describe("verifyPhoneNumber", () => {
   });
 
   test("phone number taken", async () => {
-    const { errors } = await GraphQLClient.verifyPhoneNumber({ args: { number, code } });
-
-    expect(errors[0].extensions.code).toEqual(OnboardingErrorCode.phoneNumberExists);
+    await expect(
+      GraphQLClient.verifyPhoneNumber({ args: { number, code } }),
+    ).rejects.toThrowError(OnboardingErrorCode.phoneNumberExists);
   });
 
   test("incorrect code", async () => {
     smsVerificationRepository.verifyCode = (number, code) => Promise.resolve(false);
 
     const newNumber = "+0000000000";
-    const { errors } = await GraphQLClient.verifyPhoneNumber({
-      args: { number: newNumber, code },
-    });
-
-    expect(errors[0].extensions.code).toEqual(OnboardingErrorCode.verificationCode);
+    await expect(
+      GraphQLClient.verifyPhoneNumber({
+        args: { number: newNumber, code },
+      }),
+    ).rejects.toThrowError(OnboardingErrorCode.verificationCode);
 
     const phoneNumber = await db.phoneNumber({ number: newNumber });
     expect(phoneNumber).toBeNull();

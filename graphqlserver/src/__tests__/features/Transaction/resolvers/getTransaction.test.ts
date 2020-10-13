@@ -120,15 +120,15 @@ describe("getTransaction", () => {
     const [{ id: bankAccountID, currency }] = user.bankAccounts;
     const amount = "0.01234";
 
-    const { errors } = await GraphQLClient.getTransaction(
-      {
-        args: {
-          transactionID: "transactionID",
+    await expect(
+      GraphQLClient.getTransaction(
+        {
+          args: {
+            transactionID: "transactionID",
+          },
         },
-      },
-      token,
-    );
-
-    expect(errors[0].extensions.code).toEqual(TransactionErrorCode.transactionDoesNotExist);
+        token,
+      ),
+    ).rejects.toThrowError(TransactionErrorCode.transactionDoesNotExist);
   });
 });

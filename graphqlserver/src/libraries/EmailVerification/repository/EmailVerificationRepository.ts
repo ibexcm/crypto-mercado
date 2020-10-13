@@ -4,23 +4,24 @@ import { EmailVerificationError } from "../errors/EmailVerificationError";
 import { IEmailVerificationRepository } from "../interfaces/IEmailVerificationRepository";
 
 const { sid, aid, token } = config.get("twilio");
-const { host } = config.get("email");
+const { host, from } = config.get("email");
 const { verify } = Twilio(aid, token);
 
-const sendVerificationCode = async (address: string) => {
+const sendVerificationCode = async (address: string, token: string) => {
   try {
     const { status } = await verify.services(sid).verifications.create({
       channelConfiguration: {
         template_id: "d-bf4436bd60e749bba4b1fd521675155e",
-        from: "soporte@ibexcm.com",
+        from,
         from_name: "IBEX Mercado",
         substitutions: {
-          url: `${host}/kyc/verifica-tu-correo?a=${address}`,
+          url: `${host}/kyc/verifica-tu-correo?a=${address}&t=${token}`,
         },
       },
       to: address,
       channel: "email",
     });
+
     return status === "pending";
   } catch (error) {
     switch (error.code) {
