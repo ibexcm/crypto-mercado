@@ -70,9 +70,19 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
   const onSendLink = async () => {
     try {
       await executeGetAccountRecoveryLink(input);
+      cleanFields();
     } catch (error) {
       setError(error);
     }
+  };
+
+  const cleanFields = () => {
+    setInput({
+      args: {
+        emailRecovery: { address: "" },
+        smsRecovery: { number: "+502" },
+      },
+    });
   };
 
   const handleRecoveryOptionChange = (
