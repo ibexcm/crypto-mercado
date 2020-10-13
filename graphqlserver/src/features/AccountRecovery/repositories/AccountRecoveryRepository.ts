@@ -29,19 +29,16 @@ export class AccountRecoveryRepository {
     this.smsAccountRecoveryRepository = smsAccountRecoveryRepository;
   }
 
-  async recoverAccount(input: QueryRecoverAccountArgs): Promise<Boolean> {
-    const {
-      args: {
-        emailRecovery: { address },
-        smsRecovery: { number },
-      },
-    } = this.clearInvalidValues(input);
-
+  async recoverAccount({
+    args: {
+      emailRecovery: { address },
+      smsRecovery: { number },
+    },
+  }: QueryRecoverAccountArgs): Promise<Boolean> {
     if (Boolean(address)) {
       return await this.sendEmailAccountRecoveryLink(address);
-    } else if (Boolean(number)) {
-      return await this.sendSMSAccountRecoveryLink(number);
     }
+    return await this.sendSMSAccountRecoveryLink(number);
   }
 
   async resetPassword(
@@ -88,26 +85,5 @@ export class AccountRecoveryRepository {
     return await this.smsAccountRecoveryRepository.sendRecoveryLink(number, {
       token,
     });
-  }
-
-  private clearInvalidValues(input: QueryRecoverAccountArgs): QueryRecoverAccountArgs {
-    const {
-      args: {
-        emailRecovery: { address },
-        smsRecovery: { number },
-      },
-    } = input;
-
-    try {
-      if (!isValidPhoneNumber(number)) {
-        delete input.args.smsRecovery.number;
-      } else if (!isValidEmail(address)) {
-        delete input.args.emailRecovery.address;
-      }
-    } catch (error) {
-      delete input.args.smsRecovery.number;
-    }
-
-    return input;
   }
 }
