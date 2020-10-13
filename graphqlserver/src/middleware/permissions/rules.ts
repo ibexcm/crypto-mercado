@@ -8,18 +8,17 @@ import {
   MutationSetTransactionReceiptEvidenceArgs,
   MutationVerifyEmailArgs,
   MutationVerifyPhoneNumberArgs,
-  RecoverAccountInput,
-  RecoverAccountEmailInput,
+  QueryRecoverAccountArgs,
   TUserRole,
 } from "@ibexcm/libraries/api";
 import { compare } from "bcryptjs";
 import { rule } from "graphql-shield";
-import { AccountRecoveryError } from "../../features/AccountRecovery/errors/AccountRecoveryError";
 import { AuthenticationError } from "../../features/Authentication/errors/AuthenticationError";
 import { OnboardingError } from "../../features/Onboarding/errors/OnboardingError";
 import { TransactionError } from "../../features/Transaction/errors/TransactionError";
 import { dbInjectionKey } from "../../InjectionKeys";
 import { IContext } from "../../server/interfaces/IContext";
+import { accountExists, emailExists, phoneNumberExists } from "../util";
 
 export const isUser = rule({ cache: true })(
   async (parent, args, { dependencies, request: { auth } }: IContext, info) => {
@@ -256,56 +255,17 @@ export const isEmailAvailable = rule({ cache: true })(
   },
 );
 
-export const isRecoveryEmailAvailable = rule({
+export const isRecoveryOptionAvailable = rule({
   cache: true,
-})(
-  async (
-    parent,
-    {
-      args: {
-        emailRecovery: { address },
-      },
-    },
-    { dependencies }: IContext,
-    info,
-  ) => {
-    const db = dependencies.provide(dbInjectionKey);
-    const user = await db
-      .email({ address })
-      .contact()
-      .user();
+})(async (parent, { args }: QueryRecoverAccountArgs, { dependencies }: IContext, info) => {
+  const db = dependencies.provide(dbInjectionKey);
+  const { emailRecovery, smsRecovery } = args;
 
-    if (!Boolean(user)) {
-      return AccountRecoveryError.unregisteredEmailError;
-    }
+  if (!Boolean(emailRecovery)) {
+    return await phoneNumberExists(smsRecovery.number, db);
+  } else if (!Boolean(smsRecovery)) {
+    return await emailExists(emailRecovery.address, db);
+  }
 
-    return true;
-  },
-);
-
-export const isRecoveryNumberAvailable = rule({
-  cache: true,
-})(
-  async (
-    parent,
-    {
-      args: {
-        smsRecovery: { number },
-      },
-    },
-    { dependencies }: IContext,
-    info,
-  ) => {
-    const db = dependencies.provide(dbInjectionKey);
-    const user = await db
-      .phoneNumber({ number })
-      .contact()
-      .user();
-
-    if (!Boolean(user)) {
-      return AccountRecoveryError.unregisteredPhoneNumber;
-    }
-
-    return true;
-  },
-);
+  return accountExists(emailRecovery.address, smsRecovery.number, db);
+});

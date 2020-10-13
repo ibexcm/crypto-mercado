@@ -1,4 +1,4 @@
-import { and, or, shield } from "graphql-shield";
+import { and, shield } from "graphql-shield";
 import * as rules from "./rules";
 
 export const permissions = shield({
@@ -9,7 +9,7 @@ export const permissions = shield({
     getAdminBankAccounts: rules.isUser,
 
     //ACCOUNT RECOVERY
-    recoverAccount: or(rules.isRecoveryEmailAvailable, rules.isRecoveryNumberAvailable),
+    recoverAccount: rules.isRecoveryOptionAvailable,
     // ADMIN
     // KYC
     adminGetUsersWithPendingKYCApproval: rules.isAdmin,
