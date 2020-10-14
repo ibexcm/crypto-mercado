@@ -2,16 +2,28 @@ import { prisma as db } from "@ibexcm/database";
 import { TestDependencies } from "@ibexcm/libraries/di";
 import { dbInjectionKey } from "../../../../InjectionKeys";
 import { emailVerificationRepositoryInjectionKey } from "../../../../libraries/EmailVerification";
-import { MockServer } from "../../../../__test-utils__/mocks";
+import { smsVerificationRepositoryInjectionKey } from "../../../../libraries/SMSVerification";
+import {
+  MockServer,
+  mockSMSVerificationRepository,
+} from "../../../../__test-utils__/mocks";
 import { mockEmailVerificationRepository } from "../../../../__test-utils__/mocks/EmailVerification";
 import GraphQLClient from "../../../../__test-utils__/mocks/GraphQLClient";
 
 describe("sendEmailVerificationCode", () => {
   const address = "u1@ibexcm.com";
+  const number = "+50200000000";
+  const code = "123456";
+
   const dependencies = new TestDependencies();
   dependencies.override(dbInjectionKey, _ => db);
+  const smsVerificationRepository = mockSMSVerificationRepository();
   dependencies.override(emailVerificationRepositoryInjectionKey, _ =>
     mockEmailVerificationRepository(),
+  );
+  dependencies.override(
+    smsVerificationRepositoryInjectionKey,
+    _ => smsVerificationRepository,
   );
 
   const server = new MockServer(dependencies);
@@ -27,8 +39,14 @@ describe("sendEmailVerificationCode", () => {
 
   test("success", async () => {
     const {
+      data: {
+        verifyPhoneNumber: { token },
+      },
+    } = await GraphQLClient.verifyPhoneNumber({ args: { number, code } });
+
+    const {
       data: { sendEmailVerificationCode },
-    } = await GraphQLClient.sendEmailVerificationCode({ args: { address } });
+    } = await GraphQLClient.sendEmailVerificationCode({ args: { address } }, token);
 
     expect(sendEmailVerificationCode).toBe(true);
   });

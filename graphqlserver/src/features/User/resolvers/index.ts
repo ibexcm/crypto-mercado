@@ -46,4 +46,22 @@ export const types = {
       return UserRepository.transactions(id, args);
     },
   },
+  Profile: {
+    documents: ({ id }, args, { dependencies }: IContext) => {
+      const UserRepository = dependencies.provide(userRepositoryInjectionKey);
+      return UserRepository.documents(id);
+    },
+  },
+  ProfileDocument: {
+    guatemala: ({ id }, args, { dependencies }: IContext) => {
+      const UserRepository = dependencies.provide(userRepositoryInjectionKey);
+      return UserRepository.guatemala(id);
+    },
+  },
+  GuatemalaDocument: {
+    dpi: ({ id }, args, { dependencies }: IContext) => {
+      const UserRepository = dependencies.provide(userRepositoryInjectionKey);
+      return UserRepository.dpi(id);
+    },
+  },
 };

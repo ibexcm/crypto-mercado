@@ -22,7 +22,7 @@ import {
   QueryGetBanksByCountryArgs,
   QueryGetCurrenciesByCountryArgs,
   QueryGetTransactionArgs,
-  QueryGetTransactionBreakdownArgs,
+  QueryGetTransactionBreakdownArgs
 } from "@ibexcm/libraries/api";
 import { GetBanksByCountryQuery } from "@ibexcm/libraries/api/bank";
 import { GetAdminBankAccountsQuery } from "@ibexcm/libraries/api/bankAccount";
@@ -32,14 +32,14 @@ import { AdminSettingsCreateExchangeRateMutation } from "@ibexcm/libraries/api/e
 import {
   AdminGetUsersWithPendingKYCApprovalQuery,
   AdminKYCApproveUserMutation,
-  AdminKYCRejectUserMutation,
+  AdminKYCRejectUserMutation
 } from "@ibexcm/libraries/api/kyc";
 import {
   AdminGetTransactionsQuery,
   AdminUpdateTransactionMutation,
   CreateTransactionMutation,
   GetTransactionBreakdownQuery,
-  GetTransactionQuery,
+  GetTransactionQuery
 } from "@ibexcm/libraries/api/transaction";
 import { SetTransactionReceiptEvidenceMutation } from "@ibexcm/libraries/api/transactionReceipt";
 import {
@@ -53,7 +53,7 @@ import {
   UploadGovernmentIDMutation,
   UserQuery,
   VerifyEmailMutation,
-  VerifyPhoneNumberMutation,
+  VerifyPhoneNumberMutation
 } from "@ibexcm/libraries/api/user";
 import { ApolloError } from "apollo-server-errors";
 import axios from "axios";
@@ -87,6 +87,10 @@ const query = async <TVariables, TResponse>(
       variables,
     },
   });
+
+  if (Boolean(data.errors)) {
+    throw new Error(data.errors[0]?.extensions?.code ?? data.errors[0]?.message);
+  }
 
   return data;
 };
@@ -155,11 +159,11 @@ const sendPhoneNumberVerificationCode = async (
   >(SendPhoneNumberVerificationCodeMutation, args);
 };
 
-const sendEmailVerificationCode = async (args: MutationSendEmailVerificationCodeArgs) => {
+const sendEmailVerificationCode = async (args: MutationSendEmailVerificationCodeArgs, authToken: string) => {
   return query<
     MutationSendEmailVerificationCodeArgs,
     Pick<Mutation, "sendEmailVerificationCode">
-  >(SendEmailVerificationCodeMutation, args);
+  >(SendEmailVerificationCodeMutation, args, authToken);
 };
 
 const verifyEmail = async (args: MutationVerifyEmailArgs, authToken: string) => {
