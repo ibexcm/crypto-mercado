@@ -1,10 +1,15 @@
 import { MutationResult, useMutation, useQuery } from "@apollo/client";
-import { Mutation, MutationAdminKycApproveUserArgs, Query } from "@ibexcm/libraries/api";
+import {
+  Mutation,
+  MutationAdminDeleteUserArgs,
+  MutationAdminKycApproveUserArgs,
+  Query,
+} from "@ibexcm/libraries/api";
 import {
   AdminGetUsersWithPendingKYCApprovalQuery,
   AdminKYCApproveUserMutation,
 } from "@ibexcm/libraries/api/kyc";
-import { AdminGetUsersQuery } from "@ibexcm/libraries/api/user";
+import { AdminDeleteUserMutation, AdminGetUsersQuery } from "@ibexcm/libraries/api/user";
 
 export class KYCRepository {
   useAdminGetUsersWithPendingKYCApprovalQuery() {
@@ -20,6 +25,40 @@ export class KYCRepository {
     return useQuery<Pick<Query, "adminGetUsers">>(AdminGetUsersQuery, {
       fetchPolicy: "cache-and-network",
     });
+  }
+
+  useAdminDeleteUserMutation(): {
+    execute: (args: MutationAdminDeleteUserArgs) => Promise<void>;
+    loading: boolean;
+  } {
+    const [execute, { loading }] = useMutation(AdminDeleteUserMutation);
+
+    return {
+      execute: async (args) => {
+        const message = "No se ha podido borrar este usuario este usuario.";
+        try {
+          const {
+            data,
+            error,
+          }: Partial<MutationResult<Pick<Mutation, "adminDeleteUser">>> = await execute({
+            variables: args,
+          });
+
+          if (Boolean(error) || !Boolean(data?.adminDeleteUser)) {
+            throw new Error(message);
+          }
+
+          const { adminDeleteUser } = data as Pick<Mutation, "adminDeleteUser">;
+
+          if (!adminDeleteUser) {
+            throw new Error(message);
+          }
+        } catch (error) {
+          throw new Error(message);
+        }
+      },
+      loading,
+    };
   }
 
   useAdminKYCApproveUserMutation(): {

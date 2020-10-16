@@ -59,6 +59,9 @@ type Mutation {
     rejectArgs: AdminKYCRejectUserInput!
   ): Boolean!
 
+  # USERS
+  adminDeleteUser(args: AdminDeleteUserInput!): User!
+
   # TRANSACTIONS
   adminMarkTransactionAsPaid(args: AdminMarkTransactionAsPaidInput!): Transaction!
   adminUpdateTransaction(args: AdminUpdateTransactionInput!): Transaction!
@@ -72,6 +75,10 @@ type Mutation {
 type Session {
   token: String
   expiresAt: DateTime
+}
+
+input AdminDeleteUserInput {
+  id: String!
 }
 
 input CreateBitcoinAccountInput {

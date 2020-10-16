@@ -89,6 +89,10 @@ export type AdminAuthenticateInput = {
   password: Scalars['String'],
 };
 
+export type AdminDeleteUserInput = {
+  id: Scalars['String'],
+};
+
 export type AdminGetTransactionsInput = {
   orderBy?: Maybe<TransactionOrderByInput>,
   where?: Maybe<TransactionWhereInput>,
@@ -1161,6 +1165,8 @@ export type Mutation = {
    * AUTHENTICATION: admin* must be the prefix for admin endpoints
  */
   adminAuthenticate: Session,
+  /** USERS */
+  adminDeleteUser: User,
   /** KYC */
   adminKYCApproveUser: Scalars['Boolean'],
   adminKYCRejectUser: Scalars['Boolean'],
@@ -1189,6 +1195,11 @@ export type Mutation = {
 
 export type MutationAdminAuthenticateArgs = {
   args: AdminAuthenticateInput
+};
+
+
+export type MutationAdminDeleteUserArgs = {
+  args: AdminDeleteUserInput
 };
 
 

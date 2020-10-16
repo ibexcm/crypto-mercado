@@ -1,4 +1,5 @@
 export * from "./AdminAuthenticateMutation";
+export * from "./AdminDeleteUserMutation";
 export * from "./AdminGetUserQuery";
 export * from "./AdminGetUsersQuery";
 export * from "./AuthenticateMutation";

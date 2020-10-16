@@ -19,7 +19,7 @@ import lodash from "lodash";
 import { DateTime } from "luxon";
 import React from "react";
 import { RouteComponentProps, StaticContext } from "react-router";
-import { Sidebar, ToolbarPadding, Typography } from "../../../common/components";
+import { Button, Sidebar, ToolbarPadding, Typography } from "../../../common/components";
 import DependencyContext from "../../../common/contexts/DependencyContext";
 import { styles } from "../../../common/theme";
 import { KYCRepositoryInjectionKeys } from "../InjectionKeys";
@@ -32,7 +32,19 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
   const dependencies = React.useContext(DependencyContext);
   const KYCRepository = dependencies.provide(KYCRepositoryInjectionKeys);
 
-  const { data, loading, error } = KYCRepository.useAdminGetUsersQuery();
+  const {
+    data,
+    loading: isAdminGettingUsersQueryLoading,
+    error,
+    refetch,
+  } = KYCRepository.useAdminGetUsersQuery();
+
+  const {
+    execute: executeAdminDeleteUserMutation,
+    loading: isAdminDeleteUserMutationLoading,
+  } = KYCRepository.useAdminDeleteUserMutation();
+
+  const loading = isAdminDeleteUserMutationLoading || isAdminDeleteUserMutationLoading;
 
   if (loading) {
     return (
@@ -41,6 +53,13 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
       </Backdrop>
     );
   }
+
+  const onDeleteUser = async ({ id }) => {
+    try {
+      await executeAdminDeleteUserMutation({ args: { id } });
+      await refetch();
+    } catch (error) {}
+  };
 
   return (
     <Box className={classes.drawerContainer}>
@@ -52,7 +71,7 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
         </Box>
         <Paper>
           <TableContainer className={classes.tableContainer}>
-            <Table stickyHeader size="small" style={{ minWidth: "150%" }}>
+            <Table stickyHeader size="small" style={{ minWidth: "200%" }}>
               <TableHead>
                 <TableRow>
                   <TableCell>No. de cliente</TableCell>
@@ -60,9 +79,12 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
                   <TableCell>Fecha de verificación</TableCell>
                   <TableCell>Documento</TableCell>
                   <TableCell>Banco</TableCell>
+                  <TableCell>Nombre</TableCell>
+                  <TableCell>Cuenta</TableCell>
                   <TableCell>Tipo de cuenta</TableCell>
                   <TableCell>Divisa</TableCell>
                   <TableCell>Fecha de creación</TableCell>
+                  <TableCell />
                 </TableRow>
               </TableHead>
               {!Boolean(error) && Boolean(data?.adminGetUsers.length > 0) && (
@@ -102,6 +124,12 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
                         {lodash.get(user, "bankAccounts.0.guatemala.bank.name", "")}
                       </TableCell>
                       <TableCell>
+                        {lodash.get(user, "bankAccounts.0.guatemala.fullName", "")}
+                      </TableCell>
+                      <TableCell>
+                        {lodash.get(user, "bankAccounts.0.guatemala.accountNumber", "")}
+                      </TableCell>
+                      <TableCell>
                         {lodash.get(user, "bankAccounts.0.guatemala.bankAccountType", "")}
                       </TableCell>
                       <TableCell>
@@ -113,6 +141,18 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
                               lodash.get(user, "account.createdAt"),
                             ).toLocaleString(DateTime.DATE_SHORT)
                           : null}
+                      </TableCell>
+                      <TableCell>
+                        <Button
+                          variant="outlined"
+                          color="primary"
+                          size="small"
+                          onClick={() => {
+                            onDeleteUser(user);
+                          }}
+                        >
+                          Borrar Usuario
+                        </Button>
                       </TableCell>
                     </TableRow>
                   ))}
