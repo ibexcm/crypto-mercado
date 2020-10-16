@@ -18,6 +18,7 @@ type Query {
 
   # USER
   adminGetUser(args: AdminGetUserInput!): User!
+  adminGetUsers: [User]!
 
   # TRANSACTIONS
   adminGetTransactions(args: AdminGetTransactionsInput): [Transaction]

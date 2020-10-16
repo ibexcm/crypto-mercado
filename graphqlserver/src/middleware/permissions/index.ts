@@ -14,6 +14,7 @@ export const permissions = shield({
 
     // USER
     adminGetUser: rules.isAdmin,
+    adminGetUsers: rules.isAdmin,
 
     // TRANSACTIONS
     adminGetTransactions: rules.isAdmin,

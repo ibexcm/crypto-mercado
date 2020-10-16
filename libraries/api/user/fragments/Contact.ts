@@ -10,6 +10,7 @@ export const Contact = gql`
     email {
       id
       address
+      verifiedAt
     }
   }
 `;

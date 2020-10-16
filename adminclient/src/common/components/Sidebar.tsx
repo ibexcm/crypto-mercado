@@ -44,6 +44,18 @@ const Component: React.FC<Props> = ({ classes, history, footer }) => {
           <Box px={3}>
             <Box mb={2}>
               <Link
+                to={routes.kyc.users}
+                className={
+                  isSelected(routes.kyc.users)
+                    ? `${classes.sidebarNavigationSelectedLink} ${classes.sidebarNavigationLink}`
+                    : classes.sidebarNavigationLink
+                }
+              >
+                <Typography variant="body1">Usuarios</Typography>
+              </Link>
+            </Box>
+            <Box mb={2}>
+              <Link
                 to={routes.kyc.approval}
                 className={
                   isSelected(routes.kyc.approval)

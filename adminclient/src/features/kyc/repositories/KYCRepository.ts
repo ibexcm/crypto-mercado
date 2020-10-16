@@ -4,6 +4,7 @@ import {
   AdminGetUsersWithPendingKYCApprovalQuery,
   AdminKYCApproveUserMutation,
 } from "@ibexcm/libraries/api/kyc";
+import { AdminGetUsersQuery } from "@ibexcm/libraries/api/user";
 
 export class KYCRepository {
   useAdminGetUsersWithPendingKYCApprovalQuery() {
@@ -13,6 +14,12 @@ export class KYCRepository {
         fetchPolicy: "cache-and-network",
       },
     );
+  }
+
+  useAdminGetUsersQuery() {
+    return useQuery<Pick<Query, "adminGetUsers">>(AdminGetUsersQuery, {
+      fetchPolicy: "cache-and-network",
+    });
   }
 
   useAdminKYCApproveUserMutation(): {

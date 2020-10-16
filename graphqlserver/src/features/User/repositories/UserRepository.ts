@@ -50,6 +50,16 @@ export class UserRepository {
     return await this.db.user({ id });
   }
 
+  async adminGetUsers(): Promise<User[]> {
+    return await this.db.users({
+      where: {
+        role: {
+          type: "CUSTOMER",
+        },
+      },
+    });
+  }
+
   async role(id: string): Promise<UserRole> {
     return await this.db.user({ id }).role();
   }

@@ -45,6 +45,7 @@ import { SetTransactionReceiptEvidenceMutation } from "@ibexcm/libraries/api/tra
 import {
   AdminAuthenticateMutation,
   AdminGetUserQuery,
+  AdminGetUsersQuery,
   AuthenticateMutation,
   SendEmailVerificationCodeMutation,
   SendPhoneNumberVerificationCodeMutation,
@@ -125,6 +126,14 @@ const adminGetUser = async (args: QueryAdminGetUserArgs, authToken: string) => {
   return query<QueryAdminGetUserArgs, Pick<Query, "adminGetUser">>(
     AdminGetUserQuery,
     args,
+    authToken,
+  );
+};
+
+const adminGetUsers = async (authToken: string) => {
+  return query<null, Pick<Query, "adminGetUsers">>(
+    AdminGetUsersQuery,
+    null,
     authToken,
   );
 };
@@ -318,6 +327,7 @@ const GraphQLClient = {
   authenticate,
   adminAuthenticate,
   adminGetUser,
+  adminGetUsers,
   user,
   getBanksByCountry,
   getCurrenciesByCountry,

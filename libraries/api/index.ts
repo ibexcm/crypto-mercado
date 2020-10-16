@@ -1504,6 +1504,7 @@ export type Query = {
   adminGetTransactions?: Maybe<Array<Maybe<Transaction>>>,
   /** USER */
   adminGetUser: User,
+  adminGetUsers: Array<Maybe<User>>,
   /** KYC */
   adminGetUsersWithPendingKYCApproval: Array<User>,
   /** ADMIN */
