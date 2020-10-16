@@ -103,10 +103,6 @@ describe("adminGetUsersWithPendingKYCApproval", () => {
     const length = 5;
     await Promise.all(new Array(length).fill(null).map(() => onboardUser()));
 
-    await GraphQLClient.verifyPhoneNumber({
-      args: { number: Faker.phone.phoneNumber(), code: "12345" },
-    });
-
     const {
       data: { adminGetUsersWithPendingKYCApproval },
     } = await GraphQLClient.adminGetUsersWithPendingKYCApproval(token);
@@ -115,12 +111,13 @@ describe("adminGetUsersWithPendingKYCApproval", () => {
   });
 
   test("fails when user is not ADMIN", async () => {
+    const address = "u3@ibexcm.com";
     const {
       data: {
-        verifyPhoneNumber: { token },
+        sendEmailVerificationCode: { token },
       },
-    } = await GraphQLClient.verifyPhoneNumber({
-      args: { number: Faker.phone.phoneNumber(), code: "12345" },
+    } = await GraphQLClient.sendEmailVerificationCode({
+      args: { address },
     });
 
     await expect(
