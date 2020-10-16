@@ -25,9 +25,9 @@ type Query {
 
 type Mutation {
   # ONBOARDING
-  sendPhoneNumberVerificationCode(args: SendPhoneNumberVerificationCodeInput!): Boolean!
-  verifyPhoneNumber(args: VerifyPhoneNumberInput!): Session!
-  sendEmailVerificationCode(args: SendEmailVerificationCodeInput!): Boolean!
+  sendEmailVerificationCode(
+    args: SendEmailVerificationCodeInput!
+  ): EmailVerificationSession!
   verifyEmail(args: VerifyEmailInput!): Session!
   setPassword(args: SetPasswordInput!): Session!
   uploadGovernmentID(args: UploadGovernmentIDInput!): Session!
@@ -71,6 +71,11 @@ type Mutation {
 type Session {
   token: String
   expiresAt: DateTime
+}
+
+type EmailVerificationSession {
+  token: String
+  state: Boolean
 }
 
 input CreateBitcoinAccountInput {
@@ -134,15 +139,6 @@ input SetPasswordInput {
 input VerifyEmailInput {
   address: String!
   code: String!
-}
-
-input VerifyPhoneNumberInput {
-  number: String!
-  code: String!
-}
-
-input SendPhoneNumberVerificationCodeInput {
-  number: String!
 }
 
 input SendEmailVerificationCodeInput {
