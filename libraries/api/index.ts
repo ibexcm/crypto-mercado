@@ -735,12 +735,6 @@ export enum EmailOrderByInput {
   CreatedAtDesc = 'createdAt_DESC'
 }
 
-export type EmailVerificationSession = {
-   __typename?: 'EmailVerificationSession',
-  state?: Maybe<Scalars['Boolean']>,
-  token?: Maybe<Scalars['String']>,
-};
-
 export type EmailWhereInput = {
   id?: Maybe<Scalars['ID']>,
   id_not?: Maybe<Scalars['ID']>,
@@ -1182,7 +1176,7 @@ export type Mutation = {
   /** TRANSACTIONS */
   createTransaction: Transaction,
   /** ONBOARDING */
-  sendEmailVerificationCode: EmailVerificationSession,
+  sendEmailVerificationCode: Session,
   setBankAccount: Session,
   setPassword: Session,
   setTransactionReceiptEvidence: Transaction,
