@@ -1,5 +1,9 @@
 import { Prisma, User } from "@ibexcm/database";
-import { AdminKycApproveUserBankAccountInput, AdminKycApproveUserGovernmentIdInput, TGenre } from "@ibexcm/libraries/api";
+import {
+  AdminKycApproveUserBankAccountInput,
+  AdminKycApproveUserGovernmentIdInput,
+  TGenre,
+} from "@ibexcm/libraries/api";
 import Faker from "faker";
 import GraphQLClient from "../mocks/GraphQLClient";
 import onboardAdminUser from "./onboardAdminUser";
@@ -29,8 +33,8 @@ export default async (
     .documents()
     .guatemala()
     .dpi();
-  
-    const [{ id: bankAccountID }] = await db.user({ id: user.id }).bankAccounts();
+
+  const [{ id: bankAccountID }] = await db.user({ id: user.id }).bankAccounts();
 
   const governmentIDArgs = getGovernmentIDArgs(documentID);
   const bankAccountArgs = getBankAccountArgs(bankAccountID);
