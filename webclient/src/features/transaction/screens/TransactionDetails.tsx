@@ -1,6 +1,5 @@
 import {
   QueryGetTransactionBreakdownArgs,
-  SendPhoneNumberVerificationCodeInput,
   SetBitcoinTransactionReceiptEvidenceInput,
 } from "@ibexcm/libraries/api";
 import { Box, Container, Grid, Theme, withStyles, WithStyles } from "@material-ui/core";
@@ -26,13 +25,7 @@ import {
 } from "../components";
 import { TransactionRepositoryInjectionKeys } from "../InjectionKeys";
 
-interface Props
-  extends WithStyles,
-    RouteComponentProps<
-      { id: string },
-      StaticContext,
-      SendPhoneNumberVerificationCodeInput
-    > {}
+interface Props extends WithStyles, RouteComponentProps<{ id: string }, StaticContext> {}
 
 const Component: React.FC<Props> = ({ classes, history, location, match, ...props }) => {
   const dependencies = React.useContext(DependencyContext);
