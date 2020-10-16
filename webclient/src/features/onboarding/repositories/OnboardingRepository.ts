@@ -2,12 +2,10 @@ import { LazyQueryResult, MutationResult, useLazyQuery, useMutation } from "@apo
 import {
   Mutation,
   MutationSendEmailVerificationCodeArgs,
-  MutationSendPhoneNumberVerificationCodeArgs,
   MutationSetBankAccountArgs,
   MutationSetPasswordArgs,
   MutationUploadGovernmentIdArgs,
   MutationVerifyEmailArgs,
-  MutationVerifyPhoneNumberArgs,
   Query,
   QueryGetBanksByCountryArgs,
   QueryGetCurrenciesByCountryArgs,
@@ -16,12 +14,10 @@ import { GetBanksByCountryQuery } from "@ibexcm/libraries/api/bank";
 import { GetCurrenciesByCountryQuery } from "@ibexcm/libraries/api/currency";
 import {
   SendEmailVerificationCodeMutation,
-  SendPhoneNumberVerificationCodeMutation,
   SetBankAccountMutation,
   SetPasswordMutation,
   UploadGovernmentIDMutation,
   VerifyEmailMutation,
-  VerifyPhoneNumberMutation,
 } from "@ibexcm/libraries/api/user";
 import { AuthTokenRepository } from "../../authentication/repositories/AuthTokenRepository";
 
@@ -35,64 +31,6 @@ export class OnboardingRepository {
   reset(): this {
     this.AuthTokenRepository.deleteAuthToken();
     return this;
-  }
-
-  useSendPhoneNumberVerificationCodeMutation(): {
-    execute: (args: MutationSendPhoneNumberVerificationCodeArgs) => Promise<void>;
-  } {
-    const [execute] = useMutation(SendPhoneNumberVerificationCodeMutation);
-
-    return {
-      execute: async (args) => {
-        const {
-          data,
-          error,
-        }: Partial<MutationResult<
-          Pick<Mutation, "sendPhoneNumberVerificationCode">
-        >> = await execute({
-          variables: args,
-        });
-
-        if (Boolean(error)) {
-          throw error;
-        }
-
-        if (!Boolean(data?.sendPhoneNumberVerificationCode)) {
-          throw new Error("No pudimos enviar el SMS");
-        }
-      },
-    };
-  }
-
-  useVerifyPhoneNumberMutation(): {
-    execute: (args: MutationVerifyPhoneNumberArgs) => Promise<void>;
-  } {
-    const [execute] = useMutation(VerifyPhoneNumberMutation);
-
-    return {
-      execute: async (args) => {
-        const {
-          data,
-          error,
-        }: Partial<MutationResult<Pick<Mutation, "verifyPhoneNumber">>> = await execute({
-          variables: args,
-        });
-
-        if (Boolean(error)) {
-          throw error;
-        }
-
-        if (!Boolean(data?.verifyPhoneNumber)) {
-          throw new Error("No pudimos verificar el SMS");
-        }
-
-        const {
-          verifyPhoneNumber: { token },
-        } = data as Pick<Mutation, "verifyPhoneNumber">;
-
-        this.AuthTokenRepository.setAuthToken(token as string);
-      },
-    };
   }
 
   useSendEmailVerificationCodeMutation(): {
@@ -115,9 +53,15 @@ export class OnboardingRepository {
           throw error;
         }
 
-        if (!Boolean(data?.sendEmailVerificationCode)) {
+        if (!Boolean(data?.sendEmailVerificationCode.state)) {
           throw new Error("No pudimos enviar el correo.");
         }
+
+        const {
+          sendEmailVerificationCode: { token },
+        } = data;
+
+        this.AuthTokenRepository.setAuthToken(token as string);
       },
     };
   }
