@@ -40,15 +40,12 @@ describe("sendEmailVerificationCode", () => {
   test("success", async () => {
     const {
       data: {
-        verifyPhoneNumber: { token },
+        sendEmailVerificationCode: { token, state },
       },
-    } = await GraphQLClient.verifyPhoneNumber({ args: { number, code } });
+    } = await GraphQLClient.sendEmailVerificationCode({ args: { address } });
 
-    const {
-      data: { sendEmailVerificationCode },
-    } = await GraphQLClient.sendEmailVerificationCode({ args: { address } }, token);
-
-    expect(sendEmailVerificationCode).toBe(true);
+    expect(state).toBe(true);
+    expect(token).toBeDefined();
   });
 
   test("email address taken", async () => {});

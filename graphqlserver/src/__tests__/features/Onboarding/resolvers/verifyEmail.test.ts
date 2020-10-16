@@ -39,9 +39,9 @@ describe("verifyEmail", () => {
   test("creates contact.email in user & returns Session", async () => {
     const {
       data: {
-        verifyPhoneNumber: { token },
+        sendEmailVerificationCode: { token },
       },
-    } = await GraphQLClient.verifyPhoneNumber({ args: { number: "+0000000001", code } });
+    } = await GraphQLClient.sendEmailVerificationCode({ args: { address } });
 
     const {
       data: { verifyEmail },
@@ -61,9 +61,9 @@ describe("verifyEmail", () => {
   test("email address taken", async () => {
     const {
       data: {
-        verifyPhoneNumber: { token },
+        sendEmailVerificationCode: { token },
       },
-    } = await GraphQLClient.verifyPhoneNumber({ args: { number: "+0000000002", code } });
+    } = await GraphQLClient.sendEmailVerificationCode({ args: { address } });
 
     await expect(
       GraphQLClient.verifyEmail({ args: { address, code } }, token),
@@ -73,9 +73,9 @@ describe("verifyEmail", () => {
   test("incorrect code", async () => {
     const {
       data: {
-        verifyPhoneNumber: { token },
+        sendEmailVerificationCode: { token },
       },
-    } = await GraphQLClient.verifyPhoneNumber({ args: { number: "+0000000003", code } });
+    } = await GraphQLClient.sendEmailVerificationCode({ args: { address } });
 
     emailVerificationRepository.verifyCode = (email, code) => Promise.resolve(false);
 
