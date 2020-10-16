@@ -1,6 +1,5 @@
 import { Prisma, TGuatemalaBankAccount, User } from "@ibexcm/database";
 import {
-  EmailVerificationSession,
   MutationSendEmailVerificationCodeArgs,
   MutationSetBankAccountArgs,
   MutationSetPasswordArgs,
@@ -11,6 +10,7 @@ import {
 import { genSalt, hash } from "bcryptjs";
 import { config } from "../../../config";
 import { ENVType } from "../../../config/models/ENVType";
+import { CountryPhoneNumberCode } from "@ibexcm/libraries/models/country";
 import { IEmailVerificationRepository } from "../../../libraries/EmailVerification";
 import { IEmailNotificationsRepository } from "../../../libraries/EmailVerification/interfaces/IEmailNotificationsRepository";
 import { IFileManagementRepository } from "../../../libraries/FileManagement";
@@ -23,7 +23,6 @@ export class OnboardingRepository {
   private emailVerificationRepository: IEmailVerificationRepository;
   private emailNotificationsRepository: IEmailNotificationsRepository;
   private fileManagementRepository: IFileManagementRepository;
-  private verifiedPhoneNumbers: string[];
   private verifiedEmails: string[];
 
   constructor(
@@ -38,19 +37,20 @@ export class OnboardingRepository {
     this.emailVerificationRepository = emailVerificationRepository;
     this.emailNotificationsRepository = emailNotificationsRepository;
     this.fileManagementRepository = fileManagementRepository;
-    this.verifiedPhoneNumbers =
-      config.get("env") !== ENVType.production
-        ? config.get("flags").verifiedPhoneNumbers
-        : [];
     this.verifiedEmails =
       config.get("env") !== ENVType.production ? config.get("flags").verifiedEmails : [];
   }
 
   async sendEmailVerificationCode({
     args: { address },
-  }: MutationSendEmailVerificationCodeArgs): Promise<EmailVerificationSession> {
+  }: MutationSendEmailVerificationCodeArgs): Promise<Session> {
+    const isVerified = "verified";
+
     if (this.verifiedEmails.includes(address)) {
-      return { state: true };
+      return {
+        token: isVerified,
+        expiresAt: new Date(),
+      };
     }
 
     const user = await this.db.createUser({
@@ -68,17 +68,26 @@ export class OnboardingRepository {
           },
         },
       },
+      profile: {
+        create: {
+          country: {
+            connect: {
+              phoneNumberCode: CountryPhoneNumberCode.GTQ,
+            },
+          },
+        },
+      },
     });
 
-    const { token } = await this.sessionRepository.createAuthenticationSession(user);
-    const state = await this.emailVerificationRepository.sendVerificationCode(
-      address,
-      token,
+    const { token, expiresAt } = await this.sessionRepository.createAuthenticationSession(
+      user,
     );
+
+    await this.emailVerificationRepository.sendVerificationCode(address, token);
 
     return {
       token,
-      state,
+      expiresAt,
     };
   }
 
