@@ -37,6 +37,7 @@ export class OnboardingRepository {
     execute: (args: MutationSendEmailVerificationCodeArgs) => Promise<void>;
   } {
     const [execute] = useMutation(SendEmailVerificationCodeMutation);
+    const isVerified = "verified";
 
     return {
       execute: async (args) => {
@@ -53,8 +54,12 @@ export class OnboardingRepository {
           throw error;
         }
 
-        if (!Boolean(data?.sendEmailVerificationCode.state)) {
+        if (!Boolean(data?.sendEmailVerificationCode.token)) {
           throw new Error("No pudimos enviar el correo.");
+        }
+
+        if (Boolean(data?.sendEmailVerificationCode.token === isVerified)) {
+          throw new Error("Este correo ya ha sido verificado");
         }
 
         const {

@@ -1,7 +1,6 @@
 import {
   MutationSendEmailVerificationCodeArgs,
   MutationVerifyEmailArgs,
-  SendPhoneNumberVerificationCodeInput,
 } from "@ibexcm/libraries/api";
 import { Box, Container, Theme, withStyles, WithStyles } from "@material-ui/core";
 import CircularProgress from "@material-ui/core/CircularProgress";
@@ -20,9 +19,7 @@ import routes from "../../../routes";
 import { MobileAppBar, SidebarNavigation } from "../components";
 import { OnboardingRepositoryInjectionKeys } from "../InjectionKeys";
 
-interface Props
-  extends WithStyles,
-    RouteComponentProps<{}, StaticContext, SendPhoneNumberVerificationCodeInput> {}
+interface Props extends WithStyles, RouteComponentProps<{}, StaticContext> {}
 
 const Component: React.FC<Props> = ({ classes, history, location, ...props }) => {
   const dependencies = React.useContext(DependencyContext);
