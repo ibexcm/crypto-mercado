@@ -22,10 +22,10 @@ export default async ({
 
   const {
     data: {
-      verifyPhoneNumber: { token },
+     sendEmailVerificationCode : { token },
     },
-  } = await GraphQLClient.verifyPhoneNumber({
-    args: { number, code },
+  } = await GraphQLClient.sendEmailVerificationCode({
+    args: { address },
   });
 
   await GraphQLClient.verifyEmail({ args: { address, code } }, token);
