@@ -4,10 +4,8 @@ import {
   MutationAuthenticateArgs,
   MutationCreateBitcoinAccountArgs,
   MutationSendEmailVerificationCodeArgs,
-  MutationSendPhoneNumberVerificationCodeArgs,
   MutationSetTransactionReceiptEvidenceArgs,
   MutationVerifyEmailArgs,
-  MutationVerifyPhoneNumberArgs,
   TUserRole,
 } from "@ibexcm/libraries/api";
 import { compare } from "bcryptjs";
@@ -203,29 +201,6 @@ export const usernameExists = rule({ cache: true })(
 
     if (!Boolean(account)) {
       return AuthenticationError.invalidUsernameError;
-    }
-
-    return true;
-  },
-);
-
-export const isPhoneNumberAvailable = rule({ cache: true })(
-  async (
-    parent,
-    {
-      args: { number },
-    }: MutationVerifyPhoneNumberArgs | MutationSendPhoneNumberVerificationCodeArgs,
-    { dependencies }: IContext,
-    info,
-  ) => {
-    const db = dependencies.provide(dbInjectionKey);
-    const user = await db
-      .phoneNumber({ number })
-      .contact()
-      .user();
-
-    if (Boolean(user)) {
-      return OnboardingError.phoneNumberExistsError;
     }
 
     return true;

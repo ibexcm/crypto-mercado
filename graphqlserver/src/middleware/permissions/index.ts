@@ -24,8 +24,6 @@ export const permissions = shield({
     authenticate: and(rules.usernameExists, rules.isValidPassword, rules.isKYCApproved),
 
     // ONBOARDING
-    sendPhoneNumberVerificationCode: rules.isPhoneNumberAvailable,
-    verifyPhoneNumber: rules.isPhoneNumberAvailable,
     sendEmailVerificationCode: rules.isEmailAvailable,
     verifyEmail: rules.isEmailAvailable,
     setPassword: rules.isUser,
