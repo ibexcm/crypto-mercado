@@ -8,12 +8,10 @@ import { Home } from "./features/home/screens";
 import {
   Done,
   SendEmailVerificationCode,
-  SendPhoneNumberVerificationCode,
   SetBankAccount,
   SetPassword,
   UploadGovernmentID,
   VerifyEmail,
-  VerifyPhoneNumber,
 } from "./features/onboarding/screens";
 import { TransactionDetails, TransactionsIndex } from "./features/transaction/screens";
 import { Checkout as BuyCheckout } from "./features/transaction/screens/buy";
@@ -34,16 +32,6 @@ const App: React.FC = () => {
             <Route path={routes.authentication.signIn} exact component={Authenticate} />
 
             {/* ONBOARDING */}
-            <Route
-              path={routes.onboarding.sendPhoneNumberVerificationCode}
-              exact
-              component={SendPhoneNumberVerificationCode}
-            />
-            <Route
-              path={routes.onboarding.verifyPhoneNumber}
-              exact
-              component={VerifyPhoneNumber}
-            />
             <Route
               path={routes.onboarding.sendEmailVerificationCode}
               exact
