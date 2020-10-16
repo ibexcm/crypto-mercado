@@ -1,13 +1,16 @@
-import { MutationSendEmailVerificationCodeArgs } from "@ibexcm/libraries/api";
+import {
+  EmailVerificationSession,
+  MutationSendEmailVerificationCodeArgs,
+} from "@ibexcm/libraries/api";
 import { IContext } from "../../../server/interfaces/IContext";
 import { onboardingRepositoryInjectionKey } from "../InjectionKeys";
 
 export async function sendEmailVerificationCode(
   parent,
   args: MutationSendEmailVerificationCodeArgs,
-  { dependencies, request }: IContext,
+  { dependencies }: IContext,
   info,
-): Promise<boolean> {
+): Promise<EmailVerificationSession> {
   const userRepository = dependencies.provide(onboardingRepositoryInjectionKey);
-  return userRepository.sendEmailVerificationCode(args, request.auth.user);
+  return userRepository.sendEmailVerificationCode(args);
 }
