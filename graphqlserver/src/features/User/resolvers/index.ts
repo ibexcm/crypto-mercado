@@ -1,7 +1,9 @@
 import { forwardTo } from "prisma-binding";
 import { IContext } from "../../../server/interfaces/IContext";
 import { userRepositoryInjectionKey } from "../InjectionKeys";
+import { adminDeleteUser } from "./adminDeleteUser";
 import { adminGetUser } from "./adminGetUser";
+import { adminGetUsers } from "./adminGetUsers";
 
 export const queries = {
   user: (parent, args, context: IContext, info) => {
@@ -17,6 +19,11 @@ export const queries = {
     );
   },
   adminGetUser,
+  adminGetUsers,
+};
+
+export const mutations = {
+  adminDeleteUser,
 };
 
 export const types = {
