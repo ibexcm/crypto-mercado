@@ -16,7 +16,7 @@ import {
   User,
   UserRole,
 } from "@ibexcm/database";
-import { QueryAdminGetUserArgs } from "@ibexcm/libraries/api";
+import { MutationAdminDeleteUserArgs, QueryAdminGetUserArgs } from "@ibexcm/libraries/api";
 import { config } from "../../../config";
 
 const { adminAccountEmailAddress } = config.get("flags");
@@ -48,6 +48,22 @@ export class UserRepository {
 
   async adminGetUser({ args: { id } }: QueryAdminGetUserArgs): Promise<User> {
     return await this.db.user({ id });
+  }
+
+  async adminGetUsers(): Promise<User[]> {
+    return await this.db.users({
+      where: {
+        role: {
+          type: "CUSTOMER",
+        },
+      },
+    });
+  }
+
+  async adminDeleteUser({ args: { id } }: MutationAdminDeleteUserArgs): Promise<User> {
+    return await this.db.deleteUser({
+      id,
+    });
   }
 
   async role(id: string): Promise<UserRole> {

@@ -5,6 +5,7 @@ export const routes = {
     authenticate: "/",
   },
   kyc: {
+    users: "/kyc/users",
     approval: "/kyc/approval",
     evaluate: "/kyc/evaluate/user/:id",
   },

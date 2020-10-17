@@ -1,7 +1,29 @@
 import {
   Mutation,
   MutationAdminAuthenticateArgs,
-  MutationAdminKycApproveUserArgs,
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  MutationAdminDeleteUserArgs, MutationAdminKycApproveUserArgs,
   MutationAdminKycRejectUserArgs,
   MutationAdminSettingsCreateExchangeRateArgs,
   MutationAdminUpdateTransactionArgs,
@@ -44,7 +66,19 @@ import {
 import { SetTransactionReceiptEvidenceMutation } from "@ibexcm/libraries/api/transactionReceipt";
 import {
   AdminAuthenticateMutation,
-  AdminGetUserQuery,
+
+
+
+
+
+
+
+
+
+
+
+  AdminDeleteUserMutation, AdminGetUserQuery,
+  AdminGetUsersQuery,
   AuthenticateMutation,
   SendEmailVerificationCodeMutation,
   SendPhoneNumberVerificationCodeMutation,
@@ -125,6 +159,22 @@ const adminGetUser = async (args: QueryAdminGetUserArgs, authToken: string) => {
   return query<QueryAdminGetUserArgs, Pick<Query, "adminGetUser">>(
     AdminGetUserQuery,
     args,
+    authToken,
+  );
+};
+
+const adminDeleteUser = async (args: MutationAdminDeleteUserArgs, authToken: string) => {
+  return query<MutationAdminDeleteUserArgs, Pick<Mutation, "adminDeleteUser">>(
+    AdminDeleteUserMutation,
+    args,
+    authToken,
+  );
+};
+
+const adminGetUsers = async (authToken: string) => {
+  return query<null, Pick<Query, "adminGetUsers">>(
+    AdminGetUsersQuery,
+    null,
     authToken,
   );
 };
@@ -318,6 +368,7 @@ const GraphQLClient = {
   authenticate,
   adminAuthenticate,
   adminGetUser,
+  adminGetUsers,
   user,
   getBanksByCountry,
   getCurrenciesByCountry,
@@ -340,6 +391,7 @@ const GraphQLClient = {
   adminGetTransactions,
   adminSettingsCreateExchangeRate,
   adminUpdateTransaction,
+  adminDeleteUser
 };
 
 export default GraphQLClient;
