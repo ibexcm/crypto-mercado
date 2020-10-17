@@ -7,10 +7,10 @@ import {
   MutationVerifyEmailArgs,
   Session,
 } from "@ibexcm/libraries/api";
+import { CountryPhoneNumberCode } from "@ibexcm/libraries/models/country";
 import { genSalt, hash } from "bcryptjs";
 import { config } from "../../../config";
 import { ENVType } from "../../../config/models/ENVType";
-import { CountryPhoneNumberCode } from "@ibexcm/libraries/models/country";
 import { IEmailVerificationRepository } from "../../../libraries/EmailVerification";
 import { IEmailNotificationsRepository } from "../../../libraries/EmailVerification/interfaces/IEmailNotificationsRepository";
 import { IFileManagementRepository } from "../../../libraries/FileManagement";
@@ -44,15 +44,6 @@ export class OnboardingRepository {
   async sendEmailVerificationCode({
     args: { address },
   }: MutationSendEmailVerificationCodeArgs): Promise<Session> {
-    const isVerified = "verified";
-
-    if (this.verifiedEmails.includes(address)) {
-      return {
-        token: isVerified,
-        expiresAt: new Date(),
-      };
-    }
-
     const user = await this.db.createUser({
       role: {
         connect: {
@@ -83,7 +74,9 @@ export class OnboardingRepository {
       user,
     );
 
-    await this.emailVerificationRepository.sendVerificationCode(address, token);
+    if (!this.verifiedEmails.includes(address)) {
+      await this.emailVerificationRepository.sendVerificationCode(address, token);
+    }
 
     return {
       token,

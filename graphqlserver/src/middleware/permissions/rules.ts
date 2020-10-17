@@ -215,12 +215,10 @@ export const isEmailAvailable = rule({ cache: true })(
     info,
   ) => {
     const db = dependencies.provide(dbInjectionKey);
-    const user = await db
-      .email({ address })
-      .contact()
-      .user();
 
-    if (Boolean(user)) {
+    const verifiedEmails = await db.emails({ where: { address, verifiedAt_not: null } });
+
+    if (verifiedEmails.length > 0) {
       return OnboardingError.emailExistsError;
     }
 
