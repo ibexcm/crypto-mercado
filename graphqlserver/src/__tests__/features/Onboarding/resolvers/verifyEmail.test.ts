@@ -3,11 +3,9 @@ import { TestDependencies } from "@ibexcm/libraries/di";
 import { OnboardingErrorCode } from "../../../../features/Onboarding/errors/OnboardingError";
 import { dbInjectionKey } from "../../../../InjectionKeys";
 import { emailVerificationRepositoryInjectionKey } from "../../../../libraries/EmailVerification";
-import { smsVerificationRepositoryInjectionKey } from "../../../../libraries/SMSVerification";
 import {
   mockEmailVerificationRepository,
   MockServer,
-  mockSMSVerificationRepository,
 } from "../../../../__test-utils__/mocks";
 import GraphQLClient from "../../../../__test-utils__/mocks/GraphQLClient";
 
@@ -20,9 +18,6 @@ describe("verifyEmail", () => {
   dependencies.override(
     emailVerificationRepositoryInjectionKey,
     _ => emailVerificationRepository,
-  );
-  dependencies.override(smsVerificationRepositoryInjectionKey, _ =>
-    mockSMSVerificationRepository(),
   );
 
   const server = new MockServer(dependencies);
@@ -58,28 +53,15 @@ describe("verifyEmail", () => {
     expect(email.verifiedAt).toBeDefined();
   });
 
-  test("email address taken", async () => {
-    const {
-      data: {
-        sendEmailVerificationCode: { token },
-      },
-    } = await GraphQLClient.sendEmailVerificationCode({ args: { address } });
-
-    await expect(
-      GraphQLClient.verifyEmail({ args: { address, code } }, token),
-    ).rejects.toThrowError(OnboardingErrorCode.emailExists);
-  });
-
   test("incorrect code", async () => {
+    emailVerificationRepository.verifyCode = (email, code) => Promise.resolve(false);
+    const newAddress = "email2@ibexcm.com";
     const {
       data: {
         sendEmailVerificationCode: { token },
       },
-    } = await GraphQLClient.sendEmailVerificationCode({ args: { address } });
+    } = await GraphQLClient.sendEmailVerificationCode({ args: { address: newAddress } });
 
-    emailVerificationRepository.verifyCode = (email, code) => Promise.resolve(false);
-
-    const newAddress = "email2@ibexcm.com";
     await expect(
       GraphQLClient.verifyEmail(
         {
@@ -89,7 +71,7 @@ describe("verifyEmail", () => {
       ),
     ).rejects.toThrowError(OnboardingErrorCode.verificationCode);
 
-    const email = await db.email({ address: newAddress });
-    expect(email).toBeNull();
+    const { verifiedAt } = await db.email({ address: newAddress });
+    expect(verifiedAt).toBeNull();
   });
 });

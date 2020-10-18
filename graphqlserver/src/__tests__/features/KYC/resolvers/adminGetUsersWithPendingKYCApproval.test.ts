@@ -73,7 +73,6 @@ describe("adminGetUsersWithPendingKYCApproval", () => {
     for (const user of adminGetUsersWithPendingKYCApproval) {
       expect(user.role.type).toEqual("CUSTOMER");
       expect(user.account.clientID).toBeDefined();
-      expect(user.contact.phoneNumber[0].number).toBeDefined();
       expect(user.contact.email[0].address).toBeDefined();
       expect(user.profile.country.phoneNumberCode).toBeDefined();
       expect(user.profile.documents.guatemala.dpi[0].fileHash).toBeDefined();
