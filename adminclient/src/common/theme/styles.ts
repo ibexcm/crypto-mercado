@@ -11,6 +11,7 @@ export const styles = (theme: Theme) => ({
   mainContainer: {
     paddingBottom: 6,
     backgroundColor: "whitesmoke",
+    overflow: "hidden",
   },
   backdrop: {
     zIndex: theme.zIndex.drawer + 1,
