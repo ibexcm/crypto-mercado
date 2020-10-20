@@ -104,12 +104,13 @@ describe("adminKYCApproveUser", () => {
   });
 
   test("fails when user is not ADMIN", async () => {
+    const address = "u3@ibexcm.com";
     const {
       data: {
-        verifyPhoneNumber: { token },
+        sendEmailVerificationCode: { token },
       },
-    } = await GraphQLClient.verifyPhoneNumber({
-      args: { number: Faker.phone.phoneNumber(), code: "12345" },
+    } = await GraphQLClient.sendEmailVerificationCode({
+      args: { address },
     });
 
     const governmentIDArgs = getGovernmentIDArgs("123");

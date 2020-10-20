@@ -32,12 +32,14 @@ describe("uploadGovernmentID", () => {
   });
 
   test("creates profile.governmentID.GTQ_DPI.fileHash & returns Session", async () => {
-    const number = "+0000000001";
+    const address = "u3@ibexcm.com";
     const {
       data: {
-        verifyPhoneNumber: { token },
+        sendEmailVerificationCode: { token },
       },
-    } = await GraphQLClient.verifyPhoneNumber({ args: { number, code } });
+    } = await GraphQLClient.sendEmailVerificationCode({
+      args: { address },
+    });
 
     const readFile = promisify(fs.readFile);
     const file = await readFile(
@@ -58,7 +60,7 @@ describe("uploadGovernmentID", () => {
     } = await GraphQLClient.uploadGovernmentID({ args: { fileHash } }, token);
 
     const [{ id }] = await db
-      .phoneNumber({ number })
+      .email({ address })
       .contact()
       .user()
       .profile()

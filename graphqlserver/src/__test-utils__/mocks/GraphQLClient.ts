@@ -31,13 +31,11 @@ import {
   MutationCreateBitcoinAccountArgs,
   MutationCreateTransactionArgs,
   MutationSendEmailVerificationCodeArgs,
-  MutationSendPhoneNumberVerificationCodeArgs,
   MutationSetBankAccountArgs,
   MutationSetPasswordArgs,
   MutationSetTransactionReceiptEvidenceArgs,
   MutationUploadGovernmentIdArgs,
   MutationVerifyEmailArgs,
-  MutationVerifyPhoneNumberArgs,
   Query,
   QueryAdminGetTransactionsArgs,
   QueryAdminGetUserArgs,
@@ -81,13 +79,12 @@ import {
   AdminGetUsersQuery,
   AuthenticateMutation,
   SendEmailVerificationCodeMutation,
-  SendPhoneNumberVerificationCodeMutation,
+
   SetBankAccountMutation,
   SetPasswordMutation,
   UploadGovernmentIDMutation,
   UserQuery,
-  VerifyEmailMutation,
-  VerifyPhoneNumberMutation
+  VerifyEmailMutation
 } from "@ibexcm/libraries/api/user";
 import { ApolloError } from "apollo-server-errors";
 import axios from "axios";
@@ -193,27 +190,11 @@ const getCurrenciesByCountry = async (args: QueryGetCurrenciesByCountryArgs) => 
   );
 };
 
-const verifyPhoneNumber = async (args: MutationVerifyPhoneNumberArgs) => {
-  return query<MutationVerifyPhoneNumberArgs, Pick<Mutation, "verifyPhoneNumber">>(
-    VerifyPhoneNumberMutation,
-    args,
-  );
-};
-
-const sendPhoneNumberVerificationCode = async (
-  args: MutationSendPhoneNumberVerificationCodeArgs,
-) => {
-  return query<
-    MutationSendPhoneNumberVerificationCodeArgs,
-    Pick<Mutation, "sendPhoneNumberVerificationCode">
-  >(SendPhoneNumberVerificationCodeMutation, args);
-};
-
-const sendEmailVerificationCode = async (args: MutationSendEmailVerificationCodeArgs, authToken: string) => {
+const sendEmailVerificationCode = async (args: MutationSendEmailVerificationCodeArgs) => {
   return query<
     MutationSendEmailVerificationCodeArgs,
     Pick<Mutation, "sendEmailVerificationCode">
-  >(SendEmailVerificationCodeMutation, args, authToken);
+  >(SendEmailVerificationCodeMutation, args);
 };
 
 const verifyEmail = async (args: MutationVerifyEmailArgs, authToken: string) => {
@@ -372,8 +353,6 @@ const GraphQLClient = {
   user,
   getBanksByCountry,
   getCurrenciesByCountry,
-  verifyPhoneNumber,
-  sendPhoneNumberVerificationCode,
   sendEmailVerificationCode,
   verifyEmail,
   setPassword,

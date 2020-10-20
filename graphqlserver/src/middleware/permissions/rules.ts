@@ -4,10 +4,8 @@ import {
   MutationAuthenticateArgs,
   MutationCreateBitcoinAccountArgs,
   MutationSendEmailVerificationCodeArgs,
-  MutationSendPhoneNumberVerificationCodeArgs,
   MutationSetTransactionReceiptEvidenceArgs,
   MutationVerifyEmailArgs,
-  MutationVerifyPhoneNumberArgs,
   TUserRole,
 } from "@ibexcm/libraries/api";
 import { compare } from "bcryptjs";
@@ -209,29 +207,6 @@ export const usernameExists = rule({ cache: true })(
   },
 );
 
-export const isPhoneNumberAvailable = rule({ cache: true })(
-  async (
-    parent,
-    {
-      args: { number },
-    }: MutationVerifyPhoneNumberArgs | MutationSendPhoneNumberVerificationCodeArgs,
-    { dependencies }: IContext,
-    info,
-  ) => {
-    const db = dependencies.provide(dbInjectionKey);
-    const user = await db
-      .phoneNumber({ number })
-      .contact()
-      .user();
-
-    if (Boolean(user)) {
-      return OnboardingError.phoneNumberExistsError;
-    }
-
-    return true;
-  },
-);
-
 export const isEmailAvailable = rule({ cache: true })(
   async (
     parent,
@@ -240,12 +215,10 @@ export const isEmailAvailable = rule({ cache: true })(
     info,
   ) => {
     const db = dependencies.provide(dbInjectionKey);
-    const user = await db
-      .email({ address })
-      .contact()
-      .user();
 
-    if (Boolean(user)) {
+    const verifiedEmails = await db.emails({ where: { address, verifiedAt_not: null } });
+
+    if (verifiedEmails.length > 0) {
       return OnboardingError.emailExistsError;
     }
 
