@@ -1,7 +1,4 @@
-import {
-  MutationAdminAuthenticateArgs,
-  SendPhoneNumberVerificationCodeInput,
-} from "@ibexcm/libraries/api";
+import { MutationAdminAuthenticateArgs } from "@ibexcm/libraries/api";
 import { Box, Container, Grid, Theme, withStyles, WithStyles } from "@material-ui/core";
 import React from "react";
 import { RouteComponentProps, StaticContext } from "react-router";
@@ -17,9 +14,7 @@ import routes from "../../../routes";
 import { NavBar } from "../components";
 import { AuthenticationRepositoryInjectionKeys } from "../InjectionKeys";
 
-interface Props
-  extends WithStyles,
-    RouteComponentProps<{}, StaticContext, SendPhoneNumberVerificationCodeInput> {}
+interface Props extends WithStyles, RouteComponentProps<{}, StaticContext> {}
 
 const Component: React.FC<Props> = ({ classes, history, location, match, ...props }) => {
   const dependencies = React.useContext(DependencyContext);

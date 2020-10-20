@@ -1,4 +1,4 @@
-import { SendPhoneNumberVerificationCodeInput, User } from "@ibexcm/libraries/api";
+import { User } from "@ibexcm/libraries/api";
 import {
   Backdrop,
   Box,
@@ -23,9 +23,7 @@ import { styles } from "../../../common/theme";
 import routes from "../../../routes";
 import { KYCRepositoryInjectionKeys } from "../InjectionKeys";
 
-interface Props
-  extends WithStyles,
-    RouteComponentProps<{}, StaticContext, SendPhoneNumberVerificationCodeInput> {}
+interface Props extends WithStyles, RouteComponentProps<{}, StaticContext> {}
 
 const Component: React.FC<Props> = ({ classes, history, location, match, ...props }) => {
   const dependencies = React.useContext(DependencyContext);
