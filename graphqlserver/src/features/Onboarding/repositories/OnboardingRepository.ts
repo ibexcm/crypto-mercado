@@ -1,12 +1,10 @@
 import { Prisma, TGuatemalaBankAccount, User } from "@ibexcm/database";
 import {
   MutationSendEmailVerificationCodeArgs,
-  MutationSendPhoneNumberVerificationCodeArgs,
   MutationSetBankAccountArgs,
   MutationSetPasswordArgs,
   MutationUploadGovernmentIdArgs,
   MutationVerifyEmailArgs,
-  MutationVerifyPhoneNumberArgs,
   Session,
 } from "@ibexcm/libraries/api";
 import { CountryPhoneNumberCode } from "@ibexcm/libraries/models/country";
@@ -17,73 +15,35 @@ import { IEmailVerificationRepository } from "../../../libraries/EmailVerificati
 import { IEmailNotificationsRepository } from "../../../libraries/EmailVerification/interfaces/IEmailNotificationsRepository";
 import { IFileManagementRepository } from "../../../libraries/FileManagement";
 import { ISessionRepository } from "../../../libraries/Session/interfaces/ISessionRepository";
-import { ISMSVerificationRepository } from "../../../libraries/SMSVerification";
 import { OnboardingError } from "../errors/OnboardingError";
 
 export class OnboardingRepository {
   private db: Prisma;
   private sessionRepository: ISessionRepository;
-  private smsVerificationRepository: ISMSVerificationRepository;
   private emailVerificationRepository: IEmailVerificationRepository;
   private emailNotificationsRepository: IEmailNotificationsRepository;
   private fileManagementRepository: IFileManagementRepository;
-  private verifiedPhoneNumbers: string[];
   private verifiedEmails: string[];
 
   constructor(
     db: Prisma,
     sessionRepository: ISessionRepository,
-    smsVerificationRepository: ISMSVerificationRepository,
     fileManagementRepository: IFileManagementRepository,
     emailVerificationRepository: IEmailVerificationRepository,
     emailNotificationsRepository: IEmailNotificationsRepository,
   ) {
     this.db = db;
     this.sessionRepository = sessionRepository;
-    this.smsVerificationRepository = smsVerificationRepository;
     this.emailVerificationRepository = emailVerificationRepository;
     this.emailNotificationsRepository = emailNotificationsRepository;
     this.fileManagementRepository = fileManagementRepository;
-    this.verifiedPhoneNumbers =
-      config.get("env") !== ENVType.production
-        ? config.get("flags").verifiedPhoneNumbers
-        : [];
     this.verifiedEmails =
       config.get("env") !== ENVType.production ? config.get("flags").verifiedEmails : [];
   }
 
-  async sendPhoneNumberVerificationCode({
-    args: { number },
-  }: MutationSendPhoneNumberVerificationCodeArgs): Promise<boolean> {
-    if (this.verifiedPhoneNumbers.includes(number)) {
-      return true;
-    }
-
-    return await this.smsVerificationRepository.sendVerificationCode(number);
-  }
-
-  async sendEmailVerificationCode(
-    { args: { address } }: MutationSendEmailVerificationCodeArgs,
-    user: User,
-  ): Promise<boolean> {
-    if (this.verifiedEmails.includes(address)) {
-      return true;
-    }
-
-    const { token } = await this.sessionRepository.createAuthenticationSession(user);
-
-    return await this.emailVerificationRepository.sendVerificationCode(address, token);
-  }
-
-  async verifyPhoneNumber({
-    args: { number, code },
-  }: MutationVerifyPhoneNumberArgs): Promise<Session> {
-    const isVerified = this.verifiedPhoneNumbers.includes(number)
-      ? true
-      : await this.smsVerificationRepository.verifyCode(number, code);
-
-    if (!isVerified) throw OnboardingError.verificationCodeError;
-
+  async sendEmailVerificationCode({
+    args: { address },
+  }: MutationSendEmailVerificationCodeArgs): Promise<Session> {
     const user = await this.db.createUser({
       role: {
         connect: {
@@ -92,10 +52,9 @@ export class OnboardingRepository {
       },
       contact: {
         create: {
-          phoneNumber: {
+          email: {
             create: {
-              number,
-              verifiedAt: new Date(),
+              address,
             },
           },
         },
@@ -111,7 +70,18 @@ export class OnboardingRepository {
       },
     });
 
-    return await this.sessionRepository.createAuthenticationSession(user);
+    const { token, expiresAt } = await this.sessionRepository.createAuthenticationSession(
+      user,
+    );
+
+    if (!this.verifiedEmails.includes(address)) {
+      await this.emailVerificationRepository.sendVerificationCode(address, token);
+    }
+
+    return {
+      token,
+      expiresAt,
+    };
   }
 
   async verifyEmail(
@@ -132,9 +102,13 @@ export class OnboardingRepository {
         contact: {
           update: {
             email: {
-              create: {
-                address,
-                verifiedAt: new Date(),
+              update: {
+                where: {
+                  address,
+                },
+                data: {
+                  verifiedAt: new Date(),
+                },
               },
             },
           },

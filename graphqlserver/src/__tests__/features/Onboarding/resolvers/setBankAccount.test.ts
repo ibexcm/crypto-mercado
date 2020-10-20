@@ -40,12 +40,14 @@ describe("setBankAccount", () => {
   });
 
   test("creates bank account with currency, fullName, accountNumber, and bank & returns Session", async () => {
-    const number = "+00000000004";
+    const address = "u3@ibexcm.com";
     const {
       data: {
-        verifyPhoneNumber: { token },
+        sendEmailVerificationCode: { token },
       },
-    } = await GraphQLClient.verifyPhoneNumber({ args: { number, code } });
+    } = await GraphQLClient.sendEmailVerificationCode({
+      args: { address },
+    });
 
     const {
       data: {
@@ -77,7 +79,7 @@ describe("setBankAccount", () => {
     );
 
     const bankAccounts = await db
-      .phoneNumber({ number })
+      .email({ address })
       .contact()
       .user()
       .bankAccounts({ orderBy: "createdAt_DESC" });

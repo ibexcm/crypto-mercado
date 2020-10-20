@@ -22,19 +22,6 @@ const Component: React.FC<Props> = ({ classes, history }) => {
       <Typography mb={4}>Crea una cuenta</Typography>
       <Box mb={2}>
         <Link
-          to={routes.onboarding.sendPhoneNumberVerificationCode}
-          className={
-            isSelected(routes.onboarding.sendPhoneNumberVerificationCode) ||
-            isSelected(routes.onboarding.verifyPhoneNumber)
-              ? `${classes.sidebarNavigationSelectedLink} ${classes.sidebarNavigationLink}`
-              : classes.sidebarNavigationLink
-          }
-        >
-          <Typography variant="body2">Verifica tu teléfono</Typography>
-        </Link>
-      </Box>
-      <Box mb={2}>
-        <Link
           to={routes.onboarding.sendEmailVerificationCode}
           className={
             isSelected(routes.onboarding.sendEmailVerificationCode) ||

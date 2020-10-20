@@ -1181,15 +1181,13 @@ export type Mutation = {
   createBitcoinAccount: Scalars['Boolean'],
   /** TRANSACTIONS */
   createTransaction: Transaction,
-  sendEmailVerificationCode: Scalars['Boolean'],
   /** ONBOARDING */
-  sendPhoneNumberVerificationCode: Scalars['Boolean'],
+  sendEmailVerificationCode: Session,
   setBankAccount: Session,
   setPassword: Session,
   setTransactionReceiptEvidence: Transaction,
   uploadGovernmentID: Session,
   verifyEmail: Session,
-  verifyPhoneNumber: Session,
 };
 
 
@@ -1251,11 +1249,6 @@ export type MutationSendEmailVerificationCodeArgs = {
 };
 
 
-export type MutationSendPhoneNumberVerificationCodeArgs = {
-  args: SendPhoneNumberVerificationCodeInput
-};
-
-
 export type MutationSetBankAccountArgs = {
   args: SetBankAccountInput
 };
@@ -1278,11 +1271,6 @@ export type MutationUploadGovernmentIdArgs = {
 
 export type MutationVerifyEmailArgs = {
   args: VerifyEmailInput
-};
-
-
-export type MutationVerifyPhoneNumberArgs = {
-  args: VerifyPhoneNumberInput
 };
 
 export type PhoneNumber = {
@@ -1626,10 +1614,6 @@ export type SenderWhereInput = {
   AND?: Maybe<Array<SenderWhereInput>>,
   OR?: Maybe<Array<SenderWhereInput>>,
   NOT?: Maybe<Array<SenderWhereInput>>,
-};
-
-export type SendPhoneNumberVerificationCodeInput = {
-  number: Scalars['String'],
 };
 
 export type Session = {
@@ -2130,9 +2114,4 @@ export type UserWhereInput = {
 export type VerifyEmailInput = {
   address: Scalars['String'],
   code: Scalars['String'],
-};
-
-export type VerifyPhoneNumberInput = {
-  code: Scalars['String'],
-  number: Scalars['String'],
 };

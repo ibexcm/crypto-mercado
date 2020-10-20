@@ -6,7 +6,6 @@ import {
 } from "../../libraries/EmailVerification";
 import { fileManagementRepositoryInjectionKey } from "../../libraries/FileManagement";
 import { sessionRepositoryInjectionKey } from "../../libraries/Session";
-import { smsVerificationRepositoryInjectionKey } from "../../libraries/SMSVerification";
 import { OnboardingRepository } from "./repositories/OnboardingRepository";
 
 export const onboardingRepositoryInjectionKey: InjectionKey<OnboardingRepository> = {
@@ -15,9 +14,7 @@ export const onboardingRepositoryInjectionKey: InjectionKey<OnboardingRepository
   closure: dependencies => {
     const db = dependencies.provide(dbInjectionKey);
     const sessionRepository = dependencies.provide(sessionRepositoryInjectionKey);
-    const smsVerificationRepository = dependencies.provide(
-      smsVerificationRepositoryInjectionKey,
-    );
+
     const emailVerificationRepository = dependencies.provide(
       emailVerificationRepositoryInjectionKey,
     );
@@ -31,7 +28,6 @@ export const onboardingRepositoryInjectionKey: InjectionKey<OnboardingRepository
     return new OnboardingRepository(
       db,
       sessionRepository,
-      smsVerificationRepository,
       fileManagementRepository,
       emailVerificationRepository,
       emailNotificationRepository,

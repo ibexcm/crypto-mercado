@@ -1,4 +1,4 @@
-import { SendPhoneNumberVerificationCodeInput, Transaction } from "@ibexcm/libraries/api";
+import { Transaction } from "@ibexcm/libraries/api";
 import {
   Box,
   Container,
@@ -23,9 +23,7 @@ import routes from "../../../routes";
 import { UserRepositoryInjectionKeys } from "../../user/InjectionKeys";
 import { MobileNavBar, TransactionItem } from "../components";
 
-interface Props
-  extends WithStyles,
-    RouteComponentProps<{}, StaticContext, SendPhoneNumberVerificationCodeInput> {}
+interface Props extends WithStyles, RouteComponentProps<{}, StaticContext> {}
 
 const Component: React.FC<Props> = ({ classes, history, location, match, ...props }) => {
   const dependencies = React.useContext(DependencyContext);
