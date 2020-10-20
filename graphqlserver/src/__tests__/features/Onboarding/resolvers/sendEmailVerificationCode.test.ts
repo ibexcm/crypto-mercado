@@ -2,7 +2,6 @@ import { prisma as db } from "@ibexcm/database";
 import { TestDependencies } from "@ibexcm/libraries/di";
 import { dbInjectionKey } from "../../../../InjectionKeys";
 import { emailVerificationRepositoryInjectionKey } from "../../../../libraries/EmailVerification";
-import { OnboardingErrorCode } from "../../../../features/Onboarding/errors/OnboardingError";
 import { MockServer } from "../../../../__test-utils__/mocks";
 import { mockEmailVerificationRepository } from "../../../../__test-utils__/mocks/EmailVerification";
 import GraphQLClient from "../../../../__test-utils__/mocks/GraphQLClient";
@@ -35,11 +34,5 @@ describe("sendEmailVerificationCode", () => {
     } = await GraphQLClient.sendEmailVerificationCode({ args: { address } });
 
     expect(token).toBeDefined();
-  });
-
-  test("email address taken", async () => {
-    await expect(
-      GraphQLClient.sendEmailVerificationCode({ args: { address } }),
-    ).rejects.toThrowError(OnboardingErrorCode.emailExists);
   });
 });
