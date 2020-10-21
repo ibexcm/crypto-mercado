@@ -1,8 +1,4 @@
-import {
-  BankAccount,
-  QueryGetTransactionBreakdownArgs,
-  SendPhoneNumberVerificationCodeInput,
-} from "@ibexcm/libraries/api";
+import { BankAccount, QueryGetTransactionBreakdownArgs } from "@ibexcm/libraries/api";
 import {
   Box,
   Container,
@@ -32,9 +28,7 @@ import { UserRepositoryInjectionKeys } from "../../../user/InjectionKeys";
 import { MobileNavBar, TransactionBreakdown } from "../../components";
 import { TransactionRepositoryInjectionKeys } from "../../InjectionKeys";
 
-interface Props
-  extends WithStyles,
-    RouteComponentProps<{}, StaticContext, SendPhoneNumberVerificationCodeInput> {}
+interface Props extends WithStyles, RouteComponentProps<{}, StaticContext> {}
 
 const Component: React.FC<Props> = ({ classes, history, location, match, ...props }) => {
   const dependencies = React.useContext(DependencyContext);

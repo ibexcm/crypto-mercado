@@ -1,4 +1,4 @@
-import { SendPhoneNumberVerificationCodeInput, User } from "@ibexcm/libraries/api";
+import { User } from "@ibexcm/libraries/api";
 import {
   Backdrop,
   Box,
@@ -23,9 +23,7 @@ import { styles } from "../../../common/theme";
 import routes from "../../../routes";
 import { KYCRepositoryInjectionKeys } from "../InjectionKeys";
 
-interface Props
-  extends WithStyles,
-    RouteComponentProps<{}, StaticContext, SendPhoneNumberVerificationCodeInput> {}
+interface Props extends WithStyles, RouteComponentProps<{}, StaticContext> {}
 
 const Component: React.FC<Props> = ({ classes, history, location, match, ...props }) => {
   const dependencies = React.useContext(DependencyContext);
@@ -68,7 +66,6 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
                 <TableRow>
                   <TableCell>No. de cliente</TableCell>
                   <TableCell>Correo electrónico</TableCell>
-                  <TableCell>Número de teléfono</TableCell>
                   <TableCell>Banco</TableCell>
                   <TableCell>Tipo de cuenta</TableCell>
                   <TableCell>Divisa</TableCell>
@@ -82,7 +79,6 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
                       <TableRow key={index}>
                         <TableCell>{user.account.clientID}</TableCell>
                         <TableCell>{user.contact.email[0].address}</TableCell>
-                        <TableCell>{user.contact.phoneNumber[0].number}</TableCell>
                         <TableCell>{user.bankAccounts[0].guatemala.bank.name}</TableCell>
                         <TableCell>
                           {user.bankAccounts[0].guatemala.bankAccountType}

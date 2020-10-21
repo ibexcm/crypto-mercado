@@ -1,4 +1,4 @@
-import { SendPhoneNumberVerificationCodeInput } from "@ibexcm/libraries/api";
+import { SendEmailVerificationCodeInput } from "@ibexcm/libraries/api";
 import {
   Box,
   Container,
@@ -20,7 +20,7 @@ import { Footer, MobileNavBar, NavBar } from "../components";
 
 interface Props
   extends WithStyles,
-    RouteComponentProps<{}, StaticContext, SendPhoneNumberVerificationCodeInput> {}
+    RouteComponentProps<{}, StaticContext, SendEmailVerificationCodeInput> {}
 
 const Component: React.FC<Props> = ({ classes, history, location, match, ...props }) => {
   const dependencies = React.useContext(DependencyContext);
@@ -47,7 +47,7 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
 
   const onCreateAccount = () => {
     OnboardingRepository.reset();
-    history.push(routes.onboarding.sendPhoneNumberVerificationCode);
+    history.push(routes.onboarding.sendEmailVerificationCode);
   };
 
   const onContactSupport = () => {
