@@ -1,7 +1,29 @@
 import {
   Mutation,
   MutationAdminAuthenticateArgs,
-  MutationAdminKycApproveUserArgs,
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  MutationAdminDeleteUserArgs, MutationAdminKycApproveUserArgs,
   MutationAdminKycRejectUserArgs,
   MutationAdminSettingsCreateExchangeRateArgs,
   MutationAdminUpdateTransactionArgs,
@@ -10,13 +32,11 @@ import {
   MutationCreateTransactionArgs,
   MutationResetPasswordArgs,
   MutationSendEmailVerificationCodeArgs,
-  MutationSendPhoneNumberVerificationCodeArgs,
   MutationSetBankAccountArgs,
   MutationSetPasswordArgs,
   MutationSetTransactionReceiptEvidenceArgs,
   MutationUploadGovernmentIdArgs,
   MutationVerifyEmailArgs,
-  MutationVerifyPhoneNumberArgs,
   Query,
   QueryAdminGetTransactionsArgs,
   QueryAdminGetUserArgs,
@@ -50,16 +70,27 @@ import {
 import { SetTransactionReceiptEvidenceMutation } from "@ibexcm/libraries/api/transactionReceipt";
 import {
   AdminAuthenticateMutation,
-  AdminGetUserQuery,
+
+
+
+
+
+
+
+
+
+
+
+  AdminDeleteUserMutation, AdminGetUserQuery,
+  AdminGetUsersQuery,
   AuthenticateMutation,
   SendEmailVerificationCodeMutation,
-  SendPhoneNumberVerificationCodeMutation,
+
   SetBankAccountMutation,
   SetPasswordMutation,
   UploadGovernmentIDMutation,
   UserQuery,
-  VerifyEmailMutation,
-  VerifyPhoneNumberMutation
+  VerifyEmailMutation
 } from "@ibexcm/libraries/api/user";
 import { ApolloError } from "apollo-server-errors";
 import axios from "axios";
@@ -135,6 +166,22 @@ const adminGetUser = async (args: QueryAdminGetUserArgs, authToken: string) => {
   );
 };
 
+const adminDeleteUser = async (args: MutationAdminDeleteUserArgs, authToken: string) => {
+  return query<MutationAdminDeleteUserArgs, Pick<Mutation, "adminDeleteUser">>(
+    AdminDeleteUserMutation,
+    args,
+    authToken,
+  );
+};
+
+const adminGetUsers = async (authToken: string) => {
+  return query<null, Pick<Query, "adminGetUsers">>(
+    AdminGetUsersQuery,
+    null,
+    authToken,
+  );
+};
+
 const getBanksByCountry = async (args: QueryGetBanksByCountryArgs) => {
   return query<QueryGetBanksByCountryArgs, Pick<Query, "getBanksByCountry">>(
     GetBanksByCountryQuery,
@@ -149,27 +196,11 @@ const getCurrenciesByCountry = async (args: QueryGetCurrenciesByCountryArgs) => 
   );
 };
 
-const verifyPhoneNumber = async (args: MutationVerifyPhoneNumberArgs) => {
-  return query<MutationVerifyPhoneNumberArgs, Pick<Mutation, "verifyPhoneNumber">>(
-    VerifyPhoneNumberMutation,
-    args,
-  );
-};
-
-const sendPhoneNumberVerificationCode = async (
-  args: MutationSendPhoneNumberVerificationCodeArgs,
-) => {
-  return query<
-    MutationSendPhoneNumberVerificationCodeArgs,
-    Pick<Mutation, "sendPhoneNumberVerificationCode">
-  >(SendPhoneNumberVerificationCodeMutation, args);
-};
-
-const sendEmailVerificationCode = async (args: MutationSendEmailVerificationCodeArgs, authToken: string) => {
+const sendEmailVerificationCode = async (args: MutationSendEmailVerificationCodeArgs) => {
   return query<
     MutationSendEmailVerificationCodeArgs,
     Pick<Mutation, "sendEmailVerificationCode">
-  >(SendEmailVerificationCodeMutation, args, authToken);
+  >(SendEmailVerificationCodeMutation, args);
 };
 
 const verifyEmail = async (args: MutationVerifyEmailArgs, authToken: string) => {
@@ -339,13 +370,12 @@ const GraphQLClient = {
   authenticate,
   adminAuthenticate,
   adminGetUser,
+  adminGetUsers,
   user,
   recoverAccount,
   resetPassword,
   getBanksByCountry,
   getCurrenciesByCountry,
-  verifyPhoneNumber,
-  sendPhoneNumberVerificationCode,
   sendEmailVerificationCode,
   verifyEmail,
   setPassword,
@@ -363,6 +393,7 @@ const GraphQLClient = {
   adminGetTransactions,
   adminSettingsCreateExchangeRate,
   adminUpdateTransaction,
+  adminDeleteUser
 };
 
 export default GraphQLClient;

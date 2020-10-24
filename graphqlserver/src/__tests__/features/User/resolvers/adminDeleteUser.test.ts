@@ -15,7 +15,7 @@ import {
 } from "../../../../__test-utils__/mocks";
 import GraphQLClient from "../../../../__test-utils__/mocks/GraphQLClient";
 
-describe("adminGetUser", () => {
+describe("adminDeleteUser", () => {
   const dependencies = new TestDependencies();
   const smsVerificationRepository = mockSMSVerificationRepository();
   const emailVerificationRepository = mockEmailVerificationRepository();
@@ -37,6 +37,9 @@ describe("adminGetUser", () => {
 
   beforeAll(async () => {
     await server.start();
+  });
+
+  beforeEach(async () => {
     await db.deleteManyUsers();
   });
 
@@ -44,7 +47,7 @@ describe("adminGetUser", () => {
     server.stop();
   });
 
-  test("returns user", async () => {
+  test("success", async () => {
     const address = "u1@ibexcm.com";
     const password = "password";
 
@@ -56,25 +59,37 @@ describe("adminGetUser", () => {
       },
     } = await GraphQLClient.adminAuthenticate({ args: { address, password } });
 
-    const length = 2;
-    const [{ user: user1 }] = await Promise.all(
-      new Array(length).fill(null).map(() => onboardUser()),
-    );
+    const { user } = await onboardUser();
 
     const {
-      data: { adminGetUser: user },
-    } = await GraphQLClient.adminGetUser({ args: { id: user1.id } }, token);
+      data: { adminDeleteUser },
+    } = await GraphQLClient.adminDeleteUser({ args: { id: user.id } }, token);
 
-    expect(user.role.type).toEqual("CUSTOMER");
-    expect(user.account.clientID).toBeDefined();
-    expect(user.contact.email[0].address).toBeDefined();
-    expect(user.profile.country.phoneNumberCode).toBeDefined();
-    expect(user.profile.documents.guatemala.dpi[0].fileHash).toBeDefined();
-    expect(user.bankAccounts[0].currency.name).toBeDefined();
-    expect(user.bankAccounts[0].currency.symbol).toBeDefined();
-    expect(user.bankAccounts[0].guatemala.accountNumber).toBeDefined();
-    expect(user.bankAccounts[0].guatemala.fullName).toBeDefined();
-    expect(user.bankAccounts[0].guatemala.bankAccountType).toBeDefined();
-    expect(user.bankAccounts[0].guatemala.bank.name).toBeDefined();
+    expect(adminDeleteUser.id).toEqual(user.id);
+  });
+
+  test("failure: user does not exist", async () => {
+    const address = "u1@ibexcm.com";
+    const password = "password";
+
+    await onboardAdminUser({ address, password }, db);
+
+    const {
+      data: {
+        adminAuthenticate: { token },
+      },
+    } = await GraphQLClient.adminAuthenticate({ args: { address, password } });
+
+    await expect(
+      GraphQLClient.adminDeleteUser({ args: { id: "abc123" } }, token),
+    ).rejects.toThrow();
+  });
+
+  test("failure: user is not an admin", async () => {
+    const { user } = await onboardUser();
+
+    await expect(
+      GraphQLClient.adminDeleteUser({ args: { id: user.id } }, "token"),
+    ).rejects.toThrow();
   });
 });

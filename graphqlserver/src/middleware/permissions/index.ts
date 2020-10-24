@@ -16,6 +16,7 @@ export const permissions = shield({
 
     // USER
     adminGetUser: rules.isAdmin,
+    adminGetUsers: rules.isAdmin,
 
     // TRANSACTIONS
     adminGetTransactions: rules.isAdmin,
@@ -26,8 +27,6 @@ export const permissions = shield({
     authenticate: and(rules.usernameExists, rules.isValidPassword, rules.isKYCApproved),
 
     // ONBOARDING
-    sendPhoneNumberVerificationCode: rules.isPhoneNumberAvailable,
-    verifyPhoneNumber: rules.isPhoneNumberAvailable,
     sendEmailVerificationCode: rules.isEmailAvailable,
     verifyEmail: rules.isEmailAvailable,
     setPassword: rules.isUser,
@@ -47,6 +46,8 @@ export const permissions = shield({
     // ADMIN
     // TRANSACTIONS
     adminUpdateTransaction: rules.isAdmin,
+    // USERS
+    adminDeleteUser: rules.isAdmin,
     // AUTH
     adminAuthenticate: rules.isValidAdminAuthentication,
     // KYC

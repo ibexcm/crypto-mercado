@@ -21,6 +21,7 @@ type Query {
 
   # USER
   adminGetUser(args: AdminGetUserInput!): User!
+  adminGetUsers: [User]!
 
   # TRANSACTIONS
   adminGetTransactions(args: AdminGetTransactionsInput): [Transaction]
@@ -28,9 +29,7 @@ type Query {
 
 type Mutation {
   # ONBOARDING
-  sendPhoneNumberVerificationCode(args: SendPhoneNumberVerificationCodeInput!): Boolean!
-  verifyPhoneNumber(args: VerifyPhoneNumberInput!): Session!
-  sendEmailVerificationCode(args: SendEmailVerificationCodeInput!): Boolean!
+  sendEmailVerificationCode(args: SendEmailVerificationCodeInput!): Session!
   verifyEmail(args: VerifyEmailInput!): Session!
   setPassword(args: SetPasswordInput!): Session!
   uploadGovernmentID(args: UploadGovernmentIDInput!): Session!
@@ -64,6 +63,9 @@ type Mutation {
     rejectArgs: AdminKYCRejectUserInput!
   ): Boolean!
 
+  # USERS
+  adminDeleteUser(args: AdminDeleteUserInput!): User!
+
   # TRANSACTIONS
   adminMarkTransactionAsPaid(args: AdminMarkTransactionAsPaidInput!): Transaction!
   adminUpdateTransaction(args: AdminUpdateTransactionInput!): Transaction!
@@ -77,6 +79,10 @@ type Mutation {
 type Session {
   token: String
   expiresAt: DateTime
+}
+
+input AdminDeleteUserInput {
+  id: String!
 }
 
 input CreateBitcoinAccountInput {
@@ -140,15 +146,6 @@ input SetPasswordInput {
 input VerifyEmailInput {
   address: String!
   code: String!
-}
-
-input VerifyPhoneNumberInput {
-  number: String!
-  code: String!
-}
-
-input SendPhoneNumberVerificationCodeInput {
-  number: String!
 }
 
 input SendEmailVerificationCodeInput {

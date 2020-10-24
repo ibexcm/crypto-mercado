@@ -5,8 +5,6 @@ export const routes = {
     signIn: "/inicia-sesion",
   },
   onboarding: {
-    sendPhoneNumberVerificationCode: "/kyc/ingresa-tu-telefono",
-    verifyPhoneNumber: "/kyc/verifica-tu-telefono",
     sendEmailVerificationCode: "/kyc/ingresa-tu-correo",
     verifyEmail: "/kyc/verifica-tu-correo",
     setPassword: "/kyc/elige-una-contrasena",

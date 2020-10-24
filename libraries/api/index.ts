@@ -89,6 +89,10 @@ export type AdminAuthenticateInput = {
   password: Scalars['String'],
 };
 
+export type AdminDeleteUserInput = {
+  id: Scalars['String'],
+};
+
 export type AdminGetTransactionsInput = {
   orderBy?: Maybe<TransactionOrderByInput>,
   where?: Maybe<TransactionWhereInput>,
@@ -1161,6 +1165,8 @@ export type Mutation = {
    * AUTHENTICATION: admin* must be the prefix for admin endpoints
  */
   adminAuthenticate: Session,
+  /** USERS */
+  adminDeleteUser: User,
   /** KYC */
   adminKYCApproveUser: Scalars['Boolean'],
   adminKYCRejectUser: Scalars['Boolean'],
@@ -1177,20 +1183,23 @@ export type Mutation = {
   createTransaction: Transaction,
   /** ACCOUNT RECOVERY */
   resetPassword: Session,
-  sendEmailVerificationCode: Scalars['Boolean'],
   /** ONBOARDING */
-  sendPhoneNumberVerificationCode: Scalars['Boolean'],
+  sendEmailVerificationCode: Session,
   setBankAccount: Session,
   setPassword: Session,
   setTransactionReceiptEvidence: Transaction,
   uploadGovernmentID: Session,
   verifyEmail: Session,
-  verifyPhoneNumber: Session,
 };
 
 
 export type MutationAdminAuthenticateArgs = {
   args: AdminAuthenticateInput
+};
+
+
+export type MutationAdminDeleteUserArgs = {
+  args: AdminDeleteUserInput
 };
 
 
@@ -1247,11 +1256,6 @@ export type MutationSendEmailVerificationCodeArgs = {
 };
 
 
-export type MutationSendPhoneNumberVerificationCodeArgs = {
-  args: SendPhoneNumberVerificationCodeInput
-};
-
-
 export type MutationSetBankAccountArgs = {
   args: SetBankAccountInput
 };
@@ -1274,11 +1278,6 @@ export type MutationUploadGovernmentIdArgs = {
 
 export type MutationVerifyEmailArgs = {
   args: VerifyEmailInput
-};
-
-
-export type MutationVerifyPhoneNumberArgs = {
-  args: VerifyPhoneNumberInput
 };
 
 export type PhoneNumber = {
@@ -1511,6 +1510,7 @@ export type Query = {
   adminGetTransactions?: Maybe<Array<Maybe<Transaction>>>,
   /** USER */
   adminGetUser: User,
+  adminGetUsers: Array<Maybe<User>>,
   /** KYC */
   adminGetUsersWithPendingKYCApproval: Array<User>,
   /** ADMIN */
@@ -1641,10 +1641,6 @@ export type SenderWhereInput = {
   AND?: Maybe<Array<SenderWhereInput>>,
   OR?: Maybe<Array<SenderWhereInput>>,
   NOT?: Maybe<Array<SenderWhereInput>>,
-};
-
-export type SendPhoneNumberVerificationCodeInput = {
-  number: Scalars['String'],
 };
 
 export type Session = {
@@ -2145,9 +2141,4 @@ export type UserWhereInput = {
 export type VerifyEmailInput = {
   address: Scalars['String'],
   code: Scalars['String'],
-};
-
-export type VerifyPhoneNumberInput = {
-  code: Scalars['String'],
-  number: Scalars['String'],
 };

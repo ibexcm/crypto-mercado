@@ -4,5 +4,6 @@ export const Account = gql`
   fragment Account on Account {
     id
     clientID
+    createdAt
   }
 `;

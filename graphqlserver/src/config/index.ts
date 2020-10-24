@@ -153,13 +153,19 @@ const configuration = convict({
 
   twilio: {
     sid: {
-      doc: "Twilio Account SID",
+      doc: "Twilio Verification SID",
       format: "*",
       default: "VC123",
       env: "TWILIO_SID",
       arg: "twilio-sid",
     },
-
+    smsSID: {
+      doc: "Twilio SMS SID",
+      format: "*",
+      default: "MC123",
+      env: "TWILIO_SMS_SID",
+      arg: "twilio-sms-sid",
+    },
     aid: {
       doc: "Twilio Account AID",
       format: "*",
@@ -167,7 +173,6 @@ const configuration = convict({
       env: "TWILIO_AID",
       arg: "twilio-aid",
     },
-
     token: {
       doc: "Twilio Account Token",
       format: "*",

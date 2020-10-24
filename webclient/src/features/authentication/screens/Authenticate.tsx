@@ -1,8 +1,4 @@
-import {
-  AuthenticateInput,
-  MutationAuthenticateArgs,
-  SendPhoneNumberVerificationCodeInput,
-} from "@ibexcm/libraries/api";
+import { AuthenticateInput, MutationAuthenticateArgs } from "@ibexcm/libraries/api";
 import {
   Box,
   Card,
@@ -28,9 +24,7 @@ import routes from "../../../routes";
 import { MobileNavBar, NavBar } from "../components";
 import { AuthenticationRepositoryInjectionKeys } from "../InjectionKeys";
 
-interface Props
-  extends WithStyles,
-    RouteComponentProps<{}, StaticContext, SendPhoneNumberVerificationCodeInput> {}
+interface Props extends WithStyles, RouteComponentProps<{}, StaticContext> {}
 
 const Component: React.FC<Props> = ({ classes, history, location, match, ...props }) => {
   const dependencies = React.useContext(DependencyContext);
