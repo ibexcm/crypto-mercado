@@ -7,16 +7,16 @@ import {
   MutationSetTransactionReceiptEvidenceArgs,
   MutationVerifyEmailArgs,
   QueryRecoverAccountArgs,
-  TUserRole,
+  TUserRole
 } from "@ibexcm/libraries/api";
 import { compare } from "bcryptjs";
 import { rule } from "graphql-shield";
+import { AccountRecoveryError } from "../../features/AccountRecovery/errors/AccountRecoveryError";
 import { AuthenticationError } from "../../features/Authentication/errors/AuthenticationError";
 import { OnboardingError } from "../../features/Onboarding/errors/OnboardingError";
 import { TransactionError } from "../../features/Transaction/errors/TransactionError";
 import { dbInjectionKey } from "../../InjectionKeys";
 import { IContext } from "../../server/interfaces/IContext";
-import { accountExists, emailExists, phoneNumberExists } from "../util";
 
 export const isUser = rule({ cache: true })(
   async (parent, args, { dependencies, request: { auth } }: IContext, info) => {
@@ -234,11 +234,13 @@ export const isRecoveryOptionAvailable = rule({
   const db = dependencies.provide(dbInjectionKey);
   const { emailRecovery, smsRecovery } = args;
 
-  if (!Boolean(emailRecovery)) {
-    return await phoneNumberExists(smsRecovery.number, db);
-  } else if (!Boolean(smsRecovery)) {
-    return await emailExists(emailRecovery.address, db);
+  const userContact = await db.$exists.contact({
+    email_some: { address: emailRecovery?.address },
+  });
+
+  if (Boolean(userContact)) {
+    return true;
   }
 
-  return accountExists(emailRecovery.address, smsRecovery.number, db);
+  return AccountRecoveryError.unregisteredUserError;
 });
