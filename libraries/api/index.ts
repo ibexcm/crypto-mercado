@@ -1557,7 +1557,7 @@ export type QueryGetTransactionBreakdownArgs = {
 
 
 export type QueryRecoverAccountArgs = {
-  args: RecoverAccountInput
+  args: SendEmailVerificationCodeInput
 };
 
 export type Recipient = {
@@ -1591,19 +1591,6 @@ export type RecipientWhereInput = {
   AND?: Maybe<Array<RecipientWhereInput>>,
   OR?: Maybe<Array<RecipientWhereInput>>,
   NOT?: Maybe<Array<RecipientWhereInput>>,
-};
-
-export type RecoverAccountEmailInput = {
-  address: Scalars['String'],
-};
-
-export type RecoverAccountInput = {
-  emailRecovery?: Maybe<RecoverAccountEmailInput>,
-  smsRecovery?: Maybe<RecoverAccountSmsInput>,
-};
-
-export type RecoverAccountSmsInput = {
-  number: Scalars['String'],
 };
 
 export type SendEmailVerificationCodeInput = {
