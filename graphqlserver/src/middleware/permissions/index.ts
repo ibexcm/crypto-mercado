@@ -9,7 +9,7 @@ export const permissions = shield({
     getAdminBankAccounts: rules.isUser,
 
     //ACCOUNT RECOVERY
-    recoverAccount: rules.isRecoveryOptionAvailable,
+    recoverAccount: rules.isAccountRecoveryAvailable,
     // ADMIN
     // KYC
     adminGetUsersWithPendingKYCApproval: rules.isAdmin,

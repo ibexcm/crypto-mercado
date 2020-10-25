@@ -1,29 +1,8 @@
 import {
   Mutation,
   MutationAdminAuthenticateArgs,
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  MutationAdminDeleteUserArgs, MutationAdminKycApproveUserArgs,
+  MutationAdminDeleteUserArgs, 
+  MutationAdminKycApproveUserArgs,
   MutationAdminKycRejectUserArgs,
   MutationAdminSettingsCreateExchangeRateArgs,
   MutationAdminUpdateTransactionArgs,
@@ -70,22 +49,10 @@ import {
 import { SetTransactionReceiptEvidenceMutation } from "@ibexcm/libraries/api/transactionReceipt";
 import {
   AdminAuthenticateMutation,
-
-
-
-
-
-
-
-
-
-
-
   AdminDeleteUserMutation, AdminGetUserQuery,
   AdminGetUsersQuery,
   AuthenticateMutation,
   SendEmailVerificationCodeMutation,
-
   SetBankAccountMutation,
   SetPasswordMutation,
   UploadGovernmentIDMutation,

@@ -1,16 +1,10 @@
 import GraphQLClient from "../mocks/GraphQLClient";
 
-export default async ({
-  phoneNumber,
-  address,
-}: {
-  phoneNumber?: string;
-  address?: string;
-}) => {
+export default async ({ address }: { address?: string }) => {
   const {
     data: { recoverAccount },
   } = await GraphQLClient.recoverAccount({
-    args: { emailRecovery: { address }, smsRecovery: { number: phoneNumber } },
+    args: { address },
   });
 
   return recoverAccount;

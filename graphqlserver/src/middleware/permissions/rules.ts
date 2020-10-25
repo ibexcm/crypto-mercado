@@ -7,7 +7,7 @@ import {
   MutationSetTransactionReceiptEvidenceArgs,
   MutationVerifyEmailArgs,
   QueryRecoverAccountArgs,
-  TUserRole
+  TUserRole,
 } from "@ibexcm/libraries/api";
 import { compare } from "bcryptjs";
 import { rule } from "graphql-shield";
@@ -228,19 +228,22 @@ export const isEmailAvailable = rule({ cache: true })(
   },
 );
 
-export const isRecoveryOptionAvailable = rule({
+export const isAccountRecoveryAvailable = rule({
   cache: true,
-})(async (parent, { args }: QueryRecoverAccountArgs, { dependencies }: IContext, info) => {
-  const db = dependencies.provide(dbInjectionKey);
-  const { emailRecovery, smsRecovery } = args;
+})(
+  async (
+    parent,
+    { args: { address } }: QueryRecoverAccountArgs,
+    { dependencies }: IContext,
+    info,
+  ) => {
+    const db = dependencies.provide(dbInjectionKey);
+    const emailExists = await db.emails({ where: { address, verifiedAt_not: null } });
 
-  const userContact = await db.$exists.contact({
-    email_some: { address: emailRecovery?.address },
-  });
+    if (!Boolean(emailExists.length)) {
+      return AccountRecoveryError.unregisteredEmailError;
+    }
 
-  if (Boolean(userContact)) {
     return true;
-  }
-
-  return AccountRecoveryError.unregisteredUserError;
-});
+  },
+);

@@ -2,7 +2,6 @@ import { InjectionKey, InjectionKeyScope } from "@ibexcm/libraries/di";
 import { dbInjectionKey } from "../../InjectionKeys";
 import { emailAccountRecoveryRepositoryInjectionKey } from "../../libraries/EmailVerification";
 import { sessionRepositoryInjectionKey } from "../../libraries/Session";
-import { smsAccountRecoveryRepositoryInjectionKey } from "../../libraries/SMSVerification";
 import { AccountRecoveryRepository } from "./repositories/AccountRecoveryRepository";
 
 export const accountRecoveryInjectioKey: InjectionKey<AccountRecoveryRepository> = {
@@ -15,15 +14,11 @@ export const accountRecoveryInjectioKey: InjectionKey<AccountRecoveryRepository>
     const emailAccountRecoveryRepository = dependencies.provide(
       emailAccountRecoveryRepositoryInjectionKey,
     );
-    const smsAccountRecoveryRepository = dependencies.provide(
-      smsAccountRecoveryRepositoryInjectionKey,
-    );
 
     return new AccountRecoveryRepository(
       db,
       sessionRepository,
       emailAccountRecoveryRepository,
-      smsAccountRecoveryRepository,
     );
   },
 };
