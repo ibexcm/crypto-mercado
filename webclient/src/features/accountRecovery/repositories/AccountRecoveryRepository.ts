@@ -9,7 +9,7 @@ import {
   GetAccountRecoveryLinkQuery,
   ResetPasswordMutation,
 } from "@ibexcm/libraries/api/accountRecovery";
-import { isValidEmail, isValidPhoneNumber } from "@ibexcm/libraries/validation";
+
 export class AccountRecoveryRepository {
   useGetAccountRecoveryLink(): {
     executeGetAccountRecoveryLink: (args: QueryRecoverAccountArgs) => Promise<void>;
@@ -21,7 +21,6 @@ export class AccountRecoveryRepository {
     >(GetAccountRecoveryLinkQuery);
 
     const executeGetAccountRecoveryLink = async (args: QueryRecoverAccountArgs) => {
-      this.clearInvalidValues(args);
       await execute({ variables: args });
     };
 
@@ -59,22 +58,5 @@ export class AccountRecoveryRepository {
         }
       },
     };
-  }
-
-  private clearInvalidValues(input: QueryRecoverAccountArgs): QueryRecoverAccountArgs {
-    const {
-      args: {
-        emailRecovery: { address },
-        smsRecovery: { number },
-      },
-    } = input;
-
-    if (!isValidPhoneNumber(number)) {
-      delete input.args.smsRecovery;
-    } else if (!isValidEmail(address)) {
-      delete input.args.emailRecovery;
-    }
-
-    return input;
   }
 }

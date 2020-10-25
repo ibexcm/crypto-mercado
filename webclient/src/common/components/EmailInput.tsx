@@ -1,4 +1,4 @@
-import { RecoverAccountEmailInput } from "@ibexcm/libraries/api";
+import { SendEmailVerificationCodeInput } from "@ibexcm/libraries/api";
 import { isValidEmail } from "@ibexcm/libraries/validation";
 import { Box, TextField, Theme, withStyles, WithStyles } from "@material-ui/core";
 import React from "react";
@@ -8,7 +8,7 @@ import { InputErrorBox } from "./InputErrorBox";
 
 interface Props
   extends WithStyles,
-    InputValidationProps<RecoverAccountEmailInput["address"]> {}
+    InputValidationProps<SendEmailVerificationCodeInput["address"]> {}
 
 const Component: React.FC<Props> = ({ value, error, onError, onChange }) => {
   const invalidEmailInputError = new Error("Email Inválido");

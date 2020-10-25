@@ -5,7 +5,6 @@ export * from "./EmailInput";
 export * from "./InputErrorBox";
 export * from "./Modal";
 export * from "./PrivateRoute";
-export * from "./PhoneNumberInput";
 export * from "./StepsSidebar";
 export * from "./TextField";
 export * from "./ToolbarPadding";
