@@ -12,6 +12,10 @@ export const routes = {
     setBankAccount: "/kyc/verifica-tu-cuenta-bancaria",
     done: "/kyc/fin",
   },
+  recovery: {
+    requestAccountRecoveryLink: "/recupera-tu-cuenta",
+    resetPassword: "/restablece-tu-contrasena",
+  },
   dashboard: {
     sell: {
       checkout: "/dashboard/btc/venta",

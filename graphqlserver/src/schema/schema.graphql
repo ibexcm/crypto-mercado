@@ -10,6 +10,9 @@ type Query {
   getTransaction(args: GetTransactionInput!): Transaction!
   getTransactionBreakdown(args: GetTransactionBreakdownInput!): TransactionBreakdown!
 
+  # ACCOUNT RECOVERY
+  recoverAccount(args: SendEmailVerificationCodeInput!): Boolean!
+
   # ADMIN
   getAdminBankAccounts: [BankAccount!]!
 
@@ -41,6 +44,9 @@ type Mutation {
 
   # CRYPTO ACCOUNTS
   createBitcoinAccount(args: CreateBitcoinAccountInput!): Boolean!
+
+  #ACCOUNT RECOVERY
+  resetPassword(args: SetPasswordInput!): Session!
 
   # ADMIN
   # AUTHENTICATION: admin* must be the prefix for admin endpoints
