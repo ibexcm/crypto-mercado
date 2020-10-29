@@ -6,10 +6,12 @@ import {
   MutationSendEmailVerificationCodeArgs,
   MutationSetTransactionReceiptEvidenceArgs,
   MutationVerifyEmailArgs,
+  QueryRecoverAccountArgs,
   TUserRole,
 } from "@ibexcm/libraries/api";
 import { compare } from "bcryptjs";
 import { rule } from "graphql-shield";
+import { AccountRecoveryError } from "../../features/AccountRecovery/errors/AccountRecoveryError";
 import { AuthenticationError } from "../../features/Authentication/errors/AuthenticationError";
 import { OnboardingError } from "../../features/Onboarding/errors/OnboardingError";
 import { TransactionError } from "../../features/Transaction/errors/TransactionError";
@@ -220,6 +222,26 @@ export const isEmailAvailable = rule({ cache: true })(
 
     if (verifiedEmails.length > 0) {
       return OnboardingError.emailExistsError;
+    }
+
+    return true;
+  },
+);
+
+export const isAccountRecoveryAvailable = rule({
+  cache: true,
+})(
+  async (
+    parent,
+    { args: { address } }: QueryRecoverAccountArgs,
+    { dependencies }: IContext,
+    info,
+  ) => {
+    const db = dependencies.provide(dbInjectionKey);
+    const emailExists = await db.emails({ where: { address, verifiedAt_not: null } });
+
+    if (!Boolean(emailExists.length)) {
+      return AccountRecoveryError.unregisteredEmailError;
     }
 
     return true;

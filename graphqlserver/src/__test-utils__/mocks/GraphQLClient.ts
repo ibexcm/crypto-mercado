@@ -1,35 +1,15 @@
 import {
   Mutation,
   MutationAdminAuthenticateArgs,
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  MutationAdminDeleteUserArgs, MutationAdminKycApproveUserArgs,
+  MutationAdminDeleteUserArgs, 
+  MutationAdminKycApproveUserArgs,
   MutationAdminKycRejectUserArgs,
   MutationAdminSettingsCreateExchangeRateArgs,
   MutationAdminUpdateTransactionArgs,
   MutationAuthenticateArgs,
   MutationCreateBitcoinAccountArgs,
   MutationCreateTransactionArgs,
+  MutationResetPasswordArgs,
   MutationSendEmailVerificationCodeArgs,
   MutationSetBankAccountArgs,
   MutationSetPasswordArgs,
@@ -42,8 +22,13 @@ import {
   QueryGetBanksByCountryArgs,
   QueryGetCurrenciesByCountryArgs,
   QueryGetTransactionArgs,
-  QueryGetTransactionBreakdownArgs
+  QueryGetTransactionBreakdownArgs,
+  QueryRecoverAccountArgs
 } from "@ibexcm/libraries/api";
+import {
+  GetAccountRecoveryLinkQuery,
+  ResetPasswordMutation
+} from "@ibexcm/libraries/api/accountRecovery";
 import { GetBanksByCountryQuery } from "@ibexcm/libraries/api/bank";
 import { GetAdminBankAccountsQuery } from "@ibexcm/libraries/api/bankAccount";
 import { CreateBitcoinAccountMutation } from "@ibexcm/libraries/api/cryptoAccount";
@@ -64,22 +49,10 @@ import {
 import { SetTransactionReceiptEvidenceMutation } from "@ibexcm/libraries/api/transactionReceipt";
 import {
   AdminAuthenticateMutation,
-
-
-
-
-
-
-
-
-
-
-
   AdminDeleteUserMutation, AdminGetUserQuery,
   AdminGetUsersQuery,
   AuthenticateMutation,
   SendEmailVerificationCodeMutation,
-
   SetBankAccountMutation,
   SetPasswordMutation,
   UploadGovernmentIDMutation,
@@ -344,6 +317,21 @@ const adminUpdateTransaction = async (
   >(AdminUpdateTransactionMutation, args, authToken);
 };
 
+const recoverAccount = async (args: QueryRecoverAccountArgs) => {
+  return query<QueryRecoverAccountArgs, Pick<Query, "recoverAccount">>(
+    GetAccountRecoveryLinkQuery,
+    args,
+  );
+};
+
+const resetPassword = async (args: MutationResetPasswordArgs, authToken: string) => {
+  return query<MutationResetPasswordArgs, Pick<Mutation, "resetPassword">>(
+    ResetPasswordMutation,
+    args,
+    authToken,
+  );
+};
+
 const GraphQLClient = {
   query,
   authenticate,
@@ -351,6 +339,8 @@ const GraphQLClient = {
   adminGetUser,
   adminGetUsers,
   user,
+  recoverAccount,
+  resetPassword,
   getBanksByCountry,
   getCurrenciesByCountry,
   sendEmailVerificationCode,

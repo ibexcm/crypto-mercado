@@ -1,3 +1,4 @@
+export * from "./EmailAccountRecovery";
 export * from "./EmailNotifications";
 export * from "./EmailVerification";
 export * from "./GraphQLClient";

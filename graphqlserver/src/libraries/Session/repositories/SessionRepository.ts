@@ -38,4 +38,28 @@ export class SessionRepository implements ISessionRepository {
       expiresAt,
     };
   }
+
+  async createAccountRecoverySession(
+    user: User,
+    { duration = "5m" }: { duration?: string } = {},
+  ): Promise<Session> {
+    const expiresIn = ms(duration);
+    const expiresAt = DateTime.utc()
+      .plus({ millisecond: expiresIn })
+      .toISO();
+
+    const token = this.jwtRepository.sign<IAuthenticationRequest>(
+      {
+        user,
+        createdAt: DateTime.utc().toISO(),
+        expiresAt,
+      },
+      { expiresIn },
+    );
+
+    return {
+      token,
+      expiresAt,
+    };
+  }
 }

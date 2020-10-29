@@ -1181,6 +1181,8 @@ export type Mutation = {
   createBitcoinAccount: Scalars['Boolean'],
   /** TRANSACTIONS */
   createTransaction: Transaction,
+  /** ACCOUNT RECOVERY */
+  resetPassword: Session,
   /** ONBOARDING */
   sendEmailVerificationCode: Session,
   setBankAccount: Session,
@@ -1241,6 +1243,11 @@ export type MutationCreateBitcoinAccountArgs = {
 
 export type MutationCreateTransactionArgs = {
   args: CreateTransactionInput
+};
+
+
+export type MutationResetPasswordArgs = {
+  args: SetPasswordInput
 };
 
 
@@ -1513,6 +1520,8 @@ export type Query = {
   /** TRANSACTION */
   getTransaction: Transaction,
   getTransactionBreakdown: TransactionBreakdown,
+  /** ACCOUNT RECOVERY */
+  recoverAccount: Scalars['Boolean'],
   user: User,
 };
 
@@ -1544,6 +1553,11 @@ export type QueryGetTransactionArgs = {
 
 export type QueryGetTransactionBreakdownArgs = {
   args: GetTransactionBreakdownInput
+};
+
+
+export type QueryRecoverAccountArgs = {
+  args: SendEmailVerificationCodeInput
 };
 
 export type Recipient = {

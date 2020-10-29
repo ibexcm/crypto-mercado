@@ -1,2 +1,2 @@
-export * from "./interfaces/IAuthenticationRequest";
 export * from "./InjectionKeys";
+export * from "./interfaces";

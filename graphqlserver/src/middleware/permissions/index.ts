@@ -8,6 +8,8 @@ export const permissions = shield({
     getTransaction: rules.isUser,
     getAdminBankAccounts: rules.isUser,
 
+    //ACCOUNT RECOVERY
+    recoverAccount: rules.isAccountRecoveryAvailable,
     // ADMIN
     // KYC
     adminGetUsersWithPendingKYCApproval: rules.isAdmin,
@@ -30,6 +32,9 @@ export const permissions = shield({
     setPassword: rules.isUser,
     uploadGovernmentID: rules.isUser,
     setBankAccount: rules.isUser,
+
+    //ACCOUNT RECOVERY
+    resetPassword: rules.isUser,
 
     // TRANSACTION
     createTransaction: and(rules.isUser, rules.isKYCApproved),
