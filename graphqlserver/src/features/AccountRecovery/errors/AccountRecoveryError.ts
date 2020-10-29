@@ -16,7 +16,7 @@ const invalidPasswordError = new ApolloError(
 );
 
 const unregisteredEmailError = new ApolloError(
-  "Email is not registered",
+  "Esta dirección de correo no existe",
   AccountRecoveryErrorCode.unregisteredEmail,
 );
 

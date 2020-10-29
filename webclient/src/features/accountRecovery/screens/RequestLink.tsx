@@ -40,7 +40,11 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
   }, [executeGetAccountRecoveryLinkError]);
 
   React.useEffect(() => {
-    if (!Boolean(executeGetAccountRecoveryLinkStatus?.recoverAccount)) {
+    if (
+      typeof executeGetAccountRecoveryLinkStatus?.recoverAccount === "boolean" &&
+      !Boolean(executeGetAccountRecoveryLinkStatus?.recoverAccount)
+    ) {
+      setError(new Error("Falló el envío del correo"));
       return;
     }
 
