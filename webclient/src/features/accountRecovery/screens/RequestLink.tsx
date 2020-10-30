@@ -52,6 +52,10 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
     setIsModalOpen(true);
   }, [executeGetAccountRecoveryLinkStatus]);
 
+  React.useEffect(() => {
+    setIsModalOpen(false);
+  }, []);
+
   const onSendLink = async () => {
     try {
       await executeGetAccountRecoveryLink(input);
