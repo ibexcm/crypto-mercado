@@ -40,7 +40,9 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
   }, [executeGetAccountRecoveryLinkError]);
 
   React.useEffect(() => {
-    if (
+    if (typeof executeGetAccountRecoveryLinkStatus?.recoverAccount === "undefined") {
+      return;
+    } else if (
       typeof executeGetAccountRecoveryLinkStatus?.recoverAccount === "boolean" &&
       !Boolean(executeGetAccountRecoveryLinkStatus?.recoverAccount)
     ) {
@@ -51,10 +53,6 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
     setError(null);
     setIsModalOpen(true);
   }, [executeGetAccountRecoveryLinkStatus]);
-
-  React.useEffect(() => {
-    setIsModalOpen(false);
-  }, []);
 
   const onSendLink = async () => {
     try {
