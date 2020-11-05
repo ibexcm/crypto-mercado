@@ -1,6 +1,9 @@
 export const routes = {
   root: "/",
   home: {},
+  legal: {
+    termsAndConditions: "/terminos-y-condiciones",
+  },
   authentication: {
     signIn: "/inicia-sesion",
   },
