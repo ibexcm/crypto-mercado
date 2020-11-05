@@ -41,8 +41,6 @@ const Component: React.FC<Props> = ({ classes, ...props }) => {
               todas las estipulaciones de la política de privacidad. IBEX no comercializa
               Datos Personales o Datos Sensibles del Usuario.
             </p>
-          </section>
-          <section>
             <p>
               <strong>
                 Con la aceptación de los términos y condiciones de servicio, así como a la
