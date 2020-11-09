@@ -13,7 +13,7 @@ import {
   TransactionReceiptCreateWithoutTransactionInput,
   TransactionTaxCreateOneInput,
   TransactionUpdateInput,
-  User,
+  User
 } from "@ibexcm/database";
 import {
   BitcoinToFiatTransactionBreakdown,
@@ -25,14 +25,14 @@ import {
   QueryGetTransactionArgs,
   QueryGetTransactionBreakdownArgs,
   TransactionBreakdown,
-  TransactionBreakdownField,
+  TransactionBreakdownField
 } from "@ibexcm/libraries/api";
 import { CurrencySymbol } from "@ibexcm/libraries/models/currency";
 import { IEmailNotificationsRepository } from "../../../libraries/EmailVerification/interfaces/IEmailNotificationsRepository";
 import math from "../../../libraries/math";
 import {
   IBitcoinPriceResponse,
-  IBitcoinRepository,
+  IBitcoinRepository
 } from "../../Bitcoin/interfaces/IBitcoinRepository";
 import { ExchangeRateRepository } from "../../ExchangeRate/repositories/ExchangeRateRepository";
 import { TransactionFeeRepository } from "../../TransactionFee/repositories/TransactionFeeRepository";
@@ -588,7 +588,7 @@ export class TransactionRepository {
     | Pick<RecipientCreateWithoutTransactionInput, "cryptoAccount">
   > {
     if (Boolean(sender.bankAccountID)) {
-      const [{ id }] = await this.db.user({ id: recipientUser.id }).cryptoAccounts();
+      const [{ id }] = (await this.db.user({ id: recipientUser.id }).cryptoAccounts()).reverse();
       return {
         cryptoAccount: {
           connect: {
