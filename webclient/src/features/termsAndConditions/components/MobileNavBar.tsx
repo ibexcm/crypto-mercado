@@ -2,7 +2,7 @@ import { AppBar, Box, Hidden, Theme, Toolbar, WithStyles } from "@material-ui/co
 import { withStyles } from "@material-ui/styles";
 import React from "react";
 import { Link } from "react-router-dom";
-import { styles } from "../../../common/theme";
+import { logoWidthMobile, styles } from "../../../common/theme";
 import routes from "../../../routes";
 
 interface IMobileAppBarProps extends WithStyles {}
@@ -14,12 +14,7 @@ const Component: React.FC<IMobileAppBarProps> = ({ classes }) => {
         <Toolbar className={classes.toolbar}>
           <Box className={classes.logoBox}>
             <Link to={routes.root}>
-              <img
-                src="/svg/ibex-icon.svg"
-                alt="IBEX Homepage Icon"
-                width="100%"
-                height="auto"
-              />
+              <img src="/svg/ibex-icon.svg" width="100%" height="auto" />
             </Link>
           </Box>
           <Box className={classes.some}>
@@ -38,7 +33,7 @@ const Component: React.FC<IMobileAppBarProps> = ({ classes }) => {
 export const MobileNavBar = withStyles((theme: Theme) => ({
   ...styles(theme),
   logoBox: {
-    width: 49,
+    width: logoWidthMobile,
     flexDirection: "column",
     justifyContent: "center",
   },
