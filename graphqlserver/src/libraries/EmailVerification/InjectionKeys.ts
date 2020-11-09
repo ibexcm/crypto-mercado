@@ -1,8 +1,14 @@
 import { InjectionKey, InjectionKeyScope } from "@ibexcm/libraries/di";
-import { IEmailNotificationsRepository } from "./interfaces/IEmailNotificationsRepository";
-import { IEmailVerificationRepository } from "./interfaces/IEmailVerificationRepository";
-import { EmailNotificationsRepository } from "./repository/EmailNotificationsRepository";
-import { EmailVerificationRepository } from "./repository/EmailVerificationRepository";
+import {
+  IEmailAccountRecoveryRepository,
+  IEmailNotificationsRepository,
+  IEmailVerificationRepository,
+} from "./interfaces";
+import {
+  EmailAccountRecoveryRepository,
+  EmailNotificationsRepository,
+  EmailVerificationRepository,
+} from "./repository";
 
 export const emailVerificationRepositoryInjectionKey: InjectionKey<IEmailVerificationRepository> = {
   name: "emailVerificationRepository",
@@ -14,4 +20,10 @@ export const emailNotificationsRepositoryInjectionKey: InjectionKey<IEmailNotifi
   name: "emailNotificationsRepository",
   scope: InjectionKeyScope.singleton,
   closure: _ => EmailNotificationsRepository,
+};
+
+export const emailAccountRecoveryRepositoryInjectionKey: InjectionKey<IEmailAccountRecoveryRepository> = {
+  name: "emailAccountRecoveryRepository",
+  scope: InjectionKeyScope.singleton,
+  closure: _ => EmailAccountRecoveryRepository,
 };

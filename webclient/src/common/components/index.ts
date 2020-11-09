@@ -1,6 +1,7 @@
 export * from "./Backdrop";
 export * from "./Button";
 export * from "./Dropzone";
+export * from "./EmailInput";
 export * from "./InputErrorBox";
 export * from "./Modal";
 export * from "./PrivateRoute";
