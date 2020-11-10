@@ -42,7 +42,9 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
   React.useEffect(() => {
     if (typeof executeGetAccountRecoveryLinkStatus?.recoverAccount === "undefined") {
       return;
-    } else if (
+    }
+
+    if (
       typeof executeGetAccountRecoveryLinkStatus?.recoverAccount === "boolean" &&
       !Boolean(executeGetAccountRecoveryLinkStatus?.recoverAccount)
     ) {
