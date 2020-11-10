@@ -140,6 +140,9 @@ const Component: React.FC<Props> = ({ classes, history, location, match, ...prop
               <Link href={routes.recovery.requestAccountRecoveryLink}>
                 <Typography align="center">¿Olvidaste tu contraseña?</Typography>
               </Link>
+              <Link href={routes.legal.termsAndConditions}>
+                <Typography align="center">Política de Privacidad</Typography>
+              </Link>
             </Box>
           </Box>
         </Box>
