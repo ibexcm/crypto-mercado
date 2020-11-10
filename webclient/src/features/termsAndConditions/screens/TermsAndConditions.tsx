@@ -538,26 +538,9 @@ export const TermsAndConditions = withStyles((theme: Theme) => ({
     "& h1, h2, h3": {
       textAlign: "center",
     },
-    "& h1": {
-      fontSize: theme.typography.h3.fontSize,
-      [theme.breakpoints.up("sm")]: {
-        fontSize: theme.typography.h3.fontSize,
-      },
-    },
-    "& h2": {
-      fontSize: theme.typography.h4.fontSize,
-      [theme.breakpoints.up("sm")]: {
-        fontSize: theme.typography.h4.fontSize,
-      },
-    },
-    "& h3": {
-      fontSize: theme.typography.h5.fontSize,
-      [theme.breakpoints.up("sm")]: {
-        fontSize: theme.typography.h5.fontSize,
-      },
-    },
   },
   policyContent: {
+    justifyContent: "center",
     marginBottom: "6em",
     "& p": {
       padding: "1em",
