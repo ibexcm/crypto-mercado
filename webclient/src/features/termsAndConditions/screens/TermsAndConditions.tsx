@@ -2,20 +2,20 @@ import {
   Box,
   Container,
   Table,
-  TableContainer,
   TableBody,
   TableCell,
-  TableRow,
+  TableContainer,
   TableHead,
+  TableRow,
   Theme,
   withStyles,
   WithStyles,
 } from "@material-ui/core";
 import React from "react";
 import { RouteComponentProps, StaticContext } from "react-router";
-import { styles } from "../../../common/theme";
 import { ToolbarPadding, Typography } from "../../../common/components";
-import { MobileNavBar, NavBar, Footer } from "../components";
+import { styles } from "../../../common/theme";
+import { Footer, MobileNavBar, NavBar } from "../../home/components";
 
 interface Props extends WithStyles, RouteComponentProps<{}, StaticContext> {}
 
@@ -523,7 +523,6 @@ const Component: React.FC<Props> = ({ classes, ...props }) => {
           </section>
         </Box>
       </Container>
-
       <Footer />
     </Box>
   );
@@ -533,17 +532,15 @@ export const TermsAndConditions = withStyles((theme: Theme) => ({
   ...styles(theme),
   pageContainer: {
     "& section": {
-      padding: "1em",
+      marginBottom: theme.spacing(4),
     },
     "& h1, h2, h3": {
-      textAlign: "center",
+      marginBottom: theme.spacing(2),
     },
   },
   policyContent: {
-    justifyContent: "center",
-    marginBottom: "6em",
     "& p": {
-      padding: "1em",
+      marginBottom: theme.spacing(4),
       textAlign: "justify",
     },
   },
@@ -554,7 +551,7 @@ export const TermsAndConditions = withStyles((theme: Theme) => ({
   },
   contactInformation: {
     "& p": {
-      textAlign: "center",
+      marginBottom: 0,
     },
   },
 }))(Component);
