@@ -14,6 +14,7 @@ import {
   UploadGovernmentID,
   VerifyEmail,
 } from "./features/onboarding/screens";
+import { TermsAndConditions } from "./features/termsAndConditions/screens";
 import { TransactionDetails, TransactionsIndex } from "./features/transaction/screens";
 import { Checkout as BuyCheckout } from "./features/transaction/screens/buy";
 import { Checkout as SellCheckout } from "./features/transaction/screens/sell";
@@ -51,6 +52,13 @@ const App: React.FC = () => {
               component={SetBankAccount}
             />
             <Route path={routes.onboarding.done} exact component={Done} />
+
+            {/*TERMS AND CONDITIONS*/}
+            <Route
+              path={routes.legal.termsAndConditions}
+              exact
+              component={TermsAndConditions}
+            />
 
             {/*ACCOUNT RECOVERY */}
             <Route

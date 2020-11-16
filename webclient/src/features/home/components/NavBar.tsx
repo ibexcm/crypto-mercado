@@ -18,7 +18,7 @@ interface IMobileAppBarProps extends WithStyles {}
 const Component: React.FC<IMobileAppBarProps> = ({ classes }) => {
   return (
     <Hidden smDown>
-      <AppBar position="absolute" color="transparent" elevation={0}>
+      <AppBar position="absolute" color="primary" elevation={0}>
         <Container maxWidth="lg" disableGutters style={{ minHeight: "auto" }}>
           <Toolbar className={classes.toolbar}>
             <Box className={classes.logoBox}>
