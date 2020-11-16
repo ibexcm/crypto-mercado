@@ -1,4 +1,4 @@
-import { createMuiTheme } from "@material-ui/core/styles";
+import { createMuiTheme, responsiveFontSizes } from "@material-ui/core/styles";
 import { darken, lighten } from "polished";
 
 export const spacingUnit = 16;
@@ -11,7 +11,7 @@ export const palette = {
   },
 };
 
-export const theme = createMuiTheme({
+const overrides = createMuiTheme({
   spacing: 8,
   palette: {
     action: {
@@ -91,3 +91,5 @@ export const theme = createMuiTheme({
     },
   },
 });
+
+export const theme = responsiveFontSizes(overrides, { factor: 3 });

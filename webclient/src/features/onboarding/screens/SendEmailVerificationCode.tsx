@@ -1,5 +1,5 @@
 import { MutationSendEmailVerificationCodeArgs } from "@ibexcm/libraries/api";
-import { Box, Container, Theme, withStyles, WithStyles } from "@material-ui/core";
+import { Box, Container, Link, Theme, withStyles, WithStyles } from "@material-ui/core";
 import MailOutlineIcon from "@material-ui/icons/MailOutline";
 import React from "react";
 import { RouteComponentProps } from "react-router";
@@ -16,6 +16,7 @@ import DependencyContext from "../../../common/contexts/DependencyContext";
 import { styles } from "../../../common/theme";
 import { MobileAppBar, SidebarNavigation } from "../components";
 import { OnboardingRepositoryInjectionKeys } from "../InjectionKeys";
+import routes from "../../../routes";
 
 interface ISendEmailVerificationCodeProps extends WithStyles, RouteComponentProps {}
 
@@ -130,6 +131,11 @@ const Component: React.FC<ISendEmailVerificationCodeProps> = ({
           >
             Enviar Email
           </Button>
+          <Box my={2}>
+            <Link href={routes.legal.termsAndConditions}>
+              <Typography align="center">Política de Privacidad</Typography>
+            </Link>
+          </Box>
         </Box>
       </Container>
     </Box>

@@ -239,17 +239,17 @@ export const Home = withStyles((theme: Theme) => ({
     textAlign: "center",
     color: "white",
     "& h1": {
-      fontSize: theme.typography.h4.fontSize,
+      fontSize: theme.typography.h3.fontSize,
       [theme.breakpoints.up("sm")]: {
-        fontSize: theme.typography.h4.fontSize,
+        fontSize: theme.typography.h3.fontSize,
       },
     },
     "& span": {
       display: "block",
-      fontSize: theme.typography.h4.fontSize,
+      fontSize: theme.typography.h2.fontSize,
       marginTop: theme.spacing(2),
       [theme.breakpoints.up("sm")]: {
-        fontSize: theme.typography.h3.fontSize,
+        fontSize: theme.typography.h1.fontSize,
       },
     },
   },
