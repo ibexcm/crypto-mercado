@@ -8,7 +8,7 @@ export const routes = {
     signIn: "/inicia-sesion",
   },
   onboarding: {
-    sendEmailVerificationCode: "/kyc/ingresa-tu-correo",
+    sendEmailVerificationCode: "/registro",
     verifyEmail: "/kyc/verifica-tu-correo",
     setPassword: "/kyc/elige-una-contrasena",
     uploadGovernmentID: "/kyc/verifica-tu-identificacion",
