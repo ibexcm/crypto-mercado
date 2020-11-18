@@ -369,7 +369,7 @@ export class TransactionRepository {
     const feePlusTax = math.add(calculatedFee, calculatedTax);
 
     const fee = {
-      key: `Comisión IBEX (${math.multiply(Number(assignedFee), 100).toFixed(1)}% — IVA incluido)`,
+      key: `Comisión IBEX (${math.multiply(Number(assignedFee), 100).toFixed(1)}% + IVA)`,
       value: `${CurrencySymbol.BTC} ${btcFormatter.format(Number(feePlusTax))}`,
     };
 
@@ -439,7 +439,7 @@ export class TransactionRepository {
     const feePlusTax = math.add(calculatedFee, calculatedTax);
 
     const fee = {
-      key: `Comisión IBEX (${math.multiply(Number(assignedFee), 100).toFixed(1)}% — IVA incluido)`,
+      key: `Comisión IBEX (${math.multiply(Number(assignedFee), 100).toFixed(1)}% + IVA)`,
       value: `${priceAtDestinationCurrency.symbol} ${fiatFormatter.format(
         Number(feePlusTax),
       )}`,
