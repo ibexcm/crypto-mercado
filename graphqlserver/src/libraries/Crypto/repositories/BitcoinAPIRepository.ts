@@ -96,7 +96,7 @@ export class BitcoinAPIRepository implements IBitcoinAPIRepository {
     const secondsInAnHour = this.expiresIn;
     const millisecsInAnHour = millisecsInASecond * secondsInAnHour;
 
-    const executionInterval = Math.round(millisecsInAnHour - timeFit);
+    const executionInterval = Math.round(millisecsInAnHour / timeFit);
     
     return executionInterval;
   }
