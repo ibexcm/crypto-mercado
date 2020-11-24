@@ -1,4 +1,5 @@
 import { Observable } from "rxjs";
+import { map } from "rxjs/operators";
 import { IMessage } from "stompjs/";
 import { RxStomp } from "@stomp/rx-stomp";
 import { IBitcoinWebSocketRepository } from "../interfaces/IBitcoinWebSocketRepository";
@@ -34,11 +35,13 @@ export class BitcoinWebSocketRepository implements IBitcoinWebSocketRepository {
       },
       heartbeatIncoming: 10000,
       heartbeatOutgoing: 10000,
-      reconnectDelay: 5000,
+      reconnectDelay: 2000,
     });
   }
 
   subscribe(path: string, subscriptionHeaders): Observable<IMessage> {
-    return this.StompClient.watch(path, subscriptionHeaders);
+    return this.StompClient.watch(path, subscriptionHeaders).pipe(
+      map(message => JSON.parse(message.body)),
+    );
   }
 }
