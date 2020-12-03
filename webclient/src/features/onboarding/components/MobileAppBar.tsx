@@ -19,7 +19,7 @@ const Component: React.FC<IMobileAppBarProps> = ({ classes }) => {
           </Hidden>
         </Box>
         <Box className={classes.some}>
-          <Link to={routes.root} className={classes.navBarLink}>
+          <Link to={routes.authentication.signIn} className={classes.navBarLink}>
             INICIAR SESIÓN
           </Link>
         </Box>
