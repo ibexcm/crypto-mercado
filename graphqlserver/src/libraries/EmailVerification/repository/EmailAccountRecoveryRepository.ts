@@ -23,7 +23,7 @@ const sendRecoveryLink: IEmailAccountRecoveryRepository["sendRecoveryLink"] = as
       },
     });
 
-    return sent.statusCode === 200;
+    return sent.statusCode === 202;
   } catch (error) {
     switch (error.code) {
       case 403:
