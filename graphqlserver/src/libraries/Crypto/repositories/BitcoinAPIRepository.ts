@@ -90,6 +90,17 @@ export class BitcoinAPIRepository implements IBitcoinAPIRepository {
     });
   }
 
+  private getExecutionInterval() : number {
+    const timeFit = 1.15;
+    const millisecsInASecond = 1000;
+    const secondsInAnHour = this.expiresIn;
+    const millisecsInAnHour = millisecsInASecond * secondsInAnHour;
+
+    const executionInterval = Math.round(millisecsInAnHour / timeFit);
+    
+    return executionInterval;
+  }
+
   private keepAlive(): void {
     if (Boolean(this.keepAliveInterval)) {
       clearInterval(this.keepAliveInterval);
@@ -97,6 +108,6 @@ export class BitcoinAPIRepository implements IBitcoinAPIRepository {
 
     this.keepAliveInterval = setInterval(() => {
       this.connectToPriceFeedProvider();
-    }, Math.floor(this.expiresIn / 1.15));
+    }, this.getExecutionInterval());
   }
 }
